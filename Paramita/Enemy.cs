@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using RogueSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,15 +10,16 @@ using System.Threading.Tasks;
 
 namespace Paramita
 {
-    class Enemy
+    public class Enemy : Sattva
     {
+        private readonly IMap _map;
+        private bool _isAwareOfPlayer;
         private readonly PathToPlayer _path;
-        public int X { get; set; }
-        public int Y { get; set; }
-        public Texture2D Sprite { get; set; }
+        
 
-        public Enemy(PathToPlayer path)
+        public Enemy(IMap map, PathToPlayer path)
         {
+            _map = map;
             _path = path;
         }
 
@@ -31,9 +33,29 @@ namespace Paramita
 
         public void Update()
         {
-            _path.CreateFrom(X, Y);
-            X = _path.FirstCell.X;
-            Y = _path.FirstCell.Y;
+            if (_isAwareOfPlayer == false)
+            {
+                if (_map.IsInFov(X, Y))
+                {
+                    _isAwareOfPlayer = true;
+                }
+            }
+
+            if (_isAwareOfPlayer)
+            {
+                _path.CreateFrom(X, Y);
+                // Use CombatManager to check if player occupies cell will move  into
+                if (Global.CombatManager.IsPlayerAt(_path.FirstCell.X, _path.FirstCell.Y) == true)
+                {
+                    Global.CombatManager.Attack(this,
+                        Global.CombatManager.SattvaAt(_path.FirstCell.X, _path.FirstCell.Y));
+                }
+                else
+                {
+                    X = _path.FirstCell.X;
+                    Y = _path.FirstCell.Y;
+                }
+            }
         }
     }
 }

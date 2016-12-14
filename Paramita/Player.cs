@@ -9,14 +9,8 @@ using System.Threading.Tasks;
 
 namespace Paramita
 {
-    public class Player
+    public class Player : Sattva
     {
-        // coordinates of the map cell the player is located. 
-        // (0,0) = top left corner
-        public int X { get; set; }
-        public int Y { get; set; }
-        public Texture2D Sprite { get; set; }
-
         public void Draw( SpriteBatch spriteBatch )
         {
             spriteBatch.Draw(Sprite, new Vector2(X * Sprite.Width, Y * Sprite.Height),
@@ -31,34 +25,63 @@ namespace Paramita
                 int tempX = X - 1;
                 if (map.IsWalkable(tempX, Y))
                 {
-                    X = tempX;
+                    Enemy e = Global.CombatManager.EnemyAt(tempX, Y);
+                    if (e == null)
+                    {
+                        X = tempX;
+                    }
+                    else
+                    {
+                        Global.CombatManager.Attack(this, e);
+                    }
                     return true;
                 }
             }
             else if (input.IsRight(PlayerIndex.One))
             {
                 int tempX = X + 1;
-                if (map.IsWalkable(tempX, Y))
                 {
-                    X = tempX;
+                    Enemy e = Global.CombatManager.EnemyAt(tempX, Y);
+                    if (e == null)
+                    {
+                        X = tempX;
+                    }
+                    else
+                    {
+                        Global.CombatManager.Attack(this, e);
+                    }
                     return true;
                 }
             }
             else if (input.IsUp(PlayerIndex.One))
             {
                 int tempY = Y - 1;
-                if (map.IsWalkable(X, tempY))
                 {
-                    Y = tempY;
+                    Enemy e = Global.CombatManager.EnemyAt(X, tempY);
+                    if (e == null)
+                    {
+                        Y = tempY;
+                    }
+                    else
+                    {
+                        Global.CombatManager.Attack(this, e);
+                    }
                     return true;
                 }
             }
             else if (input.IsDown(PlayerIndex.One))
             {
                 int tempY = Y + 1;
-                if (map.IsWalkable(X, tempY))
                 {
-                    Y = tempY;
+                    Enemy e = Global.CombatManager.EnemyAt(X, tempY);
+                    if (e == null)
+                    {
+                        Y = tempY;
+                    }
+                    else
+                    {
+                        Global.CombatManager.Attack(this, e);
+                    }
                     return true;
                 }
             }

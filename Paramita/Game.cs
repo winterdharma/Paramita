@@ -2,9 +2,11 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using RogueSharp;
+using RogueSharp.DiceNotation;
 using RogueSharp.MapCreation;
 using RogueSharp.Random;
 using System;
+using System.Collections.Generic;
 
 namespace Paramita
 {
@@ -20,7 +22,7 @@ namespace Paramita
         private Texture2D _floor;
         private Texture2D _wall;
         private Player _player;
-        private Enemy _enemy;
+        private List<Enemy> _enemies = new List<Enemy>();
 
         public Game()
         {
@@ -66,19 +68,20 @@ namespace Paramita
             {
                 X = startingCell.X,
                 Y = startingCell.Y,
-                Sprite = Content.Load<Texture2D>("player")
+                Sprite = Content.Load<Texture2D>("player"),
+                ArmorClass = 15,
+                AttackBonus = 1,
+                Damage = Dice.Parse("2d4"),
+                Health = 50,
+                Name = "Mr. Rogue"
             };
             startingCell = GetRandomEmptyCell();
 
             PathToPlayer pathFromEnemy = new PathToPlayer(_player, _map, Content.Load<Texture2D>("white"));
             pathFromEnemy.CreateFrom(startingCell.X, startingCell.Y);
 
-            _enemy = new Enemy(pathFromEnemy)
-            {
-                X = startingCell.X,
-                Y = startingCell.Y,
-                Sprite = Content.Load<Texture2D>("hound")
-            };
+            AddEnemies(10);
+            Global.CombatManager = new CombatManager(_player, _enemies);
             UpdatePlayerFieldOfView();
             Global.GameState = GameStates.PlayerTurn;
         }
@@ -125,7 +128,10 @@ namespace Paramita
                 }
                 if (Global.GameState == GameStates.EnemyTurn)
                 {
-                    _enemy.Update();
+                    foreach (Enemy e in _enemies)
+                    {
+                        e.Update();
+                    }
                     Global.GameState = GameStates.PlayerTurn;
                 }
             }
@@ -180,9 +186,12 @@ namespace Paramita
             }
             _player.Draw(spriteBatch);
 
-            if (Global.GameState == GameStates.Debugging || _map.IsInFov(_enemy.X, _enemy.Y))
+            foreach (Enemy e in _enemies)
             {
-                _enemy.Draw(spriteBatch);
+                if (Global.GameState == GameStates.Debugging || _map.IsInFov(e.X, e.Y))
+                {
+                    e.Draw(spriteBatch);
+                }
             }
 
             spriteBatch.End();
@@ -212,6 +221,31 @@ namespace Paramita
                 {
                     _map.SetCellProperties(c.X, c.Y, c.IsTransparent, c.IsWalkable, true);
                 }
+            }
+        }
+
+        private void AddEnemies(int numberOfEnemies)
+        {
+            for (int i = 0; i < numberOfEnemies; i++)
+            {
+                // Find a new empty cell for each enemy
+                Cell enemyCell = GetRandomEmptyCell();
+                var pathFromEnemy =
+                  new PathToPlayer(_player, _map, Content.Load<Texture2D>("White"));
+                pathFromEnemy.CreateFrom(enemyCell.X, enemyCell.Y);
+                var enemy = new Enemy(_map, pathFromEnemy)
+                {
+                    X = enemyCell.X,
+                    Y = enemyCell.Y,
+                    Sprite = Content.Load<Texture2D>("hound"),
+                    ArmorClass = 10,
+                    AttackBonus = 0,
+                    Damage = Dice.Parse("d4"),
+                    Health = 10,
+                    Name = "Hell Hound"
+                };
+                // Add each enemy to list of enemies
+                _enemies.Add(enemy);
             }
         }
     }
