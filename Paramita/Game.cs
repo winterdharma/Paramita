@@ -2,9 +2,11 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using RogueSharp;
+using RogueSharp.DiceNotation;
 using RogueSharp.MapCreation;
 using RogueSharp.Random;
 using System;
+using System.Collections.Generic;
 
 namespace Paramita
 {
@@ -20,7 +22,7 @@ namespace Paramita
         private Texture2D _floor;
         private Texture2D _wall;
         private Player _player;
-        private Enemy _enemy;
+        private List<Enemy> _enemies = new List<Enemy>();
 
         public Game()
         {
@@ -39,9 +41,13 @@ namespace Paramita
         {
             // TODO: Add your initialization logic here
             IMapCreationStrategy<Map> mapCreationStrategy =
-                new RandomRoomsMapCreationStrategy<Map>(50, 30, 100, 7,3);
+                new RandomRoomsMapCreationStrategy<Map>(Global.MapWidth, Global.MapHeight, 100, 7,3);
             _map = Map.Create(mapCreationStrategy);
             Console.WriteLine(_map.ToString());
+
+            Global.Camera.ViewportWidth = graphics.GraphicsDevice.Viewport.Width;
+            Global.Camera.ViewportHeight = graphics.GraphicsDevice.Viewport.Height;
+
             base.Initialize();
         }
 
@@ -57,25 +63,25 @@ namespace Paramita
             _floor = Content.Load<Texture2D>("floor");
             _wall = Content.Load<Texture2D>("wall");
             Cell startingCell = GetRandomEmptyCell();
+            Global.Camera.CenterOn(startingCell);
             _player = new Player
             {
                 X = startingCell.X,
                 Y = startingCell.Y,
-                Scale = 0.25f,
-                Sprite = Content.Load<Texture2D>("player")
+                Sprite = Content.Load<Texture2D>("player"),
+                ArmorClass = 15,
+                AttackBonus = 1,
+                Damage = Dice.Parse("2d4"),
+                Health = 50,
+                Name = "Mr. Rogue"
             };
             startingCell = GetRandomEmptyCell();
 
             PathToPlayer pathFromEnemy = new PathToPlayer(_player, _map, Content.Load<Texture2D>("white"));
             pathFromEnemy.CreateFrom(startingCell.X, startingCell.Y);
 
-            _enemy = new Enemy(pathFromEnemy)
-            {
-                X = startingCell.X,
-                Y = startingCell.Y,
-                Scale = 0.25f,
-                Sprite = Content.Load<Texture2D>("hound")
-            };
+            AddEnemies(10);
+            Global.CombatManager = new CombatManager(_player, _enemies);
             UpdatePlayerFieldOfView();
             Global.GameState = GameStates.PlayerTurn;
         }
@@ -117,11 +123,15 @@ namespace Paramita
                     && _player.HandleInput(_inputState, _map))
                 {
                     UpdatePlayerFieldOfView();
+                    Global.Camera.CenterOn(_map.GetCell(_player.X, _player.Y));
                     Global.GameState = GameStates.EnemyTurn;
                 }
                 if (Global.GameState == GameStates.EnemyTurn)
                 {
-                    _enemy.Update();
+                    foreach (Enemy e in _enemies)
+                    {
+                        e.Update();
+                    }
                     Global.GameState = GameStates.PlayerTurn;
                 }
             }
@@ -129,6 +139,7 @@ namespace Paramita
 
             // TODO: Add your update logic here
             _inputState.Update();
+            Global.Camera.HandleInput(_inputState, PlayerIndex.One);
             base.Update(gameTime);
         }
 
@@ -140,14 +151,12 @@ namespace Paramita
             GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
-            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
-
-            int sizeOfSprites = 64;
-            float scale = 0.25f;
+            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend,
+                null,null,null,null,Global.Camera.TranslationMatrix);
 
             foreach(Cell c in _map.GetAllCells() )
             {
-                var position = new Vector2(c.X * sizeOfSprites * scale, c.Y * sizeOfSprites * scale);
+                var position = new Vector2(c.X * Global.SpriteWidth, c.Y * Global.SpriteHeight);
 
                 if(c.IsExplored == false && Global.GameState != GameStates.Debugging)
                 {
@@ -172,15 +181,17 @@ namespace Paramita
                 }
 
                 spriteBatch.Draw(sprite, position,
-                        null, null, null, 0.0f, new Vector2(scale, scale),
-                        tint, SpriteEffects.None, 0.8f);
-
+                        null, null, null, 0.0f, Vector2.One,
+                        tint, SpriteEffects.None, LayerDepth.Cells);
             }
             _player.Draw(spriteBatch);
 
-            if (Global.GameState == GameStates.Debugging || _map.IsInFov(_enemy.X, _enemy.Y))
+            foreach (Enemy e in _enemies)
             {
-                _enemy.Draw(spriteBatch);
+                if (Global.GameState == GameStates.Debugging || _map.IsInFov(e.X, e.Y))
+                {
+                    e.Draw(spriteBatch);
+                }
             }
 
             spriteBatch.End();
@@ -210,6 +221,31 @@ namespace Paramita
                 {
                     _map.SetCellProperties(c.X, c.Y, c.IsTransparent, c.IsWalkable, true);
                 }
+            }
+        }
+
+        private void AddEnemies(int numberOfEnemies)
+        {
+            for (int i = 0; i < numberOfEnemies; i++)
+            {
+                // Find a new empty cell for each enemy
+                Cell enemyCell = GetRandomEmptyCell();
+                var pathFromEnemy =
+                  new PathToPlayer(_player, _map, Content.Load<Texture2D>("White"));
+                pathFromEnemy.CreateFrom(enemyCell.X, enemyCell.Y);
+                var enemy = new Enemy(_map, pathFromEnemy)
+                {
+                    X = enemyCell.X,
+                    Y = enemyCell.Y,
+                    Sprite = Content.Load<Texture2D>("hound"),
+                    ArmorClass = 10,
+                    AttackBonus = 0,
+                    Damage = Dice.Parse("d4"),
+                    Health = 10,
+                    Name = "Hell Hound"
+                };
+                // Add each enemy to list of enemies
+                _enemies.Add(enemy);
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using RogueSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,33 +10,52 @@ using System.Threading.Tasks;
 
 namespace Paramita
 {
-    class Enemy
+    public class Enemy : Sattva
     {
+        private readonly IMap _map;
+        private bool _isAwareOfPlayer;
         private readonly PathToPlayer _path;
-        public int X { get; set; }
-        public int Y { get; set; }
-        public float Scale { get; set; }
-        public Texture2D Sprite { get; set; }
+        
 
-        public Enemy(PathToPlayer path)
+        public Enemy(IMap map, PathToPlayer path)
         {
+            _map = map;
             _path = path;
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            float multiplier = Scale * Sprite.Width;
-            spriteBatch.Draw(Sprite, new Vector2(X * multiplier, Y * multiplier),
-              null, null, null, 0.0f, new Vector2(Scale, Scale), Color.White,
-              SpriteEffects.None, 0.5f);
+            spriteBatch.Draw(Sprite, new Vector2(X * Sprite.Width, Y * Sprite.Height),
+                null, null, null, 0.0f, Vector2.One, Color.White, 
+                SpriteEffects.None, LayerDepth.Sprites);
             _path.Draw(spriteBatch);
         }
 
         public void Update()
         {
-            _path.CreateFrom(X, Y);
-            X = _path.FirstCell.X;
-            Y = _path.FirstCell.Y;
+            if (_isAwareOfPlayer == false)
+            {
+                if (_map.IsInFov(X, Y))
+                {
+                    _isAwareOfPlayer = true;
+                }
+            }
+
+            if (_isAwareOfPlayer)
+            {
+                _path.CreateFrom(X, Y);
+                // Use CombatManager to check if player occupies cell will move  into
+                if (Global.CombatManager.IsPlayerAt(_path.FirstCell.X, _path.FirstCell.Y) == true)
+                {
+                    Global.CombatManager.Attack(this,
+                        Global.CombatManager.SattvaAt(_path.FirstCell.X, _path.FirstCell.Y));
+                }
+                else
+                {
+                    X = _path.FirstCell.X;
+                    Y = _path.FirstCell.Y;
+                }
+            }
         }
     }
 }
