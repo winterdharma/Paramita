@@ -50,7 +50,7 @@ namespace Paramita
                         float multiplier = .25f * _sprite.Width;
                         spriteBatch.Draw(_sprite, new Vector2(cell.X * multiplier, cell.Y * multiplier),
                           null, null, null, 0.0f, new Vector2(scale, scale), Color.Blue * .2f,
-                          SpriteEffects.None, 0.6f);
+                          SpriteEffects.None, LayerDepth.Paths);
                     }
                 }
             }

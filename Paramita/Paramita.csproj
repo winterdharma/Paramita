@@ -37,11 +37,16 @@
   <PropertyGroup>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Paramita.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Camera.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="InputState.cs" />
+    <Compile Include="LayerDepth.cs" />
     <Compile Include="PathToPlayer.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />

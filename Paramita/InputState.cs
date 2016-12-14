@@ -251,5 +251,37 @@ namespace Paramita
          PlayerIndex playerIndex;
          return IsNewKeyPress(Keys.Space, controllingPlayer, out playerIndex );
       }
-   }
+
+        public bool IsScrollLeft(PlayerIndex? controllingPlayer)
+        {
+            PlayerIndex playerIndex;
+            return IsKeyPressed(Keys.A, controllingPlayer, out playerIndex);
+        }
+        public bool IsScrollRight(PlayerIndex? controllingPlayer)
+        {
+            PlayerIndex playerIndex;
+            return IsKeyPressed(Keys.D, controllingPlayer, out playerIndex);
+        }
+        public bool IsScrollUp(PlayerIndex? controllingPlayer)
+        {
+            PlayerIndex playerIndex;
+            return IsKeyPressed(Keys.W, controllingPlayer, out playerIndex);
+        }
+        public bool IsScrollDown(PlayerIndex? controllingPlayer)
+        {
+            PlayerIndex playerIndex;
+            return IsKeyPressed(Keys.S, controllingPlayer, out playerIndex);
+        }
+        public bool IsZoomOut(PlayerIndex? controllingPlayer)
+        {
+            PlayerIndex playerIndex;
+            return IsNewKeyPress(Keys.OemPeriod, controllingPlayer, out playerIndex);
+        }
+
+        public bool IsZoomIn(PlayerIndex? controllingPlayer)
+        {
+            PlayerIndex playerIndex;
+            return IsNewKeyPress(Keys.OemComma, controllingPlayer, out playerIndex);
+        }
+    }
 }
