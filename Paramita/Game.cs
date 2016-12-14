@@ -15,6 +15,7 @@ namespace Paramita
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        private InputState _inputState;
         private IMap _map;
         private Texture2D _floor;
         private Texture2D _wall;
@@ -24,6 +25,7 @@ namespace Paramita
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            _inputState = new InputState();
         }
 
         /// <summary>
@@ -80,11 +82,21 @@ namespace Paramita
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (_inputState.IsExitGame(PlayerIndex.One)) 
+            {
                 Exit();
+            }
+            else
+            {
+                if( _player.HandleInput(_inputState, _map) == true)
+                {
+                    UpdatePlayerFieldOfView();
+                }
+            }
+            
 
             // TODO: Add your update logic here
-
+            _inputState.Update();
             base.Update(gameTime);
         }
 
@@ -103,25 +115,34 @@ namespace Paramita
 
             foreach(Cell c in _map.GetAllCells() )
             {
-                if(c.IsInFov == false)
+                var position = new Vector2(c.X * sizeOfSprites * scale, c.Y * sizeOfSprites * scale);
+
+                if(c.IsExplored == false)
                 {
                     continue;
                 }
 
-                if(c.IsWalkable)
+                Color tint = Color.White;
+
+                if (c.IsInFov == false)
                 {
-                    var position = new Vector2(c.X * sizeOfSprites * scale, c.Y * sizeOfSprites * scale);
-                    spriteBatch.Draw(_floor, position, 
-                        null,null,null, 0.0f, new Vector2(scale,scale), 
-                        Color.White, SpriteEffects.None, 0.8f);
+                    tint = Color.Gray;
+                }
+
+                Texture2D sprite;
+                if(c.IsWalkable == true)
+                {
+                    sprite = _floor;
                 }
                 else
                 {
-                    var position = new Vector2(c.X * sizeOfSprites * scale, c.Y * sizeOfSprites * scale);
-                    spriteBatch.Draw(_wall, position, 
-                        null, null, null, 0.0f, new Vector2(scale, scale), 
-                        Color.White, SpriteEffects.None, 0.8f);
+                    sprite = _wall;
                 }
+
+                spriteBatch.Draw(sprite, position,
+                        null, null, null, 0.0f, new Vector2(scale, scale),
+                        tint, SpriteEffects.None, 0.8f);
+
             }
             _player.Draw(spriteBatch);
             spriteBatch.End();
@@ -146,6 +167,13 @@ namespace Paramita
         private void UpdatePlayerFieldOfView()
         {
             _map.ComputeFov(_player.X, _player.Y, 30, true);
+            foreach(Cell c in _map.GetAllCells())
+            {
+                if(_map.IsInFov(c.X, c.Y))
+                {
+                    _map.SetCellProperties(c.X, c.Y, c.IsTransparent, c.IsWalkable, true);
+                }
+            }
         }
     }
 }
