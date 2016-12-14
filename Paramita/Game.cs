@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using RogueSharp;
 using RogueSharp.MapCreation;
+using RogueSharp.Random;
 using System;
 
 namespace Paramita
@@ -17,6 +18,7 @@ namespace Paramita
         private IMap _map;
         private Texture2D _floor;
         private Texture2D _wall;
+        private Player _player;
 
         public Game()
         {
@@ -40,10 +42,9 @@ namespace Paramita
             base.Initialize();
         }
 
-        /// <summary>
+        
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
-        /// </summary>
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
@@ -52,6 +53,15 @@ namespace Paramita
             // TODO: use this.Content to load your game content here
             _floor = Content.Load<Texture2D>("floor");
             _wall = Content.Load<Texture2D>("wall");
+            Cell startingCell = GetRandomEmptyCell();
+            _player = new Player
+            {
+                X = startingCell.X,
+                Y = startingCell.Y,
+                Scale = 0.25f,
+                Sprite = Content.Load<Texture2D>("player")
+            };
+            UpdatePlayerFieldOfView();
         }
 
         /// <summary>
@@ -78,13 +88,12 @@ namespace Paramita
             base.Update(gameTime);
         }
 
-        /// <summary>
+
         /// This is called when the game should draw itself.
-        /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
@@ -94,20 +103,49 @@ namespace Paramita
 
             foreach(Cell c in _map.GetAllCells() )
             {
+                if(c.IsInFov == false)
+                {
+                    continue;
+                }
+
                 if(c.IsWalkable)
                 {
                     var position = new Vector2(c.X * sizeOfSprites * scale, c.Y * sizeOfSprites * scale);
-                    spriteBatch.Draw(_floor, position, null,null,null, 0.0f, new Vector2(scale,scale), Color.White);
+                    spriteBatch.Draw(_floor, position, 
+                        null,null,null, 0.0f, new Vector2(scale,scale), 
+                        Color.White, SpriteEffects.None, 0.8f);
                 }
                 else
                 {
                     var position = new Vector2(c.X * sizeOfSprites * scale, c.Y * sizeOfSprites * scale);
-                    spriteBatch.Draw(_wall, position, null, null, null, 0.0f, new Vector2(scale, scale), Color.White);
+                    spriteBatch.Draw(_wall, position, 
+                        null, null, null, 0.0f, new Vector2(scale, scale), 
+                        Color.White, SpriteEffects.None, 0.8f);
                 }
             }
-
+            _player.Draw(spriteBatch);
             spriteBatch.End();
             base.Draw(gameTime);
+        }
+
+
+
+        private Cell GetRandomEmptyCell()
+        {
+            IRandom random = new DotNetRandom();
+            while(true)
+            {
+                int x = random.Next(49); int y = random.Next(29);
+                if(_map.IsWalkable(x,y))
+                {
+                    return _map.GetCell(x, y);
+                }
+            }
+        }
+
+        private void UpdatePlayerFieldOfView()
+        {
+            _map.ComputeFov(_player.X, _player.Y, 30, true);
         }
     }
 }
