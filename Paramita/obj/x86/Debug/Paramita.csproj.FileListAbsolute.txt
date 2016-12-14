@@ -28,3 +28,5 @@ C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\wall.xn
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\RogueSharp.dll
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\RogueSharp.xml
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\player.xnb
+C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\hound.xnb
+C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\white.xnb

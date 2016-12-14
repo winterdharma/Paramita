@@ -38,8 +38,11 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Enemy.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="Global.cs" />
     <Compile Include="InputState.cs" />
+    <Compile Include="PathToPlayer.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -57,8 +60,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\floor.png" />
+    <Content Include="Content\hound.png" />
     <Content Include="Content\player.png" />
     <Content Include="Content\wall.png" />
+    <Content Include="Content\white.png" />
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>

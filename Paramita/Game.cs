@@ -20,6 +20,7 @@ namespace Paramita
         private Texture2D _floor;
         private Texture2D _wall;
         private Player _player;
+        private Enemy _enemy;
 
         public Game()
         {
@@ -63,7 +64,20 @@ namespace Paramita
                 Scale = 0.25f,
                 Sprite = Content.Load<Texture2D>("player")
             };
+            startingCell = GetRandomEmptyCell();
+
+            PathToPlayer pathFromEnemy = new PathToPlayer(_player, _map, Content.Load<Texture2D>("white"));
+            pathFromEnemy.CreateFrom(startingCell.X, startingCell.Y);
+
+            _enemy = new Enemy(pathFromEnemy)
+            {
+                X = startingCell.X,
+                Y = startingCell.Y,
+                Scale = 0.25f,
+                Sprite = Content.Load<Texture2D>("hound")
+            };
             UpdatePlayerFieldOfView();
+            Global.GameState = GameStates.PlayerTurn;
         }
 
         /// <summary>
@@ -86,14 +100,32 @@ namespace Paramita
             {
                 Exit();
             }
-            else
+            else if(_inputState.IsSpace(PlayerIndex.One))
             {
-                if( _player.HandleInput(_inputState, _map) == true)
+                if( Global.GameState == GameStates.PlayerTurn)
                 {
-                    UpdatePlayerFieldOfView();
+                    Global.GameState = GameStates.Debugging;
+                }
+                else if(Global.GameState == GameStates.Debugging)
+                {
+                    Global.GameState = GameStates.PlayerTurn;
                 }
             }
-            
+            else
+            {
+                if (Global.GameState == GameStates.PlayerTurn
+                    && _player.HandleInput(_inputState, _map))
+                {
+                    UpdatePlayerFieldOfView();
+                    Global.GameState = GameStates.EnemyTurn;
+                }
+                if (Global.GameState == GameStates.EnemyTurn)
+                {
+                    _enemy.Update();
+                    Global.GameState = GameStates.PlayerTurn;
+                }
+            }
+
 
             // TODO: Add your update logic here
             _inputState.Update();
@@ -117,14 +149,14 @@ namespace Paramita
             {
                 var position = new Vector2(c.X * sizeOfSprites * scale, c.Y * sizeOfSprites * scale);
 
-                if(c.IsExplored == false)
+                if(c.IsExplored == false && Global.GameState != GameStates.Debugging)
                 {
                     continue;
                 }
 
                 Color tint = Color.White;
 
-                if (c.IsInFov == false)
+                if (c.IsInFov == false && Global.GameState != GameStates.Debugging)
                 {
                     tint = Color.Gray;
                 }
@@ -145,6 +177,12 @@ namespace Paramita
 
             }
             _player.Draw(spriteBatch);
+
+            if (Global.GameState == GameStates.Debugging || _map.IsInFov(_enemy.X, _enemy.Y))
+            {
+                _enemy.Draw(spriteBatch);
+            }
+
             spriteBatch.End();
             base.Draw(gameTime);
         }
@@ -153,10 +191,9 @@ namespace Paramita
 
         private Cell GetRandomEmptyCell()
         {
-            IRandom random = new DotNetRandom();
             while(true)
             {
-                int x = random.Next(49); int y = random.Next(29);
+                int x = Global.Random.Next(49); int y = Global.Random.Next(29);
                 if(_map.IsWalkable(x,y))
                 {
                     return _map.GetCell(x, y);
