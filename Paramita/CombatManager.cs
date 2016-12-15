@@ -22,7 +22,7 @@ namespace Paramita
         }
 
         // Use this method to resolve attacks between Figures
-        public void Attack(Sattva attacker, Sattva defender)
+        public void Attack(SentientBeing attacker, SentientBeing defender)
         {
             // Roll the die, add the attack bonus, and compare to the defender's armor class
             if (Dice.Roll("d20") + attacker.AttackBonus >= defender.ArmorClass)
@@ -56,7 +56,7 @@ namespace Paramita
         }
 
         // Helper method which returns the figure at a certain map cell
-        public Sattva SattvaAt(int x, int y)
+        public SentientBeing SattvaAt(int x, int y)
         {
             if (IsPlayerAt(x, y))
             {

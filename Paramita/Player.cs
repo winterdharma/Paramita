@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Paramita
 {
-    public class Player : Sattva
+    public class Player : SentientBeing
     {
         public void Draw( SpriteBatch spriteBatch )
         {
