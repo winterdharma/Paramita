@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Paramita
 {
-    public class Sattva // = sentient being
+    public class SentientBeing
     {
         public int X { get; set; }
         public int Y { get; set; }

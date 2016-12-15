@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Paramita
 {
-    public class Enemy : Sattva
+    public class Enemy : SentientBeing
     {
         private readonly IMap _map;
         private bool _isAwareOfPlayer;
