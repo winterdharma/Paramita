@@ -1,6 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Paramita.GameStates;
+using Paramita.StateManagement;
+using Paramita.UI;
 using RogueSharp;
 using RogueSharp.DiceNotation;
 using RogueSharp.MapCreation;
@@ -13,10 +16,21 @@ namespace Paramita
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public class Game : Microsoft.Xna.Framework.Game
+    public class GameController : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        GameStateManager gStateManager;
+        ITitleIntroState titleIntroState;
+
+        static Microsoft.Xna.Framework.Rectangle screenRectangle;
+
+        public SpriteBatch SpriteBatch { get { return spriteBatch; } }
+        public static Microsoft.Xna.Framework.Rectangle ScreenRectangle
+        {
+            get { return screenRectangle; }
+        }
+
         private InputState _inputState;
         private IMap _map;
         private Texture2D _floor;
@@ -24,11 +38,51 @@ namespace Paramita
         private Player _player;
         private List<Enemy> _enemies = new List<Enemy>();
 
-        public Game()
+        //UI Values
+        // The screen height and width are in number of tiles
+        private static readonly int _screenWidth = 100;
+        private static readonly int _screenHeight = 70;
+        //private static RootConsole _rootConsole;
+
+        // The map console takes up most of the screen and is where the map will be drawn
+        private static readonly int _mapWidth = 80;
+        private static readonly int _mapHeight = 48;
+        private static GameConsole _mapConsole;
+
+        // Below the map console is the message console which displays attack rolls and other information
+        private static readonly int _messageWidth = 80;
+        private static readonly int _messageHeight = 11;
+        private static GameConsole _messageConsole;
+
+        // The stat console is to the right of the map and display player and monster stats
+        private static readonly int _statWidth = 20;
+        private static readonly int _statHeight = 70;
+        private static GameConsole _statConsole;
+
+        // Above the map is the inventory console which shows the players equipment, abilities, and items
+        private static readonly int _inventoryWidth = 80;
+        private static readonly int _inventoryHeight = 11;
+        private static GameConsole _inventoryConsole;
+
+
+
+
+        public GameController()
         {
             graphics = new GraphicsDeviceManager(this);
+            screenRectangle = new Microsoft.Xna.Framework.Rectangle(0, 0, 1280, 720);
+            graphics.PreferredBackBufferWidth = ScreenRectangle.Width;
+            graphics.PreferredBackBufferHeight = ScreenRectangle.Height;
+
             Content.RootDirectory = "Content";
             _inputState = new InputState();
+
+            gStateManager = new GameStateManager(this);
+            Components.Add(gStateManager);
+
+            titleIntroState = new TitleIntroState(this);
+
+            gStateManager.ChangeState((TitleIntroState)titleIntroState, PlayerIndex.One);
         }
 
         /// <summary>
@@ -83,7 +137,7 @@ namespace Paramita
             AddEnemies(10);
             Global.CombatManager = new CombatManager(_player, _enemies);
             UpdatePlayerFieldOfView();
-            Global.GameState = GameStates.PlayerTurn;
+            Global.GameState = OldGameStates.PlayerTurn;
         }
 
         /// <summary>
@@ -108,31 +162,31 @@ namespace Paramita
             }
             else if(_inputState.IsSpace(PlayerIndex.One))
             {
-                if( Global.GameState == GameStates.PlayerTurn)
+                if( Global.GameState == OldGameStates.PlayerTurn)
                 {
-                    Global.GameState = GameStates.Debugging;
+                    Global.GameState = OldGameStates.Debugging;
                 }
-                else if(Global.GameState == GameStates.Debugging)
+                else if(Global.GameState == OldGameStates.Debugging)
                 {
-                    Global.GameState = GameStates.PlayerTurn;
+                    Global.GameState = OldGameStates.PlayerTurn;
                 }
             }
             else
             {
-                if (Global.GameState == GameStates.PlayerTurn
+                if (Global.GameState == OldGameStates.PlayerTurn
                     && _player.HandleInput(_inputState, _map))
                 {
                     UpdatePlayerFieldOfView();
                     Global.Camera.CenterOn(_map.GetCell(_player.X, _player.Y));
-                    Global.GameState = GameStates.EnemyTurn;
+                    Global.GameState = OldGameStates.EnemyTurn;
                 }
-                if (Global.GameState == GameStates.EnemyTurn)
+                if (Global.GameState == OldGameStates.EnemyTurn)
                 {
                     foreach (Enemy e in _enemies)
                     {
                         e.Update();
                     }
-                    Global.GameState = GameStates.PlayerTurn;
+                    Global.GameState = OldGameStates.PlayerTurn;
                 }
             }
 
@@ -158,14 +212,14 @@ namespace Paramita
             {
                 var position = new Vector2(c.X * Global.SpriteWidth, c.Y * Global.SpriteHeight);
 
-                if(c.IsExplored == false && Global.GameState != GameStates.Debugging)
+                if(c.IsExplored == false && Global.GameState != OldGameStates.Debugging)
                 {
                     continue;
                 }
 
                 Color tint = Color.White;
 
-                if (c.IsInFov == false && Global.GameState != GameStates.Debugging)
+                if (c.IsInFov == false && Global.GameState != OldGameStates.Debugging)
                 {
                     tint = Color.Gray;
                 }
@@ -188,7 +242,7 @@ namespace Paramita
 
             foreach (Enemy e in _enemies)
             {
-                if (Global.GameState == GameStates.Debugging || _map.IsInFov(e.X, e.Y))
+                if (Global.GameState == OldGameStates.Debugging || _map.IsInFov(e.X, e.Y))
                 {
                     e.Draw(spriteBatch);
                 }

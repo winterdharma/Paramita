@@ -29,3 +29,8 @@ C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\SharpDX.RawInpu
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\SharpDX.Direct3D9.xml
 C:\Users\Charlie\Desktop\Paramita\Paramita\obj\x86\Debug\Paramita.exe
 C:\Users\Charlie\Desktop\Paramita\Paramita\obj\x86\Debug\Paramita.pdb
+C:\Users\Charlie\Desktop\Paramita\Paramita\obj\x86\Debug\Paramita.csprojResolveAssemblyReference.cache
+C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\menuscreen.xnb
+C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\titlescreen.xnb
+C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\GameFont.xnb
+C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\InterfaceFont.xnb

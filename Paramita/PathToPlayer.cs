@@ -1,11 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Paramita.UI;
 using RogueSharp;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Paramita
 {
@@ -40,7 +38,7 @@ namespace Paramita
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            if (_cells != null && Global.GameState == GameStates.Debugging)
+            if (_cells != null && Global.GameState == OldGameStates.Debugging)
             {
                 foreach (Cell cell in _cells)
                 {
