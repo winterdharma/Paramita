@@ -48,6 +48,9 @@
     <Compile Include="GameStates\TitleIntroState.cs" />
     <Compile Include="StateManagement\GameState.cs" />
     <Compile Include="StateManagement\GameStateManager.cs" />
+    <Compile Include="TileMapEngine\TileEngine.cs" />
+    <Compile Include="TileMapEngine\TileLayer.cs" />
+    <Compile Include="TileMapEngine\TileMap.cs" />
     <Compile Include="TileMapEngine\TileSet.cs" />
     <Compile Include="TileMapEngine\Camera.cs" />
     <Compile Include="CombatManager.cs" />

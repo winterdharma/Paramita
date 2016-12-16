@@ -44,7 +44,7 @@ namespace Paramita.TileMapEngine
             for(int x = 0; x < TilesWide; x++)
             {
                 sourceRectangles[tile] = 
-                    new Rectangle(x * TilesWide, y * TilesHigh, TileWidth, TileHeight);
+                    new Rectangle(x * TilesWide, tile * TilesHigh, TileWidth, TileHeight);
                 tile++;
             }
         }
@@ -61,7 +61,7 @@ namespace Paramita.TileMapEngine
             for (int x = 0; x < TilesWide; x++)
             {
                 sourceRectangles[tile] =
-                    new Rectangle(x * TilesWide, y * TilesHigh, TileWidth, TileHeight);
+                    new Rectangle(x * TilesWide, tile * TilesHigh, TileWidth, TileHeight);
                 tile++;
             }
         }

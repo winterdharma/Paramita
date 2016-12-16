@@ -116,9 +116,6 @@ namespace Paramita
             _map = Map.Create(mapCreationStrategy);
             Console.WriteLine(_map.ToString());
 
-            Global.Camera.ViewportWidth = graphics.GraphicsDevice.Viewport.Width;
-            Global.Camera.ViewportHeight = graphics.GraphicsDevice.Viewport.Height;
-
             base.Initialize();
         }
 
@@ -134,7 +131,7 @@ namespace Paramita
             _floor = Content.Load<Texture2D>("floor");
             _wall = Content.Load<Texture2D>("wall");
             Cell startingCell = GetRandomEmptyCell();
-            Global.Camera.CenterOn(startingCell);
+            
             _player = new Player
             {
                 X = startingCell.X,
@@ -194,7 +191,7 @@ namespace Paramita
                     && _player.HandleInput(_inputState, _map))
                 {
                     UpdatePlayerFieldOfView();
-                    Global.Camera.CenterOn(_map.GetCell(_player.X, _player.Y));
+                   
                     Global.GameState = OldGameStates.EnemyTurn;
                 }
                 if (Global.GameState == OldGameStates.EnemyTurn)
@@ -210,7 +207,7 @@ namespace Paramita
 
             // TODO: Add your update logic here
             _inputState.Update();
-            Global.Camera.HandleInput(_inputState, PlayerIndex.One);
+            
             base.Update(gameTime);
         }
 
@@ -223,7 +220,7 @@ namespace Paramita
 
             // TODO: Add your drawing code here
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend,
-                null,null,null,null,Global.Camera.TranslationMatrix);
+                null,null,null,null,Global.Camera.Transformation);
 
             foreach(Cell c in _map.GetAllCells() )
             {

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Paramita.UI;
 using MonoGame;
 using Microsoft.Xna.Framework;
+using Paramita.TileMapEngine;
 
 namespace Paramita
 {
