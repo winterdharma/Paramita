@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Paramita.Components;
 using Paramita.StateManagement;
 using System;
 
@@ -46,8 +48,16 @@ namespace Paramita.GameStates
         }
         public override void Update(GameTime gameTime)
         {
-            PlayerIndex index = PlayerIndex.One;
+            PlayerIndex? index = null;
             elapsed += gameTime.ElapsedGameTime;
+
+            if(InputDevices.CheckKeyReleased(Keys.Space) ||
+                InputDevices.CheckKeyReleased(Keys.Enter) ||
+                InputDevices.CheckMouseReleased(MouseButtons.Left))
+            {
+                manager.ChangeState((MainMenuState)GameRef.StartMenuState, index);
+            }
+
             base.Update(gameTime);
         }
         public override void Draw(GameTime gameTime)

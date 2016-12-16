@@ -41,7 +41,10 @@
     <StartupObject>Paramita.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Components\InputDevices.cs" />
+    <Compile Include="Components\MenuComponent.cs" />
     <Compile Include="GameStates\BaseGameState.cs" />
+    <Compile Include="GameStates\MainMenuState.cs" />
     <Compile Include="GameStates\TitleIntroState.cs" />
     <Compile Include="StateManagement\GameState.cs" />
     <Compile Include="StateManagement\GameStateManager.cs" />
@@ -79,6 +82,7 @@
     <Content Include="Content\titlescreen.png" />
     <Content Include="Content\wall.png" />
     <Content Include="Content\white.png" />
+    <Content Include="Content\wooden-button.png" />
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>

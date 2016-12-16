@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Paramita.Components;
 using Paramita.GameStates;
 using Paramita.StateManagement;
 using Paramita.UI;
@@ -22,6 +23,7 @@ namespace Paramita
         SpriteBatch spriteBatch;
         GameStateManager gStateManager;
         ITitleIntroState titleIntroState;
+        IMainMenuState startMenuState;
 
         static Microsoft.Xna.Framework.Rectangle screenRectangle;
 
@@ -29,6 +31,18 @@ namespace Paramita
         public static Microsoft.Xna.Framework.Rectangle ScreenRectangle
         {
             get { return screenRectangle; }
+        }
+        public GameStateManager GameStateManager
+        {
+             get { return gStateManager; }
+        }
+        public ITitleIntroState TitleIntroState
+        {
+            get { return titleIntroState; }
+        }
+        public IMainMenuState StartMenuState
+        {
+            get { return startMenuState; }
         }
 
         private InputState _inputState;
@@ -79,8 +93,10 @@ namespace Paramita
 
             gStateManager = new GameStateManager(this);
             Components.Add(gStateManager);
+            this.IsMouseVisible = true;
 
             titleIntroState = new TitleIntroState(this);
+            startMenuState = new MainMenuState(this);
 
             gStateManager.ChangeState((TitleIntroState)titleIntroState, PlayerIndex.One);
         }
@@ -93,7 +109,8 @@ namespace Paramita
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            Components.Add(new InputDevices(this));
+
             IMapCreationStrategy<Map> mapCreationStrategy =
                 new RandomRoomsMapCreationStrategy<Map>(Global.MapWidth, Global.MapHeight, 100, 7,3);
             _map = Map.Create(mapCreationStrategy);
