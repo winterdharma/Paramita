@@ -54,16 +54,23 @@ namespace Paramita.GameStates
         public override void Update(GameTime gameTime)
         {
             menuComponent.Update(gameTime);
+
             if (InputDevices.CheckKeyReleased(Keys.Space) || InputDevices.CheckKeyReleased(Keys.Enter) ||
         (menuComponent.MouseOver && InputDevices.CheckMouseReleased(MouseButtons.Left)))
             {
                 if (menuComponent.SelectedIndex == 0)
                 {
                     InputDevices.FlushInput();
+                    GameRef.GamePlayState.SetUpNewGame();
+                    GameRef.GamePlayState.StartGame();
+                    manager.PushState((GamePlayState)GameRef.GamePlayState, PlayerIndexInControl);
                 }
                 else if (menuComponent.SelectedIndex == 1)
                 {
                     InputDevices.FlushInput();
+                    GameRef.GamePlayState.LoadSavedGame();
+                    GameRef.GamePlayState.StartGame();
+                    manager.PushState((GamePlayState)GameRef.GamePlayState, PlayerIndexInControl);
                 }
                 else if (menuComponent.SelectedIndex == 2)
                 {

@@ -1,92 +1,82 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Paramita.TileMapEngine;
 using Paramita.UI;
-using RogueSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Paramita
 {
     public class Player : SentientBeing
     {
-        public void Draw( SpriteBatch spriteBatch )
+        private GameController gameRef;
+        private string name;
+        private bool gender;
+        private string mapName;
+        private Point tile;
+        private AnimatedSprite sprite;
+        private Texture2D texture;
+        private float speed = 180f;
+        private Vector2 position;
+
+        public Vector2 Position
         {
-            spriteBatch.Draw(Sprite, new Vector2(X * Sprite.Width, Y * Sprite.Height),
-                null, null, null, 0.0f, Vector2.One, Color.White, 
-                SpriteEffects.None, LayerDepth.Sprites); 
+            get { return sprite.Position; }
+            set { sprite.Position = value; }
         }
 
-        public bool HandleInput(InputState input, IMap map)
+        public AnimatedSprite Sprite
         {
-            if (input.IsLeft(PlayerIndex.One))
-            {
-                int tempX = X - 1;
-                if (map.IsWalkable(tempX, Y))
-                {
-                    Enemy e = Global.CombatManager.EnemyAt(tempX, Y);
-                    if (e == null)
-                    {
-                        X = tempX;
-                    }
-                    else
-                    {
-                        Global.CombatManager.Attack(this, e);
-                    }
-                    return true;
-                }
-            }
-            else if (input.IsRight(PlayerIndex.One))
-            {
-                int tempX = X + 1;
-                {
-                    Enemy e = Global.CombatManager.EnemyAt(tempX, Y);
-                    if (e == null)
-                    {
-                        X = tempX;
-                    }
-                    else
-                    {
-                        Global.CombatManager.Attack(this, e);
-                    }
-                    return true;
-                }
-            }
-            else if (input.IsUp(PlayerIndex.One))
-            {
-                int tempY = Y - 1;
-                {
-                    Enemy e = Global.CombatManager.EnemyAt(X, tempY);
-                    if (e == null)
-                    {
-                        Y = tempY;
-                    }
-                    else
-                    {
-                        Global.CombatManager.Attack(this, e);
-                    }
-                    return true;
-                }
-            }
-            else if (input.IsDown(PlayerIndex.One))
-            {
-                int tempY = Y + 1;
-                {
-                    Enemy e = Global.CombatManager.EnemyAt(X, tempY);
-                    if (e == null)
-                    {
-                        Y = tempY;
-                    }
-                    else
-                    {
-                        Global.CombatManager.Attack(this, e);
-                    }
-                    return true;
-                }
-            }
-            return false;
+            get { return sprite; }
+        }
+
+        public float Speed
+        {
+            get { return speed; }
+            set { speed = value; }
+        }
+
+
+
+        private Player(GameController game) : base(game) { }
+
+        public Player(GameController game, string name, bool gender, Texture2D texture) : base(game)
+        {
+            gameRef = game;
+            this.name = name;
+            this.gender = gender;
+            this.texture = texture;
+            sprite = new AnimatedSprite(texture, gameRef.PlayerAnimations);
+            sprite.CurrentAnimation = AnimationKey.WalkDown;
+        }
+
+
+
+
+        public void SavePlayer() { }
+
+        public static Player Load(GameController game)
+        {
+            Player player = new Player(game);
+            return player;
+        }
+
+        public override void Initialize()
+        {
+            base.Initialize();
+        }
+
+        protected override void LoadContent()
+        {
+            base.LoadContent();
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+        }
+
+        public override void Draw( GameTime gameTime )
+        {
+            base.Draw(gameTime);
         }
     }
 }

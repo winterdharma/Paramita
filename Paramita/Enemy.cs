@@ -18,7 +18,7 @@ namespace Paramita
         private readonly PathToPlayer _path;
         
 
-        public Enemy(IMap map, PathToPlayer path)
+        public Enemy(GameController game, IMap map, PathToPlayer path) : base(game)
         {
             _map = map;
             _path = path;
@@ -26,10 +26,10 @@ namespace Paramita
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Sprite, new Vector2(X * Sprite.Width, Y * Sprite.Height),
-                null, null, null, 0.0f, Vector2.One, Color.White, 
-                SpriteEffects.None, LayerDepth.Sprites);
-            _path.Draw(spriteBatch);
+            //spriteBatch.Draw(Sprite, new Vector2(X * Sprite.Width, Y * Sprite.Height),
+            //    null, null, null, 0.0f, Vector2.One, Color.White, 
+            //    SpriteEffects.None, LayerDepth.Sprites);
+            //_path.Draw(spriteBatch);
         }
 
         public void Update()

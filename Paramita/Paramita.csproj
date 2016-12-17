@@ -44,10 +44,13 @@
     <Compile Include="Components\InputDevices.cs" />
     <Compile Include="Components\MenuComponent.cs" />
     <Compile Include="GameStates\BaseGameState.cs" />
+    <Compile Include="GameStates\GamePlayState.cs" />
     <Compile Include="GameStates\MainMenuState.cs" />
     <Compile Include="GameStates\TitleIntroState.cs" />
     <Compile Include="StateManagement\GameState.cs" />
     <Compile Include="StateManagement\GameStateManager.cs" />
+    <Compile Include="TileMapEngine\AnimatedSprite.cs" />
+    <Compile Include="TileMapEngine\Animation.cs" />
     <Compile Include="TileMapEngine\TileEngine.cs" />
     <Compile Include="TileMapEngine\TileLayer.cs" />
     <Compile Include="TileMapEngine\TileMap.cs" />
@@ -57,7 +60,6 @@
     <Compile Include="Enemy.cs" />
     <Compile Include="GameController.cs" />
     <Compile Include="Global.cs" />
-    <Compile Include="InputState.cs" />
     <Compile Include="UI\LayerDepth.cs" />
     <Compile Include="PathToPlayer.cs" />
     <Compile Include="Player.cs" />
@@ -79,10 +81,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\femaleplayer.png" />
     <Content Include="Content\floor.png" />
     <Content Include="Content\hound.png" />
+    <Content Include="Content\maleplayer.png" />
     <Content Include="Content\menuscreen.png" />
     <Content Include="Content\player.png" />
+    <Content Include="Content\tileset1.png" />
     <Content Include="Content\titlescreen.png" />
     <Content Include="Content\wall.png" />
     <Content Include="Content\white.png" />

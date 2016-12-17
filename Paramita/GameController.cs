@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Paramita.Components;
 using Paramita.GameStates;
 using Paramita.StateManagement;
+using Paramita.TileMapEngine;
 using Paramita.UI;
 using RogueSharp;
 using RogueSharp.DiceNotation;
@@ -17,13 +18,16 @@ namespace Paramita
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public class GameController : Microsoft.Xna.Framework.Game
+    public class GameController : Game
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        Dictionary<AnimationKey, Animation> playerAnimations = new Dictionary<AnimationKey, Animation>();
+
         GameStateManager gStateManager;
         ITitleIntroState titleIntroState;
         IMainMenuState startMenuState;
+        IGamePlayState gamePlayState;
 
         static Microsoft.Xna.Framework.Rectangle screenRectangle;
 
@@ -32,6 +36,7 @@ namespace Paramita
         {
             get { return screenRectangle; }
         }
+
         public GameStateManager GameStateManager
         {
              get { return gStateManager; }
@@ -44,39 +49,21 @@ namespace Paramita
         {
             get { return startMenuState; }
         }
-
-        private InputState _inputState;
+        public IGamePlayState GamePlayState
+        {
+            get { return gamePlayState; }
+        }
+        public Dictionary<AnimationKey, Animation> PlayerAnimations
+        {
+            get { return playerAnimations; }
+        }
+        
+        
         private IMap _map;
         private Texture2D _floor;
         private Texture2D _wall;
         private Player _player;
         private List<Enemy> _enemies = new List<Enemy>();
-
-        //UI Values
-        // The screen height and width are in number of tiles
-        private static readonly int _screenWidth = 100;
-        private static readonly int _screenHeight = 70;
-        //private static RootConsole _rootConsole;
-
-        // The map console takes up most of the screen and is where the map will be drawn
-        private static readonly int _mapWidth = 80;
-        private static readonly int _mapHeight = 48;
-        private static GameConsole _mapConsole;
-
-        // Below the map console is the message console which displays attack rolls and other information
-        private static readonly int _messageWidth = 80;
-        private static readonly int _messageHeight = 11;
-        private static GameConsole _messageConsole;
-
-        // The stat console is to the right of the map and display player and monster stats
-        private static readonly int _statWidth = 20;
-        private static readonly int _statHeight = 70;
-        private static GameConsole _statConsole;
-
-        // Above the map is the inventory console which shows the players equipment, abilities, and items
-        private static readonly int _inventoryWidth = 80;
-        private static readonly int _inventoryHeight = 11;
-        private static GameConsole _inventoryConsole;
 
 
 
@@ -84,12 +71,11 @@ namespace Paramita
         public GameController()
         {
             graphics = new GraphicsDeviceManager(this);
+            Content.RootDirectory = "Content";
             screenRectangle = new Microsoft.Xna.Framework.Rectangle(0, 0, 1280, 720);
             graphics.PreferredBackBufferWidth = ScreenRectangle.Width;
             graphics.PreferredBackBufferHeight = ScreenRectangle.Height;
 
-            Content.RootDirectory = "Content";
-            _inputState = new InputState();
 
             gStateManager = new GameStateManager(this);
             Components.Add(gStateManager);
@@ -97,6 +83,7 @@ namespace Paramita
 
             titleIntroState = new TitleIntroState(this);
             startMenuState = new MainMenuState(this);
+            gamePlayState = new GamePlayState(this);
 
             gStateManager.ChangeState((TitleIntroState)titleIntroState, PlayerIndex.One);
         }
@@ -110,6 +97,15 @@ namespace Paramita
         protected override void Initialize()
         {
             Components.Add(new InputDevices(this));
+
+            Animation animation = new Animation(3, 32, 32, 0, 0);
+            playerAnimations.Add(AnimationKey.WalkDown, animation);
+            animation = new Animation(3, 32, 32, 0, 32);
+            playerAnimations.Add(AnimationKey.WalkLeft, animation);
+            animation = new Animation(3, 32, 32, 0, 64);
+            playerAnimations.Add(AnimationKey.WalkRight, animation);
+            animation = new Animation(3, 32, 32, 0, 96);
+            playerAnimations.Add(AnimationKey.WalkUp, animation);
 
             IMapCreationStrategy<Map> mapCreationStrategy =
                 new RandomRoomsMapCreationStrategy<Map>(Global.MapWidth, Global.MapHeight, 100, 7,3);
@@ -128,30 +124,20 @@ namespace Paramita
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            _floor = Content.Load<Texture2D>("floor");
-            _wall = Content.Load<Texture2D>("wall");
-            Cell startingCell = GetRandomEmptyCell();
+            //_floor = Content.Load<Texture2D>("floor");
+            //_wall = Content.Load<Texture2D>("wall");
+            //Cell startingCell = GetRandomEmptyCell();
             
-            _player = new Player
-            {
-                X = startingCell.X,
-                Y = startingCell.Y,
-                Sprite = Content.Load<Texture2D>("player"),
-                ArmorClass = 15,
-                AttackBonus = 1,
-                Damage = Dice.Parse("2d4"),
-                Health = 50,
-                Name = "Mr. Rogue"
-            };
-            startingCell = GetRandomEmptyCell();
+            
+            //startingCell = GetRandomEmptyCell();
 
-            PathToPlayer pathFromEnemy = new PathToPlayer(_player, _map, Content.Load<Texture2D>("white"));
-            pathFromEnemy.CreateFrom(startingCell.X, startingCell.Y);
+            //PathToPlayer pathFromEnemy = new PathToPlayer(_player, _map, Content.Load<Texture2D>("white"));
+            //pathFromEnemy.CreateFrom(startingCell.X, startingCell.Y);
 
-            AddEnemies(10);
-            Global.CombatManager = new CombatManager(_player, _enemies);
-            UpdatePlayerFieldOfView();
-            Global.GameState = OldGameStates.PlayerTurn;
+            //AddEnemies(10);
+            //Global.CombatManager = new CombatManager(_player, _enemies);
+            //UpdatePlayerFieldOfView();
+            //Global.GameState = OldGameStates.PlayerTurn;
         }
 
         /// <summary>
@@ -170,44 +156,9 @@ namespace Paramita
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (_inputState.IsExitGame(PlayerIndex.One)) 
-            {
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
+                Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            }
-            else if(_inputState.IsSpace(PlayerIndex.One))
-            {
-                if( Global.GameState == OldGameStates.PlayerTurn)
-                {
-                    Global.GameState = OldGameStates.Debugging;
-                }
-                else if(Global.GameState == OldGameStates.Debugging)
-                {
-                    Global.GameState = OldGameStates.PlayerTurn;
-                }
-            }
-            else
-            {
-                if (Global.GameState == OldGameStates.PlayerTurn
-                    && _player.HandleInput(_inputState, _map))
-                {
-                    UpdatePlayerFieldOfView();
-                   
-                    Global.GameState = OldGameStates.EnemyTurn;
-                }
-                if (Global.GameState == OldGameStates.EnemyTurn)
-                {
-                    foreach (Enemy e in _enemies)
-                    {
-                        e.Update();
-                    }
-                    Global.GameState = OldGameStates.PlayerTurn;
-                }
-            }
-
-
-            // TODO: Add your update logic here
-            _inputState.Update();
-            
             base.Update(gameTime);
         }
 
@@ -252,7 +203,6 @@ namespace Paramita
                         null, null, null, 0.0f, Vector2.One,
                         tint, SpriteEffects.None, LayerDepth.Cells);
             }
-            _player.Draw(spriteBatch);
 
             foreach (Enemy e in _enemies)
             {
@@ -301,11 +251,11 @@ namespace Paramita
                 var pathFromEnemy =
                   new PathToPlayer(_player, _map, Content.Load<Texture2D>("White"));
                 pathFromEnemy.CreateFrom(enemyCell.X, enemyCell.Y);
-                var enemy = new Enemy(_map, pathFromEnemy)
+                var enemy = new Enemy(this, _map, pathFromEnemy)
                 {
                     X = enemyCell.X,
                     Y = enemyCell.Y,
-                    Sprite = Content.Load<Texture2D>("hound"),
+                    //Sprite = Content.Load<Texture2D>("hound"),
                     ArmorClass = 10,
                     AttackBonus = 0,
                     Damage = Dice.Parse("d4"),
