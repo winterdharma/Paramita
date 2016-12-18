@@ -6,14 +6,9 @@ using Paramita.Scenes;
 
 namespace Paramita.Scenes
 {
-    public interface IMenuScene : IScene
-    {
-
-    }
 
 
-
-    public class MenuScene : Scene, IMenuScene
+    public class MenuScene : Scene
     {
         Texture2D background;
         SpriteFont spriteFont;
@@ -23,7 +18,7 @@ namespace Paramita.Scenes
 
         public MenuScene(GameController game) : base(game)
         {
-            game.Services.AddService(typeof(IMenuScene), this);
+            
         }
 
 

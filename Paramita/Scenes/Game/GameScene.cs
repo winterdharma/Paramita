@@ -5,14 +5,8 @@ using Paramita.Components;
 
 namespace Paramita.Scenes
 {
-    public interface IGameScene : IScene
-    {
-        void SetUpNewGame();
-        void LoadSavedGame();
-        void StartGame();
-    }
 
-    public class GameScene : Scene, IGameScene
+    public class GameScene : Scene
     {
         TileEngine engine = new TileEngine(GameController.ScreenRectangle, 32, 32);
         TileMap map;
@@ -24,7 +18,7 @@ namespace Paramita.Scenes
 
         public GameScene(GameController game) : base(game)
         {
-            game.Services.AddService(typeof(IGameScene), this);
+            
         }
 
 

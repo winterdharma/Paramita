@@ -5,13 +5,21 @@ using System.Collections.Generic;
 
 namespace Paramita.Scenes
 {
-    public interface IScene
-    {
-        Scene Tag { get; }
-        PlayerIndex? PlayerIndexInControl { get; set; }
-    }
+    /*
+     * This is the base class for Scenes of the App. 
+     * The SceneManager handles transitions from one scene to another. 
+     * The GameController instantiates scene objects.
+     * 
+     * This class provides a Random number generator, 
+     * a reference to the GameController, 
+     * a reference to the SceneManager, and
+     * a reference to the ContentManager (inherited from DrawableGameComponent)
+     * which allows scenes to load Texture2D assets, etc.
+     * 
+     * It provides some generic methods anticipating scenes with child components.
+     */
 
-    public abstract partial class Scene : DrawableGameComponent, IScene
+    public abstract partial class Scene : DrawableGameComponent
     {
 
         protected static Random random = new Random();
