@@ -1,8 +1,17 @@
 ﻿using Microsoft.Xna.Framework;
 using RogueSharp.DiceNotation;
 
-namespace Paramita
+namespace Paramita.SentientBeings
 {
+    /*
+     * This is the base class for all models of sentient beings in the game.
+     * Sentient beings include: Player, animals, monsters, non-player characters,
+     * spirits, demons, gods, etc. Basically any entity with a mind and behavior
+     * that interacts with non-sentient stuff in the game.
+     * Bacteria, trees, and rocks are not sentient beings.
+     * 
+     * This is just a sketchy starting point of variables for all beings.
+     */ 
     public class SentientBeing : DrawableGameComponent
     {
         public int X { get; set; }

@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.Scenes;
 
-namespace Paramita
+namespace Paramita.SentientBeings
 {
     public class Player : SentientBeing
     {

@@ -2,7 +2,7 @@
 using RogueSharp;
 
 
-namespace Paramita
+namespace Paramita.SentientBeings
 {
     public class Enemy : SentientBeing
     {
