@@ -34,9 +34,9 @@ namespace Paramita.Scenes
         }
 
         [ContentSerializerIgnore]
-        public Rectangle[] TilesheetRects
+        public Rectangle[,] TilesheetRects
         {
-            get { return (Rectangle[])tilesheetRects.Clone(); }
+            get { return (Rectangle[,])tilesheetRects.Clone(); }
         }
 
 
@@ -61,10 +61,27 @@ namespace Paramita.Scenes
                 for(int y =0; y < TilesHigh; y++)
                 {
                     tilesheetRects[x,y] =
-                    new Rectangle(x * TilesWide, y * TilesHigh, TileSize, TileSize);
+                    new Rectangle(x * TileSize, y * TileSize, TileSize, TileSize);
                 }
                 
             }
+        }
+
+
+
+        public Rectangle GetRectForTileType(TileType type)
+        {
+            switch (type)
+            {
+                case TileType.Door :
+                    return tilesheetRects[0, 0];
+                case TileType.Floor :
+                    return tilesheetRects[0, 5];
+                case TileType.Wall :
+                    return tilesheetRects[1, 6];
+            }
+
+            return tilesheetRects[7, 7];
         }
     }
 }

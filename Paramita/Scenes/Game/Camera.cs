@@ -4,15 +4,11 @@ namespace Paramita.Scenes
 {
     public class Camera
     {
-        Vector2 position;
         float speed;
         float zoom;
 
 
-        public Vector2 Position
-        {
-            get { return position; }  set { position = value; }
-        }
+        public Vector2 Position { get;  set; }
 
         public float Speed
         {
@@ -69,16 +65,18 @@ namespace Paramita.Scenes
 
         public void LockCamera(TileMap map, Rectangle viewport)
         {
-            position.X = MathHelper.Clamp(position.X, 0, map.WidthInPixels - viewport.Width);
-            position.Y = MathHelper.Clamp(position.Y, 0, map.HeightInPixels - viewport.Height);
+            Position = new Vector2(
+                MathHelper.Clamp(Position.X, 0, map.WidthInPixels - viewport.Width),
+                MathHelper.Clamp(Position.Y, 0, map.HeightInPixels - viewport.Height)
+            );
         }
 
         public void LockToSprite(TileMap map, AnimatedSprite sprite, Rectangle viewport)
         {
-            position.X = (sprite.Position.X + sprite.Width / 2)
-            - (viewport.Width / 2);
-            position.Y = (sprite.Position.Y + sprite.Height / 2)
-            - (viewport.Height / 2);
+            Position = new Vector2(
+                (sprite.Position.X + sprite.Width / 2) - (viewport.Width / 2),
+                (sprite.Position.Y + sprite.Height / 2) - (viewport.Height / 2)
+            );
             LockCamera(map, viewport);
         }
     }

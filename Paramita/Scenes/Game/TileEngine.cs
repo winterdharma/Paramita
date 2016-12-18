@@ -60,9 +60,12 @@ namespace Paramita.Scenes
 
 
 
-        public static Point VectorToCell(Vector2 position)
+        public static Point PixelsToTileCoords(Vector2 position)
         {
-            return new Point((int)position.X / tileWidth, (int)position.Y / tileHeight);
+            return new Point(
+                (int)position.X / tileWidth, 
+                (int)position.Y / tileHeight
+            );
         }
 
 

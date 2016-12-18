@@ -12,7 +12,7 @@ namespace Paramita.Scenes
     public class TileMap
     {
         [ContentSerializer(CollectionItemName = "Tiles")]
-        Tile[][] tiles;
+        private Tile[,] tiles;
         
         Point cameraPoint;
         Point viewPoint;
@@ -26,11 +26,6 @@ namespace Paramita.Scenes
 
         [ContentSerializer]
         public TileSet TileSet { get; set; }
-
-
-        // list of NPCs by name and tile coords
-        [ContentSerializer]
-        public Dictionary<string, Point> Characters { get; private set; }
 
         // Number of tiles wide and high
         public int MapWidth { get; private set; }
@@ -52,25 +47,39 @@ namespace Paramita.Scenes
 
         public TileMap(TileSet tileSet, int width, int height, string name)
         {
-            Characters = new Dictionary<string, Point>();
             MapWidth = width;
             MapHeight = height;
             TileSet = tileSet;
             MapName = name;
+            tiles = PopulateTiles(MapWidth, MapHeight);
         }
 
 
 
 
+        private Tile[,] PopulateTiles(int cols, int rows)
+        {
+            Tile[,] tiles = new Tile[cols, rows];
+            for(int x = 0; x < cols; x++)
+            {
+                for(int y = 0; y < rows; y++ )
+                {
+                    tiles[x, y] = new Tile(x, y, TileType.Floor, true, true);
+                }
+            }
+
+            return tiles;
+        }
+
         public void SetTile(int x, int y, Tile newTile)
         {
-            tiles[x][y] = newTile;
+            tiles[x, y] = newTile;
         }
 
 
         public Tile GetTile(int x, int y)
         {
-            return tiles[x][y];
+            return tiles[x, y];
         }
 
 
@@ -85,8 +94,8 @@ namespace Paramita.Scenes
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
-            cameraPoint = TileEngine.VectorToCell(camera.Position);
-            viewPoint = TileEngine.VectorToCell(
+            cameraPoint = TileEngine.PixelsToTileCoords(camera.Position);
+            viewPoint = TileEngine.PixelsToTileCoords(
                 new Vector2(
                     (camera.Position.X + TileEngine.ViewportRectangle.Width),
                     (camera.Position.Y + TileEngine.ViewportRectangle.Height)
@@ -117,7 +126,7 @@ namespace Paramita.Scenes
                     spriteBatch.Draw(
                     TileSet.Texture,
                     destination,
-                    //tileSet.TilesheetRects[tile],
+                    TileSet.GetRectForTileType(tile.TileType),
                     Color.White);
                 }
             }
