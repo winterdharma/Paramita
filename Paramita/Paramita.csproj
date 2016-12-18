@@ -42,6 +42,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Components\InputDevices.cs" />
+    <Compile Include="Scenes\Game\TileMapCreator.cs" />
     <Compile Include="Scenes\Menu\MenuComponent.cs" />
     <Compile Include="Scenes\Game\GameScene.cs" />
     <Compile Include="Scenes\Menu\MenuScene.cs" />

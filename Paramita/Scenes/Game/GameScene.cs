@@ -9,6 +9,7 @@ namespace Paramita.Scenes
     public class GameScene : Scene
     {
         TileEngine engine = new TileEngine(GameController.ScreenRectangle, 32, 32);
+        TileMapCreator mapCreator;
         TileMap map;
         TileSet tileset;
         Camera camera;
@@ -124,7 +125,9 @@ namespace Paramita.Scenes
             Texture2D tileTextures = GameRef.Content.Load<Texture2D>("tileset1");
             tileset = new TileSet("tileset1", tileTextures, 8, 8, 32);
 
-            map = new TileMap(tileset, 50, 50, "test-map");
+            mapCreator = new TileMapCreator(80, 80, 10, 20, 10, random);
+
+            map = new TileMap(tileset, mapCreator.CreateMap(), 80, 80, "test-map");
 
             camera = new Camera();
         }

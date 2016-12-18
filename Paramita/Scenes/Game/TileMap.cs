@@ -45,13 +45,14 @@ namespace Paramita.Scenes
 
 
 
-        public TileMap(TileSet tileSet, int width, int height, string name)
+        public TileMap(TileSet tileSet, Tile[,] tiles, int width, int height, string name)
         {
             MapWidth = width;
             MapHeight = height;
             TileSet = tileSet;
             MapName = name;
-            tiles = PopulateTiles(MapWidth, MapHeight);
+            this.tiles = tiles; 
+            //tiles = PopulateTiles(MapWidth, MapHeight);
         }
 
 
