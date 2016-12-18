@@ -11,14 +11,6 @@ namespace Paramita.Scenes
 {
     public class TileMap
     {
-        string mapName;
-        Dictionary<string, Point> characters; // list of NPCs by name and tile coords
-        [ContentSerializer]
-        int mapWidth;
-        [ContentSerializer]
-        int mapHeight;
-        TileSet tileSet;
-
         [ContentSerializer(CollectionItemName = "Tiles")]
         Tile[][] tiles;
         
@@ -29,62 +21,42 @@ namespace Paramita.Scenes
         Rectangle destination;
 
         
-        
+        [ContentSerializer]
+        public string MapName { get; private set; }
 
         [ContentSerializer]
-        public string MapName
-        {
-            get { return mapName; }
-            private set { mapName = value; }
-        }
+        public TileSet TileSet { get; set; }
 
+
+        // list of NPCs by name and tile coords
         [ContentSerializer]
-        public TileSet TileSet
-        {
-            get { return tileSet; }
-            set { tileSet = value; }
-        }
+        public Dictionary<string, Point> Characters { get; private set; }
 
+        // Number of tiles wide and high
+        public int MapWidth { get; private set; }
+        public int MapHeight { get; private set; }
 
-
-        [ContentSerializer]
-        public Dictionary<string, Point> Characters
-        {
-            get { return characters; }
-            private set { characters = value; }
-        }
-
-        public int MapWidth
-        {
-            get { return mapWidth; }
-        }
-
-        public int MapHeight
-        {
-            get { return mapHeight; }
-        }
-
+        // Size of map in pixels
         public int WidthInPixels
         {
-            get { return mapWidth * TileEngine.TileWidth; }
+            get { return MapWidth * TileEngine.TileWidth; }
         }
-
         public int HeightInPixels
         {
-            get { return mapHeight * TileEngine.TileHeight; }
+            get { return MapHeight * TileEngine.TileHeight; }
         }
 
 
 
 
 
-        public TileMap(TileSet tileSet, int width, int height, string mapName)
+        public TileMap(TileSet tileSet, int width, int height, string name)
         {
-            this.characters = new Dictionary<string, Point>();
-            mapWidth = width;
-            mapHeight = height;
-            this.tileSet = tileSet;
-            this.mapName = mapName;
+            Characters = new Dictionary<string, Point>();
+            MapWidth = width;
+            MapHeight = height;
+            TileSet = tileSet;
+            MapName = name;
         }
 
 
@@ -107,7 +79,7 @@ namespace Paramita.Scenes
 
         public void Update(GameTime gameTime)
         {
-            
+            // implement in future if the map needs to change its tiles dynamically
         }
 
 
@@ -143,7 +115,7 @@ namespace Paramita.Scenes
                     tile = GetTile(x, y);
                     destination.X = x * TileEngine.TileWidth;
                     spriteBatch.Draw(
-                    tileSet.Texture,
+                    TileSet.Texture,
                     destination,
                     //tileSet.TilesheetRects[tile],
                     Color.White);
