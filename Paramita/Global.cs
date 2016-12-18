@@ -1,4 +1,5 @@
 ﻿using Paramita.Scenes;
+using Paramita.SentientBeings;
 using RogueSharp.Random;
 
 namespace Paramita

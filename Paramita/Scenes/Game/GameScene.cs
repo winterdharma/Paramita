@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Paramita.Components;
+using Paramita.SentientBeings;
 
 namespace Paramita.Scenes
 {
@@ -32,8 +33,8 @@ namespace Paramita.Scenes
 
         protected override void LoadContent()
         {
-            Texture2D spriteSheet = content.Load<Texture2D>("maleplayer");
-            player = new Player(GameRef, "Wesley", false, spriteSheet);
+            
+            
             Texture2D tileset1 = content.Load<Texture2D>("tileset1");
             tileset = new TileSet("tileset1", tileset1, 8, 8, 32);
         }
@@ -124,12 +125,33 @@ namespace Paramita.Scenes
         {
             Texture2D tileTextures = GameRef.Content.Load<Texture2D>("tileset1");
             tileset = new TileSet("tileset1", tileTextures, 8, 8, 32);
-
             mapCreator = new TileMapCreator(80, 80, 10, 20, 10, random);
-
             map = new TileMap(tileset, mapCreator.CreateMap(), 80, 80, "test-map");
 
+            
+            Texture2D spriteSheet = content.Load<Texture2D>("maleplayer");
+            player = new Player(GameRef, "Wesley", false, spriteSheet);
+            Tile startTile = GetEmptyWalkableTile();
+            player.Position = new Vector2(
+                startTile.X * tileset.TileSize,
+                startTile.Y * tileset.TileSize);
+
             camera = new Camera();
+        }
+
+        // returns a suitable starting tile for the player or enemy
+        // Does not check for empty state yet
+        private Tile GetEmptyWalkableTile()
+        {
+            while (true)
+            {
+                int x = Global.Random.Next(map.MapWidth-1);
+                int y = Global.Random.Next(map.MapHeight-1);
+                if (map.IsTileWalkable(x, y))
+                {
+                    return map.GetTile(x, y);
+                }
+            }
         }
 
         public void LoadSavedGame()

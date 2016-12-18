@@ -72,11 +72,6 @@ namespace Paramita
             animation = new Animation(3, 32, 32, 0, 96);
             playerAnimations.Add(AnimationKey.WalkUp, animation);
 
-            //IMapCreationStrategy<Map> mapCreationStrategy =
-            //    new RandomRoomsMapCreationStrategy<Map>(Global.MapWidth, Global.MapHeight, 100, 7,3);
-            //_map = Map.Create(mapCreationStrategy);
-            //Console.WriteLine(_map.ToString());
-
             base.Initialize();
         }
 
@@ -179,20 +174,6 @@ namespace Paramita
             spriteBatch.End();
             base.Draw(gameTime);
         }
-
-
-
-        //private Cell GetRandomEmptyCell()
-        //{
-        //    while(true)
-        //    {
-        //        int x = Global.Random.Next(49); int y = Global.Random.Next(29);
-        //        if(_map.IsWalkable(x,y))
-        //        {
-        //            return _map.GetCell(x, y);
-        //        }
-        //    }
-        //}
 
         //private void UpdatePlayerFieldOfView()
         //{

@@ -83,7 +83,11 @@ namespace Paramita.Scenes
             return tiles[x, y];
         }
 
-
+        // return the value of IsWalkable property on Tile at (x,y) on the map
+        public bool IsTileWalkable(int x, int y)
+        {
+            return tiles[x, y].IsWalkable;
+        }
         
 
 
