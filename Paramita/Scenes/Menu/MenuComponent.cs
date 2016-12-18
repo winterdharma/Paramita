@@ -1,9 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Paramita.Components;
 using System.Collections.Generic;
 
-namespace Paramita.Components
+namespace Paramita.Scenes
 {
     public class MenuComponent
     {

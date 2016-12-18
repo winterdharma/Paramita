@@ -2,18 +2,18 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Paramita.Components;
-using Paramita.StateManagement;
+using Paramita.Scenes;
 
-namespace Paramita.GameStates
+namespace Paramita.Scenes
 {
-    public interface IMainMenuState : IGameState
+    public interface IMenuScene : IScene
     {
 
     }
 
 
 
-    public class MainMenuState : BaseGameState, IMainMenuState
+    public class MenuScene : Scene, IMenuScene
     {
         Texture2D background;
         SpriteFont spriteFont;
@@ -21,9 +21,9 @@ namespace Paramita.GameStates
 
 
 
-        public MainMenuState(GameController game) : base(game)
+        public MenuScene(GameController game) : base(game)
         {
-            game.Services.AddService(typeof(IMainMenuState), this);
+            game.Services.AddService(typeof(IMenuScene), this);
         }
 
 
@@ -61,16 +61,16 @@ namespace Paramita.GameStates
                 if (menuComponent.SelectedIndex == 0)
                 {
                     InputDevices.FlushInput();
-                    GameRef.GamePlayState.SetUpNewGame();
-                    GameRef.GamePlayState.StartGame();
-                    manager.PushState((GamePlayState)GameRef.GamePlayState, PlayerIndexInControl);
+                    GameRef.GameScene.SetUpNewGame();
+                    GameRef.GameScene.StartGame();
+                    manager.PushScene((GameScene)GameRef.GameScene, PlayerIndexInControl);
                 }
                 else if (menuComponent.SelectedIndex == 1)
                 {
                     InputDevices.FlushInput();
-                    GameRef.GamePlayState.LoadSavedGame();
-                    GameRef.GamePlayState.StartGame();
-                    manager.PushState((GamePlayState)GameRef.GamePlayState, PlayerIndexInControl);
+                    GameRef.GameScene.LoadSavedGame();
+                    GameRef.GameScene.StartGame();
+                    manager.PushScene((GameScene)GameRef.GameScene, PlayerIndexInControl);
                 }
                 else if (menuComponent.SelectedIndex == 2)
                 {

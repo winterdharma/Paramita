@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 
-namespace Paramita.TileMapEngine
+namespace Paramita.Scenes
 {
     public enum AnimationKey
     {

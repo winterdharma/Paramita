@@ -2,17 +2,16 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Paramita.Components;
-using Paramita.StateManagement;
 using System;
 
-namespace Paramita.GameStates
+namespace Paramita.Scenes
 {
-    public interface ITitleIntroState : IGameState
+    public interface ITitleScene : IScene
     {
     }
 
 
-    public class TitleIntroState : BaseGameState, ITitleIntroState
+    public class TitleScene : Scene, ITitleScene
     {
         Texture2D background;
         Rectangle backgroundDestination;
@@ -22,10 +21,14 @@ namespace Paramita.GameStates
         string message;
 
 
-        public TitleIntroState(GameController game) : base(game)
+
+
+        public TitleScene(GameController game) : base(game)
         {
-            game.Services.AddService(typeof(ITitleIntroState), this);
+            game.Services.AddService(typeof(ITitleScene), this);
         }
+
+
 
 
         public override void Initialize()
@@ -43,9 +46,12 @@ namespace Paramita.GameStates
             font = content.Load<SpriteFont>("InterfaceFont");
             Vector2 size = font.MeasureString(message);
             position = new Vector2((GameController.ScreenRectangle.Width - size.X) / 2,
-            Paramita.GameController.ScreenRectangle.Bottom - 50 - font.LineSpacing);
+            GameController.ScreenRectangle.Bottom - 50 - font.LineSpacing);
+
             base.LoadContent();
         }
+
+
         public override void Update(GameTime gameTime)
         {
             PlayerIndex? index = null;
@@ -55,7 +61,7 @@ namespace Paramita.GameStates
                 InputDevices.CheckKeyReleased(Keys.Enter) ||
                 InputDevices.CheckMouseReleased(MouseButtons.Left))
             {
-                manager.ChangeState((MainMenuState)GameRef.StartMenuState, index);
+                manager.ChangeScene((MenuScene)GameRef.MenuScene, index);
             }
 
             base.Update(gameTime);

@@ -2,30 +2,29 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Paramita.Components;
-using Paramita.StateManagement;
-using Paramita.TileMapEngine;
 
-namespace Paramita.GameStates
+namespace Paramita.Scenes
 {
-    public interface IGamePlayState : IGameState
+    public interface IGameScene : IScene
     {
         void SetUpNewGame();
         void LoadSavedGame();
         void StartGame();
     }
 
-    public class GamePlayState : BaseGameState, IGamePlayState
+    public class GameScene : Scene, IGameScene
     {
         TileEngine engine = new TileEngine(GameController.ScreenRectangle, 32, 32);
         TileMap map;
+        TileSet tileset;
         Camera camera;
         Player player;
 
 
 
-        public GamePlayState(GameController game) : base(game)
+        public GameScene(GameController game) : base(game)
         {
-            game.Services.AddService(typeof(IGamePlayState), this);
+            game.Services.AddService(typeof(IGameScene), this);
         }
 
 
@@ -40,6 +39,8 @@ namespace Paramita.GameStates
         {
             Texture2D spriteSheet = content.Load<Texture2D>("maleplayer");
             player = new Player(GameRef, "Wesley", false, spriteSheet);
+            Texture2D tileset1 = content.Load<Texture2D>("tileset1");
+            tileset = new TileSet("tileset1", tileset1, 8, 8, 32);
         }
 
 
@@ -127,19 +128,16 @@ namespace Paramita.GameStates
         public void SetUpNewGame()
         {
             Texture2D tiles = GameRef.Content.Load<Texture2D>("tileset1");
-            TileSet set = new TileSet(8, 8, 32, 32);
-            set.Texture = tiles;
+            //TileSet set = new TileSet(8, 8, 32, 32);
+            //set.Texture = tiles;
 
             TileLayer background = new TileLayer(200, 200);
             TileLayer edge = new TileLayer(200, 200);
             TileLayer building = new TileLayer(200, 200);
             TileLayer decor = new TileLayer(200, 200);
 
-            map = new TileMap(set, background, edge, building, decor, "test-map");
+           // map = new TileMap(set, background, edge, building, decor, "test-map");
 
-            map.FillEdges();
-            map.FillBuilding();
-            map.FillDecoration();
             camera = new Camera();
         }
 

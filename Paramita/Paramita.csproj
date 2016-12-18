@@ -42,32 +42,29 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Components\InputDevices.cs" />
-    <Compile Include="Components\MenuComponent.cs" />
-    <Compile Include="GameStates\BaseGameState.cs" />
-    <Compile Include="GameStates\GamePlayState.cs" />
-    <Compile Include="GameStates\MainMenuState.cs" />
-    <Compile Include="GameStates\TitleIntroState.cs" />
-    <Compile Include="StateManagement\GameState.cs" />
-    <Compile Include="StateManagement\GameStateManager.cs" />
-    <Compile Include="TileMapEngine\AnimatedSprite.cs" />
-    <Compile Include="TileMapEngine\Animation.cs" />
-    <Compile Include="TileMapEngine\TileEngine.cs" />
-    <Compile Include="TileMapEngine\TileLayer.cs" />
-    <Compile Include="TileMapEngine\TileMap.cs" />
-    <Compile Include="TileMapEngine\TileSet.cs" />
-    <Compile Include="TileMapEngine\Camera.cs" />
+    <Compile Include="Scenes\Menu\MenuComponent.cs" />
+    <Compile Include="Scenes\Game\GameScene.cs" />
+    <Compile Include="Scenes\Menu\MenuScene.cs" />
+    <Compile Include="Scenes\Title\TitleScene.cs" />
+    <Compile Include="Scenes\Scene.cs" />
+    <Compile Include="Scenes\SceneManager.cs" />
+    <Compile Include="Scenes\Game\AnimatedSprite.cs" />
+    <Compile Include="Scenes\Game\Animation.cs" />
+    <Compile Include="Scenes\Game\Tile.cs" />
+    <Compile Include="Scenes\Game\TileEngine.cs" />
+    <Compile Include="Scenes\Game\TileLayer.cs" />
+    <Compile Include="Scenes\Game\TileMap.cs" />
+    <Compile Include="Scenes\Game\TileSet.cs" />
+    <Compile Include="Scenes\Game\Camera.cs" />
     <Compile Include="CombatManager.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="GameController.cs" />
     <Compile Include="Global.cs" />
-    <Compile Include="UI\LayerDepth.cs" />
     <Compile Include="PathToPlayer.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SentientBeing.cs" />
-    <Compile Include="UI\Panel.cs" />
-    <Compile Include="UI\GameConsole.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
@@ -82,14 +79,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\femaleplayer.png" />
-    <Content Include="Content\floor.png" />
     <Content Include="Content\hound.png" />
     <Content Include="Content\maleplayer.png" />
     <Content Include="Content\menuscreen.png" />
     <Content Include="Content\player.png" />
     <Content Include="Content\tileset1.png" />
     <Content Include="Content\titlescreen.png" />
-    <Content Include="Content\wall.png" />
     <Content Include="Content\white.png" />
     <Content Include="Content\wooden-button.png" />
     <Content Include="Icon.ico" />

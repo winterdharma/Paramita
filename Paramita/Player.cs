@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Paramita.TileMapEngine;
-using Paramita.UI;
+using Paramita.Scenes;
 
 namespace Paramita
 {

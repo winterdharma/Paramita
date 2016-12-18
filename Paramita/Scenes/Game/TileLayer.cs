@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
-namespace Paramita.TileMapEngine
+namespace Paramita.Scenes
 {
     public class TileLayer
     {
@@ -157,7 +157,7 @@ namespace Paramita.TileMapEngine
                     spriteBatch.Draw(
                     tileSet.Texture,
                     destination,
-                    tileSet.SourceRectangles[tile],
+                    tileSet.TilesheetRects[tile],
                     Color.White);
                 }
             }

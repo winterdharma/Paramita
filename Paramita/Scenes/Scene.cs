@@ -3,18 +3,22 @@ using Microsoft.Xna.Framework.Content;
 using System;
 using System.Collections.Generic;
 
-namespace Paramita.StateManagement
+namespace Paramita.Scenes
 {
-    public interface IGameState
+    public interface IScene
     {
-        GameState Tag { get; }
+        Scene Tag { get; }
         PlayerIndex? PlayerIndexInControl { get; set; }
     }
 
-    public abstract partial class GameState : DrawableGameComponent, IGameState
+    public abstract partial class Scene : DrawableGameComponent, IScene
     {
-        protected GameState tag;
-        protected readonly GameStateManager manager;
+
+        protected static Random random = new Random();
+        protected GameController GameRef;
+
+        protected Scene tag;
+        protected readonly SceneManager manager;
         protected ContentManager content;
         protected readonly List<GameComponent> childComponents;
         protected PlayerIndex? indexInControl;
@@ -32,19 +36,20 @@ namespace Paramita.StateManagement
             get { return childComponents; }
         }
 
-        public GameState Tag
+        public Scene Tag
         {
             get { return tag; }
         }
 
 
 
-        public GameState(GameController game) : base(game)
+        public Scene(GameController game) : base(game)
         {
+            GameRef = game;
             tag = this;
             childComponents = new List<GameComponent>();
             content = Game.Content;
-            manager = (GameStateManager)Game.Services.GetService(typeof(GameStateManager));
+            manager = (SceneManager)Game.Services.GetService(typeof(SceneManager));
         }
 
 
@@ -78,7 +83,7 @@ namespace Paramita.StateManagement
 
         protected internal virtual void StateChanged(object sender, EventArgs e)
         {
-            if(manager.CurrentState == tag) { Show(); }
+            if(manager.CurrentScene == tag) { Show(); }
             else { Hide(); }
         }
 

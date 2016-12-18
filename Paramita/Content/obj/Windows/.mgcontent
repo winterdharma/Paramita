@@ -4,8 +4,6 @@
   <Platform>Windows</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/floor.png</File>
-    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/wall.png</File>
     <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/player.png</File>
     <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/hound.png</File>
     <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/white.png</File>

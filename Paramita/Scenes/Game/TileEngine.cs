@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
-namespace Paramita.TileMapEngine
+namespace Paramita.Scenes
 {
     public class TileEngine
     {
@@ -49,8 +49,6 @@ namespace Paramita.TileMapEngine
         {
             ViewportRectangle = viewPort;
             camera = new Camera();
-            TileWidth = 64;
-            TileHeight = 64;
         }
 
         public TileEngine(Rectangle viewPort, int tileWidth, int tileHeight) : this(viewPort)

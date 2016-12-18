@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 
-namespace Paramita.TileMapEngine
+namespace Paramita.Scenes
 {
     public class Animation
     {

@@ -2,15 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Paramita.Components;
-using Paramita.GameStates;
-using Paramita.StateManagement;
-using Paramita.TileMapEngine;
-using Paramita.UI;
-using RogueSharp;
-using RogueSharp.DiceNotation;
-using RogueSharp.MapCreation;
-using RogueSharp.Random;
-using System;
+using Paramita.Scenes;
 using System.Collections.Generic;
 
 namespace Paramita
@@ -22,48 +14,21 @@ namespace Paramita
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+
         Dictionary<AnimationKey, Animation> playerAnimations = new Dictionary<AnimationKey, Animation>();
 
-        GameStateManager gStateManager;
-        ITitleIntroState titleIntroState;
-        IMainMenuState startMenuState;
-        IGamePlayState gamePlayState;
-
-        static Microsoft.Xna.Framework.Rectangle screenRectangle;
-
         public SpriteBatch SpriteBatch { get { return spriteBatch; } }
-        public static Microsoft.Xna.Framework.Rectangle ScreenRectangle
-        {
-            get { return screenRectangle; }
-        }
+        public static Rectangle ScreenRectangle { get; private set; }
 
-        public GameStateManager GameStateManager
-        {
-             get { return gStateManager; }
-        }
-        public ITitleIntroState TitleIntroState
-        {
-            get { return titleIntroState; }
-        }
-        public IMainMenuState StartMenuState
-        {
-            get { return startMenuState; }
-        }
-        public IGamePlayState GamePlayState
-        {
-            get { return gamePlayState; }
-        }
+        public SceneManager SceneManager { get; private set; }
+        public ITitleScene TitleScene { get; private set; }
+        public IMenuScene MenuScene { get; private set; }
+        public IGameScene GameScene { get; private set; }
+
         public Dictionary<AnimationKey, Animation> PlayerAnimations
         {
             get { return playerAnimations; }
         }
-        
-        
-        private IMap _map;
-        private Texture2D _floor;
-        private Texture2D _wall;
-        private Player _player;
-        private List<Enemy> _enemies = new List<Enemy>();
 
 
 
@@ -72,20 +37,20 @@ namespace Paramita
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            screenRectangle = new Microsoft.Xna.Framework.Rectangle(0, 0, 1280, 720);
+            ScreenRectangle = new Rectangle(0, 0, 1280, 720);
             graphics.PreferredBackBufferWidth = ScreenRectangle.Width;
             graphics.PreferredBackBufferHeight = ScreenRectangle.Height;
 
 
-            gStateManager = new GameStateManager(this);
-            Components.Add(gStateManager);
+            SceneManager = new SceneManager(this);
+            Components.Add(SceneManager);
             this.IsMouseVisible = true;
 
-            titleIntroState = new TitleIntroState(this);
-            startMenuState = new MainMenuState(this);
-            gamePlayState = new GamePlayState(this);
+            TitleScene = new TitleScene(this);
+            MenuScene = new MenuScene(this);
+            GameScene = new GameScene(this);
 
-            gStateManager.ChangeState((TitleIntroState)titleIntroState, PlayerIndex.One);
+            SceneManager.ChangeScene((TitleScene)TitleScene, PlayerIndex.One);
         }
 
         /// <summary>
@@ -107,10 +72,10 @@ namespace Paramita
             animation = new Animation(3, 32, 32, 0, 96);
             playerAnimations.Add(AnimationKey.WalkUp, animation);
 
-            IMapCreationStrategy<Map> mapCreationStrategy =
-                new RandomRoomsMapCreationStrategy<Map>(Global.MapWidth, Global.MapHeight, 100, 7,3);
-            _map = Map.Create(mapCreationStrategy);
-            Console.WriteLine(_map.ToString());
+            //IMapCreationStrategy<Map> mapCreationStrategy =
+            //    new RandomRoomsMapCreationStrategy<Map>(Global.MapWidth, Global.MapHeight, 100, 7,3);
+            //_map = Map.Create(mapCreationStrategy);
+            //Console.WriteLine(_map.ToString());
 
             base.Initialize();
         }
@@ -124,8 +89,7 @@ namespace Paramita
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            //_floor = Content.Load<Texture2D>("floor");
-            //_wall = Content.Load<Texture2D>("wall");
+            
             //Cell startingCell = GetRandomEmptyCell();
             
             
@@ -173,44 +137,44 @@ namespace Paramita
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend,
                 null,null,null,null,Global.Camera.Transformation);
 
-            foreach(Cell c in _map.GetAllCells() )
-            {
-                var position = new Vector2(c.X * Global.SpriteWidth, c.Y * Global.SpriteHeight);
+            //foreach(Cell c in _map.GetAllCells() )
+            //{
+            //    var position = new Vector2(c.X * Global.SpriteWidth, c.Y * Global.SpriteHeight);
 
-                if(c.IsExplored == false && Global.GameState != OldGameStates.Debugging)
-                {
-                    continue;
-                }
+            //    if(c.IsExplored == false && Global.GameState != OldGameStates.Debugging)
+            //    {
+            //        continue;
+            //    }
 
-                Color tint = Color.White;
+            //    Color tint = Color.White;
 
-                if (c.IsInFov == false && Global.GameState != OldGameStates.Debugging)
-                {
-                    tint = Color.Gray;
-                }
+            //    if (c.IsInFov == false && Global.GameState != OldGameStates.Debugging)
+            //    {
+            //        tint = Color.Gray;
+            //    }
 
-                Texture2D sprite;
-                if(c.IsWalkable == true)
-                {
-                    sprite = _floor;
-                }
-                else
-                {
-                    sprite = _wall;
-                }
+            //    Texture2D sprite;
+            //    if(c.IsWalkable == true)
+            //    {
+            //        sprite = _floor;
+            //    }
+            //    else
+            //    {
+            //        sprite = _wall;
+            //    }
 
-                spriteBatch.Draw(sprite, position,
-                        null, null, null, 0.0f, Vector2.One,
-                        tint, SpriteEffects.None, LayerDepth.Cells);
-            }
+            //    spriteBatch.Draw(sprite, position,
+            //            null, null, null, 0.0f, Vector2.One,
+            //            tint, SpriteEffects.None, LayerDepth.Cells);
+            //}
 
-            foreach (Enemy e in _enemies)
-            {
-                if (Global.GameState == OldGameStates.Debugging || _map.IsInFov(e.X, e.Y))
-                {
-                    e.Draw(spriteBatch);
-                }
-            }
+            //foreach (Enemy e in _enemies)
+            //{
+            //    if (Global.GameState == OldGameStates.Debugging || _map.IsInFov(e.X, e.Y))
+            //    {
+            //        e.Draw(spriteBatch);
+            //    }
+            //}
 
             spriteBatch.End();
             base.Draw(gameTime);
@@ -218,53 +182,53 @@ namespace Paramita
 
 
 
-        private Cell GetRandomEmptyCell()
-        {
-            while(true)
-            {
-                int x = Global.Random.Next(49); int y = Global.Random.Next(29);
-                if(_map.IsWalkable(x,y))
-                {
-                    return _map.GetCell(x, y);
-                }
-            }
-        }
+        //private Cell GetRandomEmptyCell()
+        //{
+        //    while(true)
+        //    {
+        //        int x = Global.Random.Next(49); int y = Global.Random.Next(29);
+        //        if(_map.IsWalkable(x,y))
+        //        {
+        //            return _map.GetCell(x, y);
+        //        }
+        //    }
+        //}
 
-        private void UpdatePlayerFieldOfView()
-        {
-            _map.ComputeFov(_player.X, _player.Y, 30, true);
-            foreach(Cell c in _map.GetAllCells())
-            {
-                if(_map.IsInFov(c.X, c.Y))
-                {
-                    _map.SetCellProperties(c.X, c.Y, c.IsTransparent, c.IsWalkable, true);
-                }
-            }
-        }
+        //private void UpdatePlayerFieldOfView()
+        //{
+        //    _map.ComputeFov(_player.X, _player.Y, 30, true);
+        //    foreach(Cell c in _map.GetAllCells())
+        //    {
+        //        if(_map.IsInFov(c.X, c.Y))
+        //        {
+        //            _map.SetCellProperties(c.X, c.Y, c.IsTransparent, c.IsWalkable, true);
+        //        }
+        //    }
+        //}
 
-        private void AddEnemies(int numberOfEnemies)
-        {
-            for (int i = 0; i < numberOfEnemies; i++)
-            {
-                // Find a new empty cell for each enemy
-                Cell enemyCell = GetRandomEmptyCell();
-                var pathFromEnemy =
-                  new PathToPlayer(_player, _map, Content.Load<Texture2D>("White"));
-                pathFromEnemy.CreateFrom(enemyCell.X, enemyCell.Y);
-                var enemy = new Enemy(this, _map, pathFromEnemy)
-                {
-                    X = enemyCell.X,
-                    Y = enemyCell.Y,
-                    //Sprite = Content.Load<Texture2D>("hound"),
-                    ArmorClass = 10,
-                    AttackBonus = 0,
-                    Damage = Dice.Parse("d4"),
-                    Health = 10,
-                    Name = "Hell Hound"
-                };
-                // Add each enemy to list of enemies
-                _enemies.Add(enemy);
-            }
-        }
+        //private void AddEnemies(int numberOfEnemies)
+        //{
+        //    for (int i = 0; i < numberOfEnemies; i++)
+        //    {
+        //        // Find a new empty cell for each enemy
+        //        Cell enemyCell = GetRandomEmptyCell();
+        //        var pathFromEnemy =
+        //          new PathToPlayer(_player, _map, Content.Load<Texture2D>("White"));
+        //        pathFromEnemy.CreateFrom(enemyCell.X, enemyCell.Y);
+        //        var enemy = new Enemy(this, _map, pathFromEnemy)
+        //        {
+        //            X = enemyCell.X,
+        //            Y = enemyCell.Y,
+        //            //Sprite = Content.Load<Texture2D>("hound"),
+        //            ArmorClass = 10,
+        //            AttackBonus = 0,
+        //            Damage = Dice.Parse("d4"),
+        //            Health = 10,
+        //            Name = "Hell Hound"
+        //        };
+        //        // Add each enemy to list of enemies
+        //        _enemies.Add(enemy);
+        //    }
+        //}
     }
 }

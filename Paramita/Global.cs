@@ -1,14 +1,5 @@
-﻿using RogueSharp.Random;
-using Paramita;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Paramita.UI;
-using MonoGame;
-using Microsoft.Xna.Framework;
-using Paramita.TileMapEngine;
+﻿using Paramita.Scenes;
+using RogueSharp.Random;
 
 namespace Paramita
 {
