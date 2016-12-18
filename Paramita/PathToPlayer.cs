@@ -1,11 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using RogueSharp;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Paramita
 {
@@ -40,7 +37,7 @@ namespace Paramita
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            if (_cells != null && Global.GameState == GameStates.Debugging)
+            if (_cells != null && Global.GameState == OldGameStates.Debugging)
             {
                 foreach (Cell cell in _cells)
                 {
@@ -50,7 +47,7 @@ namespace Paramita
                         float multiplier = .25f * _sprite.Width;
                         spriteBatch.Draw(_sprite, new Vector2(cell.X * multiplier, cell.Y * multiplier),
                           null, null, null, 0.0f, new Vector2(scale, scale), Color.Blue * .2f,
-                          SpriteEffects.None, LayerDepth.Paths);
+                          SpriteEffects.None, 0.5f);
                     }
                 }
             }
