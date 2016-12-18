@@ -35,10 +35,12 @@
 
 
         // full constructor with all properties provided
-        public Tile(int x, int y, bool isTransparent, bool isWalkable, bool isInLos, bool isExplored = false)
+        public Tile(int x, int y, TileType type, bool isTransparent, bool isWalkable,
+            bool isInLos = false, bool isExplored = false)
         {
             X = x;
             Y = y;
+            TileType = type;
             IsTransparent = isTransparent;
             IsWalkable = isWalkable;
             IsInLineOfSight = isInLos;

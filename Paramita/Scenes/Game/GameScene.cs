@@ -5,14 +5,8 @@ using Paramita.Components;
 
 namespace Paramita.Scenes
 {
-    public interface IGameScene : IScene
-    {
-        void SetUpNewGame();
-        void LoadSavedGame();
-        void StartGame();
-    }
 
-    public class GameScene : Scene, IGameScene
+    public class GameScene : Scene
     {
         TileEngine engine = new TileEngine(GameController.ScreenRectangle, 32, 32);
         TileMap map;
@@ -24,7 +18,7 @@ namespace Paramita.Scenes
 
         public GameScene(GameController game) : base(game)
         {
-            game.Services.AddService(typeof(IGameScene), this);
+            
         }
 
 
@@ -127,16 +121,10 @@ namespace Paramita.Scenes
 
         public void SetUpNewGame()
         {
-            Texture2D tiles = GameRef.Content.Load<Texture2D>("tileset1");
-            //TileSet set = new TileSet(8, 8, 32, 32);
-            //set.Texture = tiles;
+            Texture2D tileTextures = GameRef.Content.Load<Texture2D>("tileset1");
+            tileset = new TileSet("tileset1", tileTextures, 8, 8, 32);
 
-            TileLayer background = new TileLayer(200, 200);
-            TileLayer edge = new TileLayer(200, 200);
-            TileLayer building = new TileLayer(200, 200);
-            TileLayer decor = new TileLayer(200, 200);
-
-           // map = new TileMap(set, background, edge, building, decor, "test-map");
+            map = new TileMap(tileset, 50, 50, "test-map");
 
             camera = new Camera();
         }

@@ -6,12 +6,9 @@ using System;
 
 namespace Paramita.Scenes
 {
-    public interface ITitleScene : IScene
-    {
-    }
 
 
-    public class TitleScene : Scene, ITitleScene
+    public class TitleScene : Scene
     {
         Texture2D background;
         Rectangle backgroundDestination;
@@ -25,7 +22,7 @@ namespace Paramita.Scenes
 
         public TitleScene(GameController game) : base(game)
         {
-            game.Services.AddService(typeof(ITitleScene), this);
+           
         }
 
 

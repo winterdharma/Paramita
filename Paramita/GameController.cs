@@ -21,9 +21,9 @@ namespace Paramita
         public static Rectangle ScreenRectangle { get; private set; }
 
         public SceneManager SceneManager { get; private set; }
-        public ITitleScene TitleScene { get; private set; }
-        public IMenuScene MenuScene { get; private set; }
-        public IGameScene GameScene { get; private set; }
+        public TitleScene TitleScene { get; private set; }
+        public MenuScene MenuScene { get; private set; }
+        public GameScene GameScene { get; private set; }
 
         public Dictionary<AnimationKey, Animation> PlayerAnimations
         {

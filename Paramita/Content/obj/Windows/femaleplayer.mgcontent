@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <SourceFile>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/femaleplayer.png</SourceFile>
-  <SourceTime>2016-12-16T15:30:12.4748797-06:00</SourceTime>
+  <SourceTime>2016-12-17T18:55:32.358097-06:00</SourceTime>
   <DestFile>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/bin/Windows/femaleplayer.xnb</DestFile>
-  <DestTime>2016-12-16T15:30:28.8058138-06:00</DestTime>
+  <DestTime>2016-12-17T19:29:20.2170839-06:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2016-03-30T01:36:08-05:00</ImporterTime>
   <Processor>TextureProcessor</Processor>
