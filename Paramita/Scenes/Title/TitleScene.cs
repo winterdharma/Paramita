@@ -54,11 +54,11 @@ namespace Paramita.Scenes
             PlayerIndex? index = null;
             elapsed += gameTime.ElapsedGameTime;
 
-            if(InputDevices.CheckKeyReleased(Keys.Space) ||
-                InputDevices.CheckKeyReleased(Keys.Enter) ||
-                InputDevices.CheckMouseReleased(MouseButtons.Left))
+            if(GameRef.InputDevices.CheckKeyReleased(Keys.Space) ||
+                GameRef.InputDevices.CheckKeyReleased(Keys.Enter) ||
+                GameRef.InputDevices.CheckMouseReleased(MouseButtons.Left))
             {
-                manager.ChangeScene((MenuScene)GameRef.MenuScene, index);
+                manager.ChangeScene(GameRef.MenuScene, index);
             }
 
             base.Update(gameTime);

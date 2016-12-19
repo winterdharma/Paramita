@@ -14,6 +14,7 @@ namespace Paramita
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        InputDevices inputDevices;
 
         Dictionary<AnimationKey, Animation> playerAnimations = new Dictionary<AnimationKey, Animation>();
 
@@ -24,6 +25,7 @@ namespace Paramita
         public TitleScene TitleScene { get; private set; }
         public MenuScene MenuScene { get; private set; }
         public GameScene GameScene { get; private set; }
+        public InputDevices InputDevices { get; private set; }
 
         public Dictionary<AnimationKey, Animation> PlayerAnimations
         {
@@ -41,16 +43,17 @@ namespace Paramita
             graphics.PreferredBackBufferWidth = ScreenRectangle.Width;
             graphics.PreferredBackBufferHeight = ScreenRectangle.Height;
 
+            InputDevices = new InputDevices(this);
 
             SceneManager = new SceneManager(this);
             Components.Add(SceneManager);
-            this.IsMouseVisible = true;
+            IsMouseVisible = true;
 
             TitleScene = new TitleScene(this);
             MenuScene = new MenuScene(this);
             GameScene = new GameScene(this);
 
-            SceneManager.ChangeScene((TitleScene)TitleScene, PlayerIndex.One);
+            SceneManager.ChangeScene(TitleScene, PlayerIndex.One);
         }
 
         /// <summary>
@@ -61,8 +64,6 @@ namespace Paramita
         /// </summary>
         protected override void Initialize()
         {
-            Components.Add(new InputDevices(this));
-
             Animation animation = new Animation(3, 32, 32, 0, 0);
             playerAnimations.Add(AnimationKey.WalkDown, animation);
             animation = new Animation(3, 32, 32, 0, 32);
@@ -84,11 +85,6 @@ namespace Paramita
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            
-            //Cell startingCell = GetRandomEmptyCell();
-            
-            
-            //startingCell = GetRandomEmptyCell();
 
             //PathToPlayer pathFromEnemy = new PathToPlayer(_player, _map, Content.Load<Texture2D>("white"));
             //pathFromEnemy.CreateFrom(startingCell.X, startingCell.Y);
@@ -118,6 +114,7 @@ namespace Paramita
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
                 Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+            InputDevices.Update(gameTime);
             base.Update(gameTime);
         }
 

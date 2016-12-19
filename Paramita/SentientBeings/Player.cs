@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Paramita.Components;
 using Paramita.Scenes;
 
 namespace Paramita.SentientBeings
@@ -77,5 +78,6 @@ namespace Paramita.SentientBeings
         {
             base.Draw(gameTime);
         }
+
     }
 }

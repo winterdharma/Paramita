@@ -44,58 +44,42 @@ namespace Paramita.Scenes
         {
             Vector2 motion = Vector2.Zero;
 
-            if(InputDevices.KeyboardState.IsKeyDown(Keys.W) 
-                && InputDevices.PreviousKeyboardState.IsKeyUp(Keys.W) 
-                && InputDevices.KeyboardState.IsKeyDown(Keys.A) 
-                && InputDevices.PreviousKeyboardState.IsKeyUp(Keys.A))
+            if(GameRef.InputDevices.IsUpperLeft())
             {
                 motion.X = -1; motion.Y = -1;
                 player.Sprite.CurrentAnimation = AnimationKey.WalkLeft;
             }
-            else if(InputDevices.KeyboardState.IsKeyDown(Keys.W)
-                && InputDevices.PreviousKeyboardState.IsKeyUp(Keys.W)
-                && InputDevices.KeyboardState.IsKeyDown(Keys.D)
-                && InputDevices.PreviousKeyboardState.IsKeyUp(Keys.D))
+            else if(GameRef.InputDevices.IsUpperRight())
             {
                 motion.X = 1; motion.Y = -1;
                 player.Sprite.CurrentAnimation = AnimationKey.WalkRight;
             }
-            else if(InputDevices.KeyboardState.IsKeyDown(Keys.S) 
-                && InputDevices.PreviousKeyboardState.IsKeyUp(Keys.S)
-                && InputDevices.KeyboardState.IsKeyDown(Keys.A)
-                && InputDevices.PreviousKeyboardState.IsKeyUp(Keys.A))
+            else if(GameRef.InputDevices.IsLowerLeft())
             {
                 motion.X = -1; motion.Y = 1;
                 player.Sprite.CurrentAnimation = AnimationKey.WalkLeft;
             }
-            else if (InputDevices.KeyboardState.IsKeyDown(Keys.S)
-                && InputDevices.PreviousKeyboardState.IsKeyUp(Keys.S)
-                && InputDevices.KeyboardState.IsKeyDown(Keys.D)
-                && InputDevices.PreviousKeyboardState.IsKeyUp(Keys.D))
+            else if (GameRef.InputDevices.IsLowerRight())
             {
                 motion.X = 1; motion.Y = 1;
                 player.Sprite.CurrentAnimation = AnimationKey.WalkRight;
             }
-            else if (InputDevices.KeyboardState.IsKeyDown(Keys.W) 
-                && InputDevices.PreviousKeyboardState.IsKeyUp(Keys.W))
+            else if (GameRef.InputDevices.IsUp())
             {
                 motion.Y = -1;
                 player.Sprite.CurrentAnimation = AnimationKey.WalkUp;
             }
-            else if (InputDevices.KeyboardState.IsKeyDown(Keys.S)
-                && InputDevices.PreviousKeyboardState.IsKeyUp(Keys.S))
+            else if (GameRef.InputDevices.IsDown())
             {
                 motion.Y = 1;
                 player.Sprite.CurrentAnimation = AnimationKey.WalkDown;
             }
-            else if (InputDevices.KeyboardState.IsKeyDown(Keys.A)
-                && InputDevices.PreviousKeyboardState.IsKeyUp(Keys.A))
+            else if (GameRef.InputDevices.IsRight())
             {
                 motion.X = -1;
                 player.Sprite.CurrentAnimation = AnimationKey.WalkLeft;
             }
-            else if (InputDevices.KeyboardState.IsKeyDown(Keys.D)
-                && InputDevices.PreviousKeyboardState.IsKeyUp(Keys.D))
+            else if (GameRef.InputDevices.IsLeft())
             {
                 motion.X = 1;
                 player.Sprite.CurrentAnimation = AnimationKey.WalkRight;

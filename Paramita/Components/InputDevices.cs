@@ -18,28 +18,28 @@ namespace Paramita.Components
 
     public class InputDevices : GameComponent
     {
-        private static KeyboardState currentKeyboardState = Keyboard.GetState();
-        private static KeyboardState previousKeyboardState = Keyboard.GetState();
-        private static MouseState currentMouseState = Mouse.GetState();
-        private static MouseState previousMouseState = Mouse.GetState();
+        private KeyboardState currentKeyboardState = Keyboard.GetState();
+        private KeyboardState previousKeyboardState = Keyboard.GetState();
+        private MouseState currentMouseState = Mouse.GetState();
+        private MouseState previousMouseState = Mouse.GetState();
 
 
-        public static MouseState MouseState
+        public MouseState CurrentMouseState
         {
             get { return currentMouseState; }
         }
 
-        public static KeyboardState KeyboardState
+        public KeyboardState CurrentKeyboardState
         {
             get { return currentKeyboardState; }
         }
 
-        public static KeyboardState PreviousKeyboardState
+        public KeyboardState PreviousKeyboardState
         {
             get { return previousKeyboardState; }
         }
 
-        public static MouseState PreviousMouseState
+        public MouseState PreviousMouseState
         {
             get { return previousMouseState; }
         }
@@ -63,35 +63,89 @@ namespace Paramita.Components
         }
 
 
-        public static void FlushInput()
+        public void FlushInput()
         {
             currentMouseState = previousMouseState;
             currentKeyboardState = previousKeyboardState;
         }
 
 
-        public static bool CheckKeyReleased(Keys key)
+        public bool CheckKeyReleased(Keys key)
         {
             return currentKeyboardState.IsKeyUp(key) &&
             previousKeyboardState.IsKeyDown(key);
         }
 
 
-        public static bool CheckMouseReleased(MouseButtons button)
+        public bool CheckMouseReleased(MouseButtons button)
         {
             switch (button)
             {
                 case MouseButtons.Left:
-                    return (currentMouseState.LeftButton == ButtonState.Released) &&
-                    (previousMouseState.LeftButton == ButtonState.Pressed);
+                    return (CurrentMouseState.LeftButton == ButtonState.Released) &&
+                    (PreviousMouseState.LeftButton == ButtonState.Pressed);
                 case MouseButtons.Right:
-                    return (currentMouseState.RightButton == ButtonState.Released) &&
-                    (previousMouseState.RightButton == ButtonState.Pressed);
+                    return (CurrentMouseState.RightButton == ButtonState.Released) &&
+                    (PreviousMouseState.RightButton == ButtonState.Pressed);
                 case MouseButtons.Middle:
-                    return (currentMouseState.MiddleButton == ButtonState.Released) &&
-                    (previousMouseState.MiddleButton == ButtonState.Pressed);
+                    return (CurrentMouseState.MiddleButton == ButtonState.Released) &&
+                    (PreviousMouseState.MiddleButton == ButtonState.Pressed);
             }
             return false;
+        }
+
+
+        /*
+         * These methods provide keymapping to movement directions on the keyboard.
+         * When checking for player movement input, call these methods.
+         */ 
+
+        public bool IsLeft()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.D)
+                && PreviousKeyboardState.IsKeyUp(Keys.D);
+        }
+
+        public bool IsRight()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.A)
+                && PreviousKeyboardState.IsKeyUp(Keys.A);
+        }
+
+        public bool IsDown()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.S)
+                && PreviousKeyboardState.IsKeyUp(Keys.S);
+        }
+
+        public bool IsUp()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.W)
+                && PreviousKeyboardState.IsKeyUp(Keys.W);
+        }
+
+        public bool IsUpperLeft()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.Q)
+                && PreviousKeyboardState.IsKeyUp(Keys.Q);
+        }
+
+        public bool IsUpperRight()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.E)
+                && PreviousKeyboardState.IsKeyUp(Keys.E);
+        }
+
+        public bool IsLowerLeft()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.Z)
+                && PreviousKeyboardState.IsKeyUp(Keys.Z);
+        }
+
+        public bool IsLowerRight()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.C)
+                && PreviousKeyboardState.IsKeyUp(Keys.C);
         }
     }
 }
