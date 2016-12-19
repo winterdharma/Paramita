@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Paramita.Scenes
 {
-    public class MenuComponent
+    public class MenuComponent : Scene
     {
         SpriteFont spriteFont;
         readonly List<string> menuItems = new List<string>();
@@ -67,7 +67,8 @@ namespace Paramita.Scenes
 
 
 
-        public MenuComponent(SpriteFont spriteFont, Texture2D texture)
+        public MenuComponent(GameController game, SpriteFont spriteFont, Texture2D texture) 
+            : base(game)
         {
             mouseOver = false;
             this.spriteFont = spriteFont;
@@ -75,8 +76,8 @@ namespace Paramita.Scenes
         }
 
 
-        public MenuComponent(SpriteFont spriteFont, Texture2D texture, string[] menuItems)
-        : this(spriteFont, texture)
+        public MenuComponent(GameController game, SpriteFont spriteFont, Texture2D texture, string[] menuItems)
+        : this(game, spriteFont, texture)
         {
             selectedIndex = 0;
             foreach (string s in menuItems)
@@ -111,10 +112,10 @@ namespace Paramita.Scenes
         }
 
 
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
             Vector2 menuPosition = position;
-            Point p = InputDevices.MouseState.Position;
+            Point p = GameRef.InputDevices.CurrentMouseState.Position;
             Rectangle buttonRect;
             mouseOver = false;
 
@@ -129,13 +130,13 @@ namespace Paramita.Scenes
                 }
                 menuPosition.Y += texture.Height + 50;
             }
-            if (!mouseOver && (InputDevices.CheckKeyReleased(Keys.Up)))
+            if (!mouseOver && (GameRef.InputDevices.CheckKeyReleased(Keys.Up)))
             {
                 selectedIndex--;
                 if (selectedIndex < 0)
                     selectedIndex = menuItems.Count - 1;
             }
-            else if (!mouseOver && (InputDevices.CheckKeyReleased(Keys.Down)))
+            else if (!mouseOver && (GameRef.InputDevices.CheckKeyReleased(Keys.Down)))
             {
                 selectedIndex++;
                 if (selectedIndex > menuItems.Count - 1)

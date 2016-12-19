@@ -12,20 +12,11 @@
     public class Tile
     {
         //Tile coordinates
-        private int x;
-        private int y;
-
         public int X { get; private set; }
         public int Y { get; private set; }
 
 
         //Tile property flags
-        private TileType tileType; // symbol for the tile's graphical depiction
-        private bool isTransparent; // player can see through
-        private bool isWalkable; // player can walk over
-        private bool isInLineOfSight; // tile is in player's line of sight
-        private bool isExplored; // player has seen this tile
-
         public TileType TileType { get; private set; }
         public bool IsTransparent { get; private set; }
         public bool IsWalkable { get; private set; }

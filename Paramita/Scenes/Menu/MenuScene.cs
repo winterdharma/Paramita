@@ -36,7 +36,7 @@ namespace Paramita.Scenes
             background = Game.Content.Load<Texture2D>("menuscreen");
             Texture2D texture = Game.Content.Load<Texture2D>("wooden-button");
             string[] menuItems = { "NEW GAME", "CONTINUE", "OPTIONS", "EXIT" };
-            menuComponent = new MenuComponent(spriteFont, texture, menuItems);
+            menuComponent = new MenuComponent(GameRef, spriteFont, texture, menuItems);
             Vector2 position = new Vector2();
             position.Y = 90;
             position.X = 1200 - menuComponent.Width;
@@ -50,26 +50,27 @@ namespace Paramita.Scenes
         {
             menuComponent.Update(gameTime);
 
-            if (InputDevices.CheckKeyReleased(Keys.Space) || InputDevices.CheckKeyReleased(Keys.Enter) ||
-        (menuComponent.MouseOver && InputDevices.CheckMouseReleased(MouseButtons.Left)))
+            if (GameRef.InputDevices.CheckKeyReleased(Keys.Space) 
+                || GameRef.InputDevices.CheckKeyReleased(Keys.Enter) 
+                || (menuComponent.MouseOver && GameRef.InputDevices.CheckMouseReleased(MouseButtons.Left)))
             {
                 if (menuComponent.SelectedIndex == 0)
                 {
-                    InputDevices.FlushInput();
+                    GameRef.InputDevices.FlushInput();
                     GameRef.GameScene.SetUpNewGame();
                     GameRef.GameScene.StartGame();
                     manager.PushScene((GameScene)GameRef.GameScene, PlayerIndexInControl);
                 }
                 else if (menuComponent.SelectedIndex == 1)
                 {
-                    InputDevices.FlushInput();
+                    GameRef.InputDevices.FlushInput();
                     GameRef.GameScene.LoadSavedGame();
                     GameRef.GameScene.StartGame();
                     manager.PushScene((GameScene)GameRef.GameScene, PlayerIndexInControl);
                 }
                 else if (menuComponent.SelectedIndex == 2)
                 {
-                    InputDevices.FlushInput();
+                    GameRef.InputDevices.FlushInput();
                 }
                 else if (menuComponent.SelectedIndex == 3)
                 {

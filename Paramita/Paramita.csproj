@@ -42,6 +42,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Components\InputDevices.cs" />
+    <Compile Include="Scenes\Game\TileMapCreator.cs" />
     <Compile Include="Scenes\Menu\MenuComponent.cs" />
     <Compile Include="Scenes\Game\GameScene.cs" />
     <Compile Include="Scenes\Menu\MenuScene.cs" />
@@ -55,15 +56,15 @@
     <Compile Include="Scenes\Game\TileMap.cs" />
     <Compile Include="Scenes\Game\TileSet.cs" />
     <Compile Include="Scenes\Game\Camera.cs" />
-    <Compile Include="CombatManager.cs" />
-    <Compile Include="Enemy.cs" />
+    <Compile Include="SentientBeings\CombatManager.cs" />
+    <Compile Include="SentientBeings\Enemy.cs" />
     <Compile Include="GameController.cs" />
     <Compile Include="Global.cs" />
-    <Compile Include="PathToPlayer.cs" />
-    <Compile Include="Player.cs" />
+    <Compile Include="SentientBeings\PathToPlayer.cs" />
+    <Compile Include="SentientBeings\Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SentientBeing.cs" />
+    <Compile Include="SentientBeings\SentientBeing.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

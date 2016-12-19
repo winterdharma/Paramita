@@ -78,7 +78,7 @@ namespace Paramita.Scenes
                 case TileType.Floor :
                     return tilesheetRects[0, 5];
                 case TileType.Wall :
-                    return tilesheetRects[1, 6];
+                    return tilesheetRects[1, 5];
             }
 
             return tilesheetRects[7, 7];
