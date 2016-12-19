@@ -44,42 +44,58 @@ namespace Paramita.Scenes
         {
             Vector2 motion = Vector2.Zero;
 
-            if(InputDevices.KeyboardState.IsKeyDown(Keys.W) && InputDevices.KeyboardState.IsKeyDown(Keys.A))
+            if(InputDevices.KeyboardState.IsKeyDown(Keys.W) 
+                && InputDevices.PreviousKeyboardState.IsKeyUp(Keys.W) 
+                && InputDevices.KeyboardState.IsKeyDown(Keys.A) 
+                && InputDevices.PreviousKeyboardState.IsKeyUp(Keys.A))
             {
                 motion.X = -1; motion.Y = -1;
                 player.Sprite.CurrentAnimation = AnimationKey.WalkLeft;
             }
-            else if(InputDevices.KeyboardState.IsKeyDown(Keys.W) && InputDevices.KeyboardState.IsKeyDown(Keys.D))
+            else if(InputDevices.KeyboardState.IsKeyDown(Keys.W)
+                && InputDevices.PreviousKeyboardState.IsKeyUp(Keys.W)
+                && InputDevices.KeyboardState.IsKeyDown(Keys.D)
+                && InputDevices.PreviousKeyboardState.IsKeyUp(Keys.D))
             {
                 motion.X = 1; motion.Y = -1;
                 player.Sprite.CurrentAnimation = AnimationKey.WalkRight;
             }
-            else if(InputDevices.KeyboardState.IsKeyDown(Keys.S) && InputDevices.KeyboardState.IsKeyDown(Keys.A))
+            else if(InputDevices.KeyboardState.IsKeyDown(Keys.S) 
+                && InputDevices.PreviousKeyboardState.IsKeyUp(Keys.S)
+                && InputDevices.KeyboardState.IsKeyDown(Keys.A)
+                && InputDevices.PreviousKeyboardState.IsKeyUp(Keys.A))
             {
                 motion.X = -1; motion.Y = 1;
                 player.Sprite.CurrentAnimation = AnimationKey.WalkLeft;
             }
-            else if (InputDevices.KeyboardState.IsKeyDown(Keys.S) && InputDevices.KeyboardState.IsKeyDown(Keys.D))
+            else if (InputDevices.KeyboardState.IsKeyDown(Keys.S)
+                && InputDevices.PreviousKeyboardState.IsKeyUp(Keys.S)
+                && InputDevices.KeyboardState.IsKeyDown(Keys.D)
+                && InputDevices.PreviousKeyboardState.IsKeyUp(Keys.D))
             {
                 motion.X = 1; motion.Y = 1;
                 player.Sprite.CurrentAnimation = AnimationKey.WalkRight;
             }
-            else if (InputDevices.KeyboardState.IsKeyDown(Keys.W))
+            else if (InputDevices.KeyboardState.IsKeyDown(Keys.W) 
+                && InputDevices.PreviousKeyboardState.IsKeyUp(Keys.W))
             {
                 motion.Y = -1;
                 player.Sprite.CurrentAnimation = AnimationKey.WalkUp;
             }
-            else if (InputDevices.KeyboardState.IsKeyDown(Keys.S))
+            else if (InputDevices.KeyboardState.IsKeyDown(Keys.S)
+                && InputDevices.PreviousKeyboardState.IsKeyUp(Keys.S))
             {
                 motion.Y = 1;
                 player.Sprite.CurrentAnimation = AnimationKey.WalkDown;
             }
-            else if (InputDevices.KeyboardState.IsKeyDown(Keys.A))
+            else if (InputDevices.KeyboardState.IsKeyDown(Keys.A)
+                && InputDevices.PreviousKeyboardState.IsKeyUp(Keys.A))
             {
                 motion.X = -1;
                 player.Sprite.CurrentAnimation = AnimationKey.WalkLeft;
             }
-            else if (InputDevices.KeyboardState.IsKeyDown(Keys.D))
+            else if (InputDevices.KeyboardState.IsKeyDown(Keys.D)
+                && InputDevices.PreviousKeyboardState.IsKeyUp(Keys.D))
             {
                 motion.X = 1;
                 player.Sprite.CurrentAnimation = AnimationKey.WalkRight;
@@ -87,8 +103,8 @@ namespace Paramita.Scenes
 
             if(motion != Vector2.Zero)
             {
-                motion.Normalize();
-                motion *= player.Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                //motion.Normalize();
+                motion *= tileset.TileSize;
                 Vector2 newPosition = player.Sprite.Position + motion;
                 player.Sprite.Position = newPosition;
                 player.Sprite.IsAnimating = true;
@@ -145,8 +161,8 @@ namespace Paramita.Scenes
         {
             while (true)
             {
-                int x = Global.Random.Next(map.MapWidth-1);
-                int y = Global.Random.Next(map.MapHeight-1);
+                int x = random.Next(map.MapWidth-1);
+                int y = random.Next(map.MapHeight-1);
                 if (map.IsTileWalkable(x, y))
                 {
                     return map.GetTile(x, y);

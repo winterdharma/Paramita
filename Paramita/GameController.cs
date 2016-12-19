@@ -129,8 +129,7 @@ namespace Paramita
             GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
-            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend,
-                null,null,null,null,Global.Camera.Transformation);
+            
 
             //foreach(Cell c in _map.GetAllCells() )
             //{
@@ -171,7 +170,7 @@ namespace Paramita
             //    }
             //}
 
-            spriteBatch.End();
+            
             base.Draw(gameTime);
         }
 
