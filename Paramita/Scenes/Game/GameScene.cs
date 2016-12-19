@@ -16,7 +16,8 @@ namespace Paramita.Scenes
         Camera camera;
         Player player;
 
-
+        public TileMap Map { get; private set; }
+        public TileSet TileSet { get; private set; }
 
         public GameScene(GameController game) : base(game)
         {
@@ -36,67 +37,14 @@ namespace Paramita.Scenes
             
             
             Texture2D tileset1 = content.Load<Texture2D>("tileset1");
-            tileset = new TileSet("tileset1", tileset1, 8, 8, 32);
+            TileSet = new TileSet("tileset1", tileset1, 8, 8, 32);
         }
 
 
         public override void Update(GameTime gameTime)
         {
-            Vector2 motion = Vector2.Zero;
-
-            if(GameRef.InputDevices.IsUpperLeft())
-            {
-                motion.X = -1; motion.Y = -1;
-                player.Sprite.CurrentAnimation = AnimationKey.WalkLeft;
-            }
-            else if(GameRef.InputDevices.IsUpperRight())
-            {
-                motion.X = 1; motion.Y = -1;
-                player.Sprite.CurrentAnimation = AnimationKey.WalkRight;
-            }
-            else if(GameRef.InputDevices.IsLowerLeft())
-            {
-                motion.X = -1; motion.Y = 1;
-                player.Sprite.CurrentAnimation = AnimationKey.WalkLeft;
-            }
-            else if (GameRef.InputDevices.IsLowerRight())
-            {
-                motion.X = 1; motion.Y = 1;
-                player.Sprite.CurrentAnimation = AnimationKey.WalkRight;
-            }
-            else if (GameRef.InputDevices.IsUp())
-            {
-                motion.Y = -1;
-                player.Sprite.CurrentAnimation = AnimationKey.WalkUp;
-            }
-            else if (GameRef.InputDevices.IsDown())
-            {
-                motion.Y = 1;
-                player.Sprite.CurrentAnimation = AnimationKey.WalkDown;
-            }
-            else if (GameRef.InputDevices.IsRight())
-            {
-                motion.X = -1;
-                player.Sprite.CurrentAnimation = AnimationKey.WalkLeft;
-            }
-            else if (GameRef.InputDevices.IsLeft())
-            {
-                motion.X = 1;
-                player.Sprite.CurrentAnimation = AnimationKey.WalkRight;
-            }
-
-            if(motion != Vector2.Zero)
-            {
-                //motion.Normalize();
-                motion *= tileset.TileSize;
-                Vector2 newPosition = player.Sprite.Position + motion;
-                player.Sprite.Position = newPosition;
-                player.Sprite.IsAnimating = true;
-                player.Sprite.LockToMap(new Point(map.WidthInPixels, map.HeightInPixels));
-            }
-
-            camera.LockToSprite(map, player.Sprite, GameController.ScreenRectangle);
-            player.Sprite.Update(gameTime);
+            player.Update(gameTime);
+            camera.LockToSprite(Map, player.Sprite, GameController.ScreenRectangle);
 
             base.Update(gameTime);
         }
@@ -106,9 +54,9 @@ namespace Paramita.Scenes
         {
             base.Draw(gameTime);
 
-            if(map != null && camera != null)
+            if(Map != null && camera != null)
             {
-                map.Draw(gameTime, GameRef.SpriteBatch, camera);
+                Map.Draw(gameTime, GameRef.SpriteBatch, camera);
             }
 
             GameRef.SpriteBatch.Begin(
@@ -126,7 +74,7 @@ namespace Paramita.Scenes
             Texture2D tileTextures = GameRef.Content.Load<Texture2D>("tileset1");
             tileset = new TileSet("tileset1", tileTextures, 8, 8, 32);
             mapCreator = new TileMapCreator(80, 80, 10, 20, 10, random);
-            map = new TileMap(tileset, mapCreator.CreateMap(), 80, 80, "test-map");
+            Map = new TileMap(tileset, mapCreator.CreateMap(), 80, 80, "test-map");
 
             
             Texture2D spriteSheet = content.Load<Texture2D>("maleplayer");
@@ -145,11 +93,11 @@ namespace Paramita.Scenes
         {
             while (true)
             {
-                int x = random.Next(map.MapWidth-1);
-                int y = random.Next(map.MapHeight-1);
-                if (map.IsTileWalkable(x, y))
+                int x = random.Next(Map.MapWidth-1);
+                int y = random.Next(Map.MapHeight-1);
+                if (Map.IsTileWalkable(x, y))
                 {
-                    return map.GetTile(x, y);
+                    return Map.GetTile(x, y);
                 }
             }
         }
