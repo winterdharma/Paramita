@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Paramita.Components
+namespace Paramita.Mechanics
 {
     
         public enum MouseButtons
@@ -94,6 +94,32 @@ namespace Paramita.Components
             return false;
         }
 
+        /*
+         * This method checks for player movement input and returns a point
+         * representing the direction that was moved, if any, that can be
+         * used to adjust the current position to find the tile moved to.
+         */ 
+        public Compass MovedTo()
+        {
+            if (IsUp())
+                return Compass.North;
+            else if (IsDown())
+                return Compass.South;
+            else if (IsLeft())
+                return Compass.West;
+            else if (IsRight())
+                return Compass.East;
+            else if (IsUpperLeft())
+                return Compass.Northwest;
+            else if (IsUpperRight())
+                return Compass.Northeast;
+            else if (IsLowerLeft())
+                return Compass.Southwest;
+            else if (IsLowerRight())
+                return Compass.Southeast;
+
+            return Compass.None; 
+        }
 
         /*
          * These methods provide keymapping to movement directions on the keyboard.
@@ -102,14 +128,14 @@ namespace Paramita.Components
 
         public bool IsLeft()
         {
-            return CurrentKeyboardState.IsKeyDown(Keys.D)
-                && PreviousKeyboardState.IsKeyUp(Keys.D);
+            return CurrentKeyboardState.IsKeyDown(Keys.A)
+                && PreviousKeyboardState.IsKeyUp(Keys.A);
         }
 
         public bool IsRight()
         {
-            return CurrentKeyboardState.IsKeyDown(Keys.A)
-                && PreviousKeyboardState.IsKeyUp(Keys.A);
+            return CurrentKeyboardState.IsKeyDown(Keys.D)
+                && PreviousKeyboardState.IsKeyUp(Keys.D);
         }
 
         public bool IsDown()

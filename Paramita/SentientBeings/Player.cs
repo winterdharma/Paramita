@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Paramita.Components;
+using Paramita.Mechanics;
 using Paramita.Scenes;
 
 namespace Paramita.SentientBeings
@@ -11,7 +11,6 @@ namespace Paramita.SentientBeings
         private string name;
         private bool gender;
         private string mapName;
-        private Point tile;
         private AnimatedSprite sprite;
         private Texture2D texture;
         private Vector2 position;
@@ -20,6 +19,15 @@ namespace Paramita.SentientBeings
         {
             get { return sprite.Position; }
             set { sprite.Position = value; }
+        }
+
+        public Point CurrentTile {
+            get
+            {
+                return new Point(
+                    (int)Position.X / gameRef.GameScene.TileSet.TileSize,
+                    (int)Position.Y / gameRef.GameScene.TileSet.TileSize);
+            }
         }
 
         public AnimatedSprite Sprite
@@ -72,59 +80,46 @@ namespace Paramita.SentientBeings
 
         private void HandleInput()
         {
-            Vector2 motion = Vector2.Zero;
-
-            if (gameRef.InputDevices.IsUpperLeft())
-            {
-                motion.X = -1; motion.Y = -1;
-                Sprite.CurrentAnimation = AnimationKey.WalkLeft;
-            }
-            else if (gameRef.InputDevices.IsUpperRight())
-            {
-                motion.X = 1; motion.Y = -1;
-                Sprite.CurrentAnimation = AnimationKey.WalkRight;
-            }
-            else if (gameRef.InputDevices.IsLowerLeft())
-            {
-                motion.X = -1; motion.Y = 1;
-                Sprite.CurrentAnimation = AnimationKey.WalkLeft;
-            }
-            else if (gameRef.InputDevices.IsLowerRight())
-            {
-                motion.X = 1; motion.Y = 1;
-                Sprite.CurrentAnimation = AnimationKey.WalkRight;
-            }
-            else if (gameRef.InputDevices.IsUp())
-            {
-                motion.Y = -1;
+            // get the direction the player moved in (if any)
+            Facing = gameRef.InputDevices.MovedTo(); // Facing is in SentientBeing
+            
+            // set the animation according to the new facing
+            if(Facing == Compass.North)
                 Sprite.CurrentAnimation = AnimationKey.WalkUp;
-            }
-            else if (gameRef.InputDevices.IsDown())
-            {
-                motion.Y = 1;
+            else if(Facing == Compass.South)
                 Sprite.CurrentAnimation = AnimationKey.WalkDown;
-            }
-            else if (gameRef.InputDevices.IsRight())
-            {
-                motion.X = -1;
-                Sprite.CurrentAnimation = AnimationKey.WalkLeft;
-            }
-            else if (gameRef.InputDevices.IsLeft())
-            {
-                motion.X = 1;
+            else if(Facing == Compass.Northeast || Facing == Compass.East || Facing == Compass.Southeast)
                 Sprite.CurrentAnimation = AnimationKey.WalkRight;
+            else if(Facing == Compass.Northwest || Facing == Compass.West || Facing == Compass.Southwest)
+                Sprite.CurrentAnimation = AnimationKey.WalkLeft;
+
+            // declare the new position (in pixels), defaulted to zero (means no change)
+            Vector2 newPosition = Vector2.Zero;
+            // find the coordinates of the tile the player is trying to move to
+            Point newTile = CurrentTile + Direction.GetPoint(Facing);
+            // try to move there - if successful, the @newPosition has the sprite's new pixel coords
+            newPosition = TryToMoveTo(newTile);
+
+            // if there was a successful move, change the sprite's Position
+            if (newPosition != Vector2.Zero)
+                Sprite.Position = newPosition;
+           
+            Sprite.IsAnimating = false;  // turn off animations for now
+            
+            Sprite.LockToMap(new Point(gameRef.GameScene.Map.WidthInPixels, 
+                    gameRef.GameScene.Map.HeightInPixels));  // change the camera position
+        }
+
+        private Vector2 TryToMoveTo(Point destTile)
+        {
+            if(gameRef.GameScene.Map.GetTile(destTile.X,destTile.Y).IsWalkable == true)
+            {
+                return new Vector2(
+                    destTile.X * gameRef.GameScene.TileSet.TileSize,
+                    destTile.Y * gameRef.GameScene.TileSet.TileSize);
             }
 
-            if (motion != Vector2.Zero)
-            {
-                //motion.Normalize();
-                motion *= gameRef.GameScene.TileSet.TileSize;
-                Vector2 newPosition = Sprite.Position + motion;
-                Sprite.Position = newPosition;
-                Sprite.IsAnimating = true;
-                Sprite.LockToMap(new Point(gameRef.GameScene.Map.WidthInPixels, 
-                    gameRef.GameScene.Map.HeightInPixels));
-            }
+            return Vector2.Zero;
         }
 
 
