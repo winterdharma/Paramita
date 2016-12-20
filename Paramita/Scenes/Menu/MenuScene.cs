@@ -1,8 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Paramita.Components;
-using Paramita.Scenes;
+using Paramita.Mechanics;
 
 namespace Paramita.Scenes
 {

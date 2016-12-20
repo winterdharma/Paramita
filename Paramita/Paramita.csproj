@@ -41,7 +41,8 @@
     <StartupObject>Paramita.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Components\InputDevices.cs" />
+    <Compile Include="Mechanics\Direction.cs" />
+    <Compile Include="Mechanics\InputDevices.cs" />
     <Compile Include="Scenes\Game\TileMapCreator.cs" />
     <Compile Include="Scenes\Menu\MenuComponent.cs" />
     <Compile Include="Scenes\Game\GameScene.cs" />

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Paramita.Mechanics;
 using RogueSharp.DiceNotation;
 
 namespace Paramita.SentientBeings
@@ -22,6 +23,7 @@ namespace Paramita.SentientBeings
         public DiceExpression Damage { get; set; }
         public int Health { get; set; }
         public string Name { get; set; }
+        public Compass Facing { get; protected set; }
 
         public SentientBeing(GameController game) : base(game) { }
     }

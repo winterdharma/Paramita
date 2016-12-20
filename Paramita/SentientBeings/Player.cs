@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Paramita.Components;
+using Paramita.Mechanics;
 using Paramita.Scenes;
 
 namespace Paramita.SentientBeings
@@ -11,10 +11,8 @@ namespace Paramita.SentientBeings
         private string name;
         private bool gender;
         private string mapName;
-        private Point tile;
         private AnimatedSprite sprite;
         private Texture2D texture;
-        private float speed = 180f;
         private Vector2 position;
 
         public Vector2 Position
@@ -23,16 +21,20 @@ namespace Paramita.SentientBeings
             set { sprite.Position = value; }
         }
 
+        public Point CurrentTile {
+            get
+            {
+                return new Point(
+                    (int)Position.X / gameRef.GameScene.TileSet.TileSize,
+                    (int)Position.Y / gameRef.GameScene.TileSet.TileSize);
+            }
+        }
+
         public AnimatedSprite Sprite
         {
             get { return sprite; }
         }
 
-        public float Speed
-        {
-            get { return speed; }
-            set { speed = value; }
-        }
 
 
 
@@ -71,8 +73,55 @@ namespace Paramita.SentientBeings
 
         public override void Update(GameTime gameTime)
         {
+            HandleInput();
+            Sprite.Update(gameTime);
             base.Update(gameTime);
         }
+
+        private void HandleInput()
+        {
+            // get the direction the player moved in (if any)
+            Facing = gameRef.InputDevices.MovedTo(); // Facing is in SentientBeing
+            
+            // set the animation according to the new facing
+            if(Facing == Compass.North)
+                Sprite.CurrentAnimation = AnimationKey.WalkUp;
+            else if(Facing == Compass.South)
+                Sprite.CurrentAnimation = AnimationKey.WalkDown;
+            else if(Facing == Compass.Northeast || Facing == Compass.East || Facing == Compass.Southeast)
+                Sprite.CurrentAnimation = AnimationKey.WalkRight;
+            else if(Facing == Compass.Northwest || Facing == Compass.West || Facing == Compass.Southwest)
+                Sprite.CurrentAnimation = AnimationKey.WalkLeft;
+
+            // declare the new position (in pixels), defaulted to zero (means no change)
+            Vector2 newPosition = Vector2.Zero;
+            // find the coordinates of the tile the player is trying to move to
+            Point newTile = CurrentTile + Direction.GetPoint(Facing);
+            // try to move there - if successful, the @newPosition has the sprite's new pixel coords
+            newPosition = TryToMoveTo(newTile);
+
+            // if there was a successful move, change the sprite's Position
+            if (newPosition != Vector2.Zero)
+                Sprite.Position = newPosition;
+           
+            Sprite.IsAnimating = false;  // turn off animations for now
+            
+            Sprite.LockToMap(new Point(gameRef.GameScene.Map.WidthInPixels, 
+                    gameRef.GameScene.Map.HeightInPixels));  // change the camera position
+        }
+
+        private Vector2 TryToMoveTo(Point destTile)
+        {
+            if(gameRef.GameScene.Map.GetTile(destTile.X,destTile.Y).IsWalkable == true)
+            {
+                return new Vector2(
+                    destTile.X * gameRef.GameScene.TileSet.TileSize,
+                    destTile.Y * gameRef.GameScene.TileSet.TileSize);
+            }
+
+            return Vector2.Zero;
+        }
+
 
         public override void Draw( GameTime gameTime )
         {
