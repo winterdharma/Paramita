@@ -1,4 +1,7 @@
-﻿namespace Paramita.Scenes
+﻿using Paramita.Items;
+using System.Collections.Generic;
+
+namespace Paramita.Scenes
 {
 
     // These types are translated to a graphical equivalent when the TileMap is drawn to screen
@@ -9,7 +12,7 @@
         Floor
     }
 
-    public class Tile
+    public class Tile : IContainer
     {
         //Tile coordinates
         public int X { get; private set; }
@@ -23,7 +26,8 @@
         public bool IsInLineOfSight { get; private set; }
         public bool IsExplored { get; set; }
 
-
+        //The Items on the ground here
+        private List<Item> items;
 
         // full constructor with all properties provided
         public Tile(int x, int y, TileType type, bool isTransparent, bool isWalkable,
@@ -36,11 +40,35 @@
             IsWalkable = isWalkable;
             IsInLineOfSight = isInLos;
             IsExplored = isExplored;
+            items = new List<Item>();
         }
         
 
 
+        // Tiles will start with no limitations as containers
+        public bool AddItem(Item item)
+        {
+            items.Add(item);
+            return true;
+        }
 
+        // Returning null will means something went wrong (tried to remove
+        // something not actually present here).
+        public Item RemoveItem(Item item)
+        {
+            if(items.Remove(item) == true)
+            {
+                return item;
+            }
+            return null;
+        }
+
+
+        // Makes the items in this Tile visible to the caller
+        public Item[] InspectItems()
+        {
+            return items.ToArray();
+        }
 
         // this method redirects the standard ToString() call so a bool can be applied
         public override string ToString()
