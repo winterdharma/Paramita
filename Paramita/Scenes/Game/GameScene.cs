@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Paramita.Items.Weapons;
 using Paramita.SentientBeings;
 
 namespace Paramita.Scenes
@@ -9,8 +10,7 @@ namespace Paramita.Scenes
     {
         TileEngine engine = new TileEngine(GameController.ScreenRectangle, 32, 32);
         TileMapCreator mapCreator;
-        TileMap map;
-        TileSet tileset;
+        Texture2D item_sprites;
         Camera camera;
         Player player;
 
@@ -33,9 +33,6 @@ namespace Paramita.Scenes
         protected override void LoadContent()
         {
             
-            
-            Texture2D tileset1 = content.Load<Texture2D>("tileset1");
-            TileSet = new TileSet("tileset1", tileset1, 8, 8, 32);
         }
 
 
@@ -70,17 +67,23 @@ namespace Paramita.Scenes
         public void SetUpNewGame()
         {
             Texture2D tileTextures = GameRef.Content.Load<Texture2D>("tileset1");
-            tileset = new TileSet("tileset1", tileTextures, 8, 8, 32);
+            TileSet = new TileSet("tileset1", tileTextures, 8, 8, 32);
             mapCreator = new TileMapCreator(80, 80, 10, 20, 10, random);
-            Map = new TileMap(tileset, mapCreator.CreateMap(), 80, 80, "test-map");
+            Map = new TileMap(TileSet, mapCreator.CreateMap(), 80, 80, "test-map");
 
             
             Texture2D spriteSheet = content.Load<Texture2D>("maleplayer");
             player = new Player(GameRef, "Wesley", false, spriteSheet);
             Tile startTile = GetEmptyWalkableTile();
             player.Position = new Vector2(
-                startTile.X * tileset.TileSize,
-                startTile.Y * tileset.TileSize);
+                startTile.X * TileSet.TileSize,
+                startTile.Y * TileSet.TileSize);
+
+            item_sprites = content.Load<Texture2D>("item_sprites");
+            Rectangle textureRect = new Rectangle(0, 0, 32, 32);
+            ShortSword sword = new ShortSword(GameRef, item_sprites, textureRect, 
+                "Short Sword", "A short sword.");
+            GetEmptyWalkableTile().AddItem(sword);
 
             camera = new Camera();
         }

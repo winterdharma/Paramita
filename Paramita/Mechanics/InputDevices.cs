@@ -121,6 +121,14 @@ namespace Paramita.Mechanics
             return Compass.None; 
         }
 
+        public bool DroppedItem()
+        {
+            if (IsDropItem())
+                return true;
+
+            return false;
+        }
+
         /*
          * These methods provide keymapping to movement directions on the keyboard.
          * When checking for player movement input, call these methods.
@@ -172,6 +180,12 @@ namespace Paramita.Mechanics
         {
             return CurrentKeyboardState.IsKeyDown(Keys.C)
                 && PreviousKeyboardState.IsKeyUp(Keys.C);
+        }
+
+        public bool IsDropItem()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.Delete)
+                && PreviousKeyboardState.IsKeyUp(Keys.Delete);
         }
     }
 }

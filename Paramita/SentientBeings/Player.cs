@@ -1,19 +1,20 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Paramita.Items;
 using Paramita.Mechanics;
 using Paramita.Scenes;
 
 namespace Paramita.SentientBeings
 {
-    public class Player : SentientBeing
+    public class Player : SentientBeing, IContainer
     {
         private GameController gameRef;
         private string name;
         private bool gender;
-        private string mapName;
         private AnimatedSprite sprite;
         private Texture2D texture;
-        private Vector2 position;
+        private Item[] inventory;
 
         public Vector2 Position
         {
@@ -48,6 +49,7 @@ namespace Paramita.SentientBeings
             this.texture = texture;
             sprite = new AnimatedSprite(texture, gameRef.PlayerAnimations);
             sprite.CurrentAnimation = AnimationKey.WalkDown;
+            inventory = new Item[10];
         }
 
 
@@ -80,6 +82,10 @@ namespace Paramita.SentientBeings
 
         private void HandleInput()
         {
+            // check if item was dropped
+            if(gameRef.InputDevices.DroppedItem())
+                DropItem();
+
             // get the direction the player moved in (if any)
             Facing = gameRef.InputDevices.MovedTo(); // Facing is in SentientBeing
             
@@ -102,8 +108,15 @@ namespace Paramita.SentientBeings
 
             // if there was a successful move, change the sprite's Position
             if (newPosition != Vector2.Zero)
+            {
                 Sprite.Position = newPosition;
-           
+                if(gameRef.GameScene.Map.GetTile(CurrentTile.X, CurrentTile.Y).InspectItems().Length > 0)
+                {
+                    TryToPickUpItem();
+                }
+            }
+
+
             Sprite.IsAnimating = false;  // turn off animations for now
             
             Sprite.LockToMap(new Point(gameRef.GameScene.Map.WidthInPixels, 
@@ -122,11 +135,88 @@ namespace Paramita.SentientBeings
             return Vector2.Zero;
         }
 
+        private void TryToPickUpItem()
+        {
+            Tile tile = gameRef.GameScene.Map.GetTile(CurrentTile.X, CurrentTile.Y);
+            Item[] items = tile.InspectItems();
+            if(AddItem(items[0]))
+            {
+                tile.RemoveItem(items[0]);
+            }
+        }
+
+        private void DropItem()
+        {
+            Tile tile = gameRef.GameScene.Map.GetTile(CurrentTile);
+            Item item = RemoveItem(inventory[0]);
+            if (item != null)
+            {
+                Point dropPoint = CurrentTile + Direction.GetPoint(GetDirectionFacing(Sprite.CurrentAnimation));
+                gameRef.GameScene.Map.GetTile(dropPoint).AddItem(item);
+            }
+        }
+
+        private Compass GetDirectionFacing(AnimationKey currentAnimation)
+        {
+            switch(currentAnimation)
+            {
+                case AnimationKey.WalkUp:
+                    return Compass.North;
+                case AnimationKey.WalkDown:
+                    return Compass.South;
+                case AnimationKey.WalkLeft:
+                    return Compass.West;
+                case AnimationKey.WalkRight:
+                    return Compass.East;
+            }
+            return Compass.None;
+        }
 
         public override void Draw( GameTime gameTime )
         {
             base.Draw(gameTime);
         }
 
+
+
+
+
+
+
+
+        /*
+         * IContainer interface methods
+         */
+
+        public Item RemoveItem(Item item)
+        {
+            for(int x = 0; x < inventory.Length; x++)
+            {
+                if(inventory[x].Equals(item))
+                {
+                    inventory[x] = null;
+                    return item;
+                }
+            }
+            return null;
+        }
+
+        public bool AddItem(Item item)
+        {
+            for(int x = 0; x < inventory.Length; x++)
+            {
+                if(inventory[x] == null)
+                {
+                    inventory[x] = item;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public Item[] InspectItems()
+        {
+            return inventory;
+        }
     }
 }

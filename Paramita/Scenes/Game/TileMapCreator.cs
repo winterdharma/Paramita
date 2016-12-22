@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Paramita.Items.Weapons;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,6 +69,8 @@ namespace Paramita.Scenes
 
                 AddWallTiles(tiles);
             }
+
+            
 
             return tiles;
         }

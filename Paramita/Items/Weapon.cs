@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Paramita.Items
 {
@@ -8,8 +9,8 @@ namespace Paramita.Items
      */
     public abstract class Weapon : Item
     {
-        public Weapon(GameController game, Texture2D texture, string name, string description) 
-            : base(game, texture, name, description)
+        public Weapon(GameController game, Texture2D texture, Rectangle textureRect, string name, string description) 
+            : base(game, texture, textureRect, name, description)
         {
         }
     }
