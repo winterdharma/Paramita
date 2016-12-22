@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Paramita.Items;
 using System;
 using System.Collections.Generic;
 
@@ -83,6 +84,11 @@ namespace Paramita.Scenes
             return tiles[x, y];
         }
 
+        public Tile GetTile(Point coord)
+        {
+            return tiles[coord.X, coord.Y];
+        }
+
         // return the value of IsWalkable property on Tile at (x,y) on the map
         public bool IsTileWalkable(int x, int y)
         {
@@ -127,12 +133,21 @@ namespace Paramita.Scenes
                 for (int x = min.X; x < max.X; x++)
                 {
                     tile = GetTile(x, y);
+                    Item[] tileItems = tile.InspectItems();
                     destination.X = x * TileEngine.TileWidth;
                     spriteBatch.Draw(
                     TileSet.Texture,
                     destination,
                     TileSet.GetRectForTileType(tile.TileType),
                     Color.White);
+                    if(tileItems.Length > 0)
+                    {
+                        spriteBatch.Draw(
+                        tileItems[0].Texture,
+                        destination,
+                        tileItems[0].TextureRect,
+                        Color.White);
+                    }
                 }
             }
             spriteBatch.End();

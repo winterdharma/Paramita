@@ -38,3 +38,4 @@ C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\tileset
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\femaleplayer.xnb
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\maleplayer.xnb
 C:\Users\Charlie\Desktop\Paramita\Paramita\obj\x86\Debug\Paramita.csprojResolveAssemblyReference.cache
+C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\item_sprites.xnb
