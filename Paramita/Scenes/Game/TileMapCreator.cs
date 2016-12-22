@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Paramita.Scenes
 {
-    class TileMapCreator
+    public class TileMapCreator
     {
         private Random random;
         private int rows;

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <SourceFile>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/InterfaceFont.spritefont</SourceFile>
-  <SourceTime>2016-12-17T18:55:32.2600914-06:00</SourceTime>
+  <SourceTime>2016-12-21T20:21:02.3211467-06:00</SourceTime>
   <DestFile>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/bin/Windows/InterfaceFont.xnb</DestFile>
-  <DestTime>2016-12-17T19:29:20.1720813-06:00</DestTime>
+  <DestTime>2016-12-21T20:42:37.2972151-06:00</DestTime>
   <Importer>FontDescriptionImporter</Importer>
   <ImporterTime>2016-03-30T01:36:08-05:00</ImporterTime>
   <Processor>FontDescriptionProcessor</Processor>

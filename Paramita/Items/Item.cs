@@ -4,8 +4,9 @@ using System;
 
 namespace Paramita.Items
 {
-    public abstract class Item : DrawableGameComponent, IEquatable<Item>
+    public abstract class Item : IEquatable<Item>
     {
+        private static int counter;
         private int id; // used to identify specific items
 
         // private vector2 position; <= needed for drawing?
@@ -13,25 +14,16 @@ namespace Paramita.Items
         // Basic Properties all Items should have
         public Texture2D Texture { get; private set; }
         public Rectangle TextureRect { get; private set;}
-        public string Name { get; private set; }
-        public string Description { get; private set; }
-        
 
 
-        public Item(GameController game, Texture2D texture, Rectangle textureRect, string name, string description)
-            : base(game)
+        public Item(Texture2D texture, Rectangle textureRect)
         {
             Texture = texture;
             TextureRect = textureRect;
-            Name = name;
-            Description = description;
+            id = counter;
+            counter++;
         }
 
-
-        public override void Draw(GameTime gameTime)
-        {
-            base.Draw(gameTime);
-        }
 
 
         /*

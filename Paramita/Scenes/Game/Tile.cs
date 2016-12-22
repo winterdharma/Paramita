@@ -1,4 +1,5 @@
-﻿using Paramita.Items;
+﻿using Microsoft.Xna.Framework;
+using Paramita.Items;
 using System.Collections.Generic;
 
 namespace Paramita.Scenes
@@ -15,9 +16,7 @@ namespace Paramita.Scenes
     public class Tile : IContainer
     {
         //Tile coordinates
-        public int X { get; private set; }
-        public int Y { get; private set; }
-
+        public Point TilePoint { get; private set; }
 
         //Tile property flags
         public TileType TileType { get; private set; }
@@ -33,8 +32,7 @@ namespace Paramita.Scenes
         public Tile(int x, int y, TileType type, bool isTransparent, bool isWalkable,
             bool isInLos = false, bool isExplored = false)
         {
-            X = x;
-            Y = y;
+            TilePoint = new Point(x, y);
             TileType = type;
             IsTransparent = isTransparent;
             IsWalkable = isWalkable;
@@ -112,7 +110,7 @@ namespace Paramita.Scenes
             {
                 return true;
             }
-            return X == other.X && Y == other.Y && IsTransparent == other.IsTransparent && IsWalkable == other.IsWalkable && IsInLineOfSight == other.IsInLineOfSight && IsExplored == other.IsExplored;
+            return TilePoint == other.TilePoint && IsTransparent == other.IsTransparent && IsWalkable == other.IsWalkable && IsInLineOfSight == other.IsInLineOfSight && IsExplored == other.IsExplored;
         }
 
         /// <summary>
@@ -168,8 +166,8 @@ namespace Paramita.Scenes
         {
             unchecked
             {
-                var hashCode = X;
-                hashCode = (hashCode * 397) ^ Y;
+                var hashCode = TilePoint.X;
+                hashCode = (hashCode * 397) ^ TilePoint.Y;
                 hashCode = (hashCode * 397) ^ IsTransparent.GetHashCode();
                 hashCode = (hashCode * 397) ^ IsWalkable.GetHashCode();
                 hashCode = (hashCode * 397) ^ IsInLineOfSight.GetHashCode();

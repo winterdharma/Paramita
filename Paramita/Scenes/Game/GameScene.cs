@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Paramita.Items;
 using Paramita.Items.Weapons;
 using Paramita.SentientBeings;
 
@@ -8,14 +9,17 @@ namespace Paramita.Scenes
 
     public class GameScene : Scene
     {
-        TileEngine engine = new TileEngine(GameController.ScreenRectangle, 32, 32);
-        TileMapCreator mapCreator;
-        Texture2D item_sprites;
+        LevelManager levelManager;
+        ItemCreator itemCreator;
         Camera camera;
         Player player;
+        int levelNumber = 0;
+
+        private Texture2D tilesheet;
+        private Texture2D player_sprite;
+        private Texture2D item_sprites;
 
         public TileMap Map { get; private set; }
-        public TileSet TileSet { get; private set; }
 
         public GameScene(GameController game) : base(game)
         {
@@ -26,18 +30,25 @@ namespace Paramita.Scenes
 
         public override void Initialize()
         {
-            base.Initialize();
+            base.Initialize(); // This calls LoadContent()
+            itemCreator = new ItemCreator(item_sprites);
+            levelManager = new LevelManager(
+                new TileSet("tileset1", tilesheet, 8, 8, 32), 
+                GameController.random);
         }
 
 
         protected override void LoadContent()
         {
-            
+            tilesheet = content.Load<Texture2D>("tileset1");
+            item_sprites = content.Load<Texture2D>("item_sprites");
+            player_sprite = content.Load<Texture2D>("maleplayer");
         }
 
 
         public override void Update(GameTime gameTime)
         {
+            
             player.Update(gameTime);
             camera.LockToSprite(Map, player.Sprite, GameController.ScreenRectangle);
 
@@ -66,24 +77,15 @@ namespace Paramita.Scenes
 
         public void SetUpNewGame()
         {
-            Texture2D tileTextures = GameRef.Content.Load<Texture2D>("tileset1");
-            TileSet = new TileSet("tileset1", tileTextures, 8, 8, 32);
-            mapCreator = new TileMapCreator(80, 80, 10, 20, 10, random);
-            Map = new TileMap(TileSet, mapCreator.CreateMap(), 80, 80, "test-map");
+            Map = levelManager.CreateLevel(levelNumber);
+                
+            player = new Player(GameRef, "Wesley", false, player_sprite);
+            player.CurrentTile = GetEmptyWalkableTile();
 
-            
-            Texture2D spriteSheet = content.Load<Texture2D>("maleplayer");
-            player = new Player(GameRef, "Wesley", false, spriteSheet);
-            Tile startTile = GetEmptyWalkableTile();
-            player.Position = new Vector2(
-                startTile.X * TileSet.TileSize,
-                startTile.Y * TileSet.TileSize);
-
-            item_sprites = content.Load<Texture2D>("item_sprites");
-            Rectangle textureRect = new Rectangle(0, 0, 32, 32);
-            ShortSword sword = new ShortSword(GameRef, item_sprites, textureRect, 
-                "Short Sword", "A short sword.");
-            GetEmptyWalkableTile().AddItem(sword);
+            ShortSword sword1 = itemCreator.CreateShortSword();
+            ShortSword sword2 = itemCreator.CreateShortSword();
+            GetEmptyWalkableTile().AddItem(sword1);
+            GetEmptyWalkableTile().AddItem(sword2);
 
             camera = new Camera();
         }
@@ -94,11 +96,11 @@ namespace Paramita.Scenes
         {
             while (true)
             {
-                int x = random.Next(Map.MapWidth-1);
-                int y = random.Next(Map.MapHeight-1);
+                int x = GameController.random.Next(Map.TilesWide-1);
+                int y = GameController.random.Next(Map.TilesHigh-1);
                 if (Map.IsTileWalkable(x, y))
                 {
-                    return Map.GetTile(x, y);
+                    return Map.GetTile(new Point(x, y));
                 }
             }
         }
