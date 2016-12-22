@@ -21,8 +21,6 @@ namespace Paramita.Scenes
 
     public abstract partial class Scene : DrawableGameComponent
     {
-
-        protected static Random random = new Random();
         protected GameController GameRef;
 
         protected Scene tag;

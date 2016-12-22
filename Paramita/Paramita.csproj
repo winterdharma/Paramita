@@ -61,7 +61,7 @@
     <Compile Include="Scenes\Game\AnimatedSprite.cs" />
     <Compile Include="Scenes\Game\Animation.cs" />
     <Compile Include="Scenes\Game\Tile.cs" />
-    <Compile Include="Scenes\Game\TileEngine.cs" />
+    <Compile Include="Scenes\Game\LevelManager.cs" />
     <Compile Include="Scenes\Game\TileMap.cs" />
     <Compile Include="Scenes\Game\TileSet.cs" />
     <Compile Include="Scenes\Game\Camera.cs" />

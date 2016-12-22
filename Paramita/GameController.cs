@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Paramita.Mechanics;
 using Paramita.Scenes;
+using System;
 using System.Collections.Generic;
 
 namespace Paramita
@@ -12,6 +13,7 @@ namespace Paramita
     /// </summary>
     public class GameController : Game
     {
+        public static Random random = new Random();
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 

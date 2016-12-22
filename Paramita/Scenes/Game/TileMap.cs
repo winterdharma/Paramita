@@ -20,6 +20,7 @@ namespace Paramita.Scenes
         Point min;
         Point max;
         Rectangle destination;
+        Rectangle viewport = GameController.ScreenRectangle;
 
         
         [ContentSerializer]
@@ -31,15 +32,16 @@ namespace Paramita.Scenes
         // Number of tiles wide and high
         public int TilesWide { get; private set; }
         public int TilesHigh { get; private set; }
+        public int TileSize { get; private set; }
 
         // Size of map in pixels
         public int WidthInPixels
         {
-            get { return TilesWide * TileEngine.TileWidth; }
+            get { return TilesWide * TileSize; }
         }
         public int HeightInPixels
         {
-            get { return TilesHigh * TileEngine.TileHeight; }
+            get { return TilesHigh * TileSize; }
         }
 
 
@@ -51,6 +53,7 @@ namespace Paramita.Scenes
             TilesWide = width;
             TilesHigh = height;
             TileSet = tileSet;
+            TileSize = tileSet.TileSize;
             MapName = name;
             this.tiles = tiles; 
         }
@@ -71,8 +74,16 @@ namespace Paramita.Scenes
         public Vector2 GetTilePosition(Tile tile)
         {
             return new Vector2(
-                tile.TilePoint.X * TileSet.TileSize,
-                tile.TilePoint.Y * TileSet.TileSize);
+                tile.TilePoint.X * TileSize,
+                tile.TilePoint.Y * TileSize);
+        }
+
+        public Point PositionToTileCoords(Vector2 position)
+        {
+            return new Point(
+                (int)position.X / TileSize,
+                (int)position.Y / TileSize
+            );
         }
 
         // return the value of IsWalkable property on Tile at (x,y) on the map
@@ -91,11 +102,11 @@ namespace Paramita.Scenes
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
-            cameraPoint = TileEngine.PixelsToTileCoords(camera.Position);
-            viewPoint = TileEngine.PixelsToTileCoords(
+            cameraPoint = PositionToTileCoords(camera.Position);
+            viewPoint = PositionToTileCoords(
                 new Vector2(
-                    (camera.Position.X + TileEngine.ViewportRectangle.Width),
-                    (camera.Position.Y + TileEngine.ViewportRectangle.Height)
+                    (camera.Position.X + viewport.Width),
+                    (camera.Position.Y + viewport.Height)
                 )
             );
 
@@ -103,7 +114,7 @@ namespace Paramita.Scenes
             min.Y = Math.Max(0, cameraPoint.Y - 1);
             max.X = Math.Min(viewPoint.X + 1, TilesWide);
             max.Y = Math.Min(viewPoint.Y + 1, TilesHigh);
-            destination = new Rectangle(0, 0, TileEngine.TileWidth, TileEngine.TileHeight);
+            destination = new Rectangle(0, 0, TileSize, TileSize);
             Tile tile;
 
             spriteBatch.Begin(
@@ -115,12 +126,12 @@ namespace Paramita.Scenes
 
             for (int y = min.Y; y < max.Y; y++)
             {
-                destination.Y = y * TileEngine.TileHeight;
+                destination.Y = y * TileSize;
                 for (int x = min.X; x < max.X; x++)
                 {
                     tile = GetTile(new Point(x, y));
                     Item[] tileItems = tile.InspectItems();
-                    destination.X = x * TileEngine.TileWidth;
+                    destination.X = x * TileSize;
 
                     spriteBatch.Draw(
                     TileSet.Texture,
