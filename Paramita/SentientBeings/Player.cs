@@ -22,14 +22,7 @@ namespace Paramita.SentientBeings
             set { sprite.Position = value; }
         }
 
-        public Point CurrentTile {
-            get
-            {
-                return new Point(
-                    (int)Position.X / gameRef.GameScene.TileSet.TileSize,
-                    (int)Position.Y / gameRef.GameScene.TileSet.TileSize);
-            }
-        }
+        public Tile CurrentTile { get; set; }
 
         public AnimatedSprite Sprite
         {
@@ -50,6 +43,7 @@ namespace Paramita.SentientBeings
             sprite = new AnimatedSprite(texture, gameRef.PlayerAnimations);
             sprite.CurrentAnimation = AnimationKey.WalkDown;
             inventory = new Item[10];
+            sprite.IsAnimating = false;
         }
 
 
@@ -76,9 +70,11 @@ namespace Paramita.SentientBeings
         public override void Update(GameTime gameTime)
         {
             HandleInput();
+            Position = gameRef.GameScene.Map.GetTilePosition(CurrentTile);
             Sprite.Update(gameTime);
             base.Update(gameTime);
         }
+
 
         private void HandleInput()
         {
@@ -99,45 +95,32 @@ namespace Paramita.SentientBeings
             else if(Facing == Compass.Northwest || Facing == Compass.West || Facing == Compass.Southwest)
                 Sprite.CurrentAnimation = AnimationKey.WalkLeft;
 
-            // declare the new position (in pixels), defaulted to zero (means no change)
-            Vector2 newPosition = Vector2.Zero;
             // find the coordinates of the tile the player is trying to move to
-            Point newTile = CurrentTile + Direction.GetPoint(Facing);
-            // try to move there - if successful, the @newPosition has the sprite's new pixel coords
-            newPosition = TryToMoveTo(newTile);
-
-            // if there was a successful move, change the sprite's Position
-            if (newPosition != Vector2.Zero)
+            Point newTile = CurrentTile.TilePoint + Direction.GetPoint(Facing);
+            // try to move there - if successful, update the CurrentTile and check for items picked up
+            if(TryToMoveTo(newTile))
             {
-                Sprite.Position = newPosition;
-                if(gameRef.GameScene.Map.GetTile(CurrentTile.X, CurrentTile.Y).InspectItems().Length > 0)
-                {
+                CurrentTile = gameRef.GameScene.Map.GetTile(newTile);
+                if(gameRef.GameScene.Map.GetTile(CurrentTile.TilePoint).InspectItems().Length > 0)
                     TryToPickUpItem();
-                }
             }
-
-
-            Sprite.IsAnimating = false;  // turn off animations for now
             
             Sprite.LockToMap(new Point(gameRef.GameScene.Map.WidthInPixels, 
                     gameRef.GameScene.Map.HeightInPixels));  // change the camera position
         }
 
-        private Vector2 TryToMoveTo(Point destTile)
+        private bool TryToMoveTo(Point destTile)
         {
-            if(gameRef.GameScene.Map.GetTile(destTile.X,destTile.Y).IsWalkable == true)
+            if(gameRef.GameScene.Map.GetTile(destTile).IsWalkable == true)
             {
-                return new Vector2(
-                    destTile.X * gameRef.GameScene.TileSet.TileSize,
-                    destTile.Y * gameRef.GameScene.TileSet.TileSize);
+                return true;
             }
-
-            return Vector2.Zero;
+            return false;
         }
 
         private void TryToPickUpItem()
         {
-            Tile tile = gameRef.GameScene.Map.GetTile(CurrentTile.X, CurrentTile.Y);
+            Tile tile = gameRef.GameScene.Map.GetTile(CurrentTile.TilePoint);
             Item[] items = tile.InspectItems();
             if(AddItem(items[0]))
             {
@@ -147,11 +130,11 @@ namespace Paramita.SentientBeings
 
         private void DropItem()
         {
-            Tile tile = gameRef.GameScene.Map.GetTile(CurrentTile);
+            Tile tile = gameRef.GameScene.Map.GetTile(CurrentTile.TilePoint);
             Item item = RemoveItem(inventory[0]);
             if (item != null)
             {
-                Point dropPoint = CurrentTile + Direction.GetPoint(GetDirectionFacing(Sprite.CurrentAnimation));
+                Point dropPoint = CurrentTile.TilePoint + Direction.GetPoint(GetDirectionFacing(Sprite.CurrentAnimation));
                 gameRef.GameScene.Map.GetTile(dropPoint).AddItem(item);
             }
         }

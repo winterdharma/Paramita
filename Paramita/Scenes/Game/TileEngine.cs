@@ -4,14 +4,17 @@ using System;
 
 namespace Paramita.Scenes
 {
+    /*
+     * This class will become a LevelManager that handles the saving of TileMaps
+     * as they are created and handles level transitions.
+     */
+
     public class TileEngine
     {
         private static Rectangle viewPortRectangle;
         private static int tileWidth = 32;
         private static int tileHeight = 32;
         private TileMap map;
-        private static float scrollSpeed = 500f;
-        private static Camera camera;
 
 
         public static int TileWidth
@@ -36,11 +39,6 @@ namespace Paramita.Scenes
             get { return viewPortRectangle; }
             set { viewPortRectangle = value; }
         }
-
-        public static Camera Camera
-        {
-            get { return camera; }
-        }
         
 
 
@@ -48,7 +46,6 @@ namespace Paramita.Scenes
         public TileEngine(Rectangle viewPort)
         {
             ViewportRectangle = viewPort;
-            camera = new Camera();
         }
 
         public TileEngine(Rectangle viewPort, int tileWidth, int tileHeight) : this(viewPort)
@@ -87,7 +84,6 @@ namespace Paramita.Scenes
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            Map.Draw(gameTime, spriteBatch, camera);
         }
     }
 }

@@ -29,17 +29,17 @@ namespace Paramita.Scenes
         public TileSet TileSet { get; set; }
 
         // Number of tiles wide and high
-        public int MapWidth { get; private set; }
-        public int MapHeight { get; private set; }
+        public int TilesWide { get; private set; }
+        public int TilesHigh { get; private set; }
 
         // Size of map in pixels
         public int WidthInPixels
         {
-            get { return MapWidth * TileEngine.TileWidth; }
+            get { return TilesWide * TileEngine.TileWidth; }
         }
         public int HeightInPixels
         {
-            get { return MapHeight * TileEngine.TileHeight; }
+            get { return TilesHigh * TileEngine.TileHeight; }
         }
 
 
@@ -48,45 +48,31 @@ namespace Paramita.Scenes
 
         public TileMap(TileSet tileSet, Tile[,] tiles, int width, int height, string name)
         {
-            MapWidth = width;
-            MapHeight = height;
+            TilesWide = width;
+            TilesHigh = height;
             TileSet = tileSet;
             MapName = name;
             this.tiles = tiles; 
-            //tiles = PopulateTiles(MapWidth, MapHeight);
         }
 
 
 
 
-        private Tile[,] PopulateTiles(int cols, int rows)
+        public void SetTile(Point coord, Tile newTile)
         {
-            Tile[,] tiles = new Tile[cols, rows];
-            for(int x = 0; x < cols; x++)
-            {
-                for(int y = 0; y < rows; y++ )
-                {
-                    tiles[x, y] = new Tile(x, y, TileType.Floor, true, true);
-                }
-            }
-
-            return tiles;
-        }
-
-        public void SetTile(int x, int y, Tile newTile)
-        {
-            tiles[x, y] = newTile;
-        }
-
-
-        public Tile GetTile(int x, int y)
-        {
-            return tiles[x, y];
+            tiles[coord.X, coord.Y] = newTile;
         }
 
         public Tile GetTile(Point coord)
         {
             return tiles[coord.X, coord.Y];
+        }
+
+        public Vector2 GetTilePosition(Tile tile)
+        {
+            return new Vector2(
+                tile.TilePoint.X * TileSet.TileSize,
+                tile.TilePoint.Y * TileSet.TileSize);
         }
 
         // return the value of IsWalkable property on Tile at (x,y) on the map
@@ -115,8 +101,8 @@ namespace Paramita.Scenes
 
             min.X = Math.Max(0, cameraPoint.X - 1);
             min.Y = Math.Max(0, cameraPoint.Y - 1);
-            max.X = Math.Min(viewPoint.X + 1, MapWidth);
-            max.Y = Math.Min(viewPoint.Y + 1, MapHeight);
+            max.X = Math.Min(viewPoint.X + 1, TilesWide);
+            max.Y = Math.Min(viewPoint.Y + 1, TilesHigh);
             destination = new Rectangle(0, 0, TileEngine.TileWidth, TileEngine.TileHeight);
             Tile tile;
 
@@ -132,14 +118,16 @@ namespace Paramita.Scenes
                 destination.Y = y * TileEngine.TileHeight;
                 for (int x = min.X; x < max.X; x++)
                 {
-                    tile = GetTile(x, y);
+                    tile = GetTile(new Point(x, y));
                     Item[] tileItems = tile.InspectItems();
                     destination.X = x * TileEngine.TileWidth;
+
                     spriteBatch.Draw(
                     TileSet.Texture,
                     destination,
                     TileSet.GetRectForTileType(tile.TileType),
                     Color.White);
+
                     if(tileItems.Length > 0)
                     {
                         spriteBatch.Draw(

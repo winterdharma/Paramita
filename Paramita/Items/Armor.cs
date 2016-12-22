@@ -11,8 +11,8 @@ namespace Paramita.Items
      */
     public abstract class Armor : Item
     {
-        public Armor(GameController game, Texture2D texture, Rectangle textureRect, string name, string description) 
-            : base(game, texture, textureRect, name, description)
+        public Armor(Texture2D texture, Rectangle rect, string name, string description) 
+            : base(texture, rect)
         {
         }
     }

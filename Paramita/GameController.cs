@@ -14,7 +14,6 @@ namespace Paramita
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        InputDevices inputDevices;
 
         Dictionary<AnimationKey, Animation> playerAnimations = new Dictionary<AnimationKey, Animation>();
 
@@ -38,6 +37,7 @@ namespace Paramita
         public GameController()
         {
             graphics = new GraphicsDeviceManager(this);
+            
             Content.RootDirectory = "Content";
             ScreenRectangle = new Rectangle(0, 0, 1280, 720);
             graphics.PreferredBackBufferWidth = ScreenRectangle.Width;
@@ -52,6 +52,7 @@ namespace Paramita
             TitleScene = new TitleScene(this);
             MenuScene = new MenuScene(this);
             GameScene = new GameScene(this);
+            
 
             SceneManager.ChangeScene(TitleScene, PlayerIndex.One);
         }
@@ -73,6 +74,8 @@ namespace Paramita
             animation = new Animation(3, 32, 32, 0, 96);
             playerAnimations.Add(AnimationKey.WalkUp, animation);
 
+            GameScene.Initialize(); // this also calls GameScene.LoadContent()
+
             base.Initialize();
         }
 
@@ -83,16 +86,6 @@ namespace Paramita
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // TODO: use this.Content to load your game content here
-
-            //PathToPlayer pathFromEnemy = new PathToPlayer(_player, _map, Content.Load<Texture2D>("white"));
-            //pathFromEnemy.CreateFrom(startingCell.X, startingCell.Y);
-
-            //AddEnemies(10);
-            //Global.CombatManager = new CombatManager(_player, _enemies);
-            //UpdatePlayerFieldOfView();
-            //Global.GameState = OldGameStates.PlayerTurn;
         }
 
         /// <summary>
@@ -101,7 +94,7 @@ namespace Paramita
         /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
+            
         }
 
         /// <summary>

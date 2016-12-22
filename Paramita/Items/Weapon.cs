@@ -9,8 +9,8 @@ namespace Paramita.Items
      */
     public abstract class Weapon : Item
     {
-        public Weapon(GameController game, Texture2D texture, Rectangle textureRect, string name, string description) 
-            : base(game, texture, textureRect, name, description)
+        public Weapon(Texture2D texture, Rectangle rect) 
+            : base(texture, rect)
         {
         }
     }

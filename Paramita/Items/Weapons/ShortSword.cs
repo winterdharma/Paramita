@@ -3,12 +3,16 @@ using Microsoft.Xna.Framework;
 
 namespace Paramita.Items.Weapons
 {
-    class ShortSword : Weapon
+    public class ShortSword : Weapon
     {
-        public ShortSword(GameController game, Texture2D texture, Rectangle textureRect, string name, string description)
-            : base(game, texture, textureRect, name, description)
+        string name;
+        string description;
+        
+        public ShortSword(Texture2D texture, Rectangle rect, string name, string description)
+            : base(texture, rect)
         {
-
+            this.name = name;
+            this.description = description;
         }
     }
 }
