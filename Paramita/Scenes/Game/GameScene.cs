@@ -9,15 +9,20 @@ namespace Paramita.Scenes
 
     public class GameScene : Scene
     {
-        LevelManager levelManager;
-        ItemCreator itemCreator;
-        Camera camera;
-        Player player;
-        int levelNumber = 0;
+        private LevelManager levelManager;
+        private ItemCreator itemCreator;
+        private Camera camera;
+        private Player player;
+        private int levelNumber = 0;
 
         private Texture2D tilesheet;
         private Texture2D player_sprite;
         private Texture2D item_sprites;
+
+        public int LevelNumber {
+            get { return levelNumber; }
+            private set { levelNumber = value; }
+        }
 
         public TileMap Map { get; private set; }
 
@@ -31,9 +36,10 @@ namespace Paramita.Scenes
         public override void Initialize()
         {
             base.Initialize(); // This calls LoadContent()
+
             itemCreator = new ItemCreator(item_sprites);
             levelManager = new LevelManager(
-                new TileSet("tileset1", tilesheet, 8, 8, 32), 
+                new TileSet("tileset1", tilesheet, 8, 8, 32),
                 GameController.random);
         }
 
@@ -77,8 +83,7 @@ namespace Paramita.Scenes
 
         public void SetUpNewGame()
         {
-            Map = levelManager.CreateLevel(levelNumber);
-                
+            Map = levelManager.CreateLevel(levelNumber);    
             player = new Player(GameRef, "Wesley", false, player_sprite);
             player.CurrentTile = GetEmptyWalkableTile();
 
@@ -105,14 +110,46 @@ namespace Paramita.Scenes
             }
         }
 
+
+        // These methods handle moving between levels, up and down
+        public void GoUpOneLevel()
+        {
+            levelNumber--;
+            Map = levelManager.GetLevel(levelNumber);
+            player.CurrentTile = Map.FindStairsDownTile();
+        }
+
+
+        public void GoDownOneLevel()
+        {
+            TileMap nextLevel = null;
+            levelNumber++;
+            if (levelManager.GetLevels().Count == levelNumber)
+            {
+                nextLevel = levelManager.CreateLevel(levelNumber);
+            }
+            else
+            {
+                nextLevel = levelManager.GetLevel(levelNumber);
+            }
+
+            Map = nextLevel;
+            player.CurrentTile = Map.FindStairsUpTile();
+        }
+
+
+
+
+
+        // These are methods from tutorials that might be used in future
         public void LoadSavedGame()
         {
-
+            // not yet implemented
         }
 
         public void StartGame()
         {
-
+            // not yet implemented
         }
     }
 }

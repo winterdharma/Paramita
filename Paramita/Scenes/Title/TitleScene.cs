@@ -15,40 +15,49 @@ namespace Paramita.Scenes
         SpriteFont font;
         TimeSpan elapsed;
         Vector2 position;
-        string message;
+        string message = "PRESS SPACE TO CONTINUE";
 
 
 
 
-        public TitleScene(GameController game) : base(game)
-        {
-           
+        public TitleScene(GameController game) : base(game) {
+            // see Initialize() and LoadContent() for instantiation tasks
         }
 
 
 
-
+        /*
+         * Called once by GameController.Initialize() 
+         */
         public override void Initialize()
         {
-            backgroundDestination = GameController.ScreenRectangle;
-            elapsed = TimeSpan.Zero;
-            message = "PRESS SPACE TO CONTINUE";
+            base.Initialize(); // calls LoadContent()
 
-            base.Initialize();
+            backgroundDestination = GameController.ScreenRectangle;
+
+            // these variables are used to display the @message on the screen when Draw() is called
+            elapsed = TimeSpan.Zero;
+            Vector2 size = font.MeasureString(message);
+            position = new Vector2((GameController.ScreenRectangle.Width - size.X) / 2,
+                GameController.ScreenRectangle.Bottom - 50 - font.LineSpacing);
         }
 
+
+        /*
+         * Called once by base.Initialize()
+         */
         protected override void LoadContent()
         {
             background = content.Load<Texture2D>("titlescreen");
             font = content.Load<SpriteFont>("InterfaceFont");
-            Vector2 size = font.MeasureString(message);
-            position = new Vector2((GameController.ScreenRectangle.Width - size.X) / 2,
-            GameController.ScreenRectangle.Bottom - 50 - font.LineSpacing);
-
-            base.LoadContent();
         }
 
 
+
+        /* 
+         *  Called by GameController when this @Scene is the @CurrentScene in SceneManager
+         *  Watches for player input and triggers SceneManager to change to the MenuScene.
+         */
         public override void Update(GameTime gameTime)
         {
             PlayerIndex? index = null;
@@ -63,14 +72,28 @@ namespace Paramita.Scenes
 
             base.Update(gameTime);
         }
+
+
+
+        /* 
+         * Called by GameController when this @Scene is the @CurrentScene in SceneManager
+         *   Draws the @Scene to the screen.
+         */
         public override void Draw(GameTime gameTime)
         {
             GameRef.SpriteBatch.Begin();
+
             GameRef.SpriteBatch.Draw(background, backgroundDestination, Color.White);
+
+            // Causes the @message to slowly blink on and off by applying a Sine
+            // function to the alpha channel
             Color color = new Color(1f, 1f, 1f) *
             (float)Math.Abs(Math.Sin(elapsed.TotalSeconds * 2));
+
             GameRef.SpriteBatch.DrawString(font, message, position, color);
+
             GameRef.SpriteBatch.End();
+
             base.Draw(gameTime);
         }
     }

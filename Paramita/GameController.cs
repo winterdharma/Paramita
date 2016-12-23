@@ -59,6 +59,8 @@ namespace Paramita
             SceneManager.ChangeScene(TitleScene, PlayerIndex.One);
         }
 
+
+
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -76,6 +78,8 @@ namespace Paramita
             animation = new Animation(3, 32, 32, 0, 96);
             playerAnimations.Add(AnimationKey.WalkUp, animation);
 
+            TitleScene.Initialize();
+            MenuScene.Initialize();
             GameScene.Initialize(); // this also calls GameScene.LoadContent()
 
             base.Initialize();
@@ -90,6 +94,8 @@ namespace Paramita
             spriteBatch = new SpriteBatch(GraphicsDevice);
         }
 
+
+
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
         /// game-specific content.
@@ -98,6 +104,8 @@ namespace Paramita
         {
             
         }
+
+
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -109,98 +117,23 @@ namespace Paramita
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
                 Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
+            // check for user input
             InputDevices.Update(gameTime);
-            base.Update(gameTime);
+            // call Update() on the active @Scene object
+            SceneManager.CurrentScene.Update(gameTime);
         }
+
 
 
         /// This is called when the game should draw itself.
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            // clear the previous frame
             GraphicsDevice.Clear(Color.Black);
-
-            // TODO: Add your drawing code here
-            
-
-            //foreach(Cell c in _map.GetAllCells() )
-            //{
-            //    var position = new Vector2(c.X * Global.SpriteWidth, c.Y * Global.SpriteHeight);
-
-            //    if(c.IsExplored == false && Global.GameState != OldGameStates.Debugging)
-            //    {
-            //        continue;
-            //    }
-
-            //    Color tint = Color.White;
-
-            //    if (c.IsInFov == false && Global.GameState != OldGameStates.Debugging)
-            //    {
-            //        tint = Color.Gray;
-            //    }
-
-            //    Texture2D sprite;
-            //    if(c.IsWalkable == true)
-            //    {
-            //        sprite = _floor;
-            //    }
-            //    else
-            //    {
-            //        sprite = _wall;
-            //    }
-
-            //    spriteBatch.Draw(sprite, position,
-            //            null, null, null, 0.0f, Vector2.One,
-            //            tint, SpriteEffects.None, LayerDepth.Cells);
-            //}
-
-            //foreach (Enemy e in _enemies)
-            //{
-            //    if (Global.GameState == OldGameStates.Debugging || _map.IsInFov(e.X, e.Y))
-            //    {
-            //        e.Draw(spriteBatch);
-            //    }
-            //}
-
-            
-            base.Draw(gameTime);
+            // call Draw() on the active @Scene object
+            SceneManager.CurrentScene.Draw(gameTime);
         }
-
-        //private void UpdatePlayerFieldOfView()
-        //{
-        //    _map.ComputeFov(_player.X, _player.Y, 30, true);
-        //    foreach(Cell c in _map.GetAllCells())
-        //    {
-        //        if(_map.IsInFov(c.X, c.Y))
-        //        {
-        //            _map.SetCellProperties(c.X, c.Y, c.IsTransparent, c.IsWalkable, true);
-        //        }
-        //    }
-        //}
-
-        //private void AddEnemies(int numberOfEnemies)
-        //{
-        //    for (int i = 0; i < numberOfEnemies; i++)
-        //    {
-        //        // Find a new empty cell for each enemy
-        //        Cell enemyCell = GetRandomEmptyCell();
-        //        var pathFromEnemy =
-        //          new PathToPlayer(_player, _map, Content.Load<Texture2D>("White"));
-        //        pathFromEnemy.CreateFrom(enemyCell.X, enemyCell.Y);
-        //        var enemy = new Enemy(this, _map, pathFromEnemy)
-        //        {
-        //            X = enemyCell.X,
-        //            Y = enemyCell.Y,
-        //            //Sprite = Content.Load<Texture2D>("hound"),
-        //            ArmorClass = 10,
-        //            AttackBonus = 0,
-        //            Damage = Dice.Parse("d4"),
-        //            Health = 10,
-        //            Name = "Hell Hound"
-        //        };
-        //        // Add each enemy to list of enemies
-        //        _enemies.Add(enemy);
-        //    }
-        //}
     }
 }

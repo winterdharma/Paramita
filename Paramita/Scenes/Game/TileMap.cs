@@ -94,6 +94,37 @@ namespace Paramita.Scenes
         
 
 
+        // The next two methods are a refactoring candidate - leaving for now because searches are
+        // special cases at this point.
+
+        // conducts a linear search of @tiles and returns the first StairsDown tile encountered
+        public Tile FindStairsDownTile()
+        {
+            for(int x = 0; x < TilesWide; x++)
+            {
+                for(int y = 0; y < TilesHigh; y++)
+                {
+                    if (tiles[x, y].TileType == TileType.StairsDown)
+                        return tiles[x, y];
+                }
+            }
+            return null;
+        }
+
+        // conducts a linear search of @tiles and returns the first StairsUp tile encountered
+        public Tile FindStairsUpTile()
+        {
+            for (int x = 0; x < TilesWide; x++)
+            {
+                for (int y = 0; y < TilesHigh; y++)
+                {
+                    if (tiles[x, y].TileType == TileType.StairsUp)
+                        return tiles[x, y];
+                }
+            }
+            return null;
+        }
+
         public void Update(GameTime gameTime)
         {
             // implement in future if the map needs to change its tiles dynamically

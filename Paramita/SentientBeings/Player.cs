@@ -98,13 +98,15 @@ namespace Paramita.SentientBeings
             // find the coordinates of the tile the player is trying to move to
             Point newTile = CurrentTile.TilePoint + Direction.GetPoint(Facing);
             // try to move there - if successful, update the CurrentTile and check for items picked up
-            if(TryToMoveTo(newTile))
+            if(newTile != CurrentTile.TilePoint && TryToMoveTo(newTile))
             {
                 CurrentTile = gameRef.GameScene.Map.GetTile(newTile);
                 if(gameRef.GameScene.Map.GetTile(CurrentTile.TilePoint).InspectItems().Length > 0)
                     TryToPickUpItem();
+                if (CheckForStairsUp() == false)
+                    CheckForStairsDown();
             }
-            
+
             Sprite.LockToMap(new Point(gameRef.GameScene.Map.WidthInPixels, 
                     gameRef.GameScene.Map.HeightInPixels));  // change the camera position
         }
@@ -128,14 +130,29 @@ namespace Paramita.SentientBeings
             }
         }
 
+
+        private bool CheckForStairsUp()
+        {
+            if(CurrentTile.TileType == TileType.StairsUp && gameRef.GameScene.LevelNumber > 0)
+            {
+                gameRef.GameScene.GoUpOneLevel();
+                return true;
+            }
+            return false;
+        }
+
+        private void CheckForStairsDown()
+        {
+            if(CurrentTile.TileType == TileType.StairsDown)
+                gameRef.GameScene.GoDownOneLevel();
+        }
+
         private void DropItem()
         {
-            Tile tile = gameRef.GameScene.Map.GetTile(CurrentTile.TilePoint);
             Item item = RemoveItem(inventory[0]);
             if (item != null)
             {
-                Point dropPoint = CurrentTile.TilePoint + Direction.GetPoint(GetDirectionFacing(Sprite.CurrentAnimation));
-                gameRef.GameScene.Map.GetTile(dropPoint).AddItem(item);
+                CurrentTile.AddItem(item);
             }
         }
 
@@ -159,11 +176,6 @@ namespace Paramita.SentientBeings
         {
             base.Draw(gameTime);
         }
-
-
-
-
-
 
 
 

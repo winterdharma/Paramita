@@ -15,11 +15,11 @@ namespace Paramita.Scenes
         private int maxRoomSize;
         private int minRoomSize;
 
-        public TileMapCreator(int rows, int cols, int maxRooms, 
+        public TileMapCreator(int cols, int rows, int maxRooms, 
             int maxSize, int minSize, Random random)
         {
-            this.rows = rows;
             this.cols = cols;
+            this.rows = rows;
             this.maxRooms = maxRooms;
             maxRoomSize = maxSize;
             minRoomSize = minSize;
@@ -66,11 +66,13 @@ namespace Paramita.Scenes
                     MakeVerticalTunnel(tiles, previousRoomCenterY, currentRoomCenterY, previousRoomCenterX);
                     MakeHorizontalTunnel(tiles, previousRoomCenterX, currentRoomCenterX, currentRoomCenterY);
                 }
-
-                AddWallTiles(tiles);
+                
             }
 
-            
+            AddStairsTiles(rooms, tiles);
+
+
+            AddWallTiles(tiles);
 
             return tiles;
         }
@@ -105,12 +107,25 @@ namespace Paramita.Scenes
             }
         }
 
+
+        private void AddStairsTiles(List<Rectangle> rooms, Tile[,] tiles)
+        {
+            int roomCenterX = rooms[0].Center.X;
+            int roomCenterY = rooms[0].Center.Y;
+            tiles[roomCenterX, roomCenterY].SetTileType(TileType.StairsUp);
+
+            roomCenterX = rooms[rooms.Count - 1].Center.X;
+            roomCenterY = rooms[rooms.Count - 1].Center.Y;
+            tiles[roomCenterX, roomCenterY].SetTileType(TileType.StairsDown);
+
+        }
+
         // This method finds tiles that weren't rooms or tunnels and sets them to walls
         private void AddWallTiles(Tile[,] tiles)
         {
-            for(int x = 0; x < rows; x++)
+            for(int x = 0; x < cols; x++)
             {
-                for(int y = 0; y < cols; y++)
+                for(int y = 0; y < rows; y++)
                 {
                     if(tiles[x,y] == null)
                     {
