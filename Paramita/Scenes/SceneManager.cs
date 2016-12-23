@@ -52,7 +52,7 @@ namespace Paramita.Scenes
         {
             scenesStack.Push(state);
             state.PlayerIndexInControl = index;
-            Game.Components.Add(state);
+            //Game.Components.Add(state);
             SceneChanged += state.StateChanged;
         }
 

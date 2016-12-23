@@ -12,12 +12,11 @@ namespace Paramita.Scenes
 
     public class LevelManager
     {
-        private Dictionary<int, TileMap> levels = new Dictionary<int, TileMap>();
+        public Dictionary<int, TileMap> levels;
         private TileMap currentMap;
         private TileMapCreator mapCreator;
         private TileSet tileset;
 
-        public Dictionary<int, TileMap> Levels { get; private set; }
 
         public TileMap CurrentMap
         {
@@ -28,8 +27,9 @@ namespace Paramita.Scenes
 
         public LevelManager(TileSet tileset, Random random)
         {
-            mapCreator = new TileMapCreator(80, 80, 10, 20, 10, random);
+            mapCreator = new TileMapCreator(40, 25, 10, 20, 10, random);
             this.tileset = tileset;
+            levels = new Dictionary<int, TileMap>();
         }
 
        
@@ -37,7 +37,8 @@ namespace Paramita.Scenes
 
         public TileMap CreateLevel(int levelNumber)
         {
-            TileMap levelMap = new TileMap(tileset, mapCreator.CreateMap(), 80, 80, "test-map");
+            TileMap levelMap = new TileMap(tileset, mapCreator.CreateMap(), 40, 25, "test-map");
+            currentMap = levelMap;
             levels.Add(levelNumber, levelMap);
             return levelMap;
         }
@@ -47,17 +48,8 @@ namespace Paramita.Scenes
         {
             return levels[levelNumber];
         }
-        
 
-
-        public void Update(GameTime gameTime)
-        {
-            CurrentMap.Update(gameTime);
-        }
-
-
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
-        {
-        }
+        public Dictionary<int, TileMap> GetLevels()
+        { return levels; }
     }
 }

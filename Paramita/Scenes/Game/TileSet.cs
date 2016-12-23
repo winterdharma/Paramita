@@ -79,6 +79,10 @@ namespace Paramita.Scenes
                     return tilesheetRects[0, 5];
                 case TileType.Wall :
                     return tilesheetRects[1, 5];
+                case TileType.StairsUp:
+                    return tilesheetRects[2, 5];
+                case TileType.StairsDown:
+                    return tilesheetRects[3, 5];
             }
 
             return tilesheetRects[7, 7];

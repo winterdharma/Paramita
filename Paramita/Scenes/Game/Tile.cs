@@ -10,7 +10,9 @@ namespace Paramita.Scenes
     {
         Door,
         Wall,
-        Floor
+        Floor,
+        StairsUp,
+        StairsDown
     }
 
     public class Tile : IContainer
@@ -42,6 +44,10 @@ namespace Paramita.Scenes
         }
         
 
+        public void SetTileType(TileType newType)
+        {
+            TileType = newType;
+        }
 
         // Tiles will start with no limitations as containers
         public bool AddItem(Item item)
