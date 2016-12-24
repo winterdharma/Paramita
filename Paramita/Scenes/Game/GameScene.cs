@@ -10,7 +10,6 @@ namespace Paramita.Scenes
     public class GameScene : Scene
     {
         private LevelManager levelManager;
-        private ItemCreator itemCreator;
         private Camera camera;
         private Player player;
         private int levelNumber = 0;
@@ -24,11 +23,15 @@ namespace Paramita.Scenes
             private set { levelNumber = value; }
         }
 
-        public TileMap Map { get; private set; }
+        // This is simply an alias for LevelManager.CurrentMap 
+        public TileMap Map
+        {
+            get { return levelManager.CurrentMap; }
+        }
 
         public GameScene(GameController game) : base(game)
         {
-            
+            camera = new Camera();
         }
 
 
@@ -37,9 +40,12 @@ namespace Paramita.Scenes
         {
             base.Initialize(); // This calls LoadContent()
 
-            itemCreator = new ItemCreator(item_sprites);
+            player = new Player(GameRef, "Wesley", false, player_sprite);
+            player.Initialize();
+
             levelManager = new LevelManager(
                 new TileSet("tileset1", tilesheet, 8, 8, 32),
+                new ItemCreator(item_sprites),
                 GameController.random);
         }
 
@@ -81,18 +87,22 @@ namespace Paramita.Scenes
             GameRef.SpriteBatch.End();
         }
 
+
+
+        // This is called from the MenuScene and creates the first level.
+        // Currently, this is a simple test level. The item creation should
+        // be moved to the LevelManager when the level generation fully
+        // implemented.
         public void SetUpNewGame()
         {
-            Map = levelManager.CreateLevel(levelNumber);    
-            player = new Player(GameRef, "Wesley", false, player_sprite);
+            levelManager.CreateLevel(levelNumber);    
+            
             player.CurrentTile = GetEmptyWalkableTile();
 
-            ShortSword sword1 = itemCreator.CreateShortSword();
-            ShortSword sword2 = itemCreator.CreateShortSword();
+            ShortSword sword1 = levelManager.ItemCreator.CreateShortSword();
+            ShortSword sword2 = levelManager.ItemCreator.CreateShortSword();
             GetEmptyWalkableTile().AddItem(sword1);
             GetEmptyWalkableTile().AddItem(sword2);
-
-            camera = new Camera();
         }
 
         // returns a suitable starting tile for the player or enemy
@@ -111,29 +121,33 @@ namespace Paramita.Scenes
         }
 
 
-        // These methods handle moving between levels, up and down
+        // Sets LevelManager.CurrentMap to one level up and places the
+        // the player on a StairsDown tile (the first found with a linear search)
         public void GoUpOneLevel()
         {
             levelNumber--;
-            Map = levelManager.GetLevel(levelNumber);
+            levelManager.SetLevel(levelNumber);
             player.CurrentTile = Map.FindStairsDownTile();
         }
 
 
+
+        /*
+         * If the next level down has already been created:
+         *   Sets LevelManager.CurrentMap to one level up and places the
+         *   the player on a StairsDown tile (the first found with a linear search)
+         * Otherwise, creates a new level, sets it as LevelManager.CurrentMap
+         *   and places the player on the first StairsUp tile found
+         */
         public void GoDownOneLevel()
         {
-            TileMap nextLevel = null;
             levelNumber++;
-            if (levelManager.GetLevels().Count == levelNumber)
-            {
-                nextLevel = levelManager.CreateLevel(levelNumber);
-            }
-            else
-            {
-                nextLevel = levelManager.GetLevel(levelNumber);
-            }
 
-            Map = nextLevel;
+            if (levelManager.GetLevels().Count == levelNumber)
+                levelManager.CreateLevel(levelNumber);
+            else
+                levelManager.SetLevel(levelNumber);
+
             player.CurrentTile = Map.FindStairsUpTile();
         }
 
@@ -143,11 +157,6 @@ namespace Paramita.Scenes
 
         // These are methods from tutorials that might be used in future
         public void LoadSavedGame()
-        {
-            // not yet implemented
-        }
-
-        public void StartGame()
         {
             // not yet implemented
         }

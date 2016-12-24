@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework.Input;
 using Paramita.Mechanics;
 using Paramita.Scenes;
 using System;
-using System.Collections.Generic;
 
 namespace Paramita
 {
@@ -17,8 +16,6 @@ namespace Paramita
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        Dictionary<AnimationKey, Animation> playerAnimations = new Dictionary<AnimationKey, Animation>();
-
         public SpriteBatch SpriteBatch { get { return spriteBatch; } }
         public static Rectangle ScreenRectangle { get; private set; }
 
@@ -27,11 +24,6 @@ namespace Paramita
         public MenuScene MenuScene { get; private set; }
         public GameScene GameScene { get; private set; }
         public InputDevices InputDevices { get; private set; }
-
-        public Dictionary<AnimationKey, Animation> PlayerAnimations
-        {
-            get { return playerAnimations; }
-        }
 
 
 
@@ -55,7 +47,6 @@ namespace Paramita
             MenuScene = new MenuScene(this);
             GameScene = new GameScene(this);
             
-
             SceneManager.ChangeScene(TitleScene, PlayerIndex.One);
         }
 
@@ -69,15 +60,6 @@ namespace Paramita
         /// </summary>
         protected override void Initialize()
         {
-            Animation animation = new Animation(3, 32, 32, 0, 0);
-            playerAnimations.Add(AnimationKey.WalkDown, animation);
-            animation = new Animation(3, 32, 32, 0, 32);
-            playerAnimations.Add(AnimationKey.WalkLeft, animation);
-            animation = new Animation(3, 32, 32, 0, 64);
-            playerAnimations.Add(AnimationKey.WalkRight, animation);
-            animation = new Animation(3, 32, 32, 0, 96);
-            playerAnimations.Add(AnimationKey.WalkUp, animation);
-
             TitleScene.Initialize();
             MenuScene.Initialize();
             GameScene.Initialize(); // this also calls GameScene.LoadContent()
@@ -86,6 +68,7 @@ namespace Paramita
         }
 
         
+
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
         protected override void LoadContent()
