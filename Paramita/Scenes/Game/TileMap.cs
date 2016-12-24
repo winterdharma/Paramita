@@ -35,14 +35,7 @@ namespace Paramita.Scenes
         public int TileSize { get; private set; }
 
         // Size of map in pixels
-        public int WidthInPixels
-        {
-            get { return TilesWide * TileSize; }
-        }
-        public int HeightInPixels
-        {
-            get { return TilesHigh * TileSize; }
-        }
+        public Point MapSizeInPixels { get; private set; }
 
 
 
@@ -54,6 +47,7 @@ namespace Paramita.Scenes
             TilesHigh = height;
             TileSet = tileSet;
             TileSize = tileSet.TileSize;
+            MapSizeInPixels = new Point(width * tileSet.TileSize, height * tileSet.TileSize);
             MapName = name;
             this.tiles = tiles; 
         }

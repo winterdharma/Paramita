@@ -12,7 +12,7 @@ namespace Paramita.Scenes
         Texture2D background;
         SpriteFont spriteFont;
         MenuComponent menuComponent;
-
+        Texture2D button;
 
 
         public MenuScene(GameController game) : base(game)
@@ -25,21 +25,20 @@ namespace Paramita.Scenes
         public override void Initialize()
         {
             base.Initialize();
+
+            string[] menuItems = { "NEW GAME", "CONTINUE", "OPTIONS", "EXIT" };
+            Vector2 position = new Vector2();
+            position.Y = 90;
+            position.X = 1200 - button.Width;
+            menuComponent = new MenuComponent(GameRef, spriteFont, button, menuItems, position);
         }
 
 
         protected override void LoadContent()
         {
-            spriteFont = Game.Content.Load<SpriteFont>("InterfaceFont");
-
-            background = Game.Content.Load<Texture2D>("menuscreen");
-            Texture2D texture = Game.Content.Load<Texture2D>("wooden-button");
-            string[] menuItems = { "NEW GAME", "CONTINUE", "OPTIONS", "EXIT" };
-            menuComponent = new MenuComponent(GameRef, spriteFont, texture, menuItems);
-            Vector2 position = new Vector2();
-            position.Y = 90;
-            position.X = 1200 - menuComponent.Width;
-            menuComponent.Postion = position;
+            spriteFont = content.Load<SpriteFont>("InterfaceFont");
+            background = content.Load<Texture2D>("menuscreen");
+            button = content.Load<Texture2D>("wooden-button");
 
             base.LoadContent();
         }
@@ -49,24 +48,23 @@ namespace Paramita.Scenes
         {
             menuComponent.Update(gameTime);
 
-            if (GameRef.InputDevices.CheckKeyReleased(Keys.Space) 
-                || GameRef.InputDevices.CheckKeyReleased(Keys.Enter) 
-                || (menuComponent.MouseOver && GameRef.InputDevices.CheckMouseReleased(MouseButtons.Left)))
+            if (menuComponent.MouseOver 
+                && GameRef.InputDevices.CheckMouseReleased(MouseButtons.Left))
             {
                 if (menuComponent.SelectedIndex == 0)
                 {
                     GameRef.InputDevices.FlushInput();
                     GameRef.GameScene.SetUpNewGame();
-                    GameRef.GameScene.StartGame();
-                    manager.PushScene((GameScene)GameRef.GameScene, PlayerIndexInControl);
+                    manager.PushScene(GameRef.GameScene, PlayerIndexInControl);
                 }
+                // Loading saved games is not implemented yet
                 else if (menuComponent.SelectedIndex == 1)
                 {
                     GameRef.InputDevices.FlushInput();
                     GameRef.GameScene.LoadSavedGame();
-                    GameRef.GameScene.StartGame();
-                    manager.PushScene((GameScene)GameRef.GameScene, PlayerIndexInControl);
+                    manager.PushScene(GameRef.GameScene, PlayerIndexInControl);
                 }
+                // Options screen is not implemented yet
                 else if (menuComponent.SelectedIndex == 2)
                 {
                     GameRef.InputDevices.FlushInput();
@@ -83,12 +81,13 @@ namespace Paramita.Scenes
         public override void Draw(GameTime gameTime)
         {
             GameRef.SpriteBatch.Begin();
+
             GameRef.SpriteBatch.Draw(background, Vector2.Zero, Color.White);
-            GameRef.SpriteBatch.End();
-            base.Draw(gameTime);
-            GameRef.SpriteBatch.Begin();
             menuComponent.Draw(gameTime, GameRef.SpriteBatch);
+
             GameRef.SpriteBatch.End();
+
+            base.Draw(gameTime);
         }
     }
 }

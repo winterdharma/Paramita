@@ -4,18 +4,22 @@ using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items;
 using Paramita.Mechanics;
 using Paramita.Scenes;
+using System.Collections.Generic;
 
 namespace Paramita.SentientBeings
 {
     public class Player : SentientBeing, IContainer
     {
+        // private fields
         private GameController gameRef;
         private string name;
         private bool gender;
         private AnimatedSprite sprite;
         private Texture2D texture;
         private Item[] inventory;
+        Dictionary<AnimationKey, Animation> animations = new Dictionary<AnimationKey, Animation>();
 
+        // public properties
         public Vector2 Position
         {
             get { return sprite.Position; }
@@ -29,9 +33,13 @@ namespace Paramita.SentientBeings
             get { return sprite; }
         }
 
+        public Dictionary<AnimationKey, Animation> PlayerAnimations
+        {
+            get { return animations; }
+        }
 
 
-
+        // class constructors
         private Player(GameController game) : base(game) { }
 
         public Player(GameController game, string name, bool gender, Texture2D texture) : base(game)
@@ -40,25 +48,36 @@ namespace Paramita.SentientBeings
             this.name = name;
             this.gender = gender;
             this.texture = texture;
-            sprite = new AnimatedSprite(texture, gameRef.PlayerAnimations);
-            sprite.CurrentAnimation = AnimationKey.WalkDown;
+
             inventory = new Item[10];
-            sprite.IsAnimating = false;
         }
 
 
 
-
+        // Will be used when saved games are implemented
         public void SavePlayer() { }
 
-        public static Player Load(GameController game)
-        {
-            Player player = new Player(game);
-            return player;
-        }
+
+
 
         public override void Initialize()
         {
+            Animation animation = new Animation(3, 32, 32, 0, 0);
+            animations.Add(AnimationKey.WalkDown, animation);
+
+            animation = new Animation(3, 32, 32, 0, 32);
+            animations.Add(AnimationKey.WalkLeft, animation);
+
+            animation = new Animation(3, 32, 32, 0, 64);
+            animations.Add(AnimationKey.WalkRight, animation);
+
+            animation = new Animation(3, 32, 32, 0, 96);
+            animations.Add(AnimationKey.WalkUp, animation);
+
+            sprite = new AnimatedSprite(texture, PlayerAnimations);
+            sprite.CurrentAnimation = AnimationKey.WalkDown;
+            sprite.IsAnimating = false;
+
             base.Initialize();
         }
 
@@ -76,6 +95,7 @@ namespace Paramita.SentientBeings
         }
 
 
+        // This method polls InputDevices for player input and responds
         private void HandleInput()
         {
             // check if item was dropped
@@ -97,20 +117,23 @@ namespace Paramita.SentientBeings
 
             // find the coordinates of the tile the player is trying to move to
             Point newTile = CurrentTile.TilePoint + Direction.GetPoint(Facing);
-            // try to move there - if successful, update the CurrentTile and check for items picked up
-            if(newTile != CurrentTile.TilePoint && TryToMoveTo(newTile))
+
+            // try to move there - if successful, update Player.CurrentTile and check for events that are triggered
+            // by moving onto a tile
+            if(newTile != CurrentTile.TilePoint && TryToMoveTo(newTile) == true)
             {
                 CurrentTile = gameRef.GameScene.Map.GetTile(newTile);
-                if(gameRef.GameScene.Map.GetTile(CurrentTile.TilePoint).InspectItems().Length > 0)
-                    TryToPickUpItem();
-                if (CheckForStairsUp() == false)
-                    CheckForStairsDown();
+                CheckForNewTileEvents(CurrentTile);
             }
 
-            Sprite.LockToMap(new Point(gameRef.GameScene.Map.WidthInPixels, 
-                    gameRef.GameScene.Map.HeightInPixels));  // change the camera position
+            // keep the sprite within the bounds of the TileMap's size
+            Sprite.LockToMap(gameRef.GameScene.Map.MapSizeInPixels);
         }
 
+
+
+        // Checks to see if the player can move onto a new tile.
+        // Currently only checks for IsWalkable tiles.
         private bool TryToMoveTo(Point destTile)
         {
             if(gameRef.GameScene.Map.GetTile(destTile).IsWalkable == true)
@@ -120,33 +143,47 @@ namespace Paramita.SentientBeings
             return false;
         }
 
+
+        // This method is called immediately when CurrentTile is changed in Update() to check for
+        // any events that are triggered by the new tile, such as picking up items, changing levels, etc.
+        private void CheckForNewTileEvents(Tile newTile)
+        {
+            // check for items in the new time and pick any up that are present
+            if (newTile.InspectItems().Length > 0)
+                TryToPickUpItem();
+            // check for events based on moving onto TileTypes like StairsUp & StairsDown
+            CheckForTileTypeEvent(newTile.TileType);
+        }
+
+        // checks to see if there is an item to pick up and does so if one is there.
+        // used when player moves to a new tile.
         private void TryToPickUpItem()
         {
-            Tile tile = gameRef.GameScene.Map.GetTile(CurrentTile.TilePoint);
-            Item[] items = tile.InspectItems();
-            if(AddItem(items[0]))
+            Item[] items = CurrentTile.InspectItems();
+            if(AddItem(items[0]) == true)
             {
-                tile.RemoveItem(items[0]);
+                CurrentTile.RemoveItem(items[0]);
             }
         }
 
 
-        private bool CheckForStairsUp()
+        // Checks the TileType of Player.CurrentTile for any events that when moving to them
+        private void CheckForTileTypeEvent(TileType tileType)
         {
-            if(CurrentTile.TileType == TileType.StairsUp && gameRef.GameScene.LevelNumber > 0)
+            switch(tileType)
             {
-                gameRef.GameScene.GoUpOneLevel();
-                return true;
+                case TileType.StairsUp:
+                    if(gameRef.GameScene.LevelNumber > 0)
+                        gameRef.GameScene.GoUpOneLevel();
+                    break;
+                case TileType.StairsDown:
+                    gameRef.GameScene.GoDownOneLevel();
+                    break;
             }
-            return false;
         }
 
-        private void CheckForStairsDown()
-        {
-            if(CurrentTile.TileType == TileType.StairsDown)
-                gameRef.GameScene.GoDownOneLevel();
-        }
 
+        // Drops item onto the tile the player is located in. No item selection mechanism yet.
         private void DropItem()
         {
             Item item = RemoveItem(inventory[0]);

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <SourceFile>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/tileset1.png</SourceFile>
-  <SourceTime>2016-12-22T13:12:52.0457787-06:00</SourceTime>
+  <SourceTime>2016-12-23T00:05:34.9257673-06:00</SourceTime>
   <DestFile>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/bin/Windows/tileset1.xnb</DestFile>
-  <DestTime>2016-12-22T13:13:45.1508161-06:00</DestTime>
+  <DestTime>2016-12-23T14:16:32.1119315-06:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2016-03-30T01:36:08-05:00</ImporterTime>
   <Processor>TextureProcessor</Processor>
