@@ -96,8 +96,8 @@ namespace Paramita.Scenes
         // implemented.
         public void SetUpNewGame()
         {
-            levelManager.CreateLevel(levelNumber);    
-            
+            levelManager.CreateLevel(levelNumber);
+            levelManager.SetLevel(levelNumber);
             player.CurrentTile = GetEmptyWalkableTile();
 
             ShortSword sword1 = levelManager.ItemCreator.CreateShortSword();
@@ -122,34 +122,51 @@ namespace Paramita.Scenes
         }
 
 
-        // Sets LevelManager.CurrentMap to one level up and places the
-        // the player on a StairsDown tile (the first found with a linear search)
-        public void GoUpOneLevel()
+
+        /*
+         * Changes the current level given the TileType the player moved onto.
+         * Calls methods that respond to the TileType, sets the new Level, places
+         * the player on a starting tile, and sends a message to the status area.
+         */
+        public void ChangeLevel(TileType tileType)
         {
-            levelNumber--;
+            TileType startTile = TileType.StairsUp;
+
+            if (tileType == TileType.StairsUp)
+                startTile = GoUpOneLevel();
+            else if (tileType == TileType.StairsDown)
+                startTile = GoDownOneLevel();
+
             levelManager.SetLevel(levelNumber);
-            player.CurrentTile = Map.FindStairsDownTile();
+            player.CurrentTile = Map.FindTileType(startTile);
+            statuses.AddMessage("You are now on level " + levelNumber + ".");
         }
 
 
 
         /*
-         * If the next level down has already been created:
-         *   Sets LevelManager.CurrentMap to one level up and places the
-         *   the player on a StairsDown tile (the first found with a linear search)
-         * Otherwise, creates a new level, sets it as LevelManager.CurrentMap
-         *   and places the player on the first StairsUp tile found
+         * Decrements the levelNumber and returns StairsDown as the player's
+         * new starting tile type.
+         */ 
+        private TileType GoUpOneLevel()
+        {
+            levelNumber--;
+            return TileType.StairsDown;
+        }
+
+
+
+
+        /*
+         * Increments the levelNumber and creates a new level if none exists.
+         * Returns the player's new starting tile type.
          */
-        public void GoDownOneLevel()
+        private TileType GoDownOneLevel()
         {
             levelNumber++;
-
             if (levelManager.GetLevels().Count == levelNumber)
                 levelManager.CreateLevel(levelNumber);
-            else
-                levelManager.SetLevel(levelNumber);
-
-            player.CurrentTile = Map.FindStairsUpTile();
+            return TileType.StairsUp;
         }
 
 
