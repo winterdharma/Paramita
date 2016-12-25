@@ -36,15 +36,25 @@ namespace Paramita.Scenes
 
        
 
+        public void MoveToLevel(int levelNumber)
+        {
+            if(levels.ContainsKey(levelNumber) == false)
+            {
+                CreateLevel(levelNumber);
+            }
 
-        public void CreateLevel(int levelNumber)
+            SetLevel(levelNumber);
+        }
+
+        private void CreateLevel(int levelNumber)
         {
             TileMap levelMap = new TileMap(tileset, mapCreator.CreateMap(), 40, 25, "test-map");
             levels.Add(levelNumber, levelMap);
         }
+
         
 
-        public void SetLevel(int levelNumber)
+        private void SetLevel(int levelNumber)
         {
             CurrentMap = levels[levelNumber];
         }

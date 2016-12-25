@@ -13,7 +13,7 @@ namespace Paramita.Scenes
         private LevelManager levelManager;
         private Camera camera;
         private Player player;
-        private int levelNumber = 0;
+        private int levelNumber;
 
         private StatusMessages statuses;
 
@@ -28,11 +28,9 @@ namespace Paramita.Scenes
 
         public StatusMessages Statuses { get { return statuses; } }
 
-        // This is simply an alias for LevelManager.CurrentMap 
-        public TileMap Map
-        {
-            get { return levelManager.CurrentMap; }
-        }
+        public TileMap Map { get { return levelManager.CurrentMap; } }
+
+
 
         public GameScene(GameController game) : base(game)
         {
@@ -57,12 +55,14 @@ namespace Paramita.Scenes
         }
 
 
+
         protected override void LoadContent()
         {
             tilesheet = content.Load<Texture2D>("tileset1");
             item_sprites = content.Load<Texture2D>("item_sprites");
             player_sprite = content.Load<Texture2D>("maleplayer");
         }
+
 
 
         public override void Update(GameTime gameTime)
@@ -73,6 +73,7 @@ namespace Paramita.Scenes
 
             base.Update(gameTime);
         }
+
 
 
         public override void Draw(GameTime gameTime)
@@ -96,15 +97,15 @@ namespace Paramita.Scenes
         // implemented.
         public void SetUpNewGame()
         {
-            levelManager.CreateLevel(levelNumber);
-            levelManager.SetLevel(levelNumber);
-            player.CurrentTile = GetEmptyWalkableTile();
+            LevelNumber = 1;
+            levelManager.MoveToLevel(levelNumber);
+            player.CurrentTile = Map.FindTileType(TileType.StairsUp);
 
-            ShortSword sword1 = levelManager.ItemCreator.CreateShortSword();
-            ShortSword sword2 = levelManager.ItemCreator.CreateShortSword();
-            GetEmptyWalkableTile().AddItem(sword1);
-            GetEmptyWalkableTile().AddItem(sword2);
+            ShortSword sword = levelManager.ItemCreator.CreateShortSword();
+            GetEmptyWalkableTile().AddItem(sword);
         }
+
+
 
         // returns a suitable starting tile for the player or enemy
         // Does not check for empty state yet
@@ -128,48 +129,20 @@ namespace Paramita.Scenes
          * Calls methods that respond to the TileType, sets the new Level, places
          * the player on a starting tile, and sends a message to the status area.
          */
-        public void ChangeLevel(TileType tileType)
+        public void ChangeLevel(int change)
         {
+            levelNumber += change;
+
+            levelManager.MoveToLevel(levelNumber);
+
             TileType startTile = TileType.StairsUp;
 
-            if (tileType == TileType.StairsUp)
-                startTile = GoUpOneLevel();
-            else if (tileType == TileType.StairsDown)
-                startTile = GoDownOneLevel();
+            if (change < 0)
+                startTile = TileType.StairsDown;
 
-            levelManager.SetLevel(levelNumber);
             player.CurrentTile = Map.FindTileType(startTile);
             statuses.AddMessage("You are now on level " + levelNumber + ".");
         }
-
-
-
-        /*
-         * Decrements the levelNumber and returns StairsDown as the player's
-         * new starting tile type.
-         */ 
-        private TileType GoUpOneLevel()
-        {
-            levelNumber--;
-            return TileType.StairsDown;
-        }
-
-
-
-
-        /*
-         * Increments the levelNumber and creates a new level if none exists.
-         * Returns the player's new starting tile type.
-         */
-        private TileType GoDownOneLevel()
-        {
-            levelNumber++;
-            if (levelManager.GetLevels().Count == levelNumber)
-                levelManager.CreateLevel(levelNumber);
-            return TileType.StairsUp;
-        }
-
-
 
 
 
