@@ -103,6 +103,11 @@ namespace Paramita.Scenes
 
             ShortSword sword = levelManager.ItemCreator.CreateShortSword();
             GetEmptyWalkableTile().AddItem(sword);
+
+            var coins = levelManager.ItemCreator.CreateCoins(1);
+            GetEmptyWalkableTile().AddItem(coins);
+            coins = levelManager.ItemCreator.CreateCoins(100);
+            GetEmptyWalkableTile().AddItem(coins);
         }
 
 

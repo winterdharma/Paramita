@@ -5,6 +5,7 @@ using Paramita.Items;
 using Paramita.Mechanics;
 using Paramita.Scenes;
 using System.Collections.Generic;
+using Paramita.Items.Valuables;
 
 namespace Paramita.SentientBeings
 {
@@ -13,12 +14,15 @@ namespace Paramita.SentientBeings
         // private fields
         private GameScene gameScene;
         private InputDevices inputDevices;
+        private AnimatedSprite sprite;
+        Dictionary<AnimationKey, Animation> animations = new Dictionary<AnimationKey, Animation>();
+        private Texture2D texture;
+
         private string name;
         private bool gender;
-        private AnimatedSprite sprite;
-        private Texture2D texture;
         private Item[] inventory;
-        Dictionary<AnimationKey, Animation> animations = new Dictionary<AnimationKey, Animation>();
+        private int gold;
+        
 
         // public properties
         public Vector2 Position
@@ -37,6 +41,12 @@ namespace Paramita.SentientBeings
         public Dictionary<AnimationKey, Animation> PlayerAnimations
         {
             get { return animations; }
+        }
+
+        public int Gold
+        {
+            get { return gold; }
+            private set { gold = value; }
         }
 
 
@@ -161,10 +171,18 @@ namespace Paramita.SentientBeings
         private void TryToPickUpItem()
         {
             Item[] items = CurrentTile.InspectItems();
-            if(AddItem(items[0]) == true)
+
+            if (AddItem(items[0]) == true)
             {
                 CurrentTile.RemoveItem(items[0]);
-                gameScene.Statuses.AddMessage("You picked up a " + items[0].ToString() + ".");
+
+                if (items[0] is Coins)
+                {
+                    gameScene.Statuses.AddMessage("You picked up " + items[0].ToString() + ".");
+                    gameScene.Statuses.AddMessage("You now have " + Gold + " gold.");
+                }
+                else
+                    gameScene.Statuses.AddMessage("You picked up a " + items[0].ToString() + ".");
             }
         }
 
@@ -246,6 +264,13 @@ namespace Paramita.SentientBeings
 
         public bool AddItem(Item item)
         {
+            if(item is Coins)
+            {
+                var coins = item as Coins;
+                Gold = Gold + coins.Number;
+                return true;
+            }
+
             for(int x = 0; x < inventory.Length; x++)
             {
                 if(inventory[x] == null)
