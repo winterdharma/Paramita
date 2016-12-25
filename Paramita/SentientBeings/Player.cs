@@ -6,6 +6,7 @@ using Paramita.Mechanics;
 using Paramita.Scenes;
 using System.Collections.Generic;
 using Paramita.Items.Valuables;
+using Paramita.Items.Consumables;
 
 namespace Paramita.SentientBeings
 {
@@ -22,6 +23,7 @@ namespace Paramita.SentientBeings
         private bool gender;
         private Item[] inventory;
         private int gold;
+        private int sustanence;
         
 
         // public properties
@@ -49,6 +51,12 @@ namespace Paramita.SentientBeings
             private set { gold = value; }
         }
 
+        public int Sustanence
+        {
+            get { return sustanence; }
+            private set { sustanence = value; }
+        }
+
 
 
         public Player(GameController game, string name, bool gender, Texture2D texture) : base(game)
@@ -58,6 +66,8 @@ namespace Paramita.SentientBeings
             this.name = name;
             this.gender = gender;
             this.texture = texture;
+            Gold = 0;
+            sustanence = 240;
 
             inventory = new Item[10];
         }
@@ -127,6 +137,7 @@ namespace Paramita.SentientBeings
                 {
                     CurrentTile = newTile;
                     CheckForNewTileEvents();
+                    ExpendSustanence();
                 }
             }
         }
@@ -178,11 +189,16 @@ namespace Paramita.SentientBeings
 
                 if (items[0] is Coins)
                 {
-                    gameScene.Statuses.AddMessage("You picked up " + items[0].ToString() + ".");
-                    gameScene.Statuses.AddMessage("You now have " + Gold + " gold.");
+                    gameScene.PostNewStatus("You picked up " + items[0].ToString() + ".");
+                    gameScene.PostNewStatus("You now have " + Gold + " gold.");
+                }
+                else if(items[0] is Meat)
+                {
+                    gameScene.PostNewStatus("You picked up " + items[0].ToString() + ".");
+                    gameScene.PostNewStatus("You now have " + Sustanence + " calories of energy left.");
                 }
                 else
-                    gameScene.Statuses.AddMessage("You picked up a " + items[0].ToString() + ".");
+                    gameScene.PostNewStatus("You picked up a " + items[0].ToString() + ".");
             }
         }
 
@@ -203,6 +219,32 @@ namespace Paramita.SentientBeings
         }
 
 
+
+        private void ExpendSustanence()
+        {
+            Sustanence = Sustanence - 1;
+            string message = "";
+
+            if (Sustanence == 0)
+            {
+                message = "You died of starvation (0).";
+            }
+            else if (Sustanence == 30)
+            {
+                message = "You are starving and need to find food soon (30).";
+            }
+            else if(Sustanence == 120)
+            {
+                message = "You are getting hungry (120).";
+            }
+            
+            if(message != "")
+            {
+                gameScene.PostNewStatus(message);
+            }
+        }
+
+
         // Drops item onto the tile the player is located in. No item selection mechanism yet.
         private void DropItem()
         {
@@ -210,7 +252,7 @@ namespace Paramita.SentientBeings
             if (item != null)
             {
                 CurrentTile.AddItem(item);
-                gameScene.Statuses.AddMessage("You dropped a " + item.ToString() + ".");
+                gameScene.PostNewStatus("You dropped a " + item.ToString() + ".");
             }
         }
 
@@ -269,6 +311,12 @@ namespace Paramita.SentientBeings
                 var coins = item as Coins;
                 Gold = Gold + coins.Number;
                 return true;
+            }
+
+            if(item is Meat)
+            {
+                var meat = item as Meat;
+                Sustanence = Sustanence + meat.Sustanence;
             }
 
             for(int x = 0; x < inventory.Length; x++)

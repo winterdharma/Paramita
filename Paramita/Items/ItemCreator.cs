@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Paramita.Items.Consumables;
 using Paramita.Items.Valuables;
 using Paramita.Items.Weapons;
 
@@ -10,7 +11,7 @@ namespace Paramita.Items
         ShortSword = 0,
         SmallShield,
         Coins,
-        Food
+        Meat
     }
 
 
@@ -44,6 +45,14 @@ namespace Paramita.Items
         {
             return new Coins(spritesheet, spritesheetMap[(int)ItemType.Coins], 
                 "A quantity of gold coins.", number);
+        }
+
+
+
+        public Meat CreateMeat()
+        {
+            return new Meat(spritesheet, spritesheetMap[(int)ItemType.Meat],
+                "An edible chunk of salted shank.");
         }
     }
 }

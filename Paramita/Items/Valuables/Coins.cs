@@ -25,7 +25,7 @@ namespace Paramita.Items.Valuables
         public Coins(Texture2D texture, Rectangle rect, string description, int number) 
             : base(texture, rect)
         {
-            name = "Gold";
+            name = "Gold Coin";
             this.description = description;
             this.number = number;
         }
@@ -52,9 +52,9 @@ namespace Paramita.Items.Valuables
         public override string ToString()
         {
             if(number == 1)
-                return number + " Gold Coin";
+                return number + " " + name;
 
-            return number + " Gold Coins";
+            return number + " " + name + "s";
         }
     }
 }

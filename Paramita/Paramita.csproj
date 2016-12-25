@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Items\Armor.cs" />
     <Compile Include="Items\Consumable.cs" />
+    <Compile Include="Items\Consumables\Meat.cs" />
     <Compile Include="Items\IContainer.cs" />
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\ItemCreator.cs" />

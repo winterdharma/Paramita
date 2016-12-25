@@ -26,8 +26,6 @@ namespace Paramita.Scenes
             private set { levelNumber = value; }
         }
 
-        public StatusMessages Statuses { get { return statuses; } }
-
         public TileMap Map { get { return levelManager.CurrentMap; } }
 
 
@@ -155,6 +153,13 @@ namespace Paramita.Scenes
         public void LoadSavedGame()
         {
             // not yet implemented
+        }
+
+
+
+        public void PostNewStatus(string message)
+        {
+            statuses.AddMessage(message);
         }
     }
 }
