@@ -175,10 +175,10 @@ namespace Paramita.SentientBeings
             {
                 case TileType.StairsUp:
                     if(gameRef.GameScene.LevelNumber > 0)
-                        gameRef.GameScene.GoUpOneLevel();
+                        gameRef.GameScene.ChangeLevel(tileType);
                     break;
                 case TileType.StairsDown:
-                    gameRef.GameScene.GoDownOneLevel();
+                    gameRef.GameScene.ChangeLevel(tileType);
                     break;
             }
         }

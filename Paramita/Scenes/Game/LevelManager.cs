@@ -40,7 +40,6 @@ namespace Paramita.Scenes
         public void CreateLevel(int levelNumber)
         {
             TileMap levelMap = new TileMap(tileset, mapCreator.CreateMap(), 40, 25, "test-map");
-            currentMap = levelMap;
             levels.Add(levelNumber, levelMap);
         }
         

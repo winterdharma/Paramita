@@ -87,12 +87,23 @@ namespace Paramita.Scenes
         }
         
 
+        public Tile FindTileType(TileType type)
+        {
+            switch(type)
+            {
+                case TileType.StairsUp:
+                    return FindStairsUpTile();
+                case TileType.StairsDown:
+                    return FindStairsDownTile();
+            }
+            return null;
+        }
 
         // The next two methods are a refactoring candidate - leaving for now because searches are
         // special cases at this point.
 
         // conducts a linear search of @tiles and returns the first StairsDown tile encountered
-        public Tile FindStairsDownTile()
+        private Tile FindStairsDownTile()
         {
             for(int x = 0; x < TilesWide; x++)
             {
@@ -106,7 +117,7 @@ namespace Paramita.Scenes
         }
 
         // conducts a linear search of @tiles and returns the first StairsUp tile encountered
-        public Tile FindStairsUpTile()
+        private Tile FindStairsUpTile()
         {
             for (int x = 0; x < TilesWide; x++)
             {
