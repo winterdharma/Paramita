@@ -42,11 +42,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Items\Armor.cs" />
+    <Compile Include="Items\Armors\Shield.cs" />
     <Compile Include="Items\Consumable.cs" />
+    <Compile Include="Items\Consumables\Meat.cs" />
     <Compile Include="Items\IContainer.cs" />
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\ItemCreator.cs" />
     <Compile Include="Items\Valuable.cs" />
+    <Compile Include="Items\Valuables\Coins.cs" />
     <Compile Include="Items\Weapon.cs" />
     <Compile Include="Items\Weapons\ShortSword.cs" />
     <Compile Include="Mechanics\Direction.cs" />

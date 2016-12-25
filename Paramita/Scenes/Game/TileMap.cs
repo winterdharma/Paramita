@@ -54,16 +54,29 @@ namespace Paramita.Scenes
 
 
 
-
+        // Sets a specific Tile in tiles[,] to a new Tile
         public void SetTile(Point coord, Tile newTile)
         {
             tiles[coord.X, coord.Y] = newTile;
         }
 
+
+
+        // Returns the Tile in tiles[,] corresponding to the coord parameter
+        // or null if coord is outside the bounds of tiles[,]
         public Tile GetTile(Point coord)
         {
+            // return null, if coord is outside the TileMap's bounds
+            if (coord.X < 0 || coord.X > TilesWide - 1
+                || coord.Y < 0 || coord.Y > TilesHigh - 1)
+            {
+                return null;
+            }
+
             return tiles[coord.X, coord.Y];
         }
+
+
 
         public Vector2 GetTilePosition(Tile tile)
         {

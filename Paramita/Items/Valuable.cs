@@ -11,7 +11,7 @@ namespace Paramita.Items
      */
     public abstract class Valuable : Item
     {
-        public Valuable(Texture2D texture, Rectangle rect, string name, string description) 
+        public Valuable(Texture2D texture, Rectangle rect) 
             : base(texture, rect)
         {
         }

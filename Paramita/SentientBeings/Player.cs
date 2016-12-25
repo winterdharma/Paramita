@@ -5,19 +5,26 @@ using Paramita.Items;
 using Paramita.Mechanics;
 using Paramita.Scenes;
 using System.Collections.Generic;
+using Paramita.Items.Valuables;
+using Paramita.Items.Consumables;
 
 namespace Paramita.SentientBeings
 {
     public class Player : SentientBeing, IContainer
     {
         // private fields
-        private GameController gameRef;
+        private GameScene gameScene;
+        private InputDevices inputDevices;
+        private AnimatedSprite sprite;
+        Dictionary<AnimationKey, Animation> animations = new Dictionary<AnimationKey, Animation>();
+        private Texture2D texture;
+
         private string name;
         private bool gender;
-        private AnimatedSprite sprite;
-        private Texture2D texture;
         private Item[] inventory;
-        Dictionary<AnimationKey, Animation> animations = new Dictionary<AnimationKey, Animation>();
+        private int gold;
+        private int sustanence;
+        
 
         // public properties
         public Vector2 Position
@@ -38,16 +45,29 @@ namespace Paramita.SentientBeings
             get { return animations; }
         }
 
+        public int Gold
+        {
+            get { return gold; }
+            private set { gold = value; }
+        }
 
-        // class constructors
-        private Player(GameController game) : base(game) { }
+        public int Sustanence
+        {
+            get { return sustanence; }
+            private set { sustanence = value; }
+        }
+
+
 
         public Player(GameController game, string name, bool gender, Texture2D texture) : base(game)
         {
-            gameRef = game;
+            gameScene = game.GameScene;
+            inputDevices = game.InputDevices;
             this.name = name;
             this.gender = gender;
             this.texture = texture;
+            Gold = 0;
+            sustanence = 240;
 
             inventory = new Item[10];
         }
@@ -89,7 +109,7 @@ namespace Paramita.SentientBeings
         public override void Update(GameTime gameTime)
         {
             HandleInput();
-            Position = gameRef.GameScene.Map.GetTilePosition(CurrentTile);
+            Position = gameScene.Map.GetTilePosition(CurrentTile);
             Sprite.Update(gameTime);
             base.Update(gameTime);
         }
@@ -99,60 +119,62 @@ namespace Paramita.SentientBeings
         private void HandleInput()
         {
             // check if item was dropped
-            if(gameRef.InputDevices.DroppedItem())
+            if(inputDevices.DroppedItem() == true)
                 DropItem();
 
-            // get the direction the player moved in (if any)
-            Facing = gameRef.InputDevices.MovedTo(); // Facing is in SentientBeing
+            // check for movement input and store the direction returned
+            Facing = inputDevices.MovedTo();
             
+            // if the player attempted to move, update Player.CurrentAnimation
+            if(Facing != Compass.None)
+            {
+                // update the player's Sprite
+                SetCurrentAnimation(Facing);
+                // get the tile player is attempting to move to
+                Tile newTile = gameScene.Map.GetTile(
+                    CurrentTile.TilePoint + Direction.GetPoint(Facing));
+                if(newTile != null && newTile.IsWalkable == true)
+                {
+                    CurrentTile = newTile;
+                    CheckForNewTileEvents();
+                    ExpendSustanence();
+                }
+            }
+        }
+
+
+
+       /* 
+        * Sets Player.CurrentAnimation to something appropriate for the Compass direction passed to it
+        * Currently, the player animations are in four directions, but movement can be
+        * in eight directions.
+        */
+        private void SetCurrentAnimation(Compass facing)
+        {
             // set the animation according to the new facing
-            if(Facing == Compass.North)
+            if (Facing == Compass.North)
                 Sprite.CurrentAnimation = AnimationKey.WalkUp;
-            else if(Facing == Compass.South)
+            else if (Facing == Compass.South)
                 Sprite.CurrentAnimation = AnimationKey.WalkDown;
-            else if(Facing == Compass.Northeast || Facing == Compass.East || Facing == Compass.Southeast)
+            else if (Facing == Compass.Northeast || Facing == Compass.East || Facing == Compass.Southeast)
                 Sprite.CurrentAnimation = AnimationKey.WalkRight;
-            else if(Facing == Compass.Northwest || Facing == Compass.West || Facing == Compass.Southwest)
+            else if (Facing == Compass.Northwest || Facing == Compass.West || Facing == Compass.Southwest)
                 Sprite.CurrentAnimation = AnimationKey.WalkLeft;
-
-            // find the coordinates of the tile the player is trying to move to
-            Point newTile = CurrentTile.TilePoint + Direction.GetPoint(Facing);
-
-            // try to move there - if successful, update Player.CurrentTile and check for events that are triggered
-            // by moving onto a tile
-            if(newTile != CurrentTile.TilePoint && TryToMoveTo(newTile) == true)
-            {
-                CurrentTile = gameRef.GameScene.Map.GetTile(newTile);
-                CheckForNewTileEvents(CurrentTile);
-            }
-
-            // keep the sprite within the bounds of the TileMap's size
-            Sprite.LockToMap(gameRef.GameScene.Map.MapSizeInPixels);
         }
 
 
 
-        // Checks to see if the player can move onto a new tile.
-        // Currently only checks for IsWalkable tiles.
-        private bool TryToMoveTo(Point destTile)
+       /*  
+        *  This method is called immediately when CurrentTile is changed in Update() to check for
+        *  any events that are triggered by the new tile, such as picking up items, changing levels, etc.
+        */
+        private void CheckForNewTileEvents()
         {
-            if(gameRef.GameScene.Map.GetTile(destTile).IsWalkable == true)
-            {
-                return true;
-            }
-            return false;
-        }
-
-
-        // This method is called immediately when CurrentTile is changed in Update() to check for
-        // any events that are triggered by the new tile, such as picking up items, changing levels, etc.
-        private void CheckForNewTileEvents(Tile newTile)
-        {
-            // check for items in the new time and pick any up that are present
-            if (newTile.InspectItems().Length > 0)
+            // check for items in the new tile and pick the first item present
+            if (CurrentTile.InspectItems().Length > 0)
                 TryToPickUpItem();
-            // check for events based on moving onto TileTypes like StairsUp & StairsDown
-            CheckForTileTypeEvent(newTile.TileType);
+            // check for events based on moving to TileTypes like StairsUp & StairsDown
+            CheckForTileTypeEvent(CurrentTile.TileType);
         }
 
         // checks to see if there is an item to pick up and does so if one is there.
@@ -160,10 +182,23 @@ namespace Paramita.SentientBeings
         private void TryToPickUpItem()
         {
             Item[] items = CurrentTile.InspectItems();
-            if(AddItem(items[0]) == true)
+
+            if (AddItem(items[0]) == true)
             {
                 CurrentTile.RemoveItem(items[0]);
-                gameRef.GameScene.Statuses.AddMessage("You picked up a " + items[0].ToString() + ".");
+
+                if (items[0] is Coins)
+                {
+                    gameScene.PostNewStatus("You picked up " + items[0].ToString() + ".");
+                    gameScene.PostNewStatus("You now have " + Gold + " gold.");
+                }
+                else if(items[0] is Meat)
+                {
+                    gameScene.PostNewStatus("You picked up " + items[0].ToString() + ".");
+                    gameScene.PostNewStatus("You now have " + Sustanence + " calories of energy left.");
+                }
+                else
+                    gameScene.PostNewStatus("You picked up a " + items[0].ToString() + ".");
             }
         }
 
@@ -174,12 +209,38 @@ namespace Paramita.SentientBeings
             switch(tileType)
             {
                 case TileType.StairsUp:
-                    if(gameRef.GameScene.LevelNumber > 0)
-                        gameRef.GameScene.ChangeLevel(tileType);
+                    if(gameScene.LevelNumber > 1)
+                        gameScene.ChangeLevel(-1);
                     break;
                 case TileType.StairsDown:
-                    gameRef.GameScene.ChangeLevel(tileType);
+                    gameScene.ChangeLevel(1);
                     break;
+            }
+        }
+
+
+
+        private void ExpendSustanence()
+        {
+            Sustanence = Sustanence - 1;
+            string message = "";
+
+            if (Sustanence == 0)
+            {
+                message = "You died of starvation (0).";
+            }
+            else if (Sustanence == 30)
+            {
+                message = "You are starving and need to find food soon (30).";
+            }
+            else if(Sustanence == 120)
+            {
+                message = "You are getting hungry (120).";
+            }
+            
+            if(message != "")
+            {
+                gameScene.PostNewStatus(message);
             }
         }
 
@@ -191,7 +252,7 @@ namespace Paramita.SentientBeings
             if (item != null)
             {
                 CurrentTile.AddItem(item);
-                gameRef.GameScene.Statuses.AddMessage("You dropped a " + item.ToString() + ".");
+                gameScene.PostNewStatus("You dropped a " + item.ToString() + ".");
             }
         }
 
@@ -227,10 +288,9 @@ namespace Paramita.SentientBeings
 
 
 
-        /*
-         * IContainer interface methods
-         */
-
+       /*
+        * IContainer interface methods
+        */
         public Item RemoveItem(Item item)
         {
             for(int x = 0; x < inventory.Length; x++)
@@ -246,6 +306,19 @@ namespace Paramita.SentientBeings
 
         public bool AddItem(Item item)
         {
+            if(item is Coins)
+            {
+                var coins = item as Coins;
+                Gold = Gold + coins.Number;
+                return true;
+            }
+
+            if(item is Meat)
+            {
+                var meat = item as Meat;
+                Sustanence = Sustanence + meat.Sustanence;
+            }
+
             for(int x = 0; x < inventory.Length; x++)
             {
                 if(inventory[x] == null)

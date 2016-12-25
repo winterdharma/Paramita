@@ -12,7 +12,7 @@ namespace Paramita.Items
      */
     public abstract class Consumable : Item
     {
-        public Consumable(Texture2D texture, Rectangle rect, string name, string description) 
+        public Consumable(Texture2D texture, Rectangle rect) 
             : base(texture, rect)
         {
         }
