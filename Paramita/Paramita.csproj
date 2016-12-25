@@ -42,6 +42,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Items\Armor.cs" />
+    <Compile Include="Items\Armors\Shield.cs" />
     <Compile Include="Items\Consumable.cs" />
     <Compile Include="Items\Consumables\Meat.cs" />
     <Compile Include="Items\IContainer.cs" />

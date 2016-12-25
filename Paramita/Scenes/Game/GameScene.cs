@@ -104,8 +104,10 @@ namespace Paramita.Scenes
 
             var coins = levelManager.ItemCreator.CreateCoins(1);
             GetEmptyWalkableTile().AddItem(coins);
-            coins = levelManager.ItemCreator.CreateCoins(100);
-            GetEmptyWalkableTile().AddItem(coins);
+            var meat = levelManager.ItemCreator.CreateMeat();
+            GetEmptyWalkableTile().AddItem(meat);
+            var shield = levelManager.ItemCreator.CreateShield();
+            GetEmptyWalkableTile().AddItem(shield);
         }
 
 

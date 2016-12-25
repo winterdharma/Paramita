@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Paramita.Items.Armors;
 using Paramita.Items.Consumables;
 using Paramita.Items.Valuables;
 using Paramita.Items.Weapons;
@@ -9,7 +10,7 @@ namespace Paramita.Items
     public enum ItemType
     {
         ShortSword = 0,
-        SmallShield,
+        Shield,
         Coins,
         Meat
     }
@@ -53,6 +54,14 @@ namespace Paramita.Items
         {
             return new Meat(spritesheet, spritesheetMap[(int)ItemType.Meat],
                 "An edible chunk of salted shank.");
+        }
+
+
+
+        public Shield CreateShield()
+        {
+            return new Shield(spritesheet, spritesheetMap[(int)ItemType.Shield],
+                "A handy shield.");
         }
     }
 }
