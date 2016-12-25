@@ -41,6 +41,7 @@ namespace Paramita.Scenes
             this.texture = texture;
             this.position = position;
 
+            // create an array of rectangles that are used to detect which button is selected with a mouse
             menuItemRects = new Rectangle[menuItems.Length];
             Vector2 menuItemPos = position;
             for (int x = 0; x < menuItems.Length; x++)

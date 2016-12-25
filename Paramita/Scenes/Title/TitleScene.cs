@@ -36,6 +36,7 @@ namespace Paramita.Scenes
             backgroundDestination = GameController.ScreenRectangle;
 
             // these variables are used to display the @message on the screen when Draw() is called
+            font = GameRef.Font;
             elapsed = TimeSpan.Zero;
             Vector2 size = font.MeasureString(message);
             position = new Vector2((GameController.ScreenRectangle.Width - size.X) / 2,
@@ -49,7 +50,6 @@ namespace Paramita.Scenes
         protected override void LoadContent()
         {
             background = content.Load<Texture2D>("titlescreen");
-            font = content.Load<SpriteFont>("InterfaceFont");
         }
 
 
