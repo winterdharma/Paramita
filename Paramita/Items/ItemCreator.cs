@@ -33,7 +33,7 @@ namespace Paramita.Items
         public ShortSword CreateShortSword()
         {
             ShortSword shortsword = new ShortSword(spritesheet, spritesheetMap[(int)ItemType.ShortSword],
-                "test_sword", "A short sword for test games.");
+                "A short sword for test games.");
 
             return shortsword;
         }

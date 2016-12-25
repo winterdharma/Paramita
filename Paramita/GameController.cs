@@ -15,7 +15,8 @@ namespace Paramita
         public static Random random = new Random();
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-
+        GameTime gameTime;
+        public GameTime GameTime { get { return GameTime; } }
         public SpriteBatch SpriteBatch { get { return spriteBatch; } }
         public static Rectangle ScreenRectangle { get; private set; }
 
@@ -24,6 +25,7 @@ namespace Paramita
         public MenuScene MenuScene { get; private set; }
         public GameScene GameScene { get; private set; }
         public InputDevices InputDevices { get; private set; }
+        public SpriteFont Font { get; private set; }
 
 
 
@@ -60,11 +62,11 @@ namespace Paramita
         /// </summary>
         protected override void Initialize()
         {
+            base.Initialize();
+
             TitleScene.Initialize();
             MenuScene.Initialize();
             GameScene.Initialize(); // this also calls GameScene.LoadContent()
-
-            base.Initialize();
         }
 
         
@@ -75,6 +77,7 @@ namespace Paramita
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            Font = Content.Load<SpriteFont>("InterfaceFont");
         }
 
 
@@ -97,6 +100,7 @@ namespace Paramita
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            this.gameTime = gameTime;
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
                 Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();

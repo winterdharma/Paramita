@@ -163,6 +163,7 @@ namespace Paramita.SentientBeings
             if(AddItem(items[0]) == true)
             {
                 CurrentTile.RemoveItem(items[0]);
+                gameRef.GameScene.Statuses.AddMessage("You picked up a " + items[0].ToString() + ".");
             }
         }
 
@@ -190,6 +191,7 @@ namespace Paramita.SentientBeings
             if (item != null)
             {
                 CurrentTile.AddItem(item);
+                gameRef.GameScene.Statuses.AddMessage("You dropped a " + item.ToString() + ".");
             }
         }
 
@@ -209,8 +211,17 @@ namespace Paramita.SentientBeings
             return Compass.None;
         }
 
-        public override void Draw( GameTime gameTime )
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                BlendState.AlphaBlend,
+                SamplerState.PointClamp,
+                null, null, null,
+                camera.Transformation);
+            Sprite.Draw(gameTime, spriteBatch);
+            spriteBatch.End();
+
             base.Draw(gameTime);
         }
 

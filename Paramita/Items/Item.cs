@@ -24,8 +24,6 @@ namespace Paramita.Items
             counter++;
         }
 
-
-
         /*
          * IEquatable<Item> methods.
          * 

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items;
 using Paramita.Items.Weapons;
+using Paramita.Scenes.Game;
 using Paramita.SentientBeings;
 
 namespace Paramita.Scenes
@@ -14,6 +15,8 @@ namespace Paramita.Scenes
         private Player player;
         private int levelNumber = 0;
 
+        private StatusMessages statuses;
+
         private Texture2D tilesheet;
         private Texture2D player_sprite;
         private Texture2D item_sprites;
@@ -22,6 +25,8 @@ namespace Paramita.Scenes
             get { return levelNumber; }
             private set { levelNumber = value; }
         }
+
+        public StatusMessages Statuses { get { return statuses; } }
 
         // This is simply an alias for LevelManager.CurrentMap 
         public TileMap Map
@@ -47,6 +52,8 @@ namespace Paramita.Scenes
                 new TileSet("tileset1", tilesheet, 8, 8, 32),
                 new ItemCreator(item_sprites),
                 GameController.random);
+
+            statuses = new StatusMessages(GameRef.Font, 10, new Point(0,720));
         }
 
 
@@ -60,7 +67,7 @@ namespace Paramita.Scenes
 
         public override void Update(GameTime gameTime)
         {
-            
+            statuses.Update(gameTime);
             player.Update(gameTime);
             camera.LockToSprite(Map, player.Sprite, GameController.ScreenRectangle);
 
@@ -77,14 +84,8 @@ namespace Paramita.Scenes
                 Map.Draw(gameTime, GameRef.SpriteBatch, camera);
             }
 
-            GameRef.SpriteBatch.Begin(
-                SpriteSortMode.Deferred,
-                BlendState.AlphaBlend,
-                SamplerState.PointClamp,
-                null,null,null,
-                camera.Transformation);
-            player.Sprite.Draw(gameTime, GameRef.SpriteBatch);
-            GameRef.SpriteBatch.End();
+            player.Draw(gameTime, GameRef.SpriteBatch, camera);
+            statuses.Draw(gameTime, GameRef.SpriteBatch);
         }
 
 

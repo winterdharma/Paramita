@@ -8,11 +8,16 @@ namespace Paramita.Items.Weapons
         string name;
         string description;
         
-        public ShortSword(Texture2D texture, Rectangle rect, string name, string description)
+        public ShortSword(Texture2D texture, Rectangle rect, string description)
             : base(texture, rect)
         {
-            this.name = name;
+            name = "Short Sword";
             this.description = description;
+        }
+
+        public override string ToString()
+        {
+            return name;
         }
     }
 }
