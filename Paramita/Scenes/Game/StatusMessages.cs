@@ -40,7 +40,7 @@ namespace Paramita.Scenes.Game
         }
 
 
-
+        // Sets the anchor points for drawing each message in the status area
         private Point[] SetOriginsOfMessages()
         {
             Vector2 size = font.MeasureString(messages[0]);
@@ -57,7 +57,8 @@ namespace Paramita.Scenes.Game
         }
 
 
-
+        // Calculates the Status Area's height in pixels given the font
+        // and number of lines that can be displayed at one time.
         private void CalcHeightOfMessageArea()
         {
             Vector2 size = font.MeasureString(messages[0]);
@@ -66,7 +67,7 @@ namespace Paramita.Scenes.Game
         }
 
 
-
+        // Adds a message to the Status area and initializes its duration and color
         public void AddMessage(string newMsg)
         {
             for(int x = messages.Length - 1; x > 0; x--)
@@ -81,7 +82,9 @@ namespace Paramita.Scenes.Game
         }
 
 
-
+        // Updates a message's color so that it gradually fades out
+        // as its duration approaches zero. 
+        // The fade-out effect is 2.5 seconds long
         public Color SetLineColor(TimeSpan timeLeft)
         {
             Color newColor = lineColor;
@@ -94,7 +97,7 @@ namespace Paramita.Scenes.Game
         }
 
 
-
+        // Updates the messages elapsed time and colors
         public void Update(GameTime gameTime)
         {
             for(int x = 0; x < messages.Length; x++)
@@ -112,6 +115,8 @@ namespace Paramita.Scenes.Game
             }
         }
 
+
+        // Draws the messages to the GameScene
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();

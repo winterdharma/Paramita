@@ -22,6 +22,7 @@ namespace Paramita.Scenes
 
         public TitleScene(GameController game) : base(game) {
             // see Initialize() and LoadContent() for instantiation tasks
+            backgroundDestination = game.ScreenRectangle;
         }
 
 
@@ -33,14 +34,14 @@ namespace Paramita.Scenes
         {
             base.Initialize(); // calls LoadContent()
 
-            backgroundDestination = GameController.ScreenRectangle;
+            //backgroundDestination = GameController.ScreenRectangle;
 
             // these variables are used to display the @message on the screen when Draw() is called
             font = GameRef.Font;
             elapsed = TimeSpan.Zero;
             Vector2 size = font.MeasureString(message);
-            position = new Vector2((GameController.ScreenRectangle.Width - size.X) / 2,
-                GameController.ScreenRectangle.Bottom - 50 - font.LineSpacing);
+            position = new Vector2((backgroundDestination.Width - size.X) / 2,
+                backgroundDestination.Bottom - 50 - font.LineSpacing);
         }
 
 

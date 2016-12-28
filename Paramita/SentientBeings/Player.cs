@@ -45,6 +45,8 @@ namespace Paramita.SentientBeings
             get { return animations; }
         }
 
+        public Item[] Items { get { return inventory; } }
+
         public int Gold
         {
             get { return gold; }

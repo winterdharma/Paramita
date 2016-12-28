@@ -16,10 +16,14 @@ namespace Paramita.Scenes
         private int levelNumber;
 
         private StatusMessages statuses;
+        private Inventory inventoryPanel;
 
         private Texture2D tilesheet;
         private Texture2D player_sprite;
         private Texture2D item_sprites;
+        private Texture2D inventory_background;
+
+        public Player Player { get { return player; } }
 
         public int LevelNumber {
             get { return levelNumber; }
@@ -45,11 +49,13 @@ namespace Paramita.Scenes
             player.Initialize();
 
             levelManager = new LevelManager(
+                GameRef,
                 new TileSet("tileset1", tilesheet, 8, 8, 32),
                 new ItemCreator(item_sprites),
                 GameController.random);
 
             statuses = new StatusMessages(GameRef.Font, 10, new Point(0,720));
+            inventoryPanel = new Inventory(GameRef.Font, GameRef.ScreenRectangle, GameRef.InputDevices, player, inventory_background, player.Items.Length);
         }
 
 
@@ -59,6 +65,7 @@ namespace Paramita.Scenes
             tilesheet = content.Load<Texture2D>("tileset1");
             item_sprites = content.Load<Texture2D>("item_sprites");
             player_sprite = content.Load<Texture2D>("maleplayer");
+            inventory_background = content.Load<Texture2D>("black_background1");
         }
 
 
@@ -66,8 +73,9 @@ namespace Paramita.Scenes
         public override void Update(GameTime gameTime)
         {
             statuses.Update(gameTime);
+            inventoryPanel.Update(gameTime);
             player.Update(gameTime);
-            camera.LockToSprite(Map, player.Sprite, GameController.ScreenRectangle);
+            camera.LockToSprite(Map, player.Sprite, GameRef.ScreenRectangle);
 
             base.Update(gameTime);
         }
@@ -85,6 +93,7 @@ namespace Paramita.Scenes
 
             player.Draw(gameTime, GameRef.SpriteBatch, camera);
             statuses.Draw(gameTime, GameRef.SpriteBatch);
+            inventoryPanel.Draw(gameTime, GameRef.SpriteBatch);
         }
 
 
