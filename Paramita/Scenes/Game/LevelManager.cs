@@ -16,7 +16,7 @@ namespace Paramita.Scenes
         private TileMapCreator mapCreator;
         private ItemCreator itemCreator;
         private TileSet tileset;
-
+        private GameController game;
 
         public TileMap CurrentMap
         {
@@ -26,8 +26,9 @@ namespace Paramita.Scenes
         
         public ItemCreator ItemCreator { get { return itemCreator; } }
 
-        public LevelManager(TileSet tileset, ItemCreator itemCreator, Random random)
+        public LevelManager(GameController game, TileSet tileset, ItemCreator itemCreator, Random random)
         {
+            this.game = game;
             mapCreator = new TileMapCreator(40, 25, 10, 8, 3, random);
             this.tileset = tileset;
             this.itemCreator = itemCreator;
@@ -48,7 +49,7 @@ namespace Paramita.Scenes
 
         private void CreateLevel(int levelNumber)
         {
-            TileMap levelMap = new TileMap(tileset, mapCreator.CreateMap(), 40, 25, "test-map");
+            TileMap levelMap = new TileMap(game.ScreenRectangle, tileset, mapCreator.CreateMap(), 40, 25, "test-map");
             levels.Add(levelNumber, levelMap);
         }
 

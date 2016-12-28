@@ -45,6 +45,8 @@ namespace Paramita.SentientBeings
             get { return animations; }
         }
 
+        public Item[] Items { get { return inventory; } }
+
         public int Gold
         {
             get { return gold; }
@@ -118,10 +120,6 @@ namespace Paramita.SentientBeings
         // This method polls InputDevices for player input and responds
         private void HandleInput()
         {
-            // check if item was dropped
-            if(inputDevices.DroppedItem() == true)
-                DropItem();
-
             // check for movement input and store the direction returned
             Facing = inputDevices.MovedTo();
             
@@ -246,11 +244,12 @@ namespace Paramita.SentientBeings
 
 
         // Drops item onto the tile the player is located in. No item selection mechanism yet.
-        private void DropItem()
+        public void DropItem(int itemToDrop)
         {
-            Item item = RemoveItem(inventory[0]);
+            Item item = inventory[itemToDrop];
             if (item != null)
             {
+                RemoveItem(item);
                 CurrentTile.AddItem(item);
                 gameScene.PostNewStatus("You dropped a " + item.ToString() + ".");
             }
@@ -295,7 +294,7 @@ namespace Paramita.SentientBeings
         {
             for(int x = 0; x < inventory.Length; x++)
             {
-                if(inventory[x].Equals(item))
+                if(inventory[x] != null && inventory[x].Equals(item))
                 {
                     inventory[x] = null;
                     return item;
@@ -303,6 +302,8 @@ namespace Paramita.SentientBeings
             }
             return null;
         }
+
+
 
         public bool AddItem(Item item)
         {

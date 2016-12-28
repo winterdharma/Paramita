@@ -18,7 +18,7 @@ namespace Paramita
         GameTime gameTime;
         public GameTime GameTime { get { return GameTime; } }
         public SpriteBatch SpriteBatch { get { return spriteBatch; } }
-        public static Rectangle ScreenRectangle { get; private set; }
+        public Rectangle ScreenRectangle { get; private set; }
 
         public SceneManager SceneManager { get; private set; }
         public TitleScene TitleScene { get; private set; }

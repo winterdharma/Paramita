@@ -20,7 +20,7 @@ namespace Paramita.Scenes
         Point min;
         Point max;
         Rectangle destination;
-        Rectangle viewport = GameController.ScreenRectangle;
+        Rectangle viewport;
 
         
         [ContentSerializer]
@@ -41,8 +41,9 @@ namespace Paramita.Scenes
 
 
 
-        public TileMap(TileSet tileSet, Tile[,] tiles, int width, int height, string name)
+        public TileMap(Rectangle parentScreen, TileSet tileSet, Tile[,] tiles, int width, int height, string name)
         {
+            viewport = parentScreen;
             TilesWide = width;
             TilesHigh = height;
             TileSet = tileSet;

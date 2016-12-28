@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Paramita.Scenes.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -121,12 +122,48 @@ namespace Paramita.Mechanics
             return Compass.None; 
         }
 
-        public bool DroppedItem()
-        {
-            if (IsDropItem())
-                return true;
 
-            return false;
+        // Checks for an ItemSelection input and returns an integer
+        public int CheckIfItemSelected()
+        {
+            if (IsNumberOne())
+                return 1;
+            if (IsNumberTwo())
+                return 2;
+            if (IsNumberThree())
+                return 3;
+            if (IsNumberFour())
+                return 4;
+            if (IsNumberFive())
+                return 5;
+            if (IsNumberSix())
+                return 6;
+            if (IsNumberSeven())
+                return 7;
+            if (IsNumberEight())
+                return 8;
+            if (IsNumberNine())
+                return 9;
+            if (IsNumberZero())
+                return 10;
+
+            return 0;
+        }
+
+
+        // Checks for an InventoryAction input and returns the corresponding action
+        public InventoryActions CheckForInventoryAction()
+        {
+            if(IsDKeyPressed())
+                return InventoryActions.Drop;
+            if (IsEKeyPressed())
+                return InventoryActions.Equip;
+            if (IsUKeyPressed())
+                return InventoryActions.Use;
+            if (IsCKeyPressed())
+                return InventoryActions.Cancel;
+
+            return InventoryActions.None;
         }
 
         /*
@@ -136,56 +173,141 @@ namespace Paramita.Mechanics
 
         public bool IsLeft()
         {
-            return CurrentKeyboardState.IsKeyDown(Keys.A)
-                && PreviousKeyboardState.IsKeyUp(Keys.A);
+            return CurrentKeyboardState.IsKeyDown(Keys.NumPad4)
+                && PreviousKeyboardState.IsKeyUp(Keys.NumPad4);
         }
 
         public bool IsRight()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.NumPad6)
+                && PreviousKeyboardState.IsKeyUp(Keys.NumPad6);
+        }
+
+        public bool IsDown()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.NumPad2)
+                && PreviousKeyboardState.IsKeyUp(Keys.NumPad2);
+        }
+
+        public bool IsUp()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.NumPad8)
+                && PreviousKeyboardState.IsKeyUp(Keys.NumPad8);
+        }
+
+        public bool IsUpperLeft()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.NumPad7)
+                && PreviousKeyboardState.IsKeyUp(Keys.NumPad7);
+        }
+
+        public bool IsUpperRight()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.NumPad9)
+                && PreviousKeyboardState.IsKeyUp(Keys.NumPad9);
+        }
+
+        public bool IsLowerLeft()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.NumPad1)
+                && PreviousKeyboardState.IsKeyUp(Keys.NumPad1);
+        }
+
+        public bool IsLowerRight()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.NumPad3)
+                && PreviousKeyboardState.IsKeyUp(Keys.NumPad3);
+        }
+
+
+        /*
+         * These methods check for a number (0 to 9) key being pressed
+         */
+        public bool IsNumberOne()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.D1)
+                && PreviousKeyboardState.IsKeyUp(Keys.D1);
+        }
+
+        public bool IsNumberTwo()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.D2)
+                && PreviousKeyboardState.IsKeyUp(Keys.D2);
+        }
+
+        public bool IsNumberThree()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.D3)
+                && PreviousKeyboardState.IsKeyUp(Keys.D3);
+        }
+
+        public bool IsNumberFour()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.D4)
+                && PreviousKeyboardState.IsKeyUp(Keys.D4);
+        }
+
+        public bool IsNumberFive()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.D5)
+                && PreviousKeyboardState.IsKeyUp(Keys.D5);
+        }
+
+        public bool IsNumberSix()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.D6)
+                && PreviousKeyboardState.IsKeyUp(Keys.D6);
+        }
+
+        public bool IsNumberSeven()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.D7)
+                && PreviousKeyboardState.IsKeyUp(Keys.D7);
+        }
+
+        public bool IsNumberEight()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.D8)
+                && PreviousKeyboardState.IsKeyUp(Keys.D8);
+        }
+
+        public bool IsNumberNine()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.D9)
+                && PreviousKeyboardState.IsKeyUp(Keys.D9);
+        }
+
+        public bool IsNumberZero()
+        {
+            return CurrentKeyboardState.IsKeyDown(Keys.D0)
+                && PreviousKeyboardState.IsKeyUp(Keys.D0);
+        }
+
+        /*
+         *  These methods check for key presses that correspond to InventoryActions
+         */
+        public bool IsDKeyPressed()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.D)
                 && PreviousKeyboardState.IsKeyUp(Keys.D);
         }
 
-        public bool IsDown()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.S)
-                && PreviousKeyboardState.IsKeyUp(Keys.S);
-        }
-
-        public bool IsUp()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.W)
-                && PreviousKeyboardState.IsKeyUp(Keys.W);
-        }
-
-        public bool IsUpperLeft()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.Q)
-                && PreviousKeyboardState.IsKeyUp(Keys.Q);
-        }
-
-        public bool IsUpperRight()
+        public bool IsEKeyPressed()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.E)
                 && PreviousKeyboardState.IsKeyUp(Keys.E);
         }
 
-        public bool IsLowerLeft()
+        public bool IsUKeyPressed()
         {
-            return CurrentKeyboardState.IsKeyDown(Keys.Z)
-                && PreviousKeyboardState.IsKeyUp(Keys.Z);
+            return CurrentKeyboardState.IsKeyDown(Keys.U)
+                && PreviousKeyboardState.IsKeyUp(Keys.U);
         }
 
-        public bool IsLowerRight()
+        public bool IsCKeyPressed()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.C)
                 && PreviousKeyboardState.IsKeyUp(Keys.C);
-        }
-
-        public bool IsDropItem()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.Delete)
-                && PreviousKeyboardState.IsKeyUp(Keys.Delete);
         }
     }
 }
