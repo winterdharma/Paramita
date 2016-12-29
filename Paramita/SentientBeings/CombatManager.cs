@@ -1,4 +1,6 @@
-﻿using RogueSharp.DiceNotation;
+﻿using Paramita.Items;
+using RogueSharp.DiceNotation;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -6,84 +8,152 @@ namespace Paramita.SentientBeings
 {
     public class CombatManager
     {
-        private readonly Player _player;
-        private readonly List<Enemy> _enemies;
+        Random random;
+
+
 
         // When we construct the CombatManager class we want to pass in references
         // to the player and the list of enemies.
-        public CombatManager(Player player, List<Enemy> enemies)
+        public CombatManager(Random random)
         {
-            _player = player;
-            _enemies = enemies;
+            this.random = random;
         }
+
+
+
 
         // Use this method to resolve attacks between Figures
-        public void Attack(SentientBeing attacker, SentientBeing defender)
+        public bool AttackRoll(SentientBeing attacker, SentientBeing defender)
         {
+            bool IsHit = false;
             // Roll the die, add the attack bonus, and compare to the defender's armor class
-            if (Dice.Roll("d20") + attacker.AttackBonus >= defender.ArmorClass)
+            if ( DiceRoll("2d6", true) + attacker.AttackSkill - (attacker.Fatigue / 20) 
+                 > DiceRoll("2d6", true) + defender.DefenseSkill - (defender.Fatigue / 10) )
             {
-                // Roll damage dice and sum them up
-                int damage = attacker.Damage.Roll().Value;
-                // Lower the defender's health by the amount of damage
-                defender.Health -= damage;
-                // Write a combat message to the debug log.
-                // Later we'll add this to the game UI
-                Debug.WriteLine("{0} hit {1} for {2} and he has {3} health remaining.",
-                  attacker.Name, defender.Name, damage, defender.Health);
-                if (defender.Health <= 0)
+                IsHit = true;
+            }
+            return IsHit;
+        }
+
+
+
+        // This function returns the part of a regular humanoid hit by an attack
+        // In future, size difference of attacker and defense should be factored into this algo
+        // Also need to account for shield hits
+        public HumanoidBodyParts GetHitLocationOnHumanoid(SentientBeing attacker, SentientBeing defender)
+        {
+            HumanoidBodyParts hitLocation = HumanoidBodyParts.Torso;
+
+            int chance = DiceRoll("1d100", false);
+
+            // chance < 51 is a Torso hit, which is the default value for hitLocation
+            if(chance > 50 && chance < 71) 
+            {
+                if (chance < 61)
+                    hitLocation = HumanoidBodyParts.RightArm;
+                else
+                    hitLocation = HumanoidBodyParts.LeftArm;
+            }
+            else if(chance > 70 && chance < 91)
+            {
+                if (chance < 81)
+                    hitLocation = HumanoidBodyParts.RightLeg;
+                else
+                    hitLocation = HumanoidBodyParts.LeftLeg;
+            }
+            else if(chance > 90)
+            {
+                hitLocation = HumanoidBodyParts.Head;
+            }
+
+            return hitLocation;
+        }
+
+
+
+        /*
+         * This function conducts a DamageRoll after a successful AttackRoll roll
+         * The calculations for the shield hit are missing at present
+         * It also is missing the case of a head hit, which uses defender's head protection only
+         */
+        public int DamageRoll(SentientBeing attacker, Weapon attackWeapon, SentientBeing defender)
+        {
+            int damage = 0;
+
+            int attack = attacker.Strength + attackWeapon.Damage + DiceRoll("2d6", true);
+            int defense = defender.Protection + DiceRoll("2d6", true);
+
+            if (attack - defense > 0)
+                damage = attack - defense;
+
+            return damage;
+        }
+
+        /*
+         * This function simulates an open-ended roll of dice to generate a random number.
+         * 
+         * The function parses the dice type and number from @dice.
+         * 
+         * The flag @openEnded indicates whether bonus die rolls are gained with rolling
+         * the highest number possible. OpenEnded rolls simulate improbable events
+         * such as a weak attacker managing to hit a superior opponent by sheer luck. OpenEnded
+         * dice rolls can theoretically go on forever since bonus rolls can result in more
+         * bonus rolls.
+         * 
+         * The function parses the type of die and number of dice to roll plus a modifier from a 
+         * string that is passed to it. 
+         * 
+         * It returns a total of the dice rolls as an integer.
+         */
+        private int DiceRoll(string dice, bool openEnded)
+        {
+            int totalRolled = 0;
+            int roll = 0;
+            int dieSize = 0;
+            int dieNumber = 0;
+            int modifier = 0;
+             
+            switch(dice)
+            {
+                case "1d6":
+                    dieSize = 6;
+                    dieNumber = 1;
+                    break;
+                case "1d6+1":
+                    dieSize = 6;
+                    dieNumber = 1;
+                    modifier = 1;
+                    break;
+                case "2d6":
+                    dieSize = 6;
+                    dieNumber = 2;
+                    break;
+                case "1d100":
+                    dieSize = 100;
+                    dieNumber = 1;
+                    break;
+                default:
+                    dieSize = 0;
+                    dieNumber = 0;
+                    break;
+            }
+
+            // Simulates an open-ended roll of dice. Any roll that comes out highest possible
+            // yields another die roll and the total is reduced by 1. Dice continue to be rolled 
+            // until all rolls are done.
+            while(dieNumber != 0)
+            {
+                dieNumber--;
+                roll = random.Next(1, dieSize) + modifier;
+                if(roll == dieSize && openEnded == true)
                 {
-                    if (defender is Enemy)
-                    {
-                        var enemy = defender as Enemy;
-                        // When an enemies health dropped below 0 they died
-                        // Remove that enemy from the game
-                        _enemies.Remove(enemy);
-                    }
-                    // Later we'll want to display this kill message in the UI
-                    Debug.WriteLine("{0} killed {1}", attacker.Name, defender.Name);
+                    roll--;
+                    dieNumber++;
                 }
+                totalRolled += roll;
             }
-            else
-            {
-                // Show the miss message in the Debug log for now
-                Debug.WriteLine("{0} missed {1}", attacker.Name, defender.Name);
-            }
-        }
 
-        // Helper method which returns the figure at a certain map cell
-        public SentientBeing SattvaAt(int x, int y)
-        {
-            if (IsPlayerAt(x, y))
-            {
-                return _player;
-            }
-            return EnemyAt(x, y);
-        }
-
-        // Helper method for checking if the player is at a map cell
-        public bool IsPlayerAt(int x, int y)
-        {
-            return (_player.X == x && _player.Y == y);
-        }
-
-        // Helper method for getting an enemy at a map cell
-        public Enemy EnemyAt(int x, int y)
-        {
-            foreach (var enemy in _enemies)
-            {
-                if (enemy.X == x && enemy.Y == y)
-                {
-                    return enemy;
-                }
-            }
-            return null;
-        }
-
-        // Helper method for checking if an enemy is at a map cell
-        public bool IsEnemyAt(int x, int y)
-        {
-            return EnemyAt(x, y) != null;
+            return totalRolled;
         }
     }
 }

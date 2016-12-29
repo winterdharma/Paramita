@@ -74,6 +74,7 @@
     <Compile Include="SentientBeings\Enemy.cs" />
     <Compile Include="GameController.cs" />
     <Compile Include="Global.cs" />
+    <Compile Include="SentientBeings\Npc.cs" />
     <Compile Include="SentientBeings\PathToPlayer.cs" />
     <Compile Include="SentientBeings\Player.cs" />
     <Compile Include="Program.cs" />

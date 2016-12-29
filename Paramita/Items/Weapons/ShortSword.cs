@@ -9,15 +9,17 @@ namespace Paramita.Items.Weapons
         string description;
         
         public ShortSword(Texture2D texture, Rectangle rect, string description)
-            : base(texture, rect)
+            : base(texture, rect, 5, 0, 2, 1)
         {
             name = "Short Sword";
             this.description = description;
         }
 
+        // This override may belong in Weapon class (just need to pass @name to it?)
         public override string ToString()
         {
-            return name;
+            return name + "(Att:" + attackModifier + ", Def:" + defenseModifier + 
+                ", Length:" + length + ")";
         }
     }
 }

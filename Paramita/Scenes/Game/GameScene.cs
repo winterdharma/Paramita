@@ -11,6 +11,7 @@ namespace Paramita.Scenes
     public class GameScene : Scene
     {
         private LevelManager levelManager;
+        private CombatManager combatManager;
         private Camera camera;
         private Player player;
         private int levelNumber;
@@ -53,7 +54,7 @@ namespace Paramita.Scenes
                 new TileSet("tileset1", tilesheet, 8, 8, 32),
                 new ItemCreator(item_sprites),
                 GameController.random);
-
+            combatManager = new CombatManager(GameController.random);
             statuses = new StatusMessages(GameRef.Font, 10, new Point(0,720));
             inventoryPanel = new Inventory(GameRef.Font, GameRef.ScreenRectangle, GameRef.InputDevices, player, inventory_background, player.Items.Length);
         }

@@ -32,7 +32,7 @@ namespace Paramita.SentientBeings
         public void CreateFrom(int x, int y)
         {
             _path = _pathFinder.ShortestPath(_map.GetCell(x, y),
-              _map.GetCell(_player.X, _player.Y));
+              _map.GetCell(_player.CurrentTile.TilePoint.X, _player.CurrentTile.TilePoint.Y));
             _cells = _path.Steps;
         }
         public void Draw(SpriteBatch spriteBatch)

@@ -1,9 +1,22 @@
 ﻿using Microsoft.Xna.Framework;
+using Paramita.Items;
 using Paramita.Mechanics;
+using Paramita.Scenes;
 using RogueSharp.DiceNotation;
 
 namespace Paramita.SentientBeings
 {
+    public enum HumanoidBodyParts
+    {
+        Head,
+        Torso,
+        LeftArm,
+        RightArm,
+        LeftLeg,
+        RightLeg
+    }
+
+
     /*
      * This is the base class for all models of sentient beings in the game.
      * Sentient beings include: Player, animals, monsters, non-player characters,
@@ -13,18 +26,52 @@ namespace Paramita.SentientBeings
      * 
      * This is just a sketchy starting point of variables for all beings.
      */ 
-    public class SentientBeing : DrawableGameComponent
+    public class SentientBeing
     {
-        public int X { get; set; }
-        public int Y { get; set; }
+        // location on the tilemap
+        protected Tile currentTile;
 
-        public int AttackBonus { get; set; }
-        public int ArmorClass { get; set; }
-        public DiceExpression Damage { get; set; }
-        public int Health { get; set; }
-        public string Name { get; set; }
+        // the direction a being is facing
+        protected Compass facing;
+
+        // items in a being's possession
+        protected Item[] items;
+
+        // equiped items
+        protected Item leftHand;
+        protected Item rightHand;
+        protected Item head;
+        protected Item body;
+        protected Item feet;
+        protected Item extra1;
+        protected Item extra2;
+
+        // combat related attributes
+        protected int hitPoints;
+        protected int protection;
+        protected int magicResistance;
+        protected int strength;
+        protected int morale;
+        protected int attackSkill;
+        protected int defenseSkill;
+        protected int precision;
+        protected int encumbrance;
+        protected int fatigue;
+
+
+        public int AttackSkill { get { return attackSkill; } }
+
+        public int DefenseSkill { get { return defenseSkill; } }
+
+        public int Fatigue { get { return fatigue; } }
+
+        public int Strength { get { return strength; } }
+
+        public int Protection { get { return protection; } }
+
         public Compass Facing { get; protected set; }
 
-        public SentientBeing(GameController game) : base(game) { }
+        public SentientBeing(GameController game)
+        { }
     }
 }

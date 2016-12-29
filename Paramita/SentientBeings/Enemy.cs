@@ -4,8 +4,8 @@ using RogueSharp;
 
 namespace Paramita.SentientBeings
 {
-    public class Enemy : SentientBeing
-    {
+    public class Enemy //: SentientBeing
+    {/*
         private readonly IMap _map;
         private bool _isAwareOfPlayer;
         private readonly PathToPlayer _path;
@@ -51,5 +51,5 @@ namespace Paramita.SentientBeings
                 }
             }
         }
-    }
+    */}
 }

@@ -82,7 +82,7 @@ namespace Paramita.SentientBeings
 
 
 
-        public override void Initialize()
+        public /*override*/ void Initialize()
         {
             Animation animation = new Animation(3, 32, 32, 0, 0);
             animations.Add(AnimationKey.WalkDown, animation);
@@ -100,20 +100,20 @@ namespace Paramita.SentientBeings
             sprite.CurrentAnimation = AnimationKey.WalkDown;
             sprite.IsAnimating = false;
 
-            base.Initialize();
+            //base.Initialize();
         }
 
-        protected override void LoadContent()
+        protected /*override*/ void LoadContent()
         {
-            base.LoadContent();
+            //base.LoadContent();
         }
 
-        public override void Update(GameTime gameTime)
+        public /*override*/ void Update(GameTime gameTime)
         {
             HandleInput();
             Position = gameScene.Map.GetTilePosition(CurrentTile);
             Sprite.Update(gameTime);
-            base.Update(gameTime);
+            //base.Update(gameTime);
         }
 
 
@@ -282,7 +282,7 @@ namespace Paramita.SentientBeings
             Sprite.Draw(gameTime, spriteBatch);
             spriteBatch.End();
 
-            base.Draw(gameTime);
+            //base.Draw(gameTime);
         }
 
 
