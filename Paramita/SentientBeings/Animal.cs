@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Paramita.Scenes;
 
 namespace Paramita.SentientBeings
 {
@@ -15,8 +16,8 @@ namespace Paramita.SentientBeings
             Torso
         }
 
-        public Animal(Texture2D sprites, Rectangle rightFacing, Rectangle leftFacing) 
-            : base(sprites, rightFacing, leftFacing)
+        public Animal(GameScene gameScene, Texture2D sprites, Rectangle rightFacing, Rectangle leftFacing) 
+            : base(gameScene, sprites, rightFacing, leftFacing)
         {
         }
     }

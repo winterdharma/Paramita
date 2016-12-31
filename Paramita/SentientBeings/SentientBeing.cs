@@ -19,8 +19,14 @@ namespace Paramita.SentientBeings
      */ 
     public class SentientBeing
     {
+        // reference to the GameScene for access to GameScene.Map
+        protected GameScene gameScene;
+
         // location on the tilemap
         protected Tile currentTile;
+
+        // a vector2 position on the tilemap expressed in pixels
+        protected Vector2 position;
 
         // the direction a being is facing
         protected Compass facing;
@@ -58,6 +64,20 @@ namespace Paramita.SentientBeings
         protected int size;
 
 
+        public Tile CurrentTile
+        {
+            get { return currentTile; }
+            set { currentTile = value; } 
+        }
+
+        public Rectangle CurrentSprite { get; set; }
+
+        public Vector2 Position
+        {
+            get { return position; }
+            set { position = value; }
+        }
+
         public int AttackSkill { get { return attackSkill; } }
 
         public int DefenseSkill { get { return defenseSkill; } }
@@ -76,12 +96,20 @@ namespace Paramita.SentientBeings
 
         public int Size { get { return size; } }
 
-        public SentientBeing(Texture2D sprites, Rectangle right, Rectangle left)
+
+
+
+        public SentientBeing(GameScene gameScene, Texture2D sprites, Rectangle right, Rectangle left)
         {
             spritesheet = sprites;
             rightFacing = right;
             leftFacing = left;
+            this.gameScene = gameScene;
+            CurrentSprite = rightFacing;
         }
+
+
+
 
         public void Attack(SentientBeing defender)
         {
@@ -91,6 +119,44 @@ namespace Paramita.SentientBeings
         public void TakeDamage(int damage)
         {
 
+        }
+
+
+        public virtual void Update(GameTime gameTime)
+        {
+            position = gameScene.Map.GetTilePosition(currentTile);
+        }
+
+        public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            spriteBatch.Begin();
+
+            spriteBatch.Draw(
+                spritesheet,
+                position,
+                CurrentSprite,
+                Color.White
+                );
+
+            spriteBatch.End();
+        }
+
+        /* 
+        * Sets CurrentSprite to something appropriate for the Compass direction passed to it
+        * Currently, the player animations are in four directions, but movement can be
+        * in eight directions.
+        */
+        protected void SetCurrentSprite()
+        {
+            // set the animation according to the new facing
+            if (facing == Compass.North)
+                CurrentSprite = rightFacing;
+            else if (Facing == Compass.South)
+                CurrentSprite = leftFacing;
+            else if (Facing == Compass.Northeast || Facing == Compass.East || Facing == Compass.Southeast)
+                CurrentSprite = rightFacing;
+            else if (Facing == Compass.Northwest || Facing == Compass.West || Facing == Compass.Southwest)
+                CurrentSprite = leftFacing;
         }
     }
 }

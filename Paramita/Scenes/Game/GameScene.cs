@@ -4,6 +4,7 @@ using Paramita.Items;
 using Paramita.Items.Weapons;
 using Paramita.Scenes.Game;
 using Paramita.SentientBeings;
+using System.Collections.Generic;
 
 namespace Paramita.Scenes
 {
@@ -14,6 +15,7 @@ namespace Paramita.Scenes
         private CombatManager combatManager;
         private Camera camera;
         private Player player;
+        private List<SentientBeing> npcs;
         private int levelNumber;
 
         private StatusMessages statuses;
@@ -47,10 +49,13 @@ namespace Paramita.Scenes
         {
             base.Initialize(); // This calls LoadContent()
 
-            player = new Player(GameRef, "Wesley", false, player_sprite);
+            player = new Player(GameRef, "Wesley", sentientbeing_sprites,
+                new Rectangle(0,32,32,32), new Rectangle(32,32,32,32));
             player.Initialize();
+            npcs = new List<SentientBeing>();
 
             SentientBeingCreator.Sprites = sentientbeing_sprites;
+            SentientBeingCreator.gameScene = this;
             ItemCreator.Sprites = item_sprites;
 
             levelManager = new LevelManager(
@@ -80,7 +85,13 @@ namespace Paramita.Scenes
             statuses.Update(gameTime);
             inventoryPanel.Update(gameTime);
             player.Update(gameTime);
-            camera.LockToSprite(Map, player.Sprite, GameRef.ScreenRectangle);
+
+            for(int x = 0; x < npcs.Count; x++)
+            {
+                npcs[x].Update(gameTime);
+            }
+
+            camera.LockToSprite(Map, player.Position, GameRef.ScreenRectangle);
 
             base.Update(gameTime);
         }
@@ -97,6 +108,12 @@ namespace Paramita.Scenes
             }
 
             player.Draw(gameTime, GameRef.SpriteBatch, camera);
+
+            for(int x = 0; x < npcs.Count; x++)
+            {
+                npcs[x].Draw(gameTime, GameRef.SpriteBatch);
+            }
+
             statuses.Draw(gameTime, GameRef.SpriteBatch);
             inventoryPanel.Draw(gameTime, GameRef.SpriteBatch);
         }
@@ -112,6 +129,10 @@ namespace Paramita.Scenes
             LevelNumber = 1;
             levelManager.MoveToLevel(levelNumber);
             player.CurrentTile = Map.FindTileType(TileType.StairsUp);
+
+            var giantRat = SentientBeingCreator.CreateGiantRat();
+            npcs.Add(giantRat);
+            giantRat.CurrentTile = GetEmptyWalkableTile();
 
             ShortSword sword = ItemCreator.CreateShortSword();
             GetEmptyWalkableTile().AddItem(sword);

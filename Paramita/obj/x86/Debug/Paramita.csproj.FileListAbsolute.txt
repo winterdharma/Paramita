@@ -41,3 +41,4 @@ C:\Users\Charlie\Desktop\Paramita\Paramita\obj\x86\Debug\Paramita.csprojResolveA
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\item_sprites.xnb
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\black_background.xnb
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\black_background1.xnb
+C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\sentientbeing_sprites.xnb

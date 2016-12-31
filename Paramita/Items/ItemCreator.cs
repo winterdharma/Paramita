@@ -12,17 +12,23 @@ namespace Paramita.Items
         ShortSword = 0,
         Shield,
         Coins,
-        Meat
+        Meat,
+        Fist,
+        Bite
     }
 
 
     public static class ItemCreator
     {
-        private static Rectangle[] spritesheetMap = new Rectangle[4] {
+        private static Rectangle[] spritesheetMap = new Rectangle[5] {
                 new Rectangle(0,0,32,32),
                 new Rectangle(0,31,32,32),
                 new Rectangle(0,63,32,32),
-                new Rectangle(0,95,32,32)
+                new Rectangle(0,95,32,32),
+                // This rectangle is the lower right cornor of the spritesheet
+                // and should be left transparent for items that need no sprite
+                // like natural weapons, etc.
+                new Rectangle(447,447,32,32)
             };
         private static Texture2D spritesheet;
 
@@ -33,6 +39,17 @@ namespace Paramita.Items
         }
 
  
+        // This item has no visible sprite
+        public static Fist CreateFist()
+        {
+            return new Fist(spritesheet, spritesheetMap[4]);
+        }
+
+        // This item has no visible sprite
+        public static Bite CreateBite()
+        {
+            return new Bite(spritesheet, spritesheetMap[4]);
+        }
 
         public static ShortSword CreateShortSword()
         {

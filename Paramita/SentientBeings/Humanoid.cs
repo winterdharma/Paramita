@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items;
+using Paramita.Scenes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,8 +40,8 @@ namespace Paramita.SentientBeings
         protected Item extra1;
         protected Item extra2;
 
-        public Humanoid(Texture2D sprites, Rectangle right, Rectangle left) 
-            : base(sprites, right, left)
+        public Humanoid(GameScene gameScene, Texture2D sprites, Rectangle right, Rectangle left) 
+            : base(gameScene, sprites, right, left)
         {
 
         }

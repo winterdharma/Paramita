@@ -1,15 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items;
-using Paramita.Items.Weapons;
+using Paramita.Scenes;
 using System.Collections.Generic;
 
 namespace Paramita.SentientBeings.Animals
 {
     public class GiantRat : Animal
     {
-        public GiantRat(Texture2D sprites, Rectangle rightFacing, Rectangle leftFacing) 
-            : base(sprites, rightFacing, leftFacing)
+        public GiantRat(GameScene gameScene, Texture2D sprites, Rectangle rightFacing, Rectangle leftFacing) 
+            : base(gameScene, sprites, rightFacing, leftFacing)
         {
             hitPoints = 5;
             protection = 2;
@@ -24,8 +24,10 @@ namespace Paramita.SentientBeings.Animals
             size = 1;
 
             naturalWeapons = new List<Weapon>();
+            naturalWeapons.Add(ItemCreator.CreateBite());
 
             attacks = new List<Weapon>();
+            attacks.AddRange(naturalWeapons);
         }
     }
 }

@@ -9,6 +9,7 @@ namespace Paramita.Items
      */
     public abstract class Weapon : Item
     {
+        protected string name;
         protected int damage;
         protected int attackModifier;
         protected int defenseModifier;
@@ -40,6 +41,15 @@ namespace Paramita.Items
             defenseModifier = defense;
             this.length = length;
             this.isNatural = isNatural;
+        }
+
+
+
+        // This override may belong in Weapon class (just need to pass @name to it?)
+        public override string ToString()
+        {
+            return name + " (Att:" + attackModifier + ", Def:" + defenseModifier +
+                ", Length:" + length + ")";
         }
     }
 }

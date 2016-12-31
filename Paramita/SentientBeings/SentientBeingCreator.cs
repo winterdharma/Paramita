@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items;
+using Paramita.Scenes;
 using Paramita.SentientBeings.Animals;
 using System.Collections.Generic;
 
@@ -18,6 +19,8 @@ namespace Paramita.SentientBeings
                 new Rectangle(0,0,32,32),
                 new Rectangle(31,0,32,32)
             };
+        public static GameScene gameScene;
+
 
         public static Texture2D Sprites
         {
@@ -29,10 +32,8 @@ namespace Paramita.SentientBeings
 
         public static GiantRat CreateGiantRat()
         {
-            List<Weapon> naturalWeapon = new List<Weapon>();
-            naturalWeapon.Add(itemCreator.CreateBite());
-            return new GiantRat(sprites, spriteMap[(int)SentientBeingType.GiantRat],
-                spriteMap[(int)SentientBeingType.GiantRat + 1], naturalWeapon);
+            return new GiantRat(gameScene, sprites, spriteMap[(int)SentientBeingType.GiantRat],
+                spriteMap[(int)SentientBeingType.GiantRat + 1]);
         }
     }
 }

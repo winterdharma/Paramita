@@ -37,11 +37,11 @@ namespace Paramita.Scenes
 
         // Sets the Camera's position centered on the Sprite, except when it would move the viewPort's bounds
         // would move outside the bounds of the TileMap.
-        public void LockToSprite(TileMap map, AnimatedSprite sprite, Rectangle viewport)
+        public void LockToSprite(TileMap map, Vector2 position, Rectangle viewport)
         {
             Position = new Vector2(
-                (sprite.Position.X + sprite.Width / 2) - (viewport.Width / 2),
-                (sprite.Position.Y + sprite.Height / 2) - (viewport.Height / 2)
+                (position.X + 16) - (viewport.Width / 2),
+                (position.Y + 16) - (viewport.Height / 2)
             );
             LockCamera(map, viewport);
         }
