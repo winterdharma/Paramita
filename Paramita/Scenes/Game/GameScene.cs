@@ -4,6 +4,7 @@ using Paramita.Items;
 using Paramita.Items.Weapons;
 using Paramita.Scenes.Game;
 using Paramita.SentientBeings;
+using System.Collections.Generic;
 
 namespace Paramita.Scenes
 {
@@ -11,8 +12,10 @@ namespace Paramita.Scenes
     public class GameScene : Scene
     {
         private LevelManager levelManager;
+        private CombatManager combatManager;
         private Camera camera;
         private Player player;
+        private List<SentientBeing> npcs;
         private int levelNumber;
 
         private StatusMessages statuses;
@@ -21,6 +24,7 @@ namespace Paramita.Scenes
         private Texture2D tilesheet;
         private Texture2D player_sprite;
         private Texture2D item_sprites;
+        private Texture2D sentientbeing_sprites;
         private Texture2D inventory_background;
 
         public Player Player { get { return player; } }
@@ -45,15 +49,20 @@ namespace Paramita.Scenes
         {
             base.Initialize(); // This calls LoadContent()
 
-            player = new Player(GameRef, "Wesley", false, player_sprite);
+            player = new Player(GameRef, "Wesley", sentientbeing_sprites,
+                new Rectangle(0,32,32,32), new Rectangle(32,32,32,32));
             player.Initialize();
+            npcs = new List<SentientBeing>();
+
+            SentientBeingCreator.Sprites = sentientbeing_sprites;
+            SentientBeingCreator.gameScene = this;
+            ItemCreator.Sprites = item_sprites;
 
             levelManager = new LevelManager(
                 GameRef,
                 new TileSet("tileset1", tilesheet, 8, 8, 32),
-                new ItemCreator(item_sprites),
                 GameController.random);
-
+            combatManager = new CombatManager(GameController.random);
             statuses = new StatusMessages(GameRef.Font, 10, new Point(0,720));
             inventoryPanel = new Inventory(GameRef.Font, GameRef.ScreenRectangle, GameRef.InputDevices, player, inventory_background, player.Items.Length);
         }
@@ -64,6 +73,7 @@ namespace Paramita.Scenes
         {
             tilesheet = content.Load<Texture2D>("tileset1");
             item_sprites = content.Load<Texture2D>("item_sprites");
+            sentientbeing_sprites = content.Load<Texture2D>("sentientbeing_sprites");
             player_sprite = content.Load<Texture2D>("maleplayer");
             inventory_background = content.Load<Texture2D>("black_background1");
         }
@@ -75,7 +85,13 @@ namespace Paramita.Scenes
             statuses.Update(gameTime);
             inventoryPanel.Update(gameTime);
             player.Update(gameTime);
-            camera.LockToSprite(Map, player.Sprite, GameRef.ScreenRectangle);
+
+            for(int x = 0; x < npcs.Count; x++)
+            {
+                npcs[x].Update(gameTime);
+            }
+
+            camera.LockToSprite(Map, player.Position, GameRef.ScreenRectangle);
 
             base.Update(gameTime);
         }
@@ -92,6 +108,12 @@ namespace Paramita.Scenes
             }
 
             player.Draw(gameTime, GameRef.SpriteBatch, camera);
+
+            for(int x = 0; x < npcs.Count; x++)
+            {
+                npcs[x].Draw(gameTime, GameRef.SpriteBatch);
+            }
+
             statuses.Draw(gameTime, GameRef.SpriteBatch);
             inventoryPanel.Draw(gameTime, GameRef.SpriteBatch);
         }
@@ -108,14 +130,18 @@ namespace Paramita.Scenes
             levelManager.MoveToLevel(levelNumber);
             player.CurrentTile = Map.FindTileType(TileType.StairsUp);
 
-            ShortSword sword = levelManager.ItemCreator.CreateShortSword();
+            var giantRat = SentientBeingCreator.CreateGiantRat();
+            npcs.Add(giantRat);
+            giantRat.CurrentTile = GetEmptyWalkableTile();
+
+            ShortSword sword = ItemCreator.CreateShortSword();
             GetEmptyWalkableTile().AddItem(sword);
 
-            var coins = levelManager.ItemCreator.CreateCoins(1);
+            var coins = ItemCreator.CreateCoins(1);
             GetEmptyWalkableTile().AddItem(coins);
-            var meat = levelManager.ItemCreator.CreateMeat();
+            var meat = ItemCreator.CreateMeat();
             GetEmptyWalkableTile().AddItem(meat);
-            var shield = levelManager.ItemCreator.CreateShield();
+            var shield = ItemCreator.CreateShield();
             GetEmptyWalkableTile().AddItem(shield);
         }
 

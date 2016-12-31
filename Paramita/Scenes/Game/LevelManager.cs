@@ -1,4 +1,5 @@
 ﻿using Paramita.Items;
+using Paramita.SentientBeings;
 using System;
 using System.Collections.Generic;
 
@@ -14,7 +15,6 @@ namespace Paramita.Scenes
         public Dictionary<int, TileMap> levels; // (Level number, level tilemap)
         private TileMap currentMap;
         private TileMapCreator mapCreator;
-        private ItemCreator itemCreator;
         private TileSet tileset;
         private GameController game;
 
@@ -24,14 +24,13 @@ namespace Paramita.Scenes
             private set { currentMap = value; }
         }
         
-        public ItemCreator ItemCreator { get { return itemCreator; } }
 
-        public LevelManager(GameController game, TileSet tileset, ItemCreator itemCreator, Random random)
+
+        public LevelManager(GameController game, TileSet tileset, Random random)
         {
             this.game = game;
             mapCreator = new TileMapCreator(40, 25, 10, 8, 3, random);
             this.tileset = tileset;
-            this.itemCreator = itemCreator;
             levels = new Dictionary<int, TileMap>();
         }
 

@@ -5,19 +5,13 @@ namespace Paramita.Items.Weapons
 {
     public class ShortSword : Weapon
     {
-        string name;
         string description;
         
         public ShortSword(Texture2D texture, Rectangle rect, string description)
-            : base(texture, rect)
+            : base(texture, rect, 5, 0, 2, 1, false)
         {
             name = "Short Sword";
             this.description = description;
-        }
-
-        public override string ToString()
-        {
-            return name;
         }
     }
 }

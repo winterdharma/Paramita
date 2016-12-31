@@ -51,6 +51,8 @@
     <Compile Include="Items\Valuable.cs" />
     <Compile Include="Items\Valuables\Coins.cs" />
     <Compile Include="Items\Weapon.cs" />
+    <Compile Include="Items\Weapons\Bite.cs" />
+    <Compile Include="Items\Weapons\Fist.cs" />
     <Compile Include="Items\Weapons\ShortSword.cs" />
     <Compile Include="Mechanics\Direction.cs" />
     <Compile Include="Mechanics\InputDevices.cs" />
@@ -70,15 +72,18 @@
     <Compile Include="Scenes\Game\TileMap.cs" />
     <Compile Include="Scenes\Game\TileSet.cs" />
     <Compile Include="Scenes\Game\Camera.cs" />
+    <Compile Include="SentientBeings\Animal.cs" />
+    <Compile Include="SentientBeings\Animals\GiantRat.cs" />
     <Compile Include="SentientBeings\CombatManager.cs" />
-    <Compile Include="SentientBeings\Enemy.cs" />
     <Compile Include="GameController.cs" />
     <Compile Include="Global.cs" />
+    <Compile Include="SentientBeings\Humanoid.cs" />
     <Compile Include="SentientBeings\PathToPlayer.cs" />
-    <Compile Include="SentientBeings\Player.cs" />
+    <Compile Include="SentientBeings\Humanoids\Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SentientBeings\SentientBeing.cs" />
+    <Compile Include="SentientBeings\SentientBeingCreator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
@@ -99,6 +104,7 @@
     <Content Include="Content\maleplayer.png" />
     <Content Include="Content\menuscreen.png" />
     <Content Include="Content\player.png" />
+    <Content Include="Content\sentientbeing_sprites.png" />
     <Content Include="Content\tileset1.png" />
     <Content Include="Content\titlescreen.png" />
     <Content Include="Content\white.png" />

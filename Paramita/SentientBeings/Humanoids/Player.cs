@@ -10,40 +10,30 @@ using Paramita.Items.Consumables;
 
 namespace Paramita.SentientBeings
 {
-    public class Player : SentientBeing, IContainer
+    public class Player : Humanoid, IContainer
     {
         // private fields
-        private GameScene gameScene;
         private InputDevices inputDevices;
-        private AnimatedSprite sprite;
-        Dictionary<AnimationKey, Animation> animations = new Dictionary<AnimationKey, Animation>();
-        private Texture2D texture;
+        
+        // Currently not in use, saved for future
+        //private AnimatedSprite sprite;
+        //Dictionary<AnimationKey, Animation> animations = new Dictionary<AnimationKey, Animation>();
 
         private string name;
-        private bool gender;
         private Item[] inventory;
         private int gold;
         private int sustanence;
-        
 
-        // public properties
-        public Vector2 Position
-        {
-            get { return sprite.Position; }
-            set { sprite.Position = value; }
-        }
+        // Not currently used, but saved for future time when animations may be needed
+        //public AnimatedSprite Sprite
+        //{
+        //    get { return sprite; }
+        //}
 
-        public Tile CurrentTile { get; set; }
-
-        public AnimatedSprite Sprite
-        {
-            get { return sprite; }
-        }
-
-        public Dictionary<AnimationKey, Animation> PlayerAnimations
-        {
-            get { return animations; }
-        }
+        //public Dictionary<AnimationKey, Animation> PlayerAnimations
+        //{
+        //    get { return animations; }
+        //}
 
         public Item[] Items { get { return inventory; } }
 
@@ -61,13 +51,11 @@ namespace Paramita.SentientBeings
 
 
 
-        public Player(GameController game, string name, bool gender, Texture2D texture) : base(game)
+        public Player(GameController game, string name, Texture2D sprites, Rectangle right, Rectangle left) 
+            : base(game.GameScene, sprites, right, left)
         {
-            gameScene = game.GameScene;
             inputDevices = game.InputDevices;
             this.name = name;
-            this.gender = gender;
-            this.texture = texture;
             Gold = 0;
             sustanence = 240;
 
@@ -82,37 +70,36 @@ namespace Paramita.SentientBeings
 
 
 
-        public override void Initialize()
+        public void Initialize()
         {
-            Animation animation = new Animation(3, 32, 32, 0, 0);
-            animations.Add(AnimationKey.WalkDown, animation);
+            // Not currently used, but saved for future
+            //Animation animation = new Animation(3, 32, 32, 0, 0);
+            //animations.Add(AnimationKey.WalkDown, animation);
 
-            animation = new Animation(3, 32, 32, 0, 32);
-            animations.Add(AnimationKey.WalkLeft, animation);
+            //animation = new Animation(3, 32, 32, 0, 32);
+            //animations.Add(AnimationKey.WalkLeft, animation);
 
-            animation = new Animation(3, 32, 32, 0, 64);
-            animations.Add(AnimationKey.WalkRight, animation);
+            //animation = new Animation(3, 32, 32, 0, 64);
+            //animations.Add(AnimationKey.WalkRight, animation);
 
-            animation = new Animation(3, 32, 32, 0, 96);
-            animations.Add(AnimationKey.WalkUp, animation);
+            //animation = new Animation(3, 32, 32, 0, 96);
+            //animations.Add(AnimationKey.WalkUp, animation);
 
-            sprite = new AnimatedSprite(texture, PlayerAnimations);
-            sprite.CurrentAnimation = AnimationKey.WalkDown;
-            sprite.IsAnimating = false;
+            //sprite = new AnimatedSprite(texture, PlayerAnimations);
+            //sprite.CurrentAnimation = AnimationKey.WalkDown;
+            //sprite.IsAnimating = false;
 
-            base.Initialize();
+            //base.Initialize();
         }
 
-        protected override void LoadContent()
+        protected void LoadContent()
         {
-            base.LoadContent();
+
         }
 
         public override void Update(GameTime gameTime)
         {
             HandleInput();
-            Position = gameScene.Map.GetTilePosition(CurrentTile);
-            Sprite.Update(gameTime);
             base.Update(gameTime);
         }
 
@@ -126,8 +113,8 @@ namespace Paramita.SentientBeings
             // if the player attempted to move, update Player.CurrentAnimation
             if(Facing != Compass.None)
             {
-                // update the player's Sprite
-                SetCurrentAnimation(Facing);
+                // update the player's sprite (facing left or right)
+                SetCurrentSprite();
                 // get the tile player is attempting to move to
                 Tile newTile = gameScene.Map.GetTile(
                     CurrentTile.TilePoint + Direction.GetPoint(Facing));
@@ -138,26 +125,6 @@ namespace Paramita.SentientBeings
                     ExpendSustanence();
                 }
             }
-        }
-
-
-
-       /* 
-        * Sets Player.CurrentAnimation to something appropriate for the Compass direction passed to it
-        * Currently, the player animations are in four directions, but movement can be
-        * in eight directions.
-        */
-        private void SetCurrentAnimation(Compass facing)
-        {
-            // set the animation according to the new facing
-            if (Facing == Compass.North)
-                Sprite.CurrentAnimation = AnimationKey.WalkUp;
-            else if (Facing == Compass.South)
-                Sprite.CurrentAnimation = AnimationKey.WalkDown;
-            else if (Facing == Compass.Northeast || Facing == Compass.East || Facing == Compass.Southeast)
-                Sprite.CurrentAnimation = AnimationKey.WalkRight;
-            else if (Facing == Compass.Northwest || Facing == Compass.West || Facing == Compass.Southwest)
-                Sprite.CurrentAnimation = AnimationKey.WalkLeft;
         }
 
 
@@ -279,10 +246,15 @@ namespace Paramita.SentientBeings
                 SamplerState.PointClamp,
                 null, null, null,
                 camera.Transformation);
-            Sprite.Draw(gameTime, spriteBatch);
-            spriteBatch.End();
 
-            base.Draw(gameTime);
+            spriteBatch.Draw(
+                spritesheet,
+                position,
+                CurrentSprite,
+                Color.White
+                );
+
+            spriteBatch.End();
         }
 
 
