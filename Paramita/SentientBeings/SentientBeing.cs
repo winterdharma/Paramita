@@ -1,22 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items;
 using Paramita.Mechanics;
 using Paramita.Scenes;
 using RogueSharp.DiceNotation;
+using System.Collections.Generic;
 
 namespace Paramita.SentientBeings
 {
-    public enum HumanoidBodyParts
-    {
-        Head,
-        Torso,
-        LeftArm,
-        RightArm,
-        LeftLeg,
-        RightLeg
-    }
-
-
     /*
      * This is the base class for all models of sentient beings in the game.
      * Sentient beings include: Player, animals, monsters, non-player characters,
@@ -34,17 +25,24 @@ namespace Paramita.SentientBeings
         // the direction a being is facing
         protected Compass facing;
 
+        // sprite sheet for images
+        protected Texture2D spritesheet;
+
+        // left and right facing source rectangles
+        protected Rectangle rightFacing;
+        protected Rectangle leftFacing;
+
         // items in a being's possession
         protected Item[] items;
 
-        // equiped items
-        protected Item leftHand;
-        protected Item rightHand;
-        protected Item head;
-        protected Item body;
-        protected Item feet;
-        protected Item extra1;
-        protected Item extra2;
+        // a list of the natural weapons a being possesses (fist, bite, claw, etc)
+        // *  these define a being's default attack without equiped weapon items
+        // *  some beings (like animals) only use these natural weapons
+        // *  for other beings, equiped items will replace these
+        protected List<Weapon> naturalWeapons;
+
+        // a list of the weapons a being attacks with (could be > 1 or 0)
+        protected List<Weapon> attacks;
 
         // combat related attributes
         protected int hitPoints;
@@ -57,6 +55,7 @@ namespace Paramita.SentientBeings
         protected int precision;
         protected int encumbrance;
         protected int fatigue;
+        protected int size;
 
 
         public int AttackSkill { get { return attackSkill; } }
@@ -69,9 +68,29 @@ namespace Paramita.SentientBeings
 
         public int Protection { get { return protection; } }
 
-        public Compass Facing { get; protected set; }
+        public Compass Facing
+        {
+            get { return facing; }
+            protected set { facing = value; }
+        }
 
-        public SentientBeing(GameController game)
-        { }
+        public int Size { get { return size; } }
+
+        public SentientBeing(Texture2D sprites, Rectangle right, Rectangle left)
+        {
+            spritesheet = sprites;
+            rightFacing = right;
+            leftFacing = left;
+        }
+
+        public void Attack(SentientBeing defender)
+        {
+
+        }
+
+        public void TakeDamage(int damage)
+        {
+
+        }
     }
 }

@@ -13,6 +13,7 @@ namespace Paramita.Items
         protected int attackModifier;
         protected int defenseModifier;
         protected int length;
+        protected bool isNatural;
 
         public int Damage { get { return damage; } }
 
@@ -22,16 +23,23 @@ namespace Paramita.Items
 
         public int Length { get { return length; } }
 
+        // a flag for checking if a weapon is a natural (default) weapon
+        // rather than a equiped item
+        public bool IsNatural
+        {
+            get { return isNatural; }
+            private set { isNatural = value; }
+        }
 
 
-
-        public Weapon(Texture2D texture, Rectangle rect, int damage, int attack, int defense, int length) 
+        public Weapon(Texture2D texture, Rectangle rect, int damage, int attack, int defense, int length, bool isNatural) 
             : base(texture, rect)
         {
             this.damage = damage;
             attackModifier = attack;
             defenseModifier = defense;
             this.length = length;
+            this.isNatural = isNatural;
         }
     }
 }

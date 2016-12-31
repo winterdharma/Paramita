@@ -10,7 +10,7 @@ using Paramita.Items.Consumables;
 
 namespace Paramita.SentientBeings
 {
-    public class Player : SentientBeing, IContainer
+    public class Player : Humanoid, IContainer
     {
         // private fields
         private GameScene gameScene;
@@ -61,7 +61,7 @@ namespace Paramita.SentientBeings
 
 
 
-        public Player(GameController game, string name, bool gender, Texture2D texture) : base(game)
+        public Player(GameController game, string name, bool gender, Texture2D texture) : base()
         {
             gameScene = game.GameScene;
             inputDevices = game.InputDevices;
