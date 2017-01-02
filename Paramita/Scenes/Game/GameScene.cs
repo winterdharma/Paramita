@@ -27,6 +27,16 @@ namespace Paramita.Scenes
         private Texture2D sentientbeing_sprites;
         private Texture2D inventory_background;
 
+        private bool isPlayersTurn = true;
+
+        public bool IsPlayersTurn
+        {
+            get { return isPlayersTurn; }
+            set { isPlayersTurn = value; }
+        }
+
+        public Camera Camera { get { return camera; } }
+
         public Player Player { get { return player; } }
 
         public int LevelNumber {
@@ -82,15 +92,26 @@ namespace Paramita.Scenes
 
         public override void Update(GameTime gameTime)
         {
+            // update the UI panels
             statuses.Update(gameTime);
             inventoryPanel.Update(gameTime);
-            player.Update(gameTime);
 
-            for(int x = 0; x < npcs.Count; x++)
+            // check for player's input until he moves
+            if(isPlayersTurn == true)
             {
-                npcs[x].Update(gameTime);
+                player.Update(gameTime);
+            }
+            // give the npcs a turn after the player moves
+            if(isPlayersTurn == false)
+            {
+                for (int x = 0; x < npcs.Count; x++)
+                {
+                    npcs[x].Update(gameTime);
+                }
+                isPlayersTurn = true;
             }
 
+            //move the camera to center on the player
             camera.LockToSprite(Map, player.Position, GameRef.ScreenRectangle);
 
             base.Update(gameTime);

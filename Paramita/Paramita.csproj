@@ -78,6 +78,7 @@
     <Compile Include="GameController.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="SentientBeings\Humanoid.cs" />
+    <Compile Include="SentientBeings\INpc.cs" />
     <Compile Include="SentientBeings\PathToPlayer.cs" />
     <Compile Include="SentientBeings\Humanoids\Player.cs" />
     <Compile Include="Program.cs" />

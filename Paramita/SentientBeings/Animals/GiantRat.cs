@@ -3,10 +3,12 @@ using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items;
 using Paramita.Scenes;
 using System.Collections.Generic;
+using System;
+using Paramita.Mechanics;
 
 namespace Paramita.SentientBeings.Animals
 {
-    public class GiantRat : Animal
+    public class GiantRat : Animal, INpc
     {
         public GiantRat(GameScene gameScene, Texture2D sprites, Rectangle rightFacing, Rectangle leftFacing) 
             : base(gameScene, sprites, rightFacing, leftFacing)
@@ -28,6 +30,31 @@ namespace Paramita.SentientBeings.Animals
 
             attacks = new List<Weapon>();
             attacks.AddRange(naturalWeapons);
+        }
+
+
+        public override void Update(GameTime gameTime)
+        {
+            PerformAI();
+            base.Update(gameTime);
+        }
+
+        public void PerformAI()
+        {
+            MoveTo(Compass.East);
+        }
+
+
+        private void MoveTo(Compass direction)
+        {
+            facing = direction;
+            SetCurrentSprite();
+            Tile newTile = gameScene.Map.GetTile(CurrentTile.TilePoint + Direction.GetPoint(Facing));
+
+            if(newTile!=null && newTile.IsWalkable == true)
+            {
+                CurrentTile = newTile;
+            }
         }
     }
 }
