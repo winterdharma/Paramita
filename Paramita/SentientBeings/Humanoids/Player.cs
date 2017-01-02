@@ -92,10 +92,6 @@ namespace Paramita.SentientBeings
             //base.Initialize();
         }
 
-        protected void LoadContent()
-        {
-
-        }
 
         public override void Update(GameTime gameTime)
         {
@@ -110,19 +106,26 @@ namespace Paramita.SentientBeings
             // check for movement input and store the direction returned
             Facing = inputDevices.MovedTo();
             
-            // if the player attempted to move, update Player.CurrentAnimation
+            // if the player attempted to move:
             if(Facing != Compass.None)
             {
-                // update the player's sprite (facing left or right)
+                // update the player's sprite facing
                 SetCurrentSprite();
                 // get the tile player is attempting to move to
                 Tile newTile = gameScene.Map.GetTile(
                     CurrentTile.TilePoint + Direction.GetPoint(Facing));
+
+                // Check to see if:
+                //    * Player didn't try to move outside the tilemap
+                //    * Player tried to move to a tile he can stand on
                 if(newTile != null && newTile.IsWalkable == true)
                 {
                     CurrentTile = newTile;
                     CheckForNewTileEvents();
+                    // burn a calorie while walking
                     ExpendSustanence();
+                    // toggle the turn flag so Npcs will go next
+                    gameScene.IsPlayersTurn = false;
                 }
             }
         }

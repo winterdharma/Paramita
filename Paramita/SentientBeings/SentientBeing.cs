@@ -102,11 +102,13 @@ namespace Paramita.SentientBeings
 
         public SentientBeing(GameScene gameScene, Texture2D sprites, Rectangle right, Rectangle left)
         {
+            this.gameScene = gameScene;
             camera = gameScene.Camera;
+
             spritesheet = sprites;
             rightFacing = right;
             leftFacing = left;
-            this.gameScene = gameScene;
+
             CurrentSprite = rightFacing;
         }
 
