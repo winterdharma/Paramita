@@ -27,6 +27,8 @@ namespace Paramita.Scenes
         private Texture2D sentientbeing_sprites;
         private Texture2D inventory_background;
 
+        public Camera Camera { get { return camera; } }
+
         public Player Player { get { return player; } }
 
         public int LevelNumber {

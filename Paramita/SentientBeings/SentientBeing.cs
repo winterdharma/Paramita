@@ -21,6 +21,7 @@ namespace Paramita.SentientBeings
     {
         // reference to the GameScene for access to GameScene.Map
         protected GameScene gameScene;
+        protected Camera camera;
 
         // location on the tilemap
         protected Tile currentTile;
@@ -101,6 +102,7 @@ namespace Paramita.SentientBeings
 
         public SentientBeing(GameScene gameScene, Texture2D sprites, Rectangle right, Rectangle left)
         {
+            camera = gameScene.Camera;
             spritesheet = sprites;
             rightFacing = right;
             leftFacing = left;
@@ -129,7 +131,12 @@ namespace Paramita.SentientBeings
 
         public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin();
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                BlendState.AlphaBlend,
+                SamplerState.PointClamp,
+                null, null, null,
+                camera.Transformation);
 
             spriteBatch.Draw(
                 spritesheet,
