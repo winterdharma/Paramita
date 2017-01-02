@@ -33,27 +33,24 @@ namespace Paramita.SentientBeings.Animals
         }
 
 
+
         public override void Update(GameTime gameTime)
         {
+
             PerformAI();
             base.Update(gameTime);
         }
 
+
+
+        // For combat testing, the GiantRat just checks to see if the player
+        // is next to it and attacks if true.
         public void PerformAI()
         {
-            MoveTo(Compass.East);
-        }
-
-
-        private void MoveTo(Compass direction)
-        {
-            facing = direction;
-            SetCurrentSprite();
-            Tile newTile = gameScene.Map.GetTile(CurrentTile.TilePoint + Direction.GetPoint(Facing));
-
-            if(newTile!=null && newTile.IsWalkable == true)
+            Tile playerTile = gameScene.Player.CurrentTile;
+            if(CurrentTile.AdjacentTo(playerTile) == true)
             {
-                CurrentTile = newTile;
+                Attack(gameScene.Player);
             }
         }
     }

@@ -111,6 +111,14 @@ namespace Paramita.Scenes
                 isPlayersTurn = true;
             }
 
+            for (int x = 0; x < npcs.Count; x++)
+            {
+                if (npcs[x].IsDead == true)
+                {
+                    npcs.Remove(npcs[x]);   
+                }
+            }
+
             //move the camera to center on the player
             camera.LockToSprite(Map, player.Position, GameRef.ScreenRectangle);
 
@@ -218,6 +226,38 @@ namespace Paramita.Scenes
         public void PostNewStatus(string message)
         {
             statuses.AddMessage(message);
+        }
+
+
+
+        // Iterates over the @npcs list of active NPCs to find if one of them is
+        // currently on @tile
+        public bool IsNpcOnTile(Tile tile)
+        {
+            for(int x = 0; x < npcs.Count; x++)
+            {
+                if(npcs[x].CurrentTile == tile)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+
+        // Finds the NPC that is located on @tile. If none is there, null is returned
+        // (this method should be called after IsNpcOnTile check)
+        public SentientBeing GetNpcOnTile(Tile tile)
+        {
+            for (int x = 0; x < npcs.Count; x++)
+            {
+                if (npcs[x].CurrentTile == tile)
+                {
+                    return npcs[x];
+                }
+            }
+            return null;
         }
     }
 }

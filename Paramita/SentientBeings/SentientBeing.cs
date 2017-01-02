@@ -64,6 +64,10 @@ namespace Paramita.SentientBeings
         protected int fatigue;
         protected int size;
 
+        // status related flags
+        protected bool isDead = false;
+
+        public bool IsDead { get { return isDead; } }
 
         public Tile CurrentTile
         {
@@ -119,10 +123,34 @@ namespace Paramita.SentientBeings
 
 
 
+        protected virtual bool MoveTo(Compass direction)
+        {
+            // exit if no direction was given
+            if(direction == Compass.None)
+            {
+                return false;
+            }
+
+            facing = direction;
+            SetCurrentSprite();
+            Tile newTile = gameScene.Map.GetTile(CurrentTile.TilePoint + Direction.GetPoint(Facing));
+
+            // check to see if:
+            //     * newTile is not outside the TileMap
+            //     * newTile is walkable
+            if (newTile != null && newTile.IsWalkable == true)
+            {
+                CurrentTile = newTile;
+                return true;
+            }
+            return false;
+        }
+
+
 
         public void Attack(SentientBeing defender)
         {
-
+            gameScene.PostNewStatus(this + " attacked " + defender + ".");
         }
 
         public void TakeDamage(int damage)
@@ -131,7 +159,13 @@ namespace Paramita.SentientBeings
         }
 
 
-        public virtual void Update(GameTime gameTime) { }
+        public virtual void Update(GameTime gameTime)
+        {
+            if(hitPoints < 1)
+            {
+                isDead = true;
+            }
+        }
 
         public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {

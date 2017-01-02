@@ -104,23 +104,21 @@ namespace Paramita.SentientBeings
         private void HandleInput()
         {
             // check for movement input and store the direction returned
-            Facing = inputDevices.MovedTo();
-            
-            // if the player attempted to move:
-            if(Facing != Compass.None)
-            {
-                // update the player's sprite facing
-                SetCurrentSprite();
-                // get the tile player is attempting to move to
-                Tile newTile = gameScene.Map.GetTile(
-                    CurrentTile.TilePoint + Direction.GetPoint(Facing));
+            Facing = inputDevices.Moved();
 
-                // Check to see if:
-                //    * Player didn't try to move outside the tilemap
-                //    * Player tried to move to a tile he can stand on
-                if(newTile != null && newTile.IsWalkable == true)
+            Tile tile = gameScene.Map.GetTile(CurrentTile.TilePoint + Direction.GetPoint(Facing));
+
+            SentientBeing npc = gameScene.GetNpcOnTile(tile);
+            if (npc is SentientBeing)
+            {
+                Attack(npc);
+                gameScene.IsPlayersTurn = false;
+            }
+            else
+            {
+                bool moved = MoveTo(Facing);
+                if (moved == true)
                 {
-                    CurrentTile = newTile;
                     CheckForNewTileEvents();
                     // burn a calorie while walking
                     ExpendSustanence();
@@ -128,6 +126,8 @@ namespace Paramita.SentientBeings
                     gameScene.IsPlayersTurn = false;
                 }
             }
+            
+            
         }
 
 
