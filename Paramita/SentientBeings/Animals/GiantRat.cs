@@ -49,11 +49,11 @@ namespace Paramita.SentientBeings.Animals
         {
             facing = direction;
             SetCurrentSprite();
-            Tile newTile = gameScene.Map.GetTile(currentTile.TilePoint + Direction.GetPoint(Facing));
+            Tile newTile = gameScene.Map.GetTile(CurrentTile.TilePoint + Direction.GetPoint(Facing));
 
             if(newTile!=null && newTile.IsWalkable == true)
             {
-                currentTile = newTile;
+                CurrentTile = newTile;
             }
         }
     }

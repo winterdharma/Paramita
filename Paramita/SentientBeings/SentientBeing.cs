@@ -68,7 +68,11 @@ namespace Paramita.SentientBeings
         public Tile CurrentTile
         {
             get { return currentTile; }
-            set { currentTile = value; } 
+            set
+            {
+                currentTile = value;
+                position = gameScene.Map.GetTilePosition(currentTile);
+            } 
         }
 
         public Rectangle CurrentSprite { get; set; }
@@ -110,6 +114,7 @@ namespace Paramita.SentientBeings
             leftFacing = left;
 
             CurrentSprite = rightFacing;
+            
         }
 
 
@@ -126,10 +131,7 @@ namespace Paramita.SentientBeings
         }
 
 
-        public virtual void Update(GameTime gameTime)
-        {
-            position = gameScene.Map.GetTilePosition(currentTile);
-        }
+        public virtual void Update(GameTime gameTime) { }
 
         public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
