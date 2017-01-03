@@ -19,9 +19,13 @@ namespace Paramita.SentientBeings
      */ 
     public class SentientBeing
     {
+        // the string returned by ToString()
+        protected string name;
+
         // reference to the GameScene for access to GameScene.Map
         protected GameScene gameScene;
         protected Camera camera;
+        protected CombatManager combatManager;
 
         // location on the tilemap
         protected Tile currentTile;
@@ -89,7 +93,18 @@ namespace Paramita.SentientBeings
 
         public int AttackSkill { get { return attackSkill; } }
 
-        public int DefenseSkill { get { return defenseSkill; } }
+        public int DefenseSkill
+        {
+            get
+            {
+                int weaponsMods = 0;
+                for(int x = 0; x < attacks.Count; x++)
+                {
+                    weaponsMods += attacks[x].DefenseModifier;
+                }
+                return defenseSkill + weaponsMods;
+            }
+        }
 
         public int Fatigue { get { return fatigue; } }
 
@@ -112,6 +127,7 @@ namespace Paramita.SentientBeings
         {
             this.gameScene = gameScene;
             camera = gameScene.Camera;
+            combatManager = gameScene.CombatManager;
 
             spritesheet = sprites;
             rightFacing = right;
@@ -147,16 +163,30 @@ namespace Paramita.SentientBeings
         }
 
 
-
+        // conduct all of a being's attacks for the turn
         public void Attack(SentientBeing defender)
         {
             gameScene.PostNewStatus(this + " attacked " + defender + ".");
+            for(int x = 0; x < attacks.Count; x++)
+            {
+                bool isHit = combatManager.AttackRoll(this, attacks[x], defender);
+
+                //if (isHit == true)
+                //{
+                //    int damage = combatManager.DamageRoll(this, attacks[x], defender);
+                //    defender.TakeDamage(damage);
+                //}
+            }
+            
         }
+
+
 
         public void TakeDamage(int damage)
         {
 
         }
+
 
 
         public virtual void Update(GameTime gameTime)
@@ -202,6 +232,12 @@ namespace Paramita.SentientBeings
                 CurrentSprite = rightFacing;
             else if (Facing == Compass.Northwest || Facing == Compass.West || Facing == Compass.Southwest)
                 CurrentSprite = leftFacing;
+        }
+
+
+        public override string ToString()
+        {
+            return name;
         }
     }
 }

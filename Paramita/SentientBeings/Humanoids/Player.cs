@@ -19,7 +19,6 @@ namespace Paramita.SentientBeings
         //private AnimatedSprite sprite;
         //Dictionary<AnimationKey, Animation> animations = new Dictionary<AnimationKey, Animation>();
 
-        private string name;
         private Item[] inventory;
         private int gold;
         private int sustanence;
@@ -60,6 +59,24 @@ namespace Paramita.SentientBeings
             sustanence = 240;
 
             inventory = new Item[10];
+
+            hitPoints = 10;
+            protection = 0;
+            magicResistance = 10;
+            strength = 10;
+            attackSkill = 10;
+            defenseSkill = 10;
+            precision = 10;
+            morale = 10;
+            encumbrance = 0;
+            fatigue = 0;
+            size = 2;
+
+            naturalWeapons = new List<Weapon>();
+            naturalWeapons.Add(ItemCreator.CreateFist());
+
+            attacks = new List<Weapon>();
+            attacks.AddRange(naturalWeapons);
         }
 
 
@@ -145,6 +162,8 @@ namespace Paramita.SentientBeings
             CheckForTileTypeEvent(CurrentTile.TileType);
         }
 
+
+
         // checks to see if there is an item to pick up and does so if one is there.
         // used when player moves to a new tile.
         private void TryToPickUpItem()
@@ -171,6 +190,7 @@ namespace Paramita.SentientBeings
         }
 
 
+
         // Checks the TileType of Player.CurrentTile for any events that when moving to them
         private void CheckForTileTypeEvent(TileType tileType)
         {
@@ -188,6 +208,8 @@ namespace Paramita.SentientBeings
 
 
 
+        // decrement's the player's sustanence value and writes messages to
+        // GameScene.StatusMessages
         private void ExpendSustanence()
         {
             Sustanence = Sustanence - 1;
@@ -213,7 +235,10 @@ namespace Paramita.SentientBeings
         }
 
 
-        // Drops item onto the tile the player is located in. No item selection mechanism yet.
+
+        // Drops item onto the tile the player is located in.
+        // The item to drop is indicated by @itemToDrop, which should be a valid
+        // index value for the player's inventory list
         public void DropItem(int itemToDrop)
         {
             Item item = inventory[itemToDrop];
@@ -225,22 +250,9 @@ namespace Paramita.SentientBeings
             }
         }
 
-        private Compass GetDirectionFacing(AnimationKey currentAnimation)
-        {
-            switch(currentAnimation)
-            {
-                case AnimationKey.WalkUp:
-                    return Compass.North;
-                case AnimationKey.WalkDown:
-                    return Compass.South;
-                case AnimationKey.WalkLeft:
-                    return Compass.West;
-                case AnimationKey.WalkRight:
-                    return Compass.East;
-            }
-            return Compass.None;
-        }
 
+
+        // Draws the player onto the tilemap
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
             spriteBatch.Begin(
@@ -262,9 +274,7 @@ namespace Paramita.SentientBeings
 
 
 
-       /*
-        * IContainer interface methods
-        */
+        // This method removes an item from the player's possessions
         public Item RemoveItem(Item item)
         {
             for(int x = 0; x < inventory.Length; x++)
@@ -279,7 +289,7 @@ namespace Paramita.SentientBeings
         }
 
 
-
+        // This method accepts an item and adds it to the player's possessions
         public bool AddItem(Item item)
         {
             if(item is Coins)
@@ -306,9 +316,20 @@ namespace Paramita.SentientBeings
             return false;
         }
 
+
+
+        // This method returns an array of the items in the player's inventory
         public Item[] InspectItems()
         {
             return inventory;
+        }
+
+
+
+        // Provides a string equivalent of the player
+        public override string ToString()
+        {
+            return name;
         }
     }
 }

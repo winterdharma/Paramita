@@ -35,6 +35,8 @@ namespace Paramita.Scenes
             set { isPlayersTurn = value; }
         }
 
+        public CombatManager CombatManager { get { return combatManager; } }
+
         public Camera Camera { get { return camera; } }
 
         public Player Player { get { return player; } }
@@ -51,6 +53,7 @@ namespace Paramita.Scenes
         public GameScene(GameController game) : base(game)
         {
             camera = new Camera();
+            combatManager = new CombatManager(GameController.random, this);
         }
 
 
@@ -72,7 +75,7 @@ namespace Paramita.Scenes
                 GameRef,
                 new TileSet("tileset1", tilesheet, 8, 8, 32),
                 GameController.random);
-            combatManager = new CombatManager(GameController.random);
+            
             statuses = new StatusMessages(GameRef.Font, 10, new Point(0,720));
             inventoryPanel = new Inventory(GameRef.Font, GameRef.ScreenRectangle, GameRef.InputDevices, player, inventory_background, player.Items.Length);
         }

@@ -13,6 +13,7 @@ namespace Paramita.SentientBeings.Animals
         public GiantRat(GameScene gameScene, Texture2D sprites, Rectangle rightFacing, Rectangle leftFacing) 
             : base(gameScene, sprites, rightFacing, leftFacing)
         {
+            name = "Giant Rat";
             hitPoints = 5;
             protection = 2;
             magicResistance = 5;
