@@ -99,27 +99,28 @@ namespace Paramita.Scenes
             statuses.Update(gameTime);
             inventoryPanel.Update(gameTime);
 
+            // remove dead npcs before updating them
+            for (int x = 0; x < npcs.Count; x++)
+            {
+                if (npcs[x].IsDead == true)
+                {
+                    npcs.Remove(npcs[x]);
+                }
+            }
+
             // check for player's input until he moves
-            if(isPlayersTurn == true)
+            if (isPlayersTurn == true)
             {
                 player.Update(gameTime);
             }
             // give the npcs a turn after the player moves
-            if(isPlayersTurn == false)
+            else
             {
                 for (int x = 0; x < npcs.Count; x++)
                 {
                     npcs[x].Update(gameTime);
                 }
                 isPlayersTurn = true;
-            }
-
-            for (int x = 0; x < npcs.Count; x++)
-            {
-                if (npcs[x].IsDead == true)
-                {
-                    npcs.Remove(npcs[x]);   
-                }
             }
 
             //move the camera to center on the player

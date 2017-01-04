@@ -91,6 +91,10 @@ namespace Paramita.SentientBeings
             set { position = value; }
         }
 
+        public int HitPoints { get { return hitPoints; } }
+
+        public int Morale { get { return morale; } }
+
         public int AttackSkill { get { return attackSkill; } }
 
         public int DefenseSkill
@@ -121,6 +125,8 @@ namespace Paramita.SentientBeings
 
         public int Protection { get { return protection; } }
 
+        public List<Weapon> Attacks { get { return attacks; } }
+
         public Compass Facing
         {
             get { return facing; }
@@ -148,6 +154,7 @@ namespace Paramita.SentientBeings
 
 
 
+
         protected virtual bool MoveTo(Compass direction)
         {
             // exit if no direction was given
@@ -172,39 +179,46 @@ namespace Paramita.SentientBeings
         }
 
 
+
         // conduct all of a being's attacks for the turn
         public void Attack(SentientBeing defender)
         {
             gameScene.PostNewStatus(this + " attacked " + defender + ".");
             for(int x = 0; x < attacks.Count; x++)
             {
-                bool isHit = combatManager.AttackRoll(this, attacks[x], defender);
-
-                //if (isHit == true)
-                //{
-                //    int damage = combatManager.DamageRoll(this, attacks[x], defender);
-                //    defender.TakeDamage(damage);
-                //}
+                combatManager.ResolveAttack(this, attacks[x], defender);
             }
-            
         }
 
 
 
+        // Applies damage to the being's hitPoints
+        // Validates that damage is greater than zero before applying damage
         public void TakeDamage(int damage)
         {
-
+            if(damage > 0)
+            {
+                hitPoints -= damage;
+                CheckForDeath();
+            }
         }
 
 
 
         public virtual void Update(GameTime gameTime)
         {
-            if(hitPoints < 1)
-            {
-                isDead = true;
-            }
+            CheckForDeath();
         }
+
+
+        // Checks being's @hitPoints and sets @isDead to true if zero or less
+        private void CheckForDeath()
+        {
+            if (hitPoints < 1)
+                isDead = true;
+        }
+
+
 
         public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
@@ -224,6 +238,8 @@ namespace Paramita.SentientBeings
 
             spriteBatch.End();
         }
+
+
 
         /* 
         * Sets CurrentSprite to something appropriate for the Compass direction passed to it
@@ -245,6 +261,29 @@ namespace Paramita.SentientBeings
 
 
 
+        // helper method for CombatManager that returns the weapon in the being's
+        // Attacks list that is the longest one (used for resolving defender repel attacks)
+        // If there are > 1 weapon with the longest length, returns the first one that appears
+        // in the Attacks list
+        public Weapon GetLongestWeapon()
+        {
+            Weapon longestWeapon = attacks[0];
+
+            if(attacks.Count > 1)
+            {
+                for (int x = 1; x < attacks.Count; x++)
+                {
+                    if (attacks[x].Length > longestWeapon.Length)
+                        longestWeapon = attacks[x];
+                }
+            }
+
+            return longestWeapon;
+        }
+
+
+
+        // the default string equivalent for this being
         public override string ToString()
         {
             return name;
@@ -255,8 +294,11 @@ namespace Paramita.SentientBeings
         // This method is the verbose report on a sentient being
         public abstract string GetDescription();
 
+
         // being types should implement this method to handle equipping items
         public abstract bool EquipItem(Item item);
+        
+        
         // beings should implement this method to initialize and update their Attacks list
         public abstract void UpdateAttacks();
     }
