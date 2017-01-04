@@ -8,6 +8,7 @@ namespace Paramita.SentientBeings
     {
         Random random;
         GameScene scene;
+        int repelAttackDmg = 1;
 
 
 
@@ -25,85 +26,95 @@ namespace Paramita.SentientBeings
         // Conducts an attack roll for a single attack on a defending SentientBeing
         // Returns a bool indicating whether the attack hit or not.
         // It also posts messages to the GameScene indicating what happened.
-        public bool AttackRoll(SentientBeing attacker, Weapon weapon, SentientBeing defender)
+        public void ResolveAttack(SentientBeing attacker, Weapon weapon, SentientBeing defender)
         {
             // check to see if defender gets a repel attack and resolve it if it does
-            if(CheckForRepelAttempt(attacker, weapon, defender) == true)
+            // A return of true indicates the original attack was stopped
+            if (ResolveRepelAttack(attacker, weapon, defender) == true)
+                return;
+
+            // if the repel attempt failed to stop the attack,
+            // conduct an AttackRoll - a result > 0 indicates a hit is scored
+            int attackResult = AttackRoll(attacker, weapon, defender);
+
+            // resolve the DamageRoll if a hit was scored and apply damage
+            int damage = 0;
+            if(attackResult > 0)
             {
-                Weapon repelWeapon = defender.GetLongestWeapon();
-
-                scene.PostNewStatus(defender + " trys to repel attack. (Att length: " + weapon.Length 
-                    + ", Def length: " + repelWeapon.Length + ")");
-
-
-                int attackRepelled = RepelAttackRoll(defender, repelWeapon, attacker);
-                if(attackRepelled > 0)
-                {
-                    scene.PostNewStatus(defender + " succeeds!");
-                    bool moraleCheck = MoraleCheck(attacker, defender, 10, attackRepelled);
-                    if(moraleCheck == false)
-                    {
-                        // attacker aborts the attack
-                        scene.PostNewStatus(attacker + " aborts attack!");
-                        return false;
-                    }
-                    else
-                    {
-                        scene.PostNewStatus(attacker + " continues to attack.");
-                        // attacker goes ahead with attack, but might take damage from
-                        // the defender's weapon
-                        int damage = DamageRoll(defender, repelWeapon, attacker);
-                        if (damage > 1)
-                        {
-                            // no more than 1 pt of damage is possible
-                            damage = 1;
-                            attacker.TakeDamage(damage);
-                            scene.PostNewStatus(attacker + " takes " + damage + "pt of dmg!");
-                            if(attacker.IsDead == true)
-                            {
-                                scene.PostNewStatus(attacker + " is killed!");
-                                return false;
-                            }
-                        }
-                    }
-                }
+                damage = DamageRoll(attacker, weapon, defender);
+                defender.TakeDamage(damage);
+                scene.PostNewStatus(attacker + " hit " + defender + ", doing " + damage + " damage!");
             }
-
-            bool isHit = false;
-
-            int attackSkill = attacker.AttackSkill + weapon.AttackModifier;
-            int attFatigue = attacker.FatigueAttPenalty;
-            int defenseSkill = defender.DefenseSkill; // SentientBeing.DefenseSkill.Get() includes weapons modifiers
-            int defFatigue = defender.FatigueDefPenalty;
-
-            // roll the dice
-            int attRoll = DiceRoll("2d6", true);
-            int defRoll = DiceRoll("2d6", true);
-            
-            // add the dice rolls to other factors to arrive at total attack and defense scores
-            int attack = attRoll + attackSkill - attFatigue;
-            int defense = defRoll + defenseSkill - defFatigue;
-
-            // check for a hit
-            if (attack > defense)
-                isHit = true;
-
-            string verb;
-            if (isHit == true)
-                verb = "hit";
             else
-                verb = "missed";
-
-            scene.PostNewStatus(attacker + " rolled " + attRoll + " plus attack skill "
-                + attackSkill + " and weapon mod of " + weapon.AttackModifier + " minus fatigue mod of " 
-                + attFatigue + ".");
-            scene.PostNewStatus(defender + " rolled " + defRoll + " plus total defense skill of "
-                + defenseSkill + " minus fatigue mod of " + defFatigue + ".");
-            scene.PostNewStatus(attacker + " " + verb + "!");
-
-            return isHit;
+            {
+                scene.PostNewStatus(attacker + " missed!");
+            }
         }
 
+
+
+        // Conducts the repel attack check and resolves the repel attack if it is attempted
+        // Returns:
+        //      * True if the attacker's original attack is stopped
+        //      * False if the attacker's original attack is not stopped
+        private bool ResolveRepelAttack(SentientBeing attacker, Weapon weapon, SentientBeing defender)
+        {
+            int repelAttResult = 0;
+            bool moraleCheck = false;
+            int damage = 0;
+
+            // check if the defender can attempt a repel attack
+            if (CheckForRepelAttempt(attacker, weapon, defender) == false)
+                return false;
+            
+            // get the weapon the defender will use for the repel attack
+            Weapon repelWeapon = defender.GetLongestWeapon();
+
+            // report that the defender is attempting to repel the attack
+            scene.PostNewStatus(defender + " trys to repel attack. (Att length: " + weapon.Length
+                + ", Def length: " + repelWeapon.Length + ")");
+
+            // conduct an AttackRoll with the defender as attacker
+            repelAttResult = AttackRoll(defender, repelWeapon, attacker);
+
+            // if the repel attack succeeds, attacker rolls a morale check
+            if (repelAttResult > 0)
+                moraleCheck = MoraleCheck(attacker, defender, 10, repelAttResult);
+            // if the repel attack fails, return false
+            else
+                return false;
+
+            // if the attacker fails the morale check, he aborts his attack
+            if (moraleCheck == false)
+            {
+                scene.PostNewStatus(defender + " succeeds!");
+                scene.PostNewStatus(attacker + " aborts attack!");
+                return true;
+            }
+            // if the attacker passes the morale check, he presses on and is hit
+            // by defender's repel weapon
+            else
+            {
+                scene.PostNewStatus(attacker + " continues to attack.");
+                damage = DamageRoll(defender, repelWeapon, attacker);
+            }
+
+            // check if the attacker takes repel attack damage
+            if (damage > 0)
+            {
+                attacker.TakeDamage(repelAttackDmg);
+                scene.PostNewStatus(attacker + " takes 1 pt of damage!");
+            }
+
+            // check if the attack was killed by the repel attack
+            if (attacker.IsDead == true)
+            {
+                scene.PostNewStatus(attacker + " is killed!");
+                return true;
+            }
+            // if not returned yet, the attacker still gets to attack
+            return false;
+        }
 
 
         // checks to see if the defender gets a repel attempt
@@ -125,7 +136,7 @@ namespace Paramita.SentientBeings
 
         // RepelAttack is the same as a normal AttackRoll, except that the difference between
         // the attack and defense scores is returned instead of a bool
-        private int RepelAttackRoll(SentientBeing attacker, Weapon weapon, SentientBeing defender)
+        private int AttackRoll(SentientBeing attacker, Weapon weapon, SentientBeing defender)
         {
             int attackSkill = attacker.AttackSkill + weapon.AttackModifier;
             int attFatigue = attacker.FatigueAttPenalty;
@@ -140,8 +151,36 @@ namespace Paramita.SentientBeings
             int attack = attRoll + attackSkill - attFatigue;
             int defense = defRoll + defenseSkill - defFatigue;
 
-            // check for a hit
+            // report the details of the attack and defense scores
+            scene.PostNewStatus(attacker + " rolled " + attRoll + " plus attack skill "
+                + attackSkill + " and weapon mod of " + weapon.AttackModifier + " minus fatigue mod of "
+                + attFatigue + ".");
+
+            scene.PostNewStatus(defender + " rolled " + defRoll + " plus total defense skill of "
+                + defenseSkill + " minus fatigue mod of " + defFatigue + ".");
+
+            // return the difference of the attack and defense scores
             return attack - defense;
+        }
+
+
+
+        /*
+         * This function conducts a DamageRoll after a successful AttackRoll hit
+         * The calculations for the shield hit are missing at present
+         * It also is missing the case of a head hit, which uses defender's head protection only
+         */
+        public int DamageRoll(SentientBeing attacker, Weapon attackWeapon, SentientBeing defender)
+        {
+            int damage = 0;
+
+            int attack = attacker.Strength + attackWeapon.Damage + DiceRoll("2d6", true);
+            int defense = defender.Protection + DiceRoll("2d6", true);
+
+            if (attack - defense > 0)
+                damage = attack - defense;
+
+            return damage;
         }
 
 
@@ -197,26 +236,6 @@ namespace Paramita.SentientBeings
             }
 
             return hitLocation;
-        }
-
-
-
-        /*
-         * This function conducts a DamageRoll after a successful AttackRoll hit
-         * The calculations for the shield hit are missing at present
-         * It also is missing the case of a head hit, which uses defender's head protection only
-         */
-        public int DamageRoll(SentientBeing attacker, Weapon attackWeapon, SentientBeing defender)
-        {
-            int damage = 0;
-
-            int attack = attacker.Strength + attackWeapon.Damage + DiceRoll("2d6", true);
-            int defense = defender.Protection + DiceRoll("2d6", true);
-
-            if (attack - defense > 0)
-                damage = attack - defense;
-
-            return damage;
         }
 
 

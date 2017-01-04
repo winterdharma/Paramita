@@ -91,6 +91,8 @@ namespace Paramita.SentientBeings
             set { position = value; }
         }
 
+        public int HitPoints { get { return hitPoints; } }
+
         public int Morale { get { return morale; } }
 
         public int AttackSkill { get { return attackSkill; } }
@@ -184,34 +186,36 @@ namespace Paramita.SentientBeings
             gameScene.PostNewStatus(this + " attacked " + defender + ".");
             for(int x = 0; x < attacks.Count; x++)
             {
-                bool isHit = combatManager.AttackRoll(this, attacks[x], defender);
-
-                //if (isHit == true)
-                //{
-                //    int damage = combatManager.DamageRoll(this, attacks[x], defender);
-                //    defender.TakeDamage(damage);
-                //}
+                combatManager.ResolveAttack(this, attacks[x], defender);
             }
-            
         }
 
 
 
+        // Applies damage to the being's hitPoints
+        // Validates that damage is greater than zero before applying damage
         public void TakeDamage(int damage)
         {
-            hitPoints -= damage;
-            if (hitPoints < 1)
-                isDead = true;
+            if(damage > 0)
+            {
+                hitPoints -= damage;
+                CheckForDeath();
+            }
         }
 
 
 
         public virtual void Update(GameTime gameTime)
         {
-            if(hitPoints < 1)
-            {
+            CheckForDeath();
+        }
+
+
+        // Checks being's @hitPoints and sets @isDead to true if zero or less
+        private void CheckForDeath()
+        {
+            if (hitPoints < 1)
                 isDead = true;
-            }
         }
 
 
