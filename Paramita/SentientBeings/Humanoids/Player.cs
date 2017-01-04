@@ -14,12 +14,11 @@ namespace Paramita.SentientBeings
     {
         // private fields
         private InputDevices inputDevices;
-        
+
         // Currently not in use, saved for future
         //private AnimatedSprite sprite;
         //Dictionary<AnimationKey, Animation> animations = new Dictionary<AnimationKey, Animation>();
 
-        private Item[] inventory;
         private int gold;
         private int sustanence;
 
@@ -34,7 +33,7 @@ namespace Paramita.SentientBeings
         //    get { return animations; }
         //}
 
-        public Item[] Items { get { return inventory; } }
+        public Item[] Items { get { return items; } }
 
         public int Gold
         {
@@ -58,7 +57,7 @@ namespace Paramita.SentientBeings
             Gold = 0;
             sustanence = 240;
 
-            inventory = new Item[10];
+            items = new Item[5];
 
             hitPoints = 10;
             protection = 0;
@@ -75,8 +74,10 @@ namespace Paramita.SentientBeings
             naturalWeapons = new List<Weapon>();
             naturalWeapons.Add(ItemCreator.CreateFist());
 
+            EquipItem(naturalWeapons[0]);
+
             attacks = new List<Weapon>();
-            attacks.AddRange(naturalWeapons);
+            UpdateAttacks();
         }
 
 
@@ -239,14 +240,13 @@ namespace Paramita.SentientBeings
         // Drops item onto the tile the player is located in.
         // The item to drop is indicated by @itemToDrop, which should be a valid
         // index value for the player's inventory list
-        public void DropItem(int itemToDrop)
+        public void DropItem(Item itemToDrop)
         {
-            Item item = inventory[itemToDrop];
-            if (item != null)
+            if (itemToDrop != null && !(itemToDrop is NaturalWeapon))
             {
-                RemoveItem(item);
-                CurrentTile.AddItem(item);
-                gameScene.PostNewStatus("You dropped a " + item.ToString() + ".");
+                RemoveItem(itemToDrop);
+                CurrentTile.AddItem(itemToDrop);
+                gameScene.PostNewStatus("You dropped a " + itemToDrop.ToString() + ".");
             }
         }
 
@@ -277,14 +277,41 @@ namespace Paramita.SentientBeings
         // This method removes an item from the player's possessions
         public Item RemoveItem(Item item)
         {
-            for(int x = 0; x < inventory.Length; x++)
+            for(int x = 0; x < items.Length; x++)
             {
-                if(inventory[x] != null && inventory[x].Equals(item))
+                if(items[x] != null && items[x].Equals(item))
                 {
-                    inventory[x] = null;
+                    items[x] = null;
                     return item;
                 }
             }
+
+            if(leftHand != null && leftHand.Equals(item))
+            {
+                leftHand = null;
+                return item;
+            }
+            else if(rightHand != null && rightHand.Equals(item))
+            {
+                rightHand = naturalWeapons[0];
+                return item;
+            }
+            else if(head != null && head.Equals(item))
+            {
+                head = null;
+                return item;
+            }
+            else if(body != null && body.Equals(item))
+            {
+                body = null;
+                return item;
+            }
+            else if(feet != null && feet.Equals(item))
+            {
+                feet = null;
+                return item;
+            }
+
             return null;
         }
 
@@ -299,21 +326,24 @@ namespace Paramita.SentientBeings
                 return true;
             }
 
-            if(item is Meat)
-            {
-                var meat = item as Meat;
-                Sustanence = Sustanence + meat.Sustanence;
-            }
+            bool equiped = EquipItem(item);
 
-            for(int x = 0; x < inventory.Length; x++)
+            if(equiped == false)
             {
-                if(inventory[x] == null)
+                for (int x = 0; x < items.Length; x++)
                 {
-                    inventory[x] = item;
-                    return true;
+                    if (items[x] == null)
+                    {
+                        items[x] = item;
+                        return true;
+                    }
                 }
+                return false;
             }
-            return false;
+            else
+            {
+                return true;
+            }
         }
 
 
@@ -321,7 +351,7 @@ namespace Paramita.SentientBeings
         // This method returns an array of the items in the player's inventory
         public Item[] InspectItems()
         {
-            return inventory;
+            return items;
         }
 
 

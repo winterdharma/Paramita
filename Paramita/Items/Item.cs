@@ -4,6 +4,15 @@ using System;
 
 namespace Paramita.Items
 {
+    public enum EquipType
+    {
+        None = 0,
+        Hand,
+        Head,
+        Body,
+        Feet
+    }
+
     public abstract class Item : IEquatable<Item>
     {
         private static int counter;
@@ -14,7 +23,13 @@ namespace Paramita.Items
         // Basic Properties all Items should have
         public Texture2D Texture { get; private set; }
         public Rectangle TextureRect { get; private set;}
+        protected EquipType equipType;
 
+        public EquipType EquipType
+        {
+            get { return equipType; }
+            protected set { equipType = value; } 
+        }
 
         public Item(Texture2D texture, Rectangle textureRect)
         {
@@ -63,5 +78,7 @@ namespace Paramita.Items
         {
             return !Equals(left, right);
         }
+
+        public abstract string GetDescription();
     }
 }

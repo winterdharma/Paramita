@@ -27,5 +27,10 @@ namespace Paramita.Items.Consumables
         {
             return "a chunk of " + name;
         }
+
+        public override string GetDescription()
+        {
+            return "a chunk of " + name;
+        }
     }
 }

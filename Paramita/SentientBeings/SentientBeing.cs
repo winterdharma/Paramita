@@ -17,7 +17,7 @@ namespace Paramita.SentientBeings
      * 
      * This is just a sketchy starting point of variables for all beings.
      */ 
-    public class SentientBeing
+    public abstract class SentientBeing
     {
         // the string returned by ToString()
         protected string name;
@@ -107,6 +107,15 @@ namespace Paramita.SentientBeings
         }
 
         public int Fatigue { get { return fatigue; } }
+
+        public int FatigueAttPenalty
+        {
+            get { return fatigue / 20; }
+        }
+        public int FatigueDefPenalty
+        {
+            get { return fatigue / 10; }
+        }
 
         public int Strength { get { return strength; } }
 
@@ -235,9 +244,20 @@ namespace Paramita.SentientBeings
         }
 
 
+
         public override string ToString()
         {
             return name;
         }
+
+
+
+        // This method is the verbose report on a sentient being
+        public abstract string GetDescription();
+
+        // being types should implement this method to handle equipping items
+        public abstract bool EquipItem(Item item);
+        // beings should implement this method to initialize and update their Attacks list
+        public abstract void UpdateAttacks();
     }
 }

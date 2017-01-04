@@ -3,8 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items;
 using Paramita.Scenes;
 using System.Collections.Generic;
-using System;
-using Paramita.Mechanics;
 
 namespace Paramita.SentientBeings.Animals
 {
@@ -29,8 +27,10 @@ namespace Paramita.SentientBeings.Animals
             naturalWeapons = new List<Weapon>();
             naturalWeapons.Add(ItemCreator.CreateBite());
 
+            EquipItem(naturalWeapons[0]);
+
             attacks = new List<Weapon>();
-            attacks.AddRange(naturalWeapons);
+            UpdateAttacks();
         }
 
 

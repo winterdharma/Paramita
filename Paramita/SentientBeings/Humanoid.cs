@@ -1,12 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items;
+using Paramita.Items.Weapons;
 using Paramita.Scenes;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Paramita.SentientBeings
 {
@@ -37,13 +34,143 @@ namespace Paramita.SentientBeings
         protected Item head;
         protected Item body;
         protected Item feet;
-        protected Item extra1;
-        protected Item extra2;
+
+        public Item LeftHand { get { return leftHand; } }
+        public Item RightHand { get { return rightHand; } }
+        public Item Head { get { return head; } }
+        public Item Body { get { return body; } }
+        public Item Feet { get { return feet; } }
 
         public Humanoid(GameScene gameScene, Texture2D sprites, Rectangle right, Rectangle left) 
             : base(gameScene, sprites, right, left)
         {
 
+        }
+
+
+
+        // Checks the EquipType of the @item being equiped, checks to see if there
+        // is an open equip slot, and adds the item if the slot can be filled.
+        // Returns bool indicating success or failure.
+        public override bool EquipItem(Item item)
+        {
+            bool isEquiped = false;
+
+            // if the item being equiped is a NaturalWeapon, then check if it
+            // should be equiped or not
+            if(item is NaturalWeapon && item.EquipType != EquipType.None)
+            {
+                switch(item.EquipType)
+                {
+                    case EquipType.Hand:
+                        if( rightHand == null && 
+                            (!(leftHand is Weapon) || leftHand == null) )
+                        {
+                            isEquiped = true;
+                            rightHand = item;
+                            return isEquiped;
+                        }
+                        if(!(rightHand is Weapon) && leftHand == null)
+                        {
+                            isEquiped = true;
+                            leftHand = item;
+                            return isEquiped;
+                        }
+                        return isEquiped;
+                }
+            }
+
+            // handle the item according to it's EquipType
+            switch(item.EquipType)
+            {
+                case EquipType.None:
+                    return isEquiped;
+
+                case EquipType.Hand:
+                    if (rightHand == null ||
+                        item is Weapon && rightHand is NaturalWeapon)
+                    {
+                        isEquiped = true;
+                        rightHand = item;
+                    }
+                    else if (leftHand == null || 
+                        item is Weapon && leftHand is NaturalWeapon)
+                    {
+                        isEquiped = true;
+                        leftHand = item;
+                    }
+                    break;
+
+                case EquipType.Body:
+                    if (body == null)
+                    {
+                        isEquiped = true;
+                        body = item;
+                    }
+                    break;
+
+                case EquipType.Head:
+                    if (head == null)
+                    {
+                        isEquiped = true;
+                        head = item;
+                    }
+                    break;
+
+                case EquipType.Feet:
+                    if (feet == null)
+                    {
+                        isEquiped = true;
+                        feet = item;
+                    }
+                    break;
+            }
+
+            // refresh the being's attack list if his equipment has changed
+            // (it's possible that a default weapon was removed by equiping
+            //  a non-weapon item, so don't check if a weapon was equiped)
+            if(isEquiped == true)
+                UpdateAttacks();
+
+            return isEquiped;
+        }
+
+
+
+        // Checks the being's equip items for Weapons or NaturalWeapons
+        public override void UpdateAttacks()
+        {
+            // reset the attacks list
+            attacks.Clear();
+
+            // check for bonus attack NaturalWeapons
+            for(int x = 0; x < naturalWeapons.Count; x++)
+            {
+                if(naturalWeapons[x].EquipType == EquipType.None)
+                {
+                    attacks.Add(naturalWeapons[x]);
+                }
+            }
+
+            // next, check for Weapons among being's equiped items
+            if (leftHand is Weapon)
+                attacks.Add(leftHand as Weapon);
+            if (rightHand is Weapon)
+                attacks.Add(rightHand as Weapon);
+            if (head is Weapon)
+                attacks.Add(head as Weapon);
+            if (body is Weapon)
+                attacks.Add(body as Weapon);
+            if (feet is Weapon)
+                attacks.Add(feet as Weapon);
+
+            attacks = attacks.OrderBy(w => w.Length).ToList();
+            System.Console.WriteLine(attacks.ToString());
+        }
+
+        public override string GetDescription()
+        {
+            return name;
         }
     }
 }

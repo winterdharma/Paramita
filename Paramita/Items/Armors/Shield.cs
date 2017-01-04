@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Paramita.Items.Armors
@@ -13,10 +14,16 @@ namespace Paramita.Items.Armors
         {
             name = "Shield";
             this.description = description;
+            equipType = EquipType.Hand;
         }
 
 
         public override string ToString()
+        {
+            return name;
+        }
+
+        public override string GetDescription()
         {
             return name;
         }

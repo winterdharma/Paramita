@@ -28,9 +28,9 @@ namespace Paramita.SentientBeings
             bool isHit = false;
 
             int attackSkill = attacker.AttackSkill + weapon.AttackModifier;
-            int attFatigue = attacker.Fatigue / 20;
+            int attFatigue = attacker.FatigueAttPenalty;
             int defenseSkill = defender.DefenseSkill; // SentientBeing.DefenseSkill.Get() includes weapons modifiers
-            int defFatigue = defender.Fatigue / 10;
+            int defFatigue = defender.FatigueDefPenalty;
 
             // roll the attack roll and determine if the defender is hit
             int attRoll = DiceRoll("2d6", true);

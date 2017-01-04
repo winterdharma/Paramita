@@ -77,7 +77,7 @@ namespace Paramita.Scenes
                 GameController.random);
             
             statuses = new StatusMessages(GameRef.Font, 10, new Point(0,720));
-            inventoryPanel = new Inventory(GameRef.Font, GameRef.ScreenRectangle, GameRef.InputDevices, player, inventory_background, player.Items.Length);
+            inventoryPanel = new Inventory(GameRef.Font, GameRef.ScreenRectangle, GameRef.InputDevices, player, inventory_background, 10);
         }
 
 
