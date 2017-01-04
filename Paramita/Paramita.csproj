@@ -48,11 +48,12 @@
     <Compile Include="Items\IContainer.cs" />
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\ItemCreator.cs" />
+    <Compile Include="Items\NaturalWeapon.cs" />
     <Compile Include="Items\Valuable.cs" />
     <Compile Include="Items\Valuables\Coins.cs" />
     <Compile Include="Items\Weapon.cs" />
-    <Compile Include="Items\Weapons\Bite.cs" />
-    <Compile Include="Items\Weapons\Fist.cs" />
+    <Compile Include="Items\NaturalWeapons\Bite.cs" />
+    <Compile Include="Items\NaturalWeapons\Fist.cs" />
     <Compile Include="Items\Weapons\ShortSword.cs" />
     <Compile Include="Mechanics\Direction.cs" />
     <Compile Include="Mechanics\InputDevices.cs" />

@@ -79,6 +79,8 @@ namespace Paramita.Scenes
 
 
 
+        // Converts a Tile's XY coordinates on the tilemap to a Vector2
+        // of its position in pixels
         public Vector2 GetTilePosition(Tile tile)
         {
             return new Vector2(
@@ -86,6 +88,9 @@ namespace Paramita.Scenes
                 tile.TilePoint.Y * TileSize);
         }
 
+
+
+        // Converts a Vector2 position to a Tile's XY coordinates on the tilemap
         public Point PositionToTileCoords(Vector2 position)
         {
             return new Point(
@@ -93,6 +98,8 @@ namespace Paramita.Scenes
                 (int)position.Y / TileSize
             );
         }
+
+
 
         // return the value of IsWalkable property on Tile at (x,y) on the map
         public bool IsTileWalkable(int x, int y)
@@ -113,8 +120,7 @@ namespace Paramita.Scenes
             return null;
         }
 
-        // The next two methods are a refactoring candidate - leaving for now because searches are
-        // special cases at this point.
+
 
         // conducts a linear search of @tiles and returns the first StairsDown tile encountered
         private Tile FindStairsDownTile()

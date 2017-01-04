@@ -11,7 +11,7 @@ namespace Paramita.Scenes.Game
         private Point[] lineOrigins;
         private Color[] lineColors;
         private TimeSpan[] lineTimes;
-        private TimeSpan lineDuration = new TimeSpan(0,0,10);
+        private TimeSpan lineDuration = new TimeSpan(0, 0, 15);
         private Color lineColor = new Color(Color.White, 1.0f);
         private Point origin;
         private SpriteFont font;

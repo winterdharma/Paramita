@@ -1,38 +1,61 @@
 ﻿using Paramita.Items;
-using RogueSharp.DiceNotation;
+using Paramita.Scenes;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Paramita.SentientBeings
 {
     public class CombatManager
     {
         Random random;
+        GameScene scene;
 
 
 
         // When we construct the CombatManager class we want to pass in references
         // to the player and the list of enemies.
-        public CombatManager(Random random)
+        public CombatManager(Random random, GameScene gameScene)
         {
             this.random = random;
+            scene = gameScene;
         }
 
 
 
 
         // Use this method to resolve attacks between Figures
-        public bool AttackRoll(SentientBeing attacker, SentientBeing defender)
+        public bool AttackRoll(SentientBeing attacker, Weapon weapon, SentientBeing defender)
         {
-            bool IsHit = false;
-            // Roll the die, add the attack bonus, and compare to the defender's armor class
-            if ( DiceRoll("2d6", true) + attacker.AttackSkill - (attacker.Fatigue / 20) 
-                 > DiceRoll("2d6", true) + defender.DefenseSkill - (defender.Fatigue / 10) )
-            {
-                IsHit = true;
-            }
-            return IsHit;
+            bool isHit = false;
+
+            int attackSkill = attacker.AttackSkill + weapon.AttackModifier;
+            int attFatigue = attacker.FatigueAttPenalty;
+            int defenseSkill = defender.DefenseSkill; // SentientBeing.DefenseSkill.Get() includes weapons modifiers
+            int defFatigue = defender.FatigueDefPenalty;
+
+            // roll the attack roll and determine if the defender is hit
+            int attRoll = DiceRoll("2d6", true);
+            int defRoll = DiceRoll("2d6", true);
+
+            int attack = attRoll + attackSkill - attFatigue;
+            int defense = defRoll + defenseSkill - defFatigue;
+
+            if (attack > defense)
+                isHit = true;
+
+            string verb;
+            if (isHit == true)
+                verb = "hit";
+            else
+                verb = "missed";
+
+            scene.PostNewStatus(attacker + " rolled " + attRoll + " plus attack skill "
+                + attackSkill + " and weapon mod of " + weapon.AttackModifier + " minus fatigue mod of " 
+                + attFatigue + ".");
+            scene.PostNewStatus(defender + " rolled " + defRoll + " plus total defense skill of "
+                + defenseSkill + " minus fatigue mod of " + defFatigue + ".");
+            scene.PostNewStatus(attacker + " " + verb + "! (" + isHit + ")");
+
+            return isHit;
         }
 
 
@@ -144,9 +167,11 @@ namespace Paramita.SentientBeings
             while(dieNumber != 0)
             {
                 dieNumber--;
-                roll = random.Next(1, dieSize) + modifier;
+                roll = random.Next(1, dieSize + 1) + modifier;
+                Console.WriteLine("Rolled " + roll);
                 if(roll == dieSize && openEnded == true)
                 {
+                    Console.WriteLine("Bonus roll!");
                     roll--;
                     dieNumber++;
                 }

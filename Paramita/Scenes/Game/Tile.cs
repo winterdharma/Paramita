@@ -106,6 +106,31 @@ namespace Paramita.Scenes
         }
 
 
+        // Checks to see if a tile is next to this one
+        // Returns true if the other tile is next to this one (in any of the eight Directions)
+        // Otherwise, returns false 
+        public bool AdjacentTo(Tile other)
+        {
+            // exit if @other and @this tile are the same tile
+            if(this == other)
+            {
+                return false;
+            }
+
+            int thisX = this.TilePoint.X;
+            int thisY = this.TilePoint.Y;
+            int otherX = other.TilePoint.X;
+            int otherY = other.TilePoint.Y;
+
+            if( (thisX - otherX < 2 && thisX - otherX > -2 ) 
+               && ( thisY - otherY < 2 && thisY - otherY > -2 ))
+            {
+                return true;
+            }
+            return false;
+        }
+
+
         public bool Equals(Tile other)
         {
             if (ReferenceEquals(null, other))

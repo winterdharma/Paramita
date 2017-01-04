@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Paramita.Items.Valuables
@@ -55,6 +56,11 @@ namespace Paramita.Items.Valuables
                 return number + " " + name;
 
             return number + " " + name + "s";
+        }
+
+        public override string GetDescription()
+        {
+            return number + " " + name;
         }
     }
 }

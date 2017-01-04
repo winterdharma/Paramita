@@ -14,13 +14,11 @@ namespace Paramita.SentientBeings
     {
         // private fields
         private InputDevices inputDevices;
-        
+
         // Currently not in use, saved for future
         //private AnimatedSprite sprite;
         //Dictionary<AnimationKey, Animation> animations = new Dictionary<AnimationKey, Animation>();
 
-        private string name;
-        private Item[] inventory;
         private int gold;
         private int sustanence;
 
@@ -35,7 +33,7 @@ namespace Paramita.SentientBeings
         //    get { return animations; }
         //}
 
-        public Item[] Items { get { return inventory; } }
+        public Item[] Items { get { return items; } }
 
         public int Gold
         {
@@ -59,7 +57,27 @@ namespace Paramita.SentientBeings
             Gold = 0;
             sustanence = 240;
 
-            inventory = new Item[10];
+            items = new Item[5];
+
+            hitPoints = 10;
+            protection = 0;
+            magicResistance = 10;
+            strength = 10;
+            attackSkill = 10;
+            defenseSkill = 10;
+            precision = 10;
+            morale = 10;
+            encumbrance = 0;
+            fatigue = 0;
+            size = 2;
+
+            naturalWeapons = new List<Weapon>();
+            naturalWeapons.Add(ItemCreator.CreateFist());
+
+            EquipItem(naturalWeapons[0]);
+
+            attacks = new List<Weapon>();
+            UpdateAttacks();
         }
 
 
@@ -104,23 +122,21 @@ namespace Paramita.SentientBeings
         private void HandleInput()
         {
             // check for movement input and store the direction returned
-            Facing = inputDevices.MovedTo();
-            
-            // if the player attempted to move:
-            if(Facing != Compass.None)
-            {
-                // update the player's sprite facing
-                SetCurrentSprite();
-                // get the tile player is attempting to move to
-                Tile newTile = gameScene.Map.GetTile(
-                    CurrentTile.TilePoint + Direction.GetPoint(Facing));
+            Facing = inputDevices.Moved();
 
-                // Check to see if:
-                //    * Player didn't try to move outside the tilemap
-                //    * Player tried to move to a tile he can stand on
-                if(newTile != null && newTile.IsWalkable == true)
+            Tile tile = gameScene.Map.GetTile(CurrentTile.TilePoint + Direction.GetPoint(Facing));
+
+            SentientBeing npc = gameScene.GetNpcOnTile(tile);
+            if (npc is SentientBeing)
+            {
+                Attack(npc);
+                gameScene.IsPlayersTurn = false;
+            }
+            else
+            {
+                bool moved = MoveTo(Facing);
+                if (moved == true)
                 {
-                    CurrentTile = newTile;
                     CheckForNewTileEvents();
                     // burn a calorie while walking
                     ExpendSustanence();
@@ -128,6 +144,8 @@ namespace Paramita.SentientBeings
                     gameScene.IsPlayersTurn = false;
                 }
             }
+            
+            
         }
 
 
@@ -144,6 +162,8 @@ namespace Paramita.SentientBeings
             // check for events based on moving to TileTypes like StairsUp & StairsDown
             CheckForTileTypeEvent(CurrentTile.TileType);
         }
+
+
 
         // checks to see if there is an item to pick up and does so if one is there.
         // used when player moves to a new tile.
@@ -171,6 +191,7 @@ namespace Paramita.SentientBeings
         }
 
 
+
         // Checks the TileType of Player.CurrentTile for any events that when moving to them
         private void CheckForTileTypeEvent(TileType tileType)
         {
@@ -188,6 +209,8 @@ namespace Paramita.SentientBeings
 
 
 
+        // decrement's the player's sustanence value and writes messages to
+        // GameScene.StatusMessages
         private void ExpendSustanence()
         {
             Sustanence = Sustanence - 1;
@@ -213,34 +236,23 @@ namespace Paramita.SentientBeings
         }
 
 
-        // Drops item onto the tile the player is located in. No item selection mechanism yet.
-        public void DropItem(int itemToDrop)
+
+        // Drops item onto the tile the player is located in.
+        // The item to drop is indicated by @itemToDrop, which should be a valid
+        // index value for the player's inventory list
+        public void DropItem(Item itemToDrop)
         {
-            Item item = inventory[itemToDrop];
-            if (item != null)
+            if (itemToDrop != null && !(itemToDrop is NaturalWeapon))
             {
-                RemoveItem(item);
-                CurrentTile.AddItem(item);
-                gameScene.PostNewStatus("You dropped a " + item.ToString() + ".");
+                RemoveItem(itemToDrop);
+                CurrentTile.AddItem(itemToDrop);
+                gameScene.PostNewStatus("You dropped a " + itemToDrop.ToString() + ".");
             }
         }
 
-        private Compass GetDirectionFacing(AnimationKey currentAnimation)
-        {
-            switch(currentAnimation)
-            {
-                case AnimationKey.WalkUp:
-                    return Compass.North;
-                case AnimationKey.WalkDown:
-                    return Compass.South;
-                case AnimationKey.WalkLeft:
-                    return Compass.West;
-                case AnimationKey.WalkRight:
-                    return Compass.East;
-            }
-            return Compass.None;
-        }
 
+
+        // Draws the player onto the tilemap
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
         {
             spriteBatch.Begin(
@@ -262,24 +274,49 @@ namespace Paramita.SentientBeings
 
 
 
-       /*
-        * IContainer interface methods
-        */
+        // This method removes an item from the player's possessions
         public Item RemoveItem(Item item)
         {
-            for(int x = 0; x < inventory.Length; x++)
+            for(int x = 0; x < items.Length; x++)
             {
-                if(inventory[x] != null && inventory[x].Equals(item))
+                if(items[x] != null && items[x].Equals(item))
                 {
-                    inventory[x] = null;
+                    items[x] = null;
                     return item;
                 }
             }
+
+            if(leftHand != null && leftHand.Equals(item))
+            {
+                leftHand = null;
+                return item;
+            }
+            else if(rightHand != null && rightHand.Equals(item))
+            {
+                rightHand = naturalWeapons[0];
+                return item;
+            }
+            else if(head != null && head.Equals(item))
+            {
+                head = null;
+                return item;
+            }
+            else if(body != null && body.Equals(item))
+            {
+                body = null;
+                return item;
+            }
+            else if(feet != null && feet.Equals(item))
+            {
+                feet = null;
+                return item;
+            }
+
             return null;
         }
 
 
-
+        // This method accepts an item and adds it to the player's possessions
         public bool AddItem(Item item)
         {
             if(item is Coins)
@@ -289,26 +326,40 @@ namespace Paramita.SentientBeings
                 return true;
             }
 
-            if(item is Meat)
-            {
-                var meat = item as Meat;
-                Sustanence = Sustanence + meat.Sustanence;
-            }
+            bool equiped = EquipItem(item);
 
-            for(int x = 0; x < inventory.Length; x++)
+            if(equiped == false)
             {
-                if(inventory[x] == null)
+                for (int x = 0; x < items.Length; x++)
                 {
-                    inventory[x] = item;
-                    return true;
+                    if (items[x] == null)
+                    {
+                        items[x] = item;
+                        return true;
+                    }
                 }
+                return false;
             }
-            return false;
+            else
+            {
+                return true;
+            }
         }
 
+
+
+        // This method returns an array of the items in the player's inventory
         public Item[] InspectItems()
         {
-            return inventory;
+            return items;
+        }
+
+
+
+        // Provides a string equivalent of the player
+        public override string ToString()
+        {
+            return name;
         }
     }
 }

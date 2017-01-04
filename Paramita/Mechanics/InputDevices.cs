@@ -100,7 +100,7 @@ namespace Paramita.Mechanics
          * representing the direction that was moved, if any, that can be
          * used to adjust the current position to find the tile moved to.
          */ 
-        public Compass MovedTo()
+        public Compass Moved()
         {
             if (IsUp())
                 return Compass.North;

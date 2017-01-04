@@ -84,10 +84,18 @@ namespace Paramita.Scenes.Game
         private string[] CreateItemLabels(int numberOfLabels)
         {
             string[] labels = new string[numberOfLabels + 1];
-            for(int x = 0; x < numberOfLabels; x++)
+
+            labels[0] = "L Hand: ";
+            labels[1] = "R Hand: ";
+            labels[2] = "Head: ";
+            labels[3] = "Body: ";
+            labels[4] = "Feet: ";
+
+            for (int x = 5; x < numberOfLabels; x++)
             {
-                labels[x] = (x + 1).ToString() + ": ";
+                labels[x] = "Misc" + (x - 4).ToString() + ": ";
             }
+
             labels[numberOfLabels] = "Gold: ";
             return labels;
         }
@@ -98,20 +106,47 @@ namespace Paramita.Scenes.Game
         private string[] GetPlayerItemStrings()
         {
             Item[] playerItems = player.Items;
-            string[] itemStrings = new string[playerItems.Length + 1];
+            string[] itemStrings = new string[11];
 
-            for (int x = 0; x < playerItems.Length; x++)
+            // check for player's equiped item slots
+            if(player.LeftHand != null)
+                itemStrings[0] = player.LeftHand.ToString();
+            else
+                itemStrings[0] = "";
+
+            if (player.RightHand != null)
+                itemStrings[1] = player.RightHand.ToString();
+            else
+                itemStrings[1] = "";
+
+            if (player.Head != null)
+                itemStrings[2] = player.Head.ToString();
+            else
+                itemStrings[2] = "";
+
+            if (player.Body != null)
+                itemStrings[3] = player.Body.ToString();
+            else
+                itemStrings[3] = "";
+ 
+            if (player.Feet != null)
+                itemStrings[4] = player.Feet.ToString();
+            else
+                itemStrings[4] = "";
+
+            // check for the player's unequiped slots
+            for (int x = 5; x < itemStrings.Length-1; x++)
             {
-                if(playerItems[x] != null)
+                if(playerItems[x-5] != null)
                 {
-                    itemStrings[x] = playerItems[x].ToString();
+                    itemStrings[x] = playerItems[x-5].ToString();
                 }
                 else
                 {
                     itemStrings[x] = "";
                 }
             }
-            itemStrings[playerItems.Length] = player.Gold.ToString();
+            itemStrings[10] = player.Gold.ToString();
 
             return itemStrings;
         }
@@ -128,7 +163,7 @@ namespace Paramita.Scenes.Game
                 InventoryActions action = input.CheckForInventoryAction();
                 if(action == InventoryActions.Drop)
                 {
-                    player.DropItem(itemSelected - 1);
+                    player.DropItem(GetPlayerItem(itemSelected));
                     itemSelected = 0;
                 }
                 else if(action == InventoryActions.Cancel)
@@ -161,7 +196,7 @@ namespace Paramita.Scenes.Game
             Color fontColor = Color.White;
             for (int x = 0; x < itemDescriptions.Length; x++)
             {
-                if(itemSelected == (x + 1) && player.Items[x] != null)
+                if(itemSelected == (x + 1) && GetPlayerItem(itemSelected) != null)
                 {
                     fontColor = Color.Red;
                 }
@@ -172,7 +207,7 @@ namespace Paramita.Scenes.Game
                 itemOrigin.Y += 20;
             }
 
-            if(itemSelected != 0 && itemSelected <= maxItems && player.Items[itemSelected-1] != null)
+            if(itemSelected != 0 && itemSelected <= maxItems && GetPlayerItem(itemSelected) != null)
             {
                 spriteBatch.DrawString(font, dropHint, hintPosition, fontColor);
                 spriteBatch.DrawString(font, cancelHint, 
@@ -184,6 +219,42 @@ namespace Paramita.Scenes.Game
             }
 
             spriteBatch.End();
+        }
+
+
+
+        // Maps the item number in the Inventory list to the corresponding Item in the
+        // player object. (The first five are equipment slots and second five are in
+        // player.Items.
+        // Accepts an integer and returns the proper item from Player.
+        private Item GetPlayerItem(int itemSelected)
+        {
+            switch (itemSelected)
+            {
+                case 1:
+                    return player.LeftHand;
+                case 2:
+                    return player.RightHand;
+                case 3:
+                    return player.Head;
+                case 4:
+                    return player.Body;
+                case 5:
+                    return player.Feet;
+                case 6:
+                    return player.Items[0];
+                case 7:
+                    return player.Items[1];
+                case 8:
+                    return player.Items[2];
+                case 9:
+                    return player.Items[3];
+                case 10:
+                    return player.Items[4];
+                default:
+                    return null;
+            }
+
         }
     }
 }

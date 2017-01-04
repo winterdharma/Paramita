@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Paramita.SentientBeings;
 
 namespace Paramita.Items
 {
@@ -14,7 +15,6 @@ namespace Paramita.Items
         protected int attackModifier;
         protected int defenseModifier;
         protected int length;
-        protected bool isNatural;
 
         public int Damage { get { return damage; } }
 
@@ -24,23 +24,14 @@ namespace Paramita.Items
 
         public int Length { get { return length; } }
 
-        // a flag for checking if a weapon is a natural (default) weapon
-        // rather than a equiped item
-        public bool IsNatural
-        {
-            get { return isNatural; }
-            private set { isNatural = value; }
-        }
 
-
-        public Weapon(Texture2D texture, Rectangle rect, int damage, int attack, int defense, int length, bool isNatural) 
+        public Weapon(Texture2D texture, Rectangle rect, int damage, int attack, int defense, int length) 
             : base(texture, rect)
         {
             this.damage = damage;
             attackModifier = attack;
             defenseModifier = defense;
             this.length = length;
-            this.isNatural = isNatural;
         }
 
 
@@ -48,7 +39,12 @@ namespace Paramita.Items
         // This override may belong in Weapon class (just need to pass @name to it?)
         public override string ToString()
         {
-            return name + " (Att:" + attackModifier + ", Def:" + defenseModifier +
+            return name;
+        }
+
+        public override string GetDescription()
+        {
+            return name + " (Damage: " + damage + " plus strength, Att:" + attackModifier + ", Def:" + defenseModifier +
                 ", Length:" + length + ")";
         }
     }

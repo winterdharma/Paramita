@@ -3,8 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items;
 using Paramita.Scenes;
 using System.Collections.Generic;
-using System;
-using Paramita.Mechanics;
 
 namespace Paramita.SentientBeings.Animals
 {
@@ -13,6 +11,7 @@ namespace Paramita.SentientBeings.Animals
         public GiantRat(GameScene gameScene, Texture2D sprites, Rectangle rightFacing, Rectangle leftFacing) 
             : base(gameScene, sprites, rightFacing, leftFacing)
         {
+            name = "Giant Rat";
             hitPoints = 5;
             protection = 2;
             magicResistance = 5;
@@ -28,32 +27,31 @@ namespace Paramita.SentientBeings.Animals
             naturalWeapons = new List<Weapon>();
             naturalWeapons.Add(ItemCreator.CreateBite());
 
+            EquipItem(naturalWeapons[0]);
+
             attacks = new List<Weapon>();
-            attacks.AddRange(naturalWeapons);
+            UpdateAttacks();
         }
+
 
 
         public override void Update(GameTime gameTime)
         {
+
             PerformAI();
             base.Update(gameTime);
         }
 
+
+
+        // For combat testing, the GiantRat just checks to see if the player
+        // is next to it and attacks if true.
         public void PerformAI()
         {
-            MoveTo(Compass.East);
-        }
-
-
-        private void MoveTo(Compass direction)
-        {
-            facing = direction;
-            SetCurrentSprite();
-            Tile newTile = gameScene.Map.GetTile(CurrentTile.TilePoint + Direction.GetPoint(Facing));
-
-            if(newTile!=null && newTile.IsWalkable == true)
+            Tile playerTile = gameScene.Player.CurrentTile;
+            if(CurrentTile.AdjacentTo(playerTile) == true)
             {
-                CurrentTile = newTile;
+                Attack(gameScene.Player);
             }
         }
     }

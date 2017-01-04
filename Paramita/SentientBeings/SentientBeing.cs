@@ -17,11 +17,15 @@ namespace Paramita.SentientBeings
      * 
      * This is just a sketchy starting point of variables for all beings.
      */ 
-    public class SentientBeing
+    public abstract class SentientBeing
     {
+        // the string returned by ToString()
+        protected string name;
+
         // reference to the GameScene for access to GameScene.Map
         protected GameScene gameScene;
         protected Camera camera;
+        protected CombatManager combatManager;
 
         // location on the tilemap
         protected Tile currentTile;
@@ -64,6 +68,10 @@ namespace Paramita.SentientBeings
         protected int fatigue;
         protected int size;
 
+        // status related flags
+        protected bool isDead = false;
+
+        public bool IsDead { get { return isDead; } }
 
         public Tile CurrentTile
         {
@@ -85,9 +93,29 @@ namespace Paramita.SentientBeings
 
         public int AttackSkill { get { return attackSkill; } }
 
-        public int DefenseSkill { get { return defenseSkill; } }
+        public int DefenseSkill
+        {
+            get
+            {
+                int weaponsMods = 0;
+                for(int x = 0; x < attacks.Count; x++)
+                {
+                    weaponsMods += attacks[x].DefenseModifier;
+                }
+                return defenseSkill + weaponsMods;
+            }
+        }
 
         public int Fatigue { get { return fatigue; } }
+
+        public int FatigueAttPenalty
+        {
+            get { return fatigue / 20; }
+        }
+        public int FatigueDefPenalty
+        {
+            get { return fatigue / 10; }
+        }
 
         public int Strength { get { return strength; } }
 
@@ -108,6 +136,7 @@ namespace Paramita.SentientBeings
         {
             this.gameScene = gameScene;
             camera = gameScene.Camera;
+            combatManager = gameScene.CombatManager;
 
             spritesheet = sprites;
             rightFacing = right;
@@ -119,11 +148,48 @@ namespace Paramita.SentientBeings
 
 
 
+        protected virtual bool MoveTo(Compass direction)
+        {
+            // exit if no direction was given
+            if(direction == Compass.None)
+            {
+                return false;
+            }
 
+            facing = direction;
+            SetCurrentSprite();
+            Tile newTile = gameScene.Map.GetTile(CurrentTile.TilePoint + Direction.GetPoint(Facing));
+
+            // check to see if:
+            //     * newTile is not outside the TileMap
+            //     * newTile is walkable
+            if (newTile != null && newTile.IsWalkable == true)
+            {
+                CurrentTile = newTile;
+                return true;
+            }
+            return false;
+        }
+
+
+        // conduct all of a being's attacks for the turn
         public void Attack(SentientBeing defender)
         {
+            gameScene.PostNewStatus(this + " attacked " + defender + ".");
+            for(int x = 0; x < attacks.Count; x++)
+            {
+                bool isHit = combatManager.AttackRoll(this, attacks[x], defender);
 
+                //if (isHit == true)
+                //{
+                //    int damage = combatManager.DamageRoll(this, attacks[x], defender);
+                //    defender.TakeDamage(damage);
+                //}
+            }
+            
         }
+
+
 
         public void TakeDamage(int damage)
         {
@@ -131,7 +197,14 @@ namespace Paramita.SentientBeings
         }
 
 
-        public virtual void Update(GameTime gameTime) { }
+
+        public virtual void Update(GameTime gameTime)
+        {
+            if(hitPoints < 1)
+            {
+                isDead = true;
+            }
+        }
 
         public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
@@ -169,5 +242,22 @@ namespace Paramita.SentientBeings
             else if (Facing == Compass.Northwest || Facing == Compass.West || Facing == Compass.Southwest)
                 CurrentSprite = leftFacing;
         }
+
+
+
+        public override string ToString()
+        {
+            return name;
+        }
+
+
+
+        // This method is the verbose report on a sentient being
+        public abstract string GetDescription();
+
+        // being types should implement this method to handle equipping items
+        public abstract bool EquipItem(Item item);
+        // beings should implement this method to initialize and update their Attacks list
+        public abstract void UpdateAttacks();
     }
 }
