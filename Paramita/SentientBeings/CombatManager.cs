@@ -22,9 +22,53 @@ namespace Paramita.SentientBeings
 
 
 
-        // Use this method to resolve attacks between Figures
+        // Conducts an attack roll for a single attack on a defending SentientBeing
+        // Returns a bool indicating whether the attack hit or not.
+        // It also posts messages to the GameScene indicating what happened.
         public bool AttackRoll(SentientBeing attacker, Weapon weapon, SentientBeing defender)
         {
+            // check to see if defender gets a repel attack and resolve it if it does
+            if(CheckForRepelAttempt(attacker, weapon, defender) == true)
+            {
+                Weapon repelWeapon = defender.GetLongestWeapon();
+
+                scene.PostNewStatus(defender + " trys to repel attack. (Att length: " + weapon.Length 
+                    + ", Def length: " + repelWeapon.Length + ")");
+
+
+                int attackRepelled = RepelAttackRoll(defender, repelWeapon, attacker);
+                if(attackRepelled > 0)
+                {
+                    scene.PostNewStatus(defender + " succeeds!");
+                    bool moraleCheck = MoraleCheck(attacker, defender, 10, attackRepelled);
+                    if(moraleCheck == false)
+                    {
+                        // attacker aborts the attack
+                        scene.PostNewStatus(attacker + " aborts attack!");
+                        return false;
+                    }
+                    else
+                    {
+                        scene.PostNewStatus(attacker + " continues to attack.");
+                        // attacker goes ahead with attack, but might take damage from
+                        // the defender's weapon
+                        int damage = DamageRoll(defender, repelWeapon, attacker);
+                        if (damage > 1)
+                        {
+                            // no more than 1 pt of damage is possible
+                            damage = 1;
+                            attacker.TakeDamage(damage);
+                            scene.PostNewStatus(attacker + " takes " + damage + "pt of dmg!");
+                            if(attacker.IsDead == true)
+                            {
+                                scene.PostNewStatus(attacker + " is killed!");
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+
             bool isHit = false;
 
             int attackSkill = attacker.AttackSkill + weapon.AttackModifier;
@@ -32,13 +76,15 @@ namespace Paramita.SentientBeings
             int defenseSkill = defender.DefenseSkill; // SentientBeing.DefenseSkill.Get() includes weapons modifiers
             int defFatigue = defender.FatigueDefPenalty;
 
-            // roll the attack roll and determine if the defender is hit
+            // roll the dice
             int attRoll = DiceRoll("2d6", true);
             int defRoll = DiceRoll("2d6", true);
-
+            
+            // add the dice rolls to other factors to arrive at total attack and defense scores
             int attack = attRoll + attackSkill - attFatigue;
             int defense = defRoll + defenseSkill - defFatigue;
 
+            // check for a hit
             if (attack > defense)
                 isHit = true;
 
@@ -53,9 +99,70 @@ namespace Paramita.SentientBeings
                 + attFatigue + ".");
             scene.PostNewStatus(defender + " rolled " + defRoll + " plus total defense skill of "
                 + defenseSkill + " minus fatigue mod of " + defFatigue + ".");
-            scene.PostNewStatus(attacker + " " + verb + "! (" + isHit + ")");
+            scene.PostNewStatus(attacker + " " + verb + "!");
 
             return isHit;
+        }
+
+
+
+        // checks to see if the defender gets a repel attempt
+        // when a defender has a weapon longer than the one the attacker is using,
+        // he is given a chance to use it to block the attack
+        private bool CheckForRepelAttempt(SentientBeing attacker, Weapon weapon, SentientBeing defender)
+        {
+            // first, find the length of the longest weapon the defender has available
+            int maxDefWeaponLength = defender.GetLongestWeapon().Length;
+
+            // check if the defender's longest weapon is longer than the attacker's weapon
+            if (maxDefWeaponLength > weapon.Length)
+                return true;
+
+            return false;
+        }
+
+
+
+        // RepelAttack is the same as a normal AttackRoll, except that the difference between
+        // the attack and defense scores is returned instead of a bool
+        private int RepelAttackRoll(SentientBeing attacker, Weapon weapon, SentientBeing defender)
+        {
+            int attackSkill = attacker.AttackSkill + weapon.AttackModifier;
+            int attFatigue = attacker.FatigueAttPenalty;
+            int defenseSkill = defender.DefenseSkill; // SentientBeing.DefenseSkill.Get() includes weapons modifiers
+            int defFatigue = defender.FatigueDefPenalty;
+
+            // roll the dice
+            int attRoll = DiceRoll("2d6", true);
+            int defRoll = DiceRoll("2d6", true);
+
+            // add the dice rolls to other factors to arrive at total attack and defense scores
+            int attack = attRoll + attackSkill - attFatigue;
+            int defense = defRoll + defenseSkill - defFatigue;
+
+            // check for a hit
+            return attack - defense;
+        }
+
+
+
+        // perform a morale check against a supplied number and an optional bonus difficulty
+        private bool MoraleCheck(SentientBeing checker, SentientBeing other, int checkAgainst, int bonus = 0)
+        {
+            int checkerMorale = checker.Morale;
+            int sizeDifference = checker.Size - other.Size;
+            // roll the dice
+            int checkerRoll = DiceRoll("2d6", true);
+            int checkAgainstRoll = DiceRoll("2d6", true);
+
+            int checkerTotal = checkerRoll + checkerMorale + sizeDifference;
+            int checkAgainstTotal = checkAgainstRoll + checkAgainst + (bonus / 2);
+
+            if (checkerTotal > checkAgainstTotal)
+                return true;
+
+            return false;
+
         }
 
 
@@ -95,7 +202,7 @@ namespace Paramita.SentientBeings
 
 
         /*
-         * This function conducts a DamageRoll after a successful AttackRoll roll
+         * This function conducts a DamageRoll after a successful AttackRoll hit
          * The calculations for the shield hit are missing at present
          * It also is missing the case of a head hit, which uses defender's head protection only
          */
@@ -112,8 +219,10 @@ namespace Paramita.SentientBeings
             return damage;
         }
 
+
+
         /*
-         * This function simulates an open-ended roll of dice to generate a random number.
+         * This function simulates rolling dice to generate a random number.
          * 
          * The function parses the dice type and number from @dice.
          * 
