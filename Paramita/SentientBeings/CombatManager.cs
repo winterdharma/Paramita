@@ -172,15 +172,43 @@ namespace Paramita.SentientBeings
          */
         public int DamageRoll(SentientBeing attacker, Weapon attackWeapon, SentientBeing defender)
         {
+            int defProtection = defender.Protection;
+
+            // check to see if the attacker scored a critical hit
+            if (CriticalHitCheck(defender) == true)
+            {
+                defProtection = defProtection / 2;
+            }
+
             int damage = 0;
 
             int attack = attacker.Strength + attackWeapon.Damage + DiceRoll("2d6", true);
-            int defense = defender.Protection + DiceRoll("2d6", true);
+            int defense = defProtection + DiceRoll("2d6", true);
 
             if (attack - defense > 0)
                 damage = attack - defense;
 
             return damage;
+        }
+
+
+
+        // When a hit is scored, a critical hit check is rolled. If the hit is a critical,
+        // the defender's protection is halved.
+        private bool CriticalHitCheck(SentientBeing defender)
+        {
+            int fatiguePenalty = defender.Fatigue / 15;
+            int roll = DiceRoll("2d6", true);
+            int threshold = 3;
+
+            int criticalCheckRoll = roll - fatiguePenalty;
+            if (criticalCheckRoll < threshold)
+            {
+                scene.PostNewStatus("A critical hit was scored! (" + roll + "-" + fatiguePenalty + ")");
+                return true;
+            }
+            scene.PostNewStatus("No critical hit. (" + roll + "-" + fatiguePenalty + ")");
+            return false;
         }
 
 
