@@ -10,6 +10,14 @@ namespace Paramita.SentientBeings
         GameScene scene;
         int repelAttackDmg = 1;
 
+        // used for rolling dice
+        bool openEndedRoll;
+        int dieSize;
+        int dieNumber;
+        int rollModifier;
+        int totalRolled;
+        int roll;
+
 
 
         // When we construct the CombatManager class we want to pass in references
@@ -144,8 +152,8 @@ namespace Paramita.SentientBeings
             int defFatigue = defender.FatigueDefPenalty;
 
             // roll the dice
-            int attRoll = DiceRoll("2d6", true);
-            int defRoll = DiceRoll("2d6", true);
+            int attRoll = OpenEndedDiceRoll("2d6");
+            int defRoll = OpenEndedDiceRoll("2d6");
 
             // add the dice rolls to other factors to arrive at total attack and defense scores
             int attack = attRoll + attackSkill - attFatigue;
@@ -182,8 +190,8 @@ namespace Paramita.SentientBeings
 
             int damage = 0;
 
-            int attack = attacker.Strength + attackWeapon.Damage + DiceRoll("2d6", true);
-            int defense = defProtection + DiceRoll("2d6", true);
+            int attack = attacker.Strength + attackWeapon.Damage + OpenEndedDiceRoll("2d6");
+            int defense = defProtection + OpenEndedDiceRoll("2d6");
 
             if (attack - defense > 0)
                 damage = attack - defense;
@@ -198,7 +206,7 @@ namespace Paramita.SentientBeings
         private bool CriticalHitCheck(SentientBeing defender)
         {
             int fatiguePenalty = defender.Fatigue / 15;
-            int roll = DiceRoll("2d6", true);
+            int roll = OpenEndedDiceRoll("2d6");
             int threshold = 3;
 
             int criticalCheckRoll = roll - fatiguePenalty;
@@ -219,8 +227,8 @@ namespace Paramita.SentientBeings
             int checkerMorale = checker.Morale;
             int sizeDifference = checker.Size - other.Size;
             // roll the dice
-            int checkerRoll = DiceRoll("2d6", true);
-            int checkAgainstRoll = DiceRoll("2d6", true);
+            int checkerRoll = OpenEndedDiceRoll("2d6");
+            int checkAgainstRoll = OpenEndedDiceRoll("2d6");
 
             int checkerTotal = checkerRoll + checkerMorale + sizeDifference;
             int checkAgainstTotal = checkAgainstRoll + checkAgainst + (bonus / 2);
@@ -241,7 +249,7 @@ namespace Paramita.SentientBeings
         {
             HumanoidBodyParts hitLocation = HumanoidBodyParts.Torso;
 
-            int chance = DiceRoll("1d100", false);
+            int chance = ClosedEndedDiceRoll("1d100");
 
             // chance < 51 is a Torso hit, which is the default value for hitLocation
             if(chance > 50 && chance < 71) 
@@ -269,30 +277,69 @@ namespace Paramita.SentientBeings
 
 
         /*
-         * This function simulates rolling dice to generate a random number.
-         * 
-         * The function parses the dice type and number from @dice.
-         * 
-         * The flag @openEnded indicates whether bonus die rolls are gained with rolling
-         * the highest number possible. OpenEnded rolls simulate improbable events
-         * such as a weak attacker managing to hit a superior opponent by sheer luck. OpenEnded
-         * dice rolls can theoretically go on forever since bonus rolls can result in more
-         * bonus rolls.
-         * 
-         * The function parses the type of die and number of dice to roll plus a modifier from a 
-         * string that is passed to it. 
-         * 
-         * It returns a total of the dice rolls as an integer.
+         *   Dice Roll Functions
+         *   
+         *   Currently, a dice roll must correspond to a code found in the ParseDiceCode() function!
+         *
+         *   @diceCode should use D&D conventions:
+         *     * number of dice + "d" + max roll of die + any after-roll modifier (+/- integer)
+         *   
+         *   There are two kinds of dice rolls: Open-ended and closed-ended.
+         *   
+         *   Open-ended dice rolls get bonus rolls whenever any roll is the max for that die size.
+         *   Example: Roll 2 d6 dice. Both roll 6. An open-ended rolls means 2 more bonus rolls are
+         *            made and added to final total. Bonus rolls can yield more bonus rolls.
+         *   
+         *   Closed-ended dice rolls only roll the initial dice indicated by the dice code.
          */
-        private int DiceRoll(string dice, bool openEnded)
+        private int OpenEndedDiceRoll(string dice)
         {
-            int totalRolled = 0;
-            int roll = 0;
-            int dieSize = 0;
-            int dieNumber = 0;
-            int modifier = 0;
-             
-            switch(dice)
+            openEndedRoll = true;
+            DiceRoll(dice);
+
+            return totalRolled;
+        }
+
+
+
+        private int ClosedEndedDiceRoll(string dice)
+        {
+            openEndedRoll = false;
+            DiceRoll(dice);
+
+            return totalRolled;
+        }
+
+
+
+        private void DiceRoll(string dice)
+        {
+            InitializeDiceRollVariables();
+            ParseDiceRollCode(dice);
+            RollDice();
+        }
+
+
+
+        private void InitializeDiceRollVariables()
+        {
+            totalRolled = 0;
+            roll = 0;
+            dieSize = 0;
+            dieNumber = 0;
+            rollModifier = 0;
+        }
+
+
+
+        // Sets the variables for a dice roll based on @diceCode
+        //
+        // Presently, I am just adding roll types to a switch statement
+        // In the future, this should be turned into a string parser if the switch statement
+        // gets longer than 10 items
+        private void ParseDiceRollCode(string diceCode)
+        {
+            switch (diceCode)
             {
                 case "1d6":
                     dieSize = 6;
@@ -301,7 +348,7 @@ namespace Paramita.SentientBeings
                 case "1d6+1":
                     dieSize = 6;
                     dieNumber = 1;
-                    modifier = 1;
+                    rollModifier = 1;
                     break;
                 case "2d6":
                     dieSize = 6;
@@ -314,27 +361,43 @@ namespace Paramita.SentientBeings
                 default:
                     dieSize = 0;
                     dieNumber = 0;
+                    Console.WriteLine("Unknown DiceCode.");
                     break;
             }
+        }
 
-            // Simulates an open-ended roll of dice. Any roll that comes out highest possible
-            // yields another die roll and the total is reduced by 1. Dice continue to be rolled 
-            // until all rolls are done.
-            while(dieNumber != 0)
+
+
+        private void RollDice()
+        {
+            while (dieNumber != 0)
             {
-                dieNumber--;
-                roll = random.Next(1, dieSize + 1) + modifier;
-                Console.WriteLine("Rolled " + roll);
-                if(roll == dieSize && openEnded == true)
-                {
-                    Console.WriteLine("Bonus roll!");
-                    roll--;
-                    dieNumber++;
-                }
+                RollDie();
+                if(openEndedRoll == true)
+                    CheckForBonusRoll();
                 totalRolled += roll;
             }
+        }
 
-            return totalRolled;
+
+
+        private void RollDie()
+        {
+            dieNumber--;
+            roll = random.Next(1, dieSize + 1) + rollModifier;
+            Console.WriteLine("Rolled " + roll);
+        }
+
+
+
+        private void CheckForBonusRoll()
+        {
+            if (roll == dieSize)
+            {
+                Console.WriteLine("Bonus roll!");
+                roll--;
+                dieNumber++;
+            }
         }
     }
 }
