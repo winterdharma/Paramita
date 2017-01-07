@@ -10,10 +10,24 @@ namespace Paramita.SentientBeings
         GameScene scene;
         int repelAttackDmg = 1;
 
+        // used in combat resolution
+        SentientBeing attacker;
+        SentientBeing defender;
+        Weapon attWeapon;
+        Weapon repelWeapon;
+        bool attackRepelled;
+        int defCritHitFatPenalty;
+
+        // used in repel attack resolution
+        int repelAttackResult;
+        int repelAttackDamage;
+        bool moraleCheck;
+
+
         // used for rolling dice
         bool openEndedRoll;
         int dieSize;
-        int dieNumber;
+        int diceLeftToRoll;
         int rollModifier;
         int totalRolled;
         int roll;
@@ -36,13 +50,14 @@ namespace Paramita.SentientBeings
         // It also posts messages to the GameScene indicating what happened.
         public void ResolveAttack(SentientBeing attacker, Weapon weapon, SentientBeing defender)
         {
-            // check to see if defender gets a repel attack and resolve it if it does
-            // A return of true indicates the original attack was stopped
-            if (ResolveRepelAttack(attacker, weapon, defender) == true)
-                return;
+            InitializeAttackVariables(attacker, weapon, defender);
+            CheckIfAttackRepelled();
+            if (attackRepelled == false)
+            {
 
-            // if the repel attempt failed to stop the attack,
-            // conduct an AttackRoll - a result > 0 indicates a hit is scored
+            }
+
+            
             int attackResult = AttackRoll(attacker, weapon, defender);
 
             // resolve the DamageRoll if a hit was scored and apply damage
@@ -61,89 +76,129 @@ namespace Paramita.SentientBeings
 
 
 
+        private void InitializeAttackVariables(SentientBeing att, Weapon weapon, SentientBeing def)
+        {
+            attacker = att;
+            defender = def;
+            attWeapon = weapon;
+            repelWeapon = defender.GetLongestWeapon();
+            attackRepelled = false;
+            defCritHitFatPenalty = defender.Fatigue / 15;
+        }
+
+
+
+        private void CheckIfAttackRepelled()
+        {
+            if (CheckForRepelAttempt() == true)
+                ResolveRepelAttack();
+        }
+
+
+
         // Conducts the repel attack check and resolves the repel attack if it is attempted
         // Returns:
         //      * True if the attacker's original attack is stopped
         //      * False if the attacker's original attack is not stopped
-        private bool ResolveRepelAttack(SentientBeing attacker, Weapon weapon, SentientBeing defender)
+        private void ResolveRepelAttack()
         {
-            int repelAttResult = 0;
-            bool moraleCheck = false;
-            int damage = 0;
+            InitializeRepelAttackVariables();
 
-            // check if the defender can attempt a repel attack
-            if (CheckForRepelAttempt(attacker, weapon, defender) == false)
-                return false;
-            
-            // get the weapon the defender will use for the repel attack
-            Weapon repelWeapon = defender.GetLongestWeapon();
-
-            // report that the defender is attempting to repel the attack
-            scene.PostNewStatus(defender + " trys to repel attack. (Att length: " + weapon.Length
+            scene.PostNewStatus(defender + " trys to repel attack. (Att length: " + attWeapon.Length
                 + ", Def length: " + repelWeapon.Length + ")");
 
-            // conduct an AttackRoll with the defender as attacker
-            repelAttResult = AttackRoll(defender, repelWeapon, attacker);
+            RepelAttackRoll();
+            ResolveRepelAttackResult();
+        }
 
-            // if the repel attack succeeds, attacker rolls a morale check
-            if (repelAttResult > 0)
-                moraleCheck = MoraleCheck(attacker, defender, 10, repelAttResult);
-            // if the repel attack fails, return false
-            else
-                return false;
 
-            // if the attacker fails the morale check, he aborts his attack
-            if (moraleCheck == false)
-            {
-                scene.PostNewStatus(defender + " succeeds!");
-                scene.PostNewStatus(attacker + " aborts attack!");
+
+        private void InitializeRepelAttackVariables()
+        {
+            repelAttackResult = 0;
+            moraleCheck = false;
+            repelAttackDamage = 0;
+        }
+
+
+
+        /*
+         *  Repel Attack Functions
+         *  
+         *  When a defender is attacked, he can attempt to repel the attack if it has a weapon
+         *  with greater length than the attack weapon.
+         *  
+         *  If so, the defender attempts to interrupt the original attack with a repel attack.
+         *  
+         *  If the repel attack is successful, the attacker rolls a morale check to see if
+         *  it gives up on the original attack.
+         *  
+         *  If the attacker passes the morale check, it continues to attack, but the defender
+         *  did hit it with the repel attack and a damage roll is made. If the damage is greater
+         *  than zero, the attacker takes 1 pt of damage.
+         *  
+         *  If the attacker happened to be killed by the repel attack damage, his attack
+         *  is aborted.
+         */
+
+        private bool CheckForRepelAttempt()
+        {
+            if (repelWeapon.Length > attWeapon.Length)
                 return true;
-            }
-            // if the attacker passes the morale check, he presses on and is hit
-            // by defender's repel weapon
-            else
-            {
-                scene.PostNewStatus(attacker + " continues to attack.");
-                damage = DamageRoll(defender, repelWeapon, attacker);
-            }
+            return false;
+        }
 
-            // check if the attacker takes repel attack damage
-            if (damage > 0)
+
+
+        private void RepelAttackRoll()
+        {
+            repelAttackResult = AttackRoll(defender, repelWeapon, attacker);
+        }
+
+
+
+        private void ResolveRepelAttackResult()
+        {
+            if (repelAttackResult > 0)
+                RepelAttackMoraleCheck();
+
+            CheckIfRepelAttackKilledAttacker();
+        }
+
+
+
+        private void RepelAttackMoraleCheck()
+        {
+            if(MoraleCheck(attacker, defender, 10, repelAttackResult) == true)
+                RepelAttackDamageRoll();
+            else
+                attackRepelled = true;
+        }
+
+
+
+        private void RepelAttackDamageRoll()
+        {
+            if (DamageRoll(defender, repelWeapon, attacker) > 0)
             {
-                attacker.TakeDamage(repelAttackDmg);
+                attacker.TakeDamage(1);
                 scene.PostNewStatus(attacker + " takes 1 pt of damage!");
             }
+        }
 
-            // check if the attack was killed by the repel attack
+
+
+        private void CheckIfRepelAttackKilledAttacker()
+        {
             if (attacker.IsDead == true)
             {
                 scene.PostNewStatus(attacker + " is killed!");
-                return true;
+                attackRepelled = true;
             }
-            // if not returned yet, the attacker still gets to attack
-            return false;
-        }
-
-
-        // checks to see if the defender gets a repel attempt
-        // when a defender has a weapon longer than the one the attacker is using,
-        // he is given a chance to use it to block the attack
-        private bool CheckForRepelAttempt(SentientBeing attacker, Weapon weapon, SentientBeing defender)
-        {
-            // first, find the length of the longest weapon the defender has available
-            int maxDefWeaponLength = defender.GetLongestWeapon().Length;
-
-            // check if the defender's longest weapon is longer than the attacker's weapon
-            if (maxDefWeaponLength > weapon.Length)
-                return true;
-
-            return false;
         }
 
 
 
-        // RepelAttack is the same as a normal AttackRoll, except that the difference between
-        // the attack and defense scores is returned instead of a bool
         private int AttackRoll(SentientBeing attacker, Weapon weapon, SentientBeing defender)
         {
             int attackSkill = attacker.AttackSkill + weapon.AttackModifier;
@@ -287,7 +342,7 @@ namespace Paramita.SentientBeings
          *   There are two kinds of dice rolls: Open-ended and closed-ended.
          *   
          *   Open-ended dice rolls get bonus rolls whenever any roll is the max for that die size.
-         *   Example: Roll 2 d6 dice. Both roll 6. An open-ended rolls means 2 more bonus rolls are
+         *   Example: Roll 2 d6 dice. Both roll 6. An open-ended roll means 2 more bonus rolls are
          *            made and added to final total. Bonus rolls can yield more bonus rolls.
          *   
          *   Closed-ended dice rolls only roll the initial dice indicated by the dice code.
@@ -326,7 +381,7 @@ namespace Paramita.SentientBeings
             totalRolled = 0;
             roll = 0;
             dieSize = 0;
-            dieNumber = 0;
+            diceLeftToRoll = 0;
             rollModifier = 0;
         }
 
@@ -343,24 +398,24 @@ namespace Paramita.SentientBeings
             {
                 case "1d6":
                     dieSize = 6;
-                    dieNumber = 1;
+                    diceLeftToRoll = 1;
                     break;
                 case "1d6+1":
                     dieSize = 6;
-                    dieNumber = 1;
+                    diceLeftToRoll = 1;
                     rollModifier = 1;
                     break;
                 case "2d6":
                     dieSize = 6;
-                    dieNumber = 2;
+                    diceLeftToRoll = 2;
                     break;
                 case "1d100":
                     dieSize = 100;
-                    dieNumber = 1;
+                    diceLeftToRoll = 1;
                     break;
                 default:
                     dieSize = 0;
-                    dieNumber = 0;
+                    diceLeftToRoll = 0;
                     Console.WriteLine("Unknown DiceCode.");
                     break;
             }
@@ -370,7 +425,7 @@ namespace Paramita.SentientBeings
 
         private void RollDice()
         {
-            while (dieNumber != 0)
+            while (diceLeftToRoll > 0)
             {
                 RollDie();
                 if(openEndedRoll == true)
@@ -383,7 +438,7 @@ namespace Paramita.SentientBeings
 
         private void RollDie()
         {
-            dieNumber--;
+            diceLeftToRoll--;
             roll = random.Next(1, dieSize + 1) + rollModifier;
             Console.WriteLine("Rolled " + roll);
         }
@@ -396,7 +451,7 @@ namespace Paramita.SentientBeings
             {
                 Console.WriteLine("Bonus roll!");
                 roll--;
-                dieNumber++;
+                diceLeftToRoll++;
             }
         }
     }
