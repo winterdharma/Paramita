@@ -187,6 +187,8 @@ namespace Paramita.SentientBeings
             for(int x = 0; x < attacks.Count; x++)
             {
                 combatManager.ResolveAttack(this, attacks[x], defender);
+                if (this.IsDead== true || defender.IsDead == true)
+                    break;
             }
         }
 

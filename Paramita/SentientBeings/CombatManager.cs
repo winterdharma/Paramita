@@ -8,21 +8,22 @@ namespace Paramita.SentientBeings
     {
         Random random;
         GameScene scene;
-        int repelAttackDmg = 1;
 
         // used in combat resolution
         SentientBeing attacker;
         SentientBeing defender;
         Weapon attWeapon;
         Weapon repelWeapon;
+
+        // used in attack resolution
         bool attackRepelled;
         int defCritHitFatPenalty;
+        int attackResult;
+        int attackDamage;
 
         // used in repel attack resolution
         int repelAttackResult;
-        int repelAttackDamage;
-        bool moraleCheck;
-
+        const int repelAttackDamage = 1;
 
         // used for rolling dice
         bool openEndedRoll;
@@ -31,6 +32,7 @@ namespace Paramita.SentientBeings
         int rollModifier;
         int totalRolled;
         int roll;
+
 
 
 
@@ -54,23 +56,9 @@ namespace Paramita.SentientBeings
             CheckIfAttackRepelled();
             if (attackRepelled == false)
             {
-
-            }
-
-            
-            int attackResult = AttackRoll(attacker, weapon, defender);
-
-            // resolve the DamageRoll if a hit was scored and apply damage
-            int damage = 0;
-            if(attackResult > 0)
-            {
-                damage = DamageRoll(attacker, weapon, defender);
-                defender.TakeDamage(damage);
-                scene.PostNewStatus(attacker + " hit " + defender + ", doing " + damage + " damage!");
-            }
-            else
-            {
-                scene.PostNewStatus(attacker + " missed!");
+                AttackRoll(attacker, weapon, defender);
+                ResolveAttackResult();
+                CheckIfAttackKilledDefender();
             }
         }
 
@@ -80,6 +68,8 @@ namespace Paramita.SentientBeings
         {
             attacker = att;
             defender = def;
+            attackResult = 0;
+            attackDamage = 0;
             attWeapon = weapon;
             repelWeapon = defender.GetLongestWeapon();
             attackRepelled = false;
@@ -96,28 +86,26 @@ namespace Paramita.SentientBeings
 
 
 
-        // Conducts the repel attack check and resolves the repel attack if it is attempted
-        // Returns:
-        //      * True if the attacker's original attack is stopped
-        //      * False if the attacker's original attack is not stopped
-        private void ResolveRepelAttack()
+        private void ResolveAttackResult()
         {
-            InitializeRepelAttackVariables();
-
-            scene.PostNewStatus(defender + " trys to repel attack. (Att length: " + attWeapon.Length
-                + ", Def length: " + repelWeapon.Length + ")");
-
-            RepelAttackRoll();
-            ResolveRepelAttackResult();
+            if (attackResult > 0)
+            {
+                attackDamage = DamageRoll(attacker, attWeapon, defender);
+                defender.TakeDamage(attackDamage);
+                scene.PostNewStatus(attacker + " hit " + defender + ", doing " + attackDamage + " damage!");
+            }
+            else
+            {
+                scene.PostNewStatus(attacker + " missed!");
+            }
         }
 
 
 
-        private void InitializeRepelAttackVariables()
+        private void CheckIfAttackKilledDefender()
         {
-            repelAttackResult = 0;
-            moraleCheck = false;
-            repelAttackDamage = 0;
+            if (defender.IsDead == true)
+                scene.PostNewStatus(defender + " is killed!");
         }
 
 
@@ -135,12 +123,11 @@ namespace Paramita.SentientBeings
          *  
          *  If the attacker passes the morale check, it continues to attack, but the defender
          *  did hit it with the repel attack and a damage roll is made. If the damage is greater
-         *  than zero, the attacker takes 1 pt of damage.
+         *  than zero, the attacker takes damage equal to @repelAttackDamage.
          *  
          *  If the attacker happened to be killed by the repel attack damage, his attack
          *  is aborted.
          */
-
         private bool CheckForRepelAttempt()
         {
             if (repelWeapon.Length > attWeapon.Length)
@@ -150,16 +137,36 @@ namespace Paramita.SentientBeings
 
 
 
+        private void ResolveRepelAttack()
+        {
+            InitializeRepelAttackVariables();
+
+            scene.PostNewStatus(defender + " trys to repel attack. (Att length: " + attWeapon.Length
+                + ", Def length: " + repelWeapon.Length + ")");
+
+            RepelAttackRoll();
+            ResolveRepelAttackResult();
+        }
+
+
+
+        private void InitializeRepelAttackVariables()
+        {
+            repelAttackResult = 0;
+        }
+
+
+
         private void RepelAttackRoll()
         {
-            repelAttackResult = AttackRoll(defender, repelWeapon, attacker);
+            AttackRoll(defender, repelWeapon, attacker);
         }
 
 
 
         private void ResolveRepelAttackResult()
         {
-            if (repelAttackResult > 0)
+            if (attackResult > 0)
                 RepelAttackMoraleCheck();
 
             CheckIfRepelAttackKilledAttacker();
@@ -169,7 +176,7 @@ namespace Paramita.SentientBeings
 
         private void RepelAttackMoraleCheck()
         {
-            if(MoraleCheck(attacker, defender, 10, repelAttackResult) == true)
+            if(MoraleCheck(attacker, defender, 10, attackResult) == true)
                 RepelAttackDamageRoll();
             else
                 attackRepelled = true;
@@ -181,8 +188,8 @@ namespace Paramita.SentientBeings
         {
             if (DamageRoll(defender, repelWeapon, attacker) > 0)
             {
-                attacker.TakeDamage(1);
-                scene.PostNewStatus(attacker + " takes 1 pt of damage!");
+                attacker.TakeDamage(repelAttackDamage);
+                scene.PostNewStatus(attacker + " takes " + repelAttackDamage + " pt of damage!");
             }
         }
 
@@ -199,7 +206,7 @@ namespace Paramita.SentientBeings
 
 
 
-        private int AttackRoll(SentientBeing attacker, Weapon weapon, SentientBeing defender)
+        private void AttackRoll(SentientBeing attacker, Weapon weapon, SentientBeing defender)
         {
             int attackSkill = attacker.AttackSkill + weapon.AttackModifier;
             int attFatigue = attacker.FatigueAttPenalty;
@@ -223,7 +230,7 @@ namespace Paramita.SentientBeings
                 + defenseSkill + " minus fatigue mod of " + defFatigue + ".");
 
             // return the difference of the attack and defense scores
-            return attack - defense;
+            attackResult = attack - defense;
         }
 
 
