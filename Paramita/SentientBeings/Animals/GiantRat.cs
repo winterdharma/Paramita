@@ -31,6 +31,8 @@ namespace Paramita.SentientBeings.Animals
 
             attacks = new List<Weapon>();
             UpdateAttacks();
+
+            shields = new List<Shield>();
         }
 
 

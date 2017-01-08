@@ -174,7 +174,7 @@ namespace Paramita.Scenes
             GetEmptyWalkableTile().AddItem(coins);
             var meat = ItemCreator.CreateMeat();
             GetEmptyWalkableTile().AddItem(meat);
-            var shield = ItemCreator.CreateShield();
+            var shield = ItemCreator.CreateBuckler();
             GetEmptyWalkableTile().AddItem(shield);
         }
 

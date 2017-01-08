@@ -4,6 +4,7 @@ using Paramita.Items;
 using Paramita.Items.Weapons;
 using Paramita.Scenes;
 using System.Linq;
+using System;
 
 namespace Paramita.SentientBeings
 {
@@ -126,11 +127,13 @@ namespace Paramita.SentientBeings
                     break;
             }
 
-            // refresh the being's attack list if his equipment has changed
-            // (it's possible that a default weapon was removed by equiping
-            //  a non-weapon item, so don't check if a weapon was equiped)
+            // update the humanoid's Attacks and Shields lists in case the
+            // change has made them out of date
             if(isEquiped == true)
+            {
                 UpdateAttacks();
+                UpdateShields();
+            }
 
             return isEquiped;
         }
@@ -165,8 +168,22 @@ namespace Paramita.SentientBeings
                 attacks.Add(feet as Weapon);
 
             attacks = attacks.OrderBy(w => w.Length).ToList();
-            System.Console.WriteLine(attacks.ToString());
+            Console.WriteLine(attacks.ToString());
         }
+
+
+
+        public override void UpdateShields()
+        {
+            shields.Clear();
+
+            if (leftHand is Shield)
+                shields.Add(leftHand as Shield);
+            if (rightHand is Shield)
+                shields.Add(rightHand as Shield);
+        }
+
+
 
         public override string GetDescription()
         {

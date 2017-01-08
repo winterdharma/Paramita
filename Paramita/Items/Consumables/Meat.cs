@@ -5,7 +5,6 @@ namespace Paramita.Items.Consumables
 {
     public class Meat : Consumable
     {
-        private string name;
         private string description;
         private int sustenance;
 

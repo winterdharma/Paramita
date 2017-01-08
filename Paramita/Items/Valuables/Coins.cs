@@ -15,7 +15,6 @@ namespace Paramita.Items.Valuables
 
     public class Coins : Valuable
     {
-        private string name;
         private string description;
         private int number;
 

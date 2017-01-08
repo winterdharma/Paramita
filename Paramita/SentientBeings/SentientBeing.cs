@@ -54,15 +54,18 @@ namespace Paramita.SentientBeings
 
         // a list of the weapons a being attacks with (could be > 1 or 0)
         protected List<Weapon> attacks;
+        protected List<Shield> shields;
 
         // combat related attributes
         protected int hitPoints;
         protected int protection;
+        protected int shieldProtection;
         protected int magicResistance;
         protected int strength;
         protected int morale;
         protected int attackSkill;
         protected int defenseSkill;
+        protected int parry;
         protected int precision;
         protected int encumbrance;
         protected int fatigue;
@@ -71,7 +74,7 @@ namespace Paramita.SentientBeings
         // status related flags
         protected bool isDead = false;
 
-        public bool IsDead { get { return isDead; } }
+        
 
         public Tile CurrentTile
         {
@@ -83,15 +86,43 @@ namespace Paramita.SentientBeings
             } 
         }
 
-        public Rectangle CurrentSprite { get; set; }
-
         public Vector2 Position
         {
             get { return position; }
             set { position = value; }
         }
 
+        public Compass Facing
+        {
+            get { return facing; }
+            protected set { facing = value; }
+        }
+
+        public Rectangle CurrentSprite { get; set; }
+
+        public List<Weapon> Attacks { get { return attacks; } }
+
+        public List<Shield> Shields { get { return shields; } }
+
+
         public int HitPoints { get { return hitPoints; } }
+
+        public int Protection { get { return protection; } }
+
+        public int ShieldProtection
+        {
+            get
+            {
+                int protection = 0;
+                for(int x = 0; x<shields.Count; x++)
+                {
+                    protection += shields[x].Protection;
+                }
+                return protection;
+            }
+        }
+
+        public int Strength { get { return strength; } }
 
         public int Morale { get { return morale; } }
 
@@ -110,6 +141,19 @@ namespace Paramita.SentientBeings
             }
         }
 
+        public int Parry
+        {
+            get
+            {
+                int shieldParry = 0;
+                for(int x = 0; x < shields.Count; x++)
+                {
+                    shieldParry += shields[x].Parry;
+                }
+                return shieldParry;
+            }
+        }
+
         public int Fatigue { get { return fatigue; } }
 
         public int FatigueAttPenalty
@@ -120,20 +164,14 @@ namespace Paramita.SentientBeings
         {
             get { return fatigue / 10; }
         }
-
-        public int Strength { get { return strength; } }
-
-        public int Protection { get { return protection; } }
-
-        public List<Weapon> Attacks { get { return attacks; } }
-
-        public Compass Facing
+        public int FatigueCriticalPenalty
         {
-            get { return facing; }
-            protected set { facing = value; }
+            get { return fatigue / 15; }
         }
 
         public int Size { get { return size; } }
+
+        public bool IsDead { get { return isDead; } }
 
 
 
@@ -149,7 +187,6 @@ namespace Paramita.SentientBeings
             leftFacing = left;
 
             CurrentSprite = rightFacing;
-            
         }
 
 
@@ -187,6 +224,8 @@ namespace Paramita.SentientBeings
             for(int x = 0; x < attacks.Count; x++)
             {
                 combatManager.ResolveAttack(this, attacks[x], defender);
+                if (this.IsDead== true || defender.IsDead == true)
+                    break;
             }
         }
 
@@ -301,5 +340,9 @@ namespace Paramita.SentientBeings
         
         // beings should implement this method to initialize and update their Attacks list
         public abstract void UpdateAttacks();
+
+
+        public abstract void UpdateShields();
+
     }
 }
