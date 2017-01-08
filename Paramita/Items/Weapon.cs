@@ -10,7 +10,6 @@ namespace Paramita.Items
      */
     public abstract class Weapon : Item
     {
-        protected string name;
         protected int damage;
         protected int attackModifier;
         protected int defenseModifier;

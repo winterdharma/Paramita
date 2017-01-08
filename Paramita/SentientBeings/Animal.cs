@@ -142,7 +142,14 @@ namespace Paramita.SentientBeings
                 attacks.Add(tail as Weapon);
 
             attacks = attacks.OrderBy(w => w.Length).ToList();
-            System.Console.WriteLine(attacks.ToString());
+            Console.WriteLine(attacks.ToString());
+        }
+
+
+
+        public override void UpdateShields()
+        {
+            shields.Clear();
         }
     }
 }

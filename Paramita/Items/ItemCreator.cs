@@ -75,9 +75,9 @@ namespace Paramita.Items
 
 
 
-        public static Shield CreateShield()
+        public static Buckler CreateBuckler()
         {
-            return new Shield(spritesheet, spritesheetMap[(int)ItemType.Shield],
+            return new Buckler(spritesheet, spritesheetMap[(int)ItemType.Shield],
                 "A handy shield.");
         }
     }

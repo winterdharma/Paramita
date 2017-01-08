@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items;
 using Paramita.Mechanics;
@@ -78,6 +77,8 @@ namespace Paramita.SentientBeings
 
             attacks = new List<Weapon>();
             UpdateAttacks();
+
+            shields = new List<Shield>();
         }
 
 

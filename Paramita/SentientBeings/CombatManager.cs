@@ -16,13 +16,15 @@ namespace Paramita.SentientBeings
         Weapon repelWeapon;
 
         // used in attack resolution
-        bool attackRepelled;
         int defCritHitFatPenalty;
+        int defParry;
+        int defShieldProt;
         int attackResult;
         int attackDamage;
+        bool isShieldHit;
 
         // used in repel attack resolution
-        int repelAttackResult;
+        bool attackRepelled;
         const int repelAttackDamage = 1;
 
         // used for rolling dice
@@ -46,10 +48,18 @@ namespace Paramita.SentientBeings
 
 
 
-
-        // Conducts an attack roll for a single attack on a defending SentientBeing
-        // Returns a bool indicating whether the attack hit or not.
-        // It also posts messages to the GameScene indicating what happened.
+        /*
+         *  Resolve Attack Functions
+         *  
+         *  When a sentient being attacks another sentient being, a repel attack
+         *  check is first done to see if the attack is aborted.
+         *  
+         *  If not, an attack roll is made to see if the attack hits the defender.
+         *  
+         *  If so, a damage roll is made to see if damage is done to the defender.
+         *  
+         *  Finally, a check is done to see if the defender was killed.
+         */
         public void ResolveAttack(SentientBeing attacker, Weapon weapon, SentientBeing defender)
         {
             InitializeAttackVariables(attacker, weapon, defender);
@@ -72,8 +82,10 @@ namespace Paramita.SentientBeings
             attackDamage = 0;
             attWeapon = weapon;
             repelWeapon = defender.GetLongestWeapon();
-            attackRepelled = false;
-            defCritHitFatPenalty = defender.Fatigue / 15;
+            defCritHitFatPenalty = defender.FatigueCriticalPenalty;
+            defParry = defender.Parry;
+            defShieldProt = defender.ShieldProtection;
+            isShieldHit = false;
         }
 
 
@@ -90,6 +102,7 @@ namespace Paramita.SentientBeings
         {
             if (attackResult > 0)
             {
+                CheckForShieldHit();
                 attackDamage = DamageRoll(attacker, attWeapon, defender);
                 defender.TakeDamage(attackDamage);
                 scene.PostNewStatus(attacker + " hit " + defender + ", doing " + attackDamage + " damage!");
@@ -97,6 +110,17 @@ namespace Paramita.SentientBeings
             else
             {
                 scene.PostNewStatus(attacker + " missed!");
+            }
+        }
+
+
+
+        private void CheckForShieldHit()
+        {
+            if (attackResult <= defParry)
+            {
+                isShieldHit = true;
+                Console.WriteLine("Shield hit.");
             }
         }
 
@@ -152,7 +176,7 @@ namespace Paramita.SentientBeings
 
         private void InitializeRepelAttackVariables()
         {
-            repelAttackResult = 0;
+            attackRepelled = false;
         }
 
 
@@ -242,13 +266,7 @@ namespace Paramita.SentientBeings
          */
         public int DamageRoll(SentientBeing attacker, Weapon attackWeapon, SentientBeing defender)
         {
-            int defProtection = defender.Protection;
-
-            // check to see if the attacker scored a critical hit
-            if (CriticalHitCheck(defender) == true)
-            {
-                defProtection = defProtection / 2;
-            }
+            int defProtection = CalculateDefenderProtection(defender);
 
             int damage = 0;
 
@@ -263,21 +281,37 @@ namespace Paramita.SentientBeings
 
 
 
+        private int CalculateDefenderProtection(SentientBeing defender)
+        {
+            int protection = defender.Protection;
+
+            if (isShieldHit == true)
+                protection += defShieldProt;
+
+            if (CriticalHitCheck(defender) == true)
+            {
+                protection = protection / 2;
+            }
+
+            return protection;
+        }
+
+
+
         // When a hit is scored, a critical hit check is rolled. If the hit is a critical,
         // the defender's protection is halved.
         private bool CriticalHitCheck(SentientBeing defender)
         {
-            int fatiguePenalty = defender.Fatigue / 15;
-            int roll = OpenEndedDiceRoll("2d6");
             int threshold = 3;
 
-            int criticalCheckRoll = roll - fatiguePenalty;
+            int criticalCheckRoll = OpenEndedDiceRoll("2d6") - defCritHitFatPenalty;
             if (criticalCheckRoll < threshold)
             {
-                scene.PostNewStatus("A critical hit was scored! (" + roll + "-" + fatiguePenalty + ")");
+                scene.PostNewStatus("A critical hit was scored! (" + roll + "-" + defCritHitFatPenalty + ")");
                 return true;
             }
-            scene.PostNewStatus("No critical hit. (" + roll + "-" + fatiguePenalty + ")");
+
+            scene.PostNewStatus("No critical hit. (" + roll + "-" + defCritHitFatPenalty + ")");
             return false;
         }
 

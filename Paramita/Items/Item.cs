@@ -17,6 +17,7 @@ namespace Paramita.Items
     {
         private static int counter;
         private int id; // used to identify specific items
+        protected string name;
 
         // private vector2 position; <= needed for drawing?
 
