@@ -70,6 +70,7 @@ namespace Paramita.SentientBeings
         protected int encumbrance;
         protected int fatigue;
         protected int size;
+        protected int timesAttacked;
 
         // status related flags
         protected bool isDead = false;
@@ -171,6 +172,18 @@ namespace Paramita.SentientBeings
 
         public int Size { get { return size; } }
 
+        public int TimesAttacked
+        {
+            get
+            {
+                return timesAttacked;
+            }
+            set
+            {
+                timesAttacked = value;
+            }
+        }
+
         public bool IsDead { get { return isDead; } }
 
 
@@ -240,6 +253,12 @@ namespace Paramita.SentientBeings
                 hitPoints -= damage;
                 CheckForDeath();
             }
+        }
+
+
+        public void IncrementTimesAttacked()
+        {
+            timesAttacked++;
         }
 
 

@@ -118,9 +118,11 @@ namespace Paramita.Scenes
             {
                 for (int x = 0; x < npcs.Count; x++)
                 {
+                    npcs[x].TimesAttacked = 0;
                     npcs[x].Update(gameTime);
                 }
                 isPlayersTurn = true;
+                player.TimesAttacked = 0;
             }
 
             //move the camera to center on the player
