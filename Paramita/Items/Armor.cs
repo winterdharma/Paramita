@@ -11,6 +11,11 @@ namespace Paramita.Items
      */
     public abstract class Armor : Item
     {
+
+        private int encumbrance;
+
+        public int Encumbrance { get { return encumbrance; } }
+
         public Armor(Texture2D texture, Rectangle rect) 
             : base(texture, rect)
         {

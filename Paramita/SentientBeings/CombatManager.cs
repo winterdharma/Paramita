@@ -78,6 +78,8 @@ namespace Paramita.SentientBeings
             if (attackRepelled == false)
             {
                 defender.IncrementTimesAttacked();
+                attacker.AddEncumbranceToFatigue();
+
                 AttackRoll(attacker, weapon, defender);
                 ResolveAttackResult();
                 CheckIfAttackKilledDefender();
@@ -103,6 +105,8 @@ namespace Paramita.SentientBeings
             if (CheckForRepelAttempt() == true)
             {
                 attacker.IncrementTimesAttacked();
+                defender.AddEncumbranceToFatigue();
+
                 ResolveRepelAttack();
             }
         }

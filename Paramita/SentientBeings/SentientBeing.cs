@@ -5,6 +5,7 @@ using Paramita.Mechanics;
 using Paramita.Scenes;
 using RogueSharp.DiceNotation;
 using System.Collections.Generic;
+using System;
 
 namespace Paramita.SentientBeings
 {
@@ -262,9 +263,21 @@ namespace Paramita.SentientBeings
         }
 
 
+        public void AddEncumbranceToFatigue()
+        {
+            int totalEncumbrance = GetTotalEncumbrance();
+
+            fatigue += totalEncumbrance;
+        }
+
+
+        protected abstract int GetTotalEncumbrance();
+
 
         public virtual void Update(GameTime gameTime)
         {
+            if(fatigue > 0)
+                fatigue--;
             CheckForDeath();
         }
 

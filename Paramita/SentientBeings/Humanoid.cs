@@ -185,6 +185,36 @@ namespace Paramita.SentientBeings
 
 
 
+        protected override int GetTotalEncumbrance()
+        {
+            int total = encumbrance;
+
+            total += GetItemEncumbrance(leftHand);
+            total += GetItemEncumbrance(rightHand);
+            total += GetItemEncumbrance(head);
+            total += GetItemEncumbrance(body);
+            total += GetItemEncumbrance(feet);
+
+            return total;
+        }
+
+
+        private int GetItemEncumbrance(Item item)
+        {
+            if(item is Armor)
+            {
+                var itemAsArmor = item as Armor;
+                return itemAsArmor.Encumbrance;
+            }
+            else if(item is Shield)
+            {
+                var itemAsShield = item as Shield;
+                return itemAsShield.Encumbrance;
+            }
+            return 0;
+        }
+
+
         public override string GetDescription()
         {
             return name;

@@ -151,5 +151,10 @@ namespace Paramita.SentientBeings
         {
             shields.Clear();
         }
+
+        protected override int GetTotalEncumbrance()
+        {
+            return encumbrance;
+        }
     }
 }
