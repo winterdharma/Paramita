@@ -6,6 +6,7 @@ using Paramita.Scenes;
 using System.Collections.Generic;
 using Paramita.Items.Valuables;
 using Paramita.Items.Consumables;
+using System;
 
 namespace Paramita.SentientBeings
 {
@@ -32,7 +33,8 @@ namespace Paramita.SentientBeings
         //    get { return animations; }
         //}
 
-        public Item[] Items { get { return items; } }
+        public Item[] UnequipedItems { get { return unequipedItems; } }
+        public Item[] EquipedItems { get { return equipedItems; } }
 
         public int Gold
         {
@@ -53,11 +55,16 @@ namespace Paramita.SentientBeings
         {
             inputDevices = game.InputDevices;
             this.name = name;
+            
+            InitializeAttributes();
+            InitializeItemLists();
+        }
+
+
+        protected override void InitializeAttributes()
+        {
             Gold = 0;
             sustanence = 240;
-
-            items = new Item[5];
-
             hitPoints = 10;
             protection = 0;
             magicResistance = 10;
@@ -69,6 +76,13 @@ namespace Paramita.SentientBeings
             encumbrance = 0;
             fatigue = 0;
             size = 2;
+        }
+
+
+
+        protected override void InitializeItemLists()
+        {
+            base.InitializeItemLists();
 
             naturalWeapons = new List<Weapon>();
             naturalWeapons.Add(ItemCreator.CreateFist());
@@ -145,8 +159,6 @@ namespace Paramita.SentientBeings
                     gameScene.IsPlayersTurn = false;
                 }
             }
-            
-            
         }
 
 
@@ -180,11 +192,6 @@ namespace Paramita.SentientBeings
                 {
                     gameScene.PostNewStatus("You picked up " + items[0].ToString() + ".");
                     gameScene.PostNewStatus("You now have " + Gold + " gold.");
-                }
-                else if(items[0] is Meat)
-                {
-                    gameScene.PostNewStatus("You picked up " + items[0].ToString() + ".");
-                    gameScene.PostNewStatus("You now have " + Sustanence + " calories of energy left.");
                 }
                 else
                     gameScene.PostNewStatus("You picked up a " + items[0].ToString() + ".");
@@ -251,7 +258,30 @@ namespace Paramita.SentientBeings
             }
         }
 
+        public override bool AddItem(Item item)
+        {
+            if (AddCoins(item) == true)
+                return true;
 
+            return base.AddItem(item);
+        }
+
+
+        private bool AddCoins(Item item)
+        {
+            if (item is Coins)
+            {
+                var coins = item as Coins;
+                Gold = Gold + coins.Number;
+                return true;
+            }
+            return false;
+        }
+
+        public override string GetDescription()
+        {
+            throw new NotImplementedException();
+        }
 
         // Draws the player onto the tilemap
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
@@ -271,96 +301,6 @@ namespace Paramita.SentientBeings
                 );
 
             spriteBatch.End();
-        }
-
-
-
-        // This method removes an item from the player's possessions
-        public Item RemoveItem(Item item)
-        {
-            for(int x = 0; x < items.Length; x++)
-            {
-                if(items[x] != null && items[x].Equals(item))
-                {
-                    items[x] = null;
-                    return item;
-                }
-            }
-
-            if(leftHand != null && leftHand.Equals(item))
-            {
-                leftHand = null;
-                return item;
-            }
-            else if(rightHand != null && rightHand.Equals(item))
-            {
-                rightHand = naturalWeapons[0];
-                return item;
-            }
-            else if(head != null && head.Equals(item))
-            {
-                head = null;
-                return item;
-            }
-            else if(body != null && body.Equals(item))
-            {
-                body = null;
-                return item;
-            }
-            else if(feet != null && feet.Equals(item))
-            {
-                feet = null;
-                return item;
-            }
-
-            return null;
-        }
-
-
-        // This method accepts an item and adds it to the player's possessions
-        public bool AddItem(Item item)
-        {
-            if(item is Coins)
-            {
-                var coins = item as Coins;
-                Gold = Gold + coins.Number;
-                return true;
-            }
-
-            bool equiped = EquipItem(item);
-
-            if(equiped == false)
-            {
-                for (int x = 0; x < items.Length; x++)
-                {
-                    if (items[x] == null)
-                    {
-                        items[x] = item;
-                        return true;
-                    }
-                }
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-
-
-
-        // This method returns an array of the items in the player's inventory
-        public Item[] InspectItems()
-        {
-            return items;
-        }
-
-
-
-        // Provides a string equivalent of the player
-        public override string ToString()
-        {
-            return name;
         }
     }
 }

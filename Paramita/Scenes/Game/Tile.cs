@@ -58,13 +58,9 @@ namespace Paramita.Scenes
 
         // Returning null will means something went wrong (tried to remove
         // something not actually present here).
-        public Item RemoveItem(Item item)
+        public void RemoveItem(Item item)
         {
-            if(items.Remove(item) == true)
-            {
-                return item;
-            }
-            return null;
+            items.Remove(item);
         }
 
 

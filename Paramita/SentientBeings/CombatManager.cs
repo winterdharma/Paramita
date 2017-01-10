@@ -20,12 +20,23 @@ namespace Paramita.SentientBeings
         int defParry;
         int defShieldProt;
         int attackResult;
-        int attackDamage;
-        bool isShieldHit;
 
         // used in repel attack resolution
         bool attackRepelled;
         const int repelAttackDamage = 1;
+
+        // used in attack rolls
+        int attackSkill;
+        int attFatigue;
+        int defenseSkill;
+        int defFatigue;
+        int attackScore;
+        int defenseScore;
+        int multipleAttackPenalty;
+
+        //used in damage rolls
+        int defProtection;
+        int damage;
 
         // used for rolling dice
         bool openEndedRoll;
@@ -66,6 +77,9 @@ namespace Paramita.SentientBeings
             CheckIfAttackRepelled();
             if (attackRepelled == false)
             {
+                defender.IncrementTimesAttacked();
+                attacker.AddEncumbranceToFatigue();
+
                 AttackRoll(attacker, weapon, defender);
                 ResolveAttackResult();
                 CheckIfAttackKilledDefender();
@@ -73,57 +87,44 @@ namespace Paramita.SentientBeings
         }
 
 
-
         private void InitializeAttackVariables(SentientBeing att, Weapon weapon, SentientBeing def)
         {
             attacker = att;
             defender = def;
-            attackResult = 0;
-            attackDamage = 0;
             attWeapon = weapon;
             repelWeapon = defender.GetLongestWeapon();
             defCritHitFatPenalty = defender.FatigueCriticalPenalty;
             defParry = defender.Parry;
             defShieldProt = defender.ShieldProtection;
-            isShieldHit = false;
+            attackRepelled = false;
         }
-
 
 
         private void CheckIfAttackRepelled()
         {
             if (CheckForRepelAttempt() == true)
-                ResolveRepelAttack();
-        }
+            {
+                attacker.IncrementTimesAttacked();
+                defender.AddEncumbranceToFatigue();
 
+                ResolveRepelAttack();
+            }
+        }
 
 
         private void ResolveAttackResult()
         {
             if (attackResult > 0)
             {
-                CheckForShieldHit();
-                attackDamage = DamageRoll(attacker, attWeapon, defender);
-                defender.TakeDamage(attackDamage);
-                scene.PostNewStatus(attacker + " hit " + defender + ", doing " + attackDamage + " damage!");
+                DamageRoll(attacker, attWeapon, defender);
+                defender.TakeDamage(damage);
+                scene.PostNewStatus(attacker + " hit " + defender + ", doing " + damage + " damage!");
             }
             else
             {
                 scene.PostNewStatus(attacker + " missed!");
             }
         }
-
-
-
-        private void CheckForShieldHit()
-        {
-            if (attackResult <= defParry)
-            {
-                isShieldHit = true;
-                Console.WriteLine("Shield hit.");
-            }
-        }
-
 
 
         private void CheckIfAttackKilledDefender()
@@ -160,7 +161,6 @@ namespace Paramita.SentientBeings
         }
 
 
-
         private void ResolveRepelAttack()
         {
             InitializeRepelAttackVariables();
@@ -173,19 +173,15 @@ namespace Paramita.SentientBeings
         }
 
 
-
         private void InitializeRepelAttackVariables()
         {
-            attackRepelled = false;
         }
-
 
 
         private void RepelAttackRoll()
         {
             AttackRoll(defender, repelWeapon, attacker);
         }
-
 
 
         private void ResolveRepelAttackResult()
@@ -197,7 +193,6 @@ namespace Paramita.SentientBeings
         }
 
 
-
         private void RepelAttackMoraleCheck()
         {
             if(MoraleCheck(attacker, defender, 10, attackResult) == true)
@@ -207,16 +202,15 @@ namespace Paramita.SentientBeings
         }
 
 
-
         private void RepelAttackDamageRoll()
         {
-            if (DamageRoll(defender, repelWeapon, attacker) > 0)
+            DamageRoll(defender, repelWeapon, attacker);
+            if ( damage > 0)
             {
                 attacker.TakeDamage(repelAttackDamage);
                 scene.PostNewStatus(attacker + " takes " + repelAttackDamage + " pt of damage!");
             }
         }
-
 
 
         private void CheckIfRepelAttackKilledAttacker()
@@ -230,31 +224,47 @@ namespace Paramita.SentientBeings
 
 
 
+        /*
+         *  An attack roll consists of a competitive roll of 2d6 (open-ended) between the attacker
+         *  and defender. 
+         *  
+         *  The attacker's attack skill, weapon modifiers, and fatigue penalties are added to its roll.
+         *  The defender's defense skill, weapon modifiers, and fatigue penalities are added to its roll.
+         *  
+         *  A message is displayed on the GameScene's Status Message panel indicated the totals.
+         *  
+         *  The difference between the two scores is stored for use in further resolution. A positive
+         *  result indicates the defender was hit.
+         */
         private void AttackRoll(SentientBeing attacker, Weapon weapon, SentientBeing defender)
         {
-            int attackSkill = attacker.AttackSkill + weapon.AttackModifier;
-            int attFatigue = attacker.FatigueAttPenalty;
-            int defenseSkill = defender.DefenseSkill; // SentientBeing.DefenseSkill.Get() includes weapons modifiers
-            int defFatigue = defender.FatigueDefPenalty;
+            InitializeAttackRollVariables(attacker, weapon, defender);
 
-            // roll the dice
-            int attRoll = OpenEndedDiceRoll("2d6");
-            int defRoll = OpenEndedDiceRoll("2d6");
+            attackScore = OpenEndedDiceRoll("2d6") + attackSkill - attFatigue;
+            defenseScore = OpenEndedDiceRoll("2d6") + defenseSkill - defFatigue - multipleAttackPenalty;
 
-            // add the dice rolls to other factors to arrive at total attack and defense scores
-            int attack = attRoll + attackSkill - attFatigue;
-            int defense = defRoll + defenseSkill - defFatigue;
+            ReportAttackRollToScene();
+     
+            attackResult = attackScore - defenseScore;
+        }
 
-            // report the details of the attack and defense scores
-            scene.PostNewStatus(attacker + " rolled " + attRoll + " plus attack skill "
-                + attackSkill + " and weapon mod of " + weapon.AttackModifier + " minus fatigue mod of "
-                + attFatigue + ".");
+        
+        private void InitializeAttackRollVariables(SentientBeing attacker, Weapon weapon, SentientBeing defender)
+        {
+            attackSkill = attacker.AttackSkill + weapon.AttackModifier;
+            attFatigue = attacker.FatigueAttPenalty;
+            defenseSkill = defender.DefenseSkill;
+            defFatigue = defender.FatigueDefPenalty;
+            multipleAttackPenalty = (defender.TimesAttacked - 1) * 2;
+        }
 
-            scene.PostNewStatus(defender + " rolled " + defRoll + " plus total defense skill of "
-                + defenseSkill + " minus fatigue mod of " + defFatigue + ".");
 
-            // return the difference of the attack and defense scores
-            attackResult = attack - defense;
+        private void ReportAttackRollToScene()
+        {
+            scene.PostNewStatus(attacker + " rolled " + attackScore + "(attSkill: " + attackSkill
+                + ", fatigue: " + attFatigue + ")");
+            scene.PostNewStatus(defender + " rolled " + defenseScore + "(defSkill: " + defenseSkill
+                + ", fatigue: " + defFatigue + ", multAtt: " + multipleAttackPenalty + ")");
         }
 
 
@@ -264,38 +274,43 @@ namespace Paramita.SentientBeings
          * The calculations for the shield hit are missing at present
          * It also is missing the case of a head hit, which uses defender's head protection only
          */
-        public int DamageRoll(SentientBeing attacker, Weapon attackWeapon, SentientBeing defender)
+        public void DamageRoll(SentientBeing attacker, Weapon attackWeapon, SentientBeing defender)
         {
-            int defProtection = CalculateDefenderProtection(defender);
+            CalculateDefenderProtection(defender);
 
-            int damage = 0;
+            attackScore = attacker.Strength + attackWeapon.Damage + OpenEndedDiceRoll("2d6");
+            defenseScore = defProtection + OpenEndedDiceRoll("2d6");
 
-            int attack = attacker.Strength + attackWeapon.Damage + OpenEndedDiceRoll("2d6");
-            int defense = defProtection + OpenEndedDiceRoll("2d6");
-
-            if (attack - defense > 0)
-                damage = attack - defense;
-
-            return damage;
+            damage = attackScore - defenseScore;
         }
 
 
-
-        private int CalculateDefenderProtection(SentientBeing defender)
+        private void CalculateDefenderProtection(SentientBeing defender)
         {
-            int protection = defender.Protection;
+            defProtection = defender.Protection;
 
-            if (isShieldHit == true)
-                protection += defShieldProt;
+            if (CheckForShieldHit() == true)
+                defProtection += defShieldProt;
 
             if (CriticalHitCheck(defender) == true)
             {
-                protection = protection / 2;
+                defProtection = defProtection / 2;
             }
-
-            return protection;
         }
 
+
+        // If an attacker rolls higher than the defender's total defense score, the
+        // defender is hit, but if the margin of the win doesn't beat the defender's
+        // shield parry, then defender was able to block the hit with his shield.
+        private bool CheckForShieldHit()
+        {
+            if (attackResult <= defParry)
+            {
+                Console.WriteLine("Shield hit.");
+                return true;
+            }
+            return false;
+        }
 
 
         // When a hit is scored, a critical hit check is rolled. If the hit is a critical,
@@ -310,14 +325,10 @@ namespace Paramita.SentientBeings
                 scene.PostNewStatus("A critical hit was scored! (" + roll + "-" + defCritHitFatPenalty + ")");
                 return true;
             }
-
-            scene.PostNewStatus("No critical hit. (" + roll + "-" + defCritHitFatPenalty + ")");
             return false;
         }
 
 
-
-        // perform a morale check against a supplied number and an optional bonus difficulty
         private bool MoraleCheck(SentientBeing checker, SentientBeing other, int checkAgainst, int bonus = 0)
         {
             int checkerMorale = checker.Morale;
@@ -333,7 +344,6 @@ namespace Paramita.SentientBeings
                 return true;
 
             return false;
-
         }
 
 

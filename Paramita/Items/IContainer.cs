@@ -14,7 +14,7 @@
          * Returns that Item to the caller is successful
          * or null if the remove attempt failed for some reason.
          */ 
-        Item RemoveItem(Item item);
+        void RemoveItem(Item item);
 
         /*
          * AddItem() attempts to add an @item to the IContainer.
