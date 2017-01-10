@@ -11,6 +11,12 @@ namespace Paramita.SentientBeings.Animals
         public GiantRat(GameScene gameScene, Texture2D sprites, Rectangle rightFacing, Rectangle leftFacing) 
             : base(gameScene, sprites, rightFacing, leftFacing)
         {
+            InitializeAttributes();
+            InitializeItemLists();
+        }
+
+        protected override void InitializeAttributes()
+        {
             name = "Giant Rat";
             hitPoints = 5;
             protection = 2;
@@ -23,6 +29,12 @@ namespace Paramita.SentientBeings.Animals
             encumbrance = 1;
             fatigue = 0;
             size = 1;
+        }
+
+
+        protected override void InitializeItemLists()
+        {
+            base.InitializeItemLists();
 
             naturalWeapons = new List<Weapon>();
             naturalWeapons.Add(ItemCreator.CreateBite());
@@ -33,9 +45,8 @@ namespace Paramita.SentientBeings.Animals
             UpdateAttacks();
 
             shields = new List<Shield>();
+
         }
-
-
 
         public override void Update(GameTime gameTime)
         {

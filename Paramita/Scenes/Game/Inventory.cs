@@ -105,32 +105,32 @@ namespace Paramita.Scenes.Game
         // Gets the player's Item list and converts it to a string[] for display on the panel
         private string[] GetPlayerItemStrings()
         {
-            Item[] playerItems = player.Items;
+            Item[] playerItems = player.UnequipedItems;
             string[] itemStrings = new string[11];
 
             // check for player's equiped item slots
-            if(player.LeftHand != null)
-                itemStrings[0] = player.LeftHand.ToString();
+            if(player.LeftHandItem != null)
+                itemStrings[0] = player.LeftHandItem.ToString();
             else
                 itemStrings[0] = "";
 
-            if (player.RightHand != null)
-                itemStrings[1] = player.RightHand.ToString();
+            if (player.RightHandItem != null)
+                itemStrings[1] = player.RightHandItem.ToString();
             else
                 itemStrings[1] = "";
 
-            if (player.Head != null)
-                itemStrings[2] = player.Head.ToString();
+            if (player.HeadItem != null)
+                itemStrings[2] = player.HeadItem.ToString();
             else
                 itemStrings[2] = "";
 
-            if (player.Body != null)
-                itemStrings[3] = player.Body.ToString();
+            if (player.BodyItem != null)
+                itemStrings[3] = player.BodyItem.ToString();
             else
                 itemStrings[3] = "";
  
-            if (player.Feet != null)
-                itemStrings[4] = player.Feet.ToString();
+            if (player.FeetItem != null)
+                itemStrings[4] = player.FeetItem.ToString();
             else
                 itemStrings[4] = "";
 
@@ -232,25 +232,25 @@ namespace Paramita.Scenes.Game
             switch (itemSelected)
             {
                 case 1:
-                    return player.LeftHand;
+                    return player.LeftHandItem;
                 case 2:
-                    return player.RightHand;
+                    return player.RightHandItem;
                 case 3:
-                    return player.Head;
+                    return player.HeadItem;
                 case 4:
-                    return player.Body;
+                    return player.BodyItem;
                 case 5:
-                    return player.Feet;
+                    return player.FeetItem;
                 case 6:
-                    return player.Items[0];
+                    return player.UnequipedItems[0];
                 case 7:
-                    return player.Items[1];
+                    return player.UnequipedItems[1];
                 case 8:
-                    return player.Items[2];
+                    return player.UnequipedItems[2];
                 case 9:
-                    return player.Items[3];
+                    return player.UnequipedItems[3];
                 case 10:
-                    return player.Items[4];
+                    return player.UnequipedItems[4];
                 default:
                     return null;
             }
