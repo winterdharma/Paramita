@@ -1,4 +1,5 @@
 ﻿using Paramita.Items;
+using Paramita.Mechanics;
 using Paramita.Scenes;
 using System;
 
@@ -6,8 +7,9 @@ namespace Paramita.SentientBeings
 {
     public class CombatManager
     {
-        Random random;
         GameScene scene;
+        Dice dice2d6;
+        Dice dice1d100;
 
         // used in combat resolution
         SentientBeing attacker;
@@ -38,25 +40,23 @@ namespace Paramita.SentientBeings
         int defProtection;
         int damage;
 
-        // used for rolling dice
-        bool openEndedRoll;
-        int dieSize;
-        int diceLeftToRoll;
-        int rollModifier;
-        int totalRolled;
-        int roll;
-
-
 
 
         // When we construct the CombatManager class we want to pass in references
         // to the player and the list of enemies.
         public CombatManager(Random random, GameScene gameScene)
         {
-            this.random = random;
             scene = gameScene;
+            InitializeDice();
         }
 
+
+
+        private void InitializeDice()
+        {
+            dice2d6 = new Dice(2);
+            dice1d100 = new Dice(1, Die.d100);
+        }
 
 
         /*
@@ -239,9 +239,8 @@ namespace Paramita.SentientBeings
         private void AttackRoll(SentientBeing attacker, Weapon weapon, SentientBeing defender)
         {
             InitializeAttackRollVariables(attacker, weapon, defender);
-
-            attackScore = OpenEndedDiceRoll("2d6") + attackSkill - attFatigue;
-            defenseScore = OpenEndedDiceRoll("2d6") + defenseSkill - defFatigue - multipleAttackPenalty;
+            attackScore = dice2d6.OpenEndedDiceRoll() + attackSkill - attFatigue;
+            defenseScore = dice2d6.OpenEndedDiceRoll() + defenseSkill - defFatigue - multipleAttackPenalty;
 
             ReportAttackRollToScene();
      
@@ -277,9 +276,8 @@ namespace Paramita.SentientBeings
         public void DamageRoll(SentientBeing attacker, Weapon attackWeapon, SentientBeing defender)
         {
             CalculateDefenderProtection(defender);
-
-            attackScore = attacker.Strength + attackWeapon.Damage + OpenEndedDiceRoll("2d6");
-            defenseScore = defProtection + OpenEndedDiceRoll("2d6");
+            attackScore = attacker.Strength + attackWeapon.Damage + dice2d6.OpenEndedDiceRoll();
+            defenseScore = defProtection + dice2d6.OpenEndedDiceRoll();
 
             damage = attackScore - defenseScore;
         }
@@ -318,11 +316,11 @@ namespace Paramita.SentientBeings
         private bool CriticalHitCheck(SentientBeing defender)
         {
             int threshold = 3;
-
-            int criticalCheckRoll = OpenEndedDiceRoll("2d6") - defCritHitFatPenalty;
+            int criticalCheckRoll = dice2d6.OpenEndedDiceRoll() - defCritHitFatPenalty;
             if (criticalCheckRoll < threshold)
             {
-                scene.PostNewStatus("A critical hit was scored! (" + roll + "-" + defCritHitFatPenalty + ")");
+                scene.PostNewStatus("A critical hit was scored! (" + (criticalCheckRoll - defCritHitFatPenalty) 
+                    + "-" + defCritHitFatPenalty + ")");
                 return true;
             }
             return false;
@@ -333,9 +331,8 @@ namespace Paramita.SentientBeings
         {
             int checkerMorale = checker.Morale;
             int sizeDifference = checker.Size - other.Size;
-            // roll the dice
-            int checkerRoll = OpenEndedDiceRoll("2d6");
-            int checkAgainstRoll = OpenEndedDiceRoll("2d6");
+            int checkerRoll = dice2d6.OpenEndedDiceRoll();
+            int checkAgainstRoll = dice2d6.OpenEndedDiceRoll();
 
             int checkerTotal = checkerRoll + checkerMorale + sizeDifference;
             int checkAgainstTotal = checkAgainstRoll + checkAgainst + (bonus / 2);
@@ -354,8 +351,7 @@ namespace Paramita.SentientBeings
         public HumanoidBodyParts GetHitLocationOnHumanoid(SentientBeing attacker, SentientBeing defender)
         {
             HumanoidBodyParts hitLocation = HumanoidBodyParts.Torso;
-
-            int chance = ClosedEndedDiceRoll("1d100");
+            int chance = dice1d100.ClosedEndedDiceRoll();
 
             // chance < 51 is a Torso hit, which is the default value for hitLocation
             if(chance > 50 && chance < 71) 
@@ -378,132 +374,6 @@ namespace Paramita.SentientBeings
             }
 
             return hitLocation;
-        }
-
-
-
-        /*
-         *   Dice Roll Functions
-         *   
-         *   Currently, a dice roll must correspond to a code found in the ParseDiceCode() function!
-         *
-         *   @diceCode should use D&D conventions:
-         *     * number of dice + "d" + max roll of die + any after-roll modifier (+/- integer)
-         *   
-         *   There are two kinds of dice rolls: Open-ended and closed-ended.
-         *   
-         *   Open-ended dice rolls get bonus rolls whenever any roll is the max for that die size.
-         *   Example: Roll 2 d6 dice. Both roll 6. An open-ended roll means 2 more bonus rolls are
-         *            made and added to final total. Bonus rolls can yield more bonus rolls.
-         *   
-         *   Closed-ended dice rolls only roll the initial dice indicated by the dice code.
-         */
-        private int OpenEndedDiceRoll(string dice)
-        {
-            openEndedRoll = true;
-            DiceRoll(dice);
-
-            return totalRolled;
-        }
-
-
-
-        private int ClosedEndedDiceRoll(string dice)
-        {
-            openEndedRoll = false;
-            DiceRoll(dice);
-
-            return totalRolled;
-        }
-
-
-
-        private void DiceRoll(string dice)
-        {
-            InitializeDiceRollVariables();
-            ParseDiceRollCode(dice);
-            RollDice();
-        }
-
-
-
-        private void InitializeDiceRollVariables()
-        {
-            totalRolled = 0;
-            roll = 0;
-            dieSize = 0;
-            diceLeftToRoll = 0;
-            rollModifier = 0;
-        }
-
-
-
-        // Sets the variables for a dice roll based on @diceCode
-        //
-        // Presently, I am just adding roll types to a switch statement
-        // In the future, this should be turned into a string parser if the switch statement
-        // gets longer than 10 items
-        private void ParseDiceRollCode(string diceCode)
-        {
-            switch (diceCode)
-            {
-                case "1d6":
-                    dieSize = 6;
-                    diceLeftToRoll = 1;
-                    break;
-                case "1d6+1":
-                    dieSize = 6;
-                    diceLeftToRoll = 1;
-                    rollModifier = 1;
-                    break;
-                case "2d6":
-                    dieSize = 6;
-                    diceLeftToRoll = 2;
-                    break;
-                case "1d100":
-                    dieSize = 100;
-                    diceLeftToRoll = 1;
-                    break;
-                default:
-                    dieSize = 0;
-                    diceLeftToRoll = 0;
-                    Console.WriteLine("Unknown DiceCode.");
-                    break;
-            }
-        }
-
-
-
-        private void RollDice()
-        {
-            while (diceLeftToRoll > 0)
-            {
-                RollDie();
-                if(openEndedRoll == true)
-                    CheckForBonusRoll();
-                totalRolled += roll;
-            }
-        }
-
-
-
-        private void RollDie()
-        {
-            diceLeftToRoll--;
-            roll = random.Next(1, dieSize + 1) + rollModifier;
-            Console.WriteLine("Rolled " + roll);
-        }
-
-
-
-        private void CheckForBonusRoll()
-        {
-            if (roll == dieSize)
-            {
-                Console.WriteLine("Bonus roll!");
-                roll--;
-                diceLeftToRoll++;
-            }
         }
     }
 }
