@@ -8,6 +8,8 @@ namespace Paramita.SentientBeings
     public class CombatManager
     {
         GameScene scene;
+        Dice dice2d6;
+        Dice dice1d100;
 
         // used in combat resolution
         SentientBeing attacker;
@@ -45,9 +47,16 @@ namespace Paramita.SentientBeings
         public CombatManager(Random random, GameScene gameScene)
         {
             scene = gameScene;
+            InitializeDice();
         }
 
 
+
+        private void InitializeDice()
+        {
+            dice2d6 = new Dice(2);
+            dice1d100 = new Dice(1, Die.d100);
+        }
 
 
         /*
@@ -230,9 +239,8 @@ namespace Paramita.SentientBeings
         private void AttackRoll(SentientBeing attacker, Weapon weapon, SentientBeing defender)
         {
             InitializeAttackRollVariables(attacker, weapon, defender);
-            Dice dice = new Dice(2);
-            attackScore = dice.OpenEndedDiceRoll() + attackSkill - attFatigue;
-            defenseScore = dice.OpenEndedDiceRoll() + defenseSkill - defFatigue - multipleAttackPenalty;
+            attackScore = dice2d6.OpenEndedDiceRoll() + attackSkill - attFatigue;
+            defenseScore = dice2d6.OpenEndedDiceRoll() + defenseSkill - defFatigue - multipleAttackPenalty;
 
             ReportAttackRollToScene();
      
@@ -268,9 +276,8 @@ namespace Paramita.SentientBeings
         public void DamageRoll(SentientBeing attacker, Weapon attackWeapon, SentientBeing defender)
         {
             CalculateDefenderProtection(defender);
-            Dice dice = new Dice(2);
-            attackScore = attacker.Strength + attackWeapon.Damage + dice.OpenEndedDiceRoll();
-            defenseScore = defProtection + dice.OpenEndedDiceRoll();
+            attackScore = attacker.Strength + attackWeapon.Damage + dice2d6.OpenEndedDiceRoll();
+            defenseScore = defProtection + dice2d6.OpenEndedDiceRoll();
 
             damage = attackScore - defenseScore;
         }
@@ -309,8 +316,7 @@ namespace Paramita.SentientBeings
         private bool CriticalHitCheck(SentientBeing defender)
         {
             int threshold = 3;
-            Dice dice = new Dice(2);
-            int criticalCheckRoll = dice.OpenEndedDiceRoll() - defCritHitFatPenalty;
+            int criticalCheckRoll = dice2d6.OpenEndedDiceRoll() - defCritHitFatPenalty;
             if (criticalCheckRoll < threshold)
             {
                 scene.PostNewStatus("A critical hit was scored! (" + (criticalCheckRoll - defCritHitFatPenalty) 
@@ -325,9 +331,8 @@ namespace Paramita.SentientBeings
         {
             int checkerMorale = checker.Morale;
             int sizeDifference = checker.Size - other.Size;
-            Dice dice = new Dice(2);
-            int checkerRoll = dice.OpenEndedDiceRoll();
-            int checkAgainstRoll = dice.OpenEndedDiceRoll();
+            int checkerRoll = dice2d6.OpenEndedDiceRoll();
+            int checkAgainstRoll = dice2d6.OpenEndedDiceRoll();
 
             int checkerTotal = checkerRoll + checkerMorale + sizeDifference;
             int checkAgainstTotal = checkAgainstRoll + checkAgainst + (bonus / 2);
@@ -346,8 +351,7 @@ namespace Paramita.SentientBeings
         public HumanoidBodyParts GetHitLocationOnHumanoid(SentientBeing attacker, SentientBeing defender)
         {
             HumanoidBodyParts hitLocation = HumanoidBodyParts.Torso;
-            Dice dice = new Dice(1, Die.d100);
-            int chance = dice.ClosedEndedDiceRoll();
+            int chance = dice1d100.ClosedEndedDiceRoll();
 
             // chance < 51 is a Torso hit, which is the default value for hitLocation
             if(chance > 50 && chance < 71) 

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Paramita.Mechanics
 {
@@ -20,34 +16,30 @@ namespace Paramita.Mechanics
     /*
     *   Dice
     *   
-    *   Currently, a dice roll must correspond to a code found in the ParseDiceCode() function!
-    *
-    *   @diceCode should use D&D conventions:
-    *     * number of dice + "d" + max roll of die + any after-roll modifier (+/- integer)
-    *   
     *   There are two kinds of dice rolls: Open-ended and closed-ended.
     *   
     *   Open-ended dice rolls get bonus rolls whenever any roll is the max for that die size.
     *   Example: Roll 2 d6 dice. Both roll 6. An open-ended roll means 2 more bonus rolls are
     *            made and added to final total. Bonus rolls can yield more bonus rolls.
     *   
-    *   Closed-ended dice rolls only roll the initial dice indicated by the dice code.
+    *   Closed-ended dice rolls only roll once and return the result.
     */
     public class Dice
     {
         private Random random;
         private bool openEndedRoll;
         private Die dieSize;
-        private int diceLeftToRoll;
+        private int numberOfDice;
         private int rollModifier;
+        private int diceLeftToRoll;
 
 
 
 
-        public Dice(int dieRolls, Die die = Die.d6, int modifier = 0)
+        public Dice(int numberOfDice, Die die = Die.d6, int modifier = 0)
         {
             dieSize = die;
-            diceLeftToRoll = dieRolls;
+            this.numberOfDice = numberOfDice;
             rollModifier = modifier;
             random = new Random();
         }
@@ -73,14 +65,18 @@ namespace Paramita.Mechanics
 
         private int RollDice()
         {
+            diceLeftToRoll = numberOfDice;
             int totalRolled = 0;
             int roll;
+
             while (diceLeftToRoll > 0)
             {
                 roll = RollDie();
-                if (openEndedRoll == true)
+                if (openEndedRoll)
                     CheckForBonusRoll(roll);
+                totalRolled += roll;
             }
+
             return totalRolled;
         }
 
