@@ -12,13 +12,12 @@ namespace Paramita.Scenes
     public class GameScene : Scene
     {
         private LevelManager levelManager;
-        private CombatManager combatManager;
         private Camera camera;
         private Player player;
         private List<SentientBeing> npcs;
         private int levelNumber;
 
-        private StatusMessages statuses;
+        private static StatusMessages statuses;
         private Inventory inventoryPanel;
 
         private Texture2D tilesheet;
@@ -35,8 +34,6 @@ namespace Paramita.Scenes
             set { isPlayersTurn = value; }
         }
 
-        public CombatManager CombatManager { get { return combatManager; } }
-
         public Camera Camera { get { return camera; } }
 
         public Player Player { get { return player; } }
@@ -49,11 +46,9 @@ namespace Paramita.Scenes
         public TileMap Map { get { return levelManager.CurrentMap; } }
 
 
-
         public GameScene(GameController game) : base(game)
         {
             camera = new Camera();
-            combatManager = new CombatManager(GameController.random, this);
         }
 
 
@@ -229,7 +224,7 @@ namespace Paramita.Scenes
 
 
 
-        public void PostNewStatus(string message)
+        public static void PostNewStatus(string message)
         {
             statuses.AddMessage(message);
         }

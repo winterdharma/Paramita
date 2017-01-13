@@ -190,11 +190,11 @@ namespace Paramita.SentientBeings
 
                 if (items[0] is Coins)
                 {
-                    gameScene.PostNewStatus("You picked up " + items[0].ToString() + ".");
-                    gameScene.PostNewStatus("You now have " + Gold + " gold.");
+                    GameScene.PostNewStatus("You picked up " + items[0].ToString() + ".");
+                    GameScene.PostNewStatus("You now have " + Gold + " gold.");
                 }
                 else
-                    gameScene.PostNewStatus("You picked up a " + items[0].ToString() + ".");
+                    GameScene.PostNewStatus("You picked up a " + items[0].ToString() + ".");
             }
         }
 
@@ -239,7 +239,7 @@ namespace Paramita.SentientBeings
             
             if(message != "")
             {
-                gameScene.PostNewStatus(message);
+                GameScene.PostNewStatus(message);
             }
         }
 
@@ -254,7 +254,7 @@ namespace Paramita.SentientBeings
             {
                 RemoveItem(itemToDrop);
                 CurrentTile.AddItem(itemToDrop);
-                gameScene.PostNewStatus("You dropped a " + itemToDrop.ToString() + ".");
+                GameScene.PostNewStatus("You dropped a " + itemToDrop.ToString() + ".");
             }
         }
 

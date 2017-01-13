@@ -27,7 +27,6 @@ namespace Paramita.SentientBeings
         // reference to the GameScene for access to GameScene.Map
         protected GameScene gameScene;
         protected Camera camera;
-        protected CombatManager combatManager;
 
         // used to determine SentientBeing's placement on a TileMap
         protected Tile currentTile;
@@ -172,7 +171,6 @@ namespace Paramita.SentientBeings
         {
             this.gameScene = gameScene;
             camera = gameScene.Camera;
-            combatManager = gameScene.CombatManager;
 
             spritesheet = sprites;
             rightFacing = right;
@@ -365,10 +363,12 @@ namespace Paramita.SentientBeings
         // conduct all of a being's attacks for the turn
         public void Attack(SentientBeing defender)
         {
-            gameScene.PostNewStatus(this + " attacked " + defender + ".");
+            MeeleeAttack attack;
+            GameScene.PostNewStatus(this + " attacked " + defender + ".");
             for(int x = 0; x < attacks.Count; x++)
             {
-                combatManager.ResolveAttack(this, attacks[x], defender);
+                attack = new MeeleeAttack(this, attacks[x], defender);
+                attack.ResolveAttack();
                 if (this.IsDead== true || defender.IsDead == true)
                     break;
             }
