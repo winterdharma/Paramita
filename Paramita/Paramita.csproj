@@ -56,9 +56,12 @@
     <Compile Include="Items\NaturalWeapons\Bite.cs" />
     <Compile Include="Items\NaturalWeapons\Fist.cs" />
     <Compile Include="Items\Weapons\ShortSword.cs" />
+    <Compile Include="Mechanics\AttackRoll.cs" />
+    <Compile Include="Mechanics\DamageRoll.cs" />
     <Compile Include="Mechanics\Dice.cs" />
     <Compile Include="Mechanics\Direction.cs" />
     <Compile Include="Mechanics\InputDevices.cs" />
+    <Compile Include="Mechanics\MeeleeAttack.cs" />
     <Compile Include="Scenes\Game\Inventory.cs" />
     <Compile Include="Scenes\Game\StatusMessages.cs" />
     <Compile Include="Scenes\Game\TileMapCreator.cs" />
@@ -77,9 +80,7 @@
     <Compile Include="Scenes\Game\Camera.cs" />
     <Compile Include="SentientBeings\Animal.cs" />
     <Compile Include="SentientBeings\Animals\GiantRat.cs" />
-    <Compile Include="SentientBeings\CombatManager.cs" />
     <Compile Include="GameController.cs" />
-    <Compile Include="Global.cs" />
     <Compile Include="SentientBeings\Humanoid.cs" />
     <Compile Include="SentientBeings\INpc.cs" />
     <Compile Include="SentientBeings\PathToPlayer.cs" />
