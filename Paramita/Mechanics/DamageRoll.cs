@@ -37,7 +37,7 @@ namespace Paramita.Mechanics
             defender = attackRoll.Defender;
             attacker = attackRoll.Attacker;
             attackWeapon = attackRoll.AttackWeaon;
-            attackRollResult = attackRoll.AttackRollResult;
+            attackRollResult = attackRoll.Result;
 
             dice2d6 = new Dice(2);
 

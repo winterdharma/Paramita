@@ -44,7 +44,7 @@ namespace Paramita.Mechanics
         {
             get { return attackWeapon; }
         }
-        public int AttackRollResult
+        public int Result
         {
             get { return attackScore - defendScore; }
         }

@@ -363,12 +363,11 @@ namespace Paramita.SentientBeings
         // conduct all of a being's attacks for the turn
         public void Attack(SentientBeing defender)
         {
-            MeeleeAttack attack;
+            Attack attack;
             GameScene.PostNewStatus(this + " attacked " + defender + ".");
             for(int x = 0; x < attacks.Count; x++)
             {
-                attack = new MeeleeAttack(this, attacks[x], defender);
-                attack.ResolveAttack();
+                attack = new Attack(this, attacks[x], defender);
                 if (this.IsDead== true || defender.IsDead == true)
                     break;
             }
