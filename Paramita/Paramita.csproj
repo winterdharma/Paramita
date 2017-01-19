@@ -56,12 +56,17 @@
     <Compile Include="Items\NaturalWeapons\Bite.cs" />
     <Compile Include="Items\NaturalWeapons\Fist.cs" />
     <Compile Include="Items\Weapons\ShortSword.cs" />
-    <Compile Include="Mechanics\AttackRoll.cs" />
-    <Compile Include="Mechanics\DamageRoll.cs" />
+    <Compile Include="Mechanics\Combat\Attack.cs" />
+    <Compile Include="Mechanics\Combat\AttackRoll.cs" />
+    <Compile Include="Mechanics\Combat\DamageRoll.cs" />
     <Compile Include="Mechanics\Dice.cs" />
     <Compile Include="Mechanics\Direction.cs" />
     <Compile Include="Mechanics\InputDevices.cs" />
-    <Compile Include="Mechanics\MeeleeAttack.cs" />
+    <Compile Include="Mechanics\Combat\MeeleeAttack.cs" />
+    <Compile Include="Mechanics\MoraleCheck.cs" />
+    <Compile Include="Mechanics\Combat\RepelMeeleeAttack.cs" />
+    <Compile Include="UI\BeingSprite.cs" />
+    <Compile Include="UI\Sprite.cs" />
     <Compile Include="Scenes\Game\Inventory.cs" />
     <Compile Include="Scenes\Game\StatusMessages.cs" />
     <Compile Include="Scenes\Game\TileMapCreator.cs" />
@@ -71,8 +76,7 @@
     <Compile Include="Scenes\Title\TitleScene.cs" />
     <Compile Include="Scenes\Scene.cs" />
     <Compile Include="Scenes\SceneManager.cs" />
-    <Compile Include="Scenes\Game\AnimatedSprite.cs" />
-    <Compile Include="Scenes\Game\Animation.cs" />
+    <Compile Include="UI\Animation.cs" />
     <Compile Include="Scenes\Game\Tile.cs" />
     <Compile Include="Scenes\Game\LevelManager.cs" />
     <Compile Include="Scenes\Game\TileMap.cs" />
@@ -103,13 +107,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\black_background.png" />
-    <Content Include="Content\femaleplayer.png" />
-    <Content Include="Content\hound.png" />
-    <Content Include="Content\item_sprites.png" />
-    <Content Include="Content\maleplayer.png" />
+    <Content Include="Content\black_background1.png" />
+    <Content Include="Content\Images\Items\buckler.png" />
+    <Content Include="Content\Images\Items\coins.png" />
+    <Content Include="Content\Images\Items\meat.png" />
+    <Content Include="Content\Images\Items\short_sword.png" />
+    <Content Include="Content\Images\SentientBeings\giant_rat.png" />
+    <Content Include="Content\Images\SentientBeings\human_player.png" />
     <Content Include="Content\menuscreen.png" />
-    <Content Include="Content\player.png" />
-    <Content Include="Content\sentientbeing_sprites.png" />
     <Content Include="Content\tileset1.png" />
     <Content Include="Content\titlescreen.png" />
     <Content Include="Content\white.png" />
@@ -124,6 +129,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Content\Images\Scenes\" />
+    <Folder Include="Content\Images\Tiles\" />
     <Folder Include="Items\Armors\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

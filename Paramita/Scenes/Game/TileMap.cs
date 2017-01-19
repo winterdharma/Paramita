@@ -156,13 +156,13 @@ namespace Paramita.Scenes
         }
 
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            cameraPoint = PositionToTileCoords(camera.Position);
+            cameraPoint = PositionToTileCoords(Camera.Position);
             viewPoint = PositionToTileCoords(
                 new Vector2(
-                    (camera.Position.X + viewport.Width),
-                    (camera.Position.Y + viewport.Height)
+                    (Camera.Position.X + viewport.Width),
+                    (Camera.Position.Y + viewport.Height)
                 )
             );
 
@@ -173,12 +173,7 @@ namespace Paramita.Scenes
             destination = new Rectangle(0, 0, TileSize, TileSize);
             Tile tile;
 
-            spriteBatch.Begin(
-                SpriteSortMode.Deferred,
-                BlendState.AlphaBlend,
-                SamplerState.PointClamp,
-                null, null, null,
-                camera.Transformation);
+            
 
             for (int y = min.Y; y < max.Y; y++)
             {
@@ -189,23 +184,27 @@ namespace Paramita.Scenes
                     Item[] tileItems = tile.InspectItems();
                     destination.X = x * TileSize;
 
+                    spriteBatch.Begin(
+                     SpriteSortMode.Deferred,
+                     BlendState.AlphaBlend,
+                     SamplerState.PointClamp,
+                     null, null, null,
+                     Camera.Transformation);
+
                     spriteBatch.Draw(
                     TileSet.Texture,
                     destination,
                     TileSet.GetRectForTileType(tile.TileType),
                     Color.White);
 
-                    if(tileItems.Length > 0)
+                    spriteBatch.End();
+
+                    if (tileItems.Length > 0)
                     {
-                        spriteBatch.Draw(
-                        tileItems[0].Texture,
-                        destination,
-                        tileItems[0].TextureRect,
-                        Color.White);
+                        tileItems[0].Sprite.Draw(gameTime, spriteBatch);
                     }
                 }
             }
-            spriteBatch.End();
         }
     }
 }

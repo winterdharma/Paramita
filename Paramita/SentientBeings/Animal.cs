@@ -27,8 +27,8 @@ namespace Paramita.SentientBeings
         protected int body = 3;
         protected int tail = 4;
 
-        public Animal(GameScene gameScene, Texture2D sprites, Rectangle rightFacing, Rectangle leftFacing) 
-            : base(gameScene, sprites, rightFacing, leftFacing)
+        public Animal(GameScene gameScene, Texture2D sprites) 
+            : base(gameScene, sprites)
         {
         }
 

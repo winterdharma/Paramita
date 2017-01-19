@@ -21,8 +21,7 @@ namespace Paramita.Items
         public int Protection { get { return protection; } }
 
 
-        public Shield(Texture2D texture, Rectangle textureRect,
-            int prot, int defMod, int parry, int enc) : base(texture, textureRect)
+        public Shield(Texture2D texture, int prot, int defMod, int parry, int enc) : base(texture)
         {
             encumbrance = enc;
             this.parry = parry;

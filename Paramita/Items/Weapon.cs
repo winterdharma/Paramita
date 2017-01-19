@@ -24,8 +24,8 @@ namespace Paramita.Items
         public int Length { get { return length; } }
 
 
-        public Weapon(Texture2D texture, Rectangle rect, int damage, int attack, int defense, int length) 
-            : base(texture, rect)
+        public Weapon(int damage, int attack, int defense, int length, Texture2D texture = null) 
+            : base(texture)
         {
             this.damage = damage;
             attackModifier = attack;

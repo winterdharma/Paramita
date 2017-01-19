@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Paramita.Mechanics;
 using System.Collections.Generic;
 
 namespace Paramita.Scenes
@@ -79,7 +80,7 @@ namespace Paramita.Scenes
         public override void Update(GameTime gameTime)
         {
             Vector2 menuPosition = position;
-            Point p = GameRef.InputDevices.CurrentMouseState.Position;
+            Point p = InputDevices.CurrentMouseState.Position;
             mouseOver = false;
 
             for (int i = 0; i < menuItems.Count; i++)
@@ -91,13 +92,13 @@ namespace Paramita.Scenes
                 }
             }
 
-            if (GameRef.InputDevices.CheckKeyReleased(Keys.Up))
+            if (InputDevices.CheckKeyReleased(Keys.Up))
             {
                 selectedIndex--;
                 if (selectedIndex < 0)
                     selectedIndex = menuItems.Count - 1;
             }
-            else if (GameRef.InputDevices.CheckKeyReleased(Keys.Down))
+            else if (InputDevices.CheckKeyReleased(Keys.Down))
             {
                 selectedIndex++;
                 if (selectedIndex > menuItems.Count - 1)

@@ -3,10 +3,10 @@ using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items;
 using Paramita.Mechanics;
 using Paramita.Scenes;
-using RogueSharp.DiceNotation;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using Paramita.UI;
 
 namespace Paramita.SentientBeings
 {
@@ -26,17 +26,12 @@ namespace Paramita.SentientBeings
 
         // reference to the GameScene for access to GameScene.Map
         protected GameScene gameScene;
-        protected Camera camera;
 
         // used to determine SentientBeing's placement on a TileMap
         protected Tile currentTile;
-        protected Vector2 position;
 
-        // used to display SentientBEing's sprite in UI
-        protected Compass facing;
-        protected Texture2D spritesheet;
-        protected Rectangle rightFacing;
-        protected Rectangle leftFacing;
+        // used to display SentientBeing in the UI
+        protected BeingSprite sprite;
 
         // items in a being's possession - how these arrays are implemented 
         // is defined by child classes of SentientBeing
@@ -80,20 +75,12 @@ namespace Paramita.SentientBeings
             set
             {
                 currentTile = value;
-                position = gameScene.Map.GetTilePosition(currentTile);
+                sprite.Position = gameScene.Map.GetTilePosition(currentTile);
             } 
         }
-        public Vector2 Position
-        {
-            get { return position; }
-            set { position = value; }
-        }
-        public Compass Facing
-        {
-            get { return facing; }
-            protected set { facing = value; }
-        }
-        public Rectangle CurrentSprite { get; set; }
+        
+        public BeingSprite Sprite { get { return sprite; } }
+
         public List<Weapon> Attacks { get { return attacks; } }
         public List<Shield> Shields { get { return shields; } }
         public int HitPoints { get { return hitPoints; } }
@@ -167,16 +154,13 @@ namespace Paramita.SentientBeings
 
 
 
-        public SentientBeing(GameScene gameScene, Texture2D sprites, Rectangle right, Rectangle left)
+        public SentientBeing(GameScene gameScene, Texture2D spritesheet)
         {
             this.gameScene = gameScene;
-            camera = gameScene.Camera;
+            var frame = new Rectangle(0, 0, 32, 32);
+            sprite = new BeingSprite(spritesheet, frame);
 
-            spritesheet = sprites;
-            rightFacing = right;
-            leftFacing = left;
-
-            CurrentSprite = rightFacing;
+            sprite.Facing = Compass.East;
         }
 
 
@@ -343,9 +327,8 @@ namespace Paramita.SentientBeings
                 return false;
             }
 
-            facing = direction;
-            SetCurrentSprite();
-            Tile newTile = gameScene.Map.GetTile(CurrentTile.TilePoint + Direction.GetPoint(Facing));
+            sprite.Facing = direction;
+            Tile newTile = gameScene.Map.GetTile(CurrentTile.TilePoint + Direction.GetPoint(direction));
 
             // check to see if:
             //     * newTile is not outside the TileMap
@@ -363,13 +346,12 @@ namespace Paramita.SentientBeings
         // conduct all of a being's attacks for the turn
         public void Attack(SentientBeing defender)
         {
-            MeeleeAttack attack;
+            Attack attack;
             GameScene.PostNewStatus(this + " attacked " + defender + ".");
             for(int x = 0; x < attacks.Count; x++)
             {
-                attack = new MeeleeAttack(this, attacks[x], defender);
-                attack.ResolveAttack();
-                if (this.IsDead== true || defender.IsDead == true)
+                attack = new Attack(this, attacks[x], defender);
+                if ( this.IsDead || defender.IsDead)
                     break;
             }
         }
@@ -408,6 +390,7 @@ namespace Paramita.SentientBeings
             if(fatigue > 0)
                 fatigue--;
             CheckForDeath();
+            sprite.Update(gameTime);
         }
 
 
@@ -422,44 +405,8 @@ namespace Paramita.SentientBeings
 
         public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin(
-                SpriteSortMode.Deferred,
-                BlendState.AlphaBlend,
-                SamplerState.PointClamp,
-                null, null, null,
-                camera.Transformation);
-
-            spriteBatch.Draw(
-                spritesheet,
-                position,
-                CurrentSprite,
-                Color.White
-                );
-
-            spriteBatch.End();
+            sprite.Draw(gameTime, spriteBatch);
         }
-
-
-
-        /* 
-        * Sets CurrentSprite to something appropriate for the Compass direction passed to it
-        * Currently, the player animations are in four directions, but movement can be
-        * in eight directions.
-        */
-        protected void SetCurrentSprite()
-        {
-            // set the animation according to the new facing
-            if (facing == Compass.North)
-                CurrentSprite = rightFacing;
-            else if (Facing == Compass.South)
-                CurrentSprite = leftFacing;
-            else if (Facing == Compass.Northeast || Facing == Compass.East || Facing == Compass.Southeast)
-                CurrentSprite = rightFacing;
-            else if (Facing == Compass.Northwest || Facing == Compass.West || Facing == Compass.Southwest)
-                CurrentSprite = leftFacing;
-        }
-
-
 
         // helper method for CombatManager that returns the weapon in the being's
         // Attacks list that is the longest one (used for resolving defender repel attacks)

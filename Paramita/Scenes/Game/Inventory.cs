@@ -156,11 +156,11 @@ namespace Paramita.Scenes.Game
         {
             if(itemSelected == 0)
             {
-                itemSelected = input.CheckIfItemSelected();
+                itemSelected = InputDevices.CheckIfItemSelected();
             }
             else if(itemSelected > 0 && itemSelected <= maxItems)
             {
-                InventoryActions action = input.CheckForInventoryAction();
+                InventoryActions action = InputDevices.CheckForInventoryAction();
                 if(action == InventoryActions.Drop)
                 {
                     player.DropItem(GetPlayerItem(itemSelected));

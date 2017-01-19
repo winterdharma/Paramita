@@ -8,8 +8,8 @@ namespace Paramita.SentientBeings.Animals
 {
     public class GiantRat : Animal, INpc
     {
-        public GiantRat(GameScene gameScene, Texture2D sprites, Rectangle rightFacing, Rectangle leftFacing) 
-            : base(gameScene, sprites, rightFacing, leftFacing)
+        public GiantRat(GameScene gameScene, Texture2D sprites) 
+            : base(gameScene, sprites)
         {
             InitializeAttributes();
             InitializeItemLists();

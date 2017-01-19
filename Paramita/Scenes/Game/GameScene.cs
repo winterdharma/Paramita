@@ -12,7 +12,6 @@ namespace Paramita.Scenes
     public class GameScene : Scene
     {
         private LevelManager levelManager;
-        private Camera camera;
         private Player player;
         private List<SentientBeing> npcs;
         private int levelNumber;
@@ -21,9 +20,6 @@ namespace Paramita.Scenes
         private Inventory inventoryPanel;
 
         private Texture2D tilesheet;
-        private Texture2D player_sprite;
-        private Texture2D item_sprites;
-        private Texture2D sentientbeing_sprites;
         private Texture2D inventory_background;
 
         private bool isPlayersTurn = true;
@@ -33,8 +29,6 @@ namespace Paramita.Scenes
             get { return isPlayersTurn; }
             set { isPlayersTurn = value; }
         }
-
-        public Camera Camera { get { return camera; } }
 
         public Player Player { get { return player; } }
 
@@ -48,7 +42,6 @@ namespace Paramita.Scenes
 
         public GameScene(GameController game) : base(game)
         {
-            camera = new Camera();
         }
 
 
@@ -57,14 +50,10 @@ namespace Paramita.Scenes
         {
             base.Initialize(); // This calls LoadContent()
 
-            player = new Player(GameRef, "Wesley", sentientbeing_sprites,
-                new Rectangle(0,32,32,32), new Rectangle(32,32,32,32));
-            player.Initialize();
             npcs = new List<SentientBeing>();
 
-            SentientBeingCreator.Sprites = sentientbeing_sprites;
             SentientBeingCreator.gameScene = this;
-            ItemCreator.Sprites = item_sprites;
+            player = SentientBeingCreator.CreateHumanPlayer();
 
             levelManager = new LevelManager(
                 GameRef,
@@ -80,9 +69,15 @@ namespace Paramita.Scenes
         protected override void LoadContent()
         {
             tilesheet = content.Load<Texture2D>("tileset1");
-            item_sprites = content.Load<Texture2D>("item_sprites");
-            sentientbeing_sprites = content.Load<Texture2D>("sentientbeing_sprites");
-            player_sprite = content.Load<Texture2D>("maleplayer");
+
+            ItemCreator.Spritesheets.Add(ItemType.Coins, content.Load<Texture2D>("Images\\Items\\coins"));
+            ItemCreator.Spritesheets.Add(ItemType.Meat, content.Load<Texture2D>("Images\\Items\\meat"));
+            ItemCreator.Spritesheets.Add(ItemType.Shield, content.Load<Texture2D>("Images\\Items\\buckler"));
+            ItemCreator.Spritesheets.Add(ItemType.ShortSword, content.Load<Texture2D>("Images\\Items\\short_sword"));
+
+            SentientBeingCreator.Spritesheets.Add(BeingType.GiantRat, content.Load<Texture2D>("Images\\SentientBeings\\giant_rat"));
+            SentientBeingCreator.Spritesheets.Add(BeingType.HumanPlayer, content.Load<Texture2D>("Images\\SentientBeings\\human_player"));
+
             inventory_background = content.Load<Texture2D>("black_background1");
         }
 
@@ -121,7 +116,7 @@ namespace Paramita.Scenes
             }
 
             //move the camera to center on the player
-            camera.LockToSprite(Map, player.Position, GameRef.ScreenRectangle);
+            Camera.LockToSprite(Map, player.Sprite.Position, GameRef.ScreenRectangle);
 
             base.Update(gameTime);
         }
@@ -132,12 +127,12 @@ namespace Paramita.Scenes
         {
             base.Draw(gameTime);
 
-            if(Map != null && camera != null)
+            if(Map != null)
             {
-                Map.Draw(gameTime, GameRef.SpriteBatch, camera);
+                Map.Draw(gameTime, GameRef.SpriteBatch);
             }
 
-            player.Draw(gameTime, GameRef.SpriteBatch, camera);
+            player.Draw(gameTime, GameRef.SpriteBatch);
 
             for(int x = 0; x < npcs.Count; x++)
             {

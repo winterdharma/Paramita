@@ -13,10 +13,10 @@ namespace Paramita.Items.Consumables
             get { return sustenance; }
         }
 
-        public Meat(Texture2D texture, Rectangle rect, string description) : base(texture, rect)
+        public Meat(Texture2D texture) : base(texture)
         {
             name = "Salted Meat";
-            this.description = description;
+            this.description = "A chunk of tasty salted meat.";
             sustenance = 480;
         }
 
@@ -29,7 +29,7 @@ namespace Paramita.Items.Consumables
 
         public override string GetDescription()
         {
-            return "a chunk of " + name;
+            return description;
         }
     }
 }

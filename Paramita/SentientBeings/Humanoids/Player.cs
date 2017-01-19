@@ -12,26 +12,8 @@ namespace Paramita.SentientBeings
 {
     public class Player : Humanoid, IContainer
     {
-        // private fields
-        private InputDevices inputDevices;
-
-        // Currently not in use, saved for future
-        //private AnimatedSprite sprite;
-        //Dictionary<AnimationKey, Animation> animations = new Dictionary<AnimationKey, Animation>();
-
         private int gold;
         private int sustanence;
-
-        // Not currently used, but saved for future time when animations may be needed
-        //public AnimatedSprite Sprite
-        //{
-        //    get { return sprite; }
-        //}
-
-        //public Dictionary<AnimationKey, Animation> PlayerAnimations
-        //{
-        //    get { return animations; }
-        //}
 
         public Item[] UnequipedItems { get { return unequipedItems; } }
         public Item[] EquipedItems { get { return equipedItems; } }
@@ -50,10 +32,9 @@ namespace Paramita.SentientBeings
 
 
 
-        public Player(GameController game, string name, Texture2D sprites, Rectangle right, Rectangle left) 
-            : base(game.GameScene, sprites, right, left)
+        public Player(GameScene gameScene, string name, Texture2D sprites) 
+            : base(gameScene, sprites)
         {
-            inputDevices = game.InputDevices;
             this.name = name;
             
             InitializeAttributes();
@@ -101,31 +82,6 @@ namespace Paramita.SentientBeings
         public void SavePlayer() { }
 
 
-
-
-        public void Initialize()
-        {
-            // Not currently used, but saved for future
-            //Animation animation = new Animation(3, 32, 32, 0, 0);
-            //animations.Add(AnimationKey.WalkDown, animation);
-
-            //animation = new Animation(3, 32, 32, 0, 32);
-            //animations.Add(AnimationKey.WalkLeft, animation);
-
-            //animation = new Animation(3, 32, 32, 0, 64);
-            //animations.Add(AnimationKey.WalkRight, animation);
-
-            //animation = new Animation(3, 32, 32, 0, 96);
-            //animations.Add(AnimationKey.WalkUp, animation);
-
-            //sprite = new AnimatedSprite(texture, PlayerAnimations);
-            //sprite.CurrentAnimation = AnimationKey.WalkDown;
-            //sprite.IsAnimating = false;
-
-            //base.Initialize();
-        }
-
-
         public override void Update(GameTime gameTime)
         {
             HandleInput();
@@ -137,9 +93,9 @@ namespace Paramita.SentientBeings
         private void HandleInput()
         {
             // check for movement input and store the direction returned
-            Facing = inputDevices.Moved();
+            Compass direction = InputDevices.Moved();
 
-            Tile tile = gameScene.Map.GetTile(CurrentTile.TilePoint + Direction.GetPoint(Facing));
+            Tile tile = gameScene.Map.GetTile(CurrentTile.TilePoint + Direction.GetPoint(direction));
 
             SentientBeing npc = gameScene.GetNpcOnTile(tile);
             if (npc is SentientBeing)
@@ -149,7 +105,7 @@ namespace Paramita.SentientBeings
             }
             else
             {
-                bool moved = MoveTo(Facing);
+                bool moved = MoveTo(direction);
                 if (moved == true)
                 {
                     CheckForNewTileEvents();
@@ -281,26 +237,6 @@ namespace Paramita.SentientBeings
         public override string GetDescription()
         {
             throw new NotImplementedException();
-        }
-
-        // Draws the player onto the tilemap
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch, Camera camera)
-        {
-            spriteBatch.Begin(
-                SpriteSortMode.Deferred,
-                BlendState.AlphaBlend,
-                SamplerState.PointClamp,
-                null, null, null,
-                camera.Transformation);
-
-            spriteBatch.Draw(
-                spritesheet,
-                position,
-                CurrentSprite,
-                Color.White
-                );
-
-            spriteBatch.End();
         }
     }
 }

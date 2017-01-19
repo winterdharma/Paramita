@@ -19,6 +19,8 @@ namespace Paramita.Scenes
     {
         //Tile coordinates
         public Point TilePoint { get; private set; }
+        public Vector2 Position { get; private set; }
+        private const int TILE_SIZE = 32;
 
         //Tile property flags
         public TileType TileType { get; private set; }
@@ -35,6 +37,7 @@ namespace Paramita.Scenes
             bool isInLos = false, bool isExplored = false)
         {
             TilePoint = new Point(x, y);
+            Position = GetTilePosition();
             TileType = type;
             IsTransparent = isTransparent;
             IsWalkable = isWalkable;
@@ -42,7 +45,18 @@ namespace Paramita.Scenes
             IsExplored = isExplored;
             items = new List<Item>();
         }
-        
+
+
+
+        // Converts a Tile's XY coordinates on the tilemap to a Vector2
+        // of its position in pixels
+        public Vector2 GetTilePosition()
+        {
+            return new Vector2(
+                TilePoint.X * TILE_SIZE,
+                TilePoint.Y * TILE_SIZE);
+        }
+
 
         public void SetTileType(TileType newType)
         {
@@ -52,6 +66,7 @@ namespace Paramita.Scenes
         // Tiles will start with no limitations as containers
         public bool AddItem(Item item)
         {
+            item.Sprite.Position = Position;
             items.Add(item);
             return true;
         }
