@@ -9,10 +9,10 @@ namespace Paramita.Items.Armors
         private string description;
 
 
-        public Buckler(Texture2D texture, Rectangle rect, string description) : base(texture, rect, 14, 0, 2, 0)
+        public Buckler(Texture2D texture) : base(texture, 14, 0, 2, 0)
         {
             name = "Buckler";
-            this.description = description;
+            this.description = "A small shield for parrying attacks.";
             equipType = EquipType.Hand;
         }
 
@@ -24,7 +24,7 @@ namespace Paramita.Items.Armors
 
         public override string GetDescription()
         {
-            return name;
+            return description;
         }
     }
 }

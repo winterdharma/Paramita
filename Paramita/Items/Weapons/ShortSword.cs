@@ -8,11 +8,11 @@ namespace Paramita.Items.Weapons
     {
         string description;
         
-        public ShortSword(Texture2D texture, Rectangle rect, string description)
-            : base(texture, rect, 5, 0, 2, 1)
+        public ShortSword(Texture2D texture)
+            : base(5, 0, 2, 1, texture)
         {
             name = "Short Sword";
-            this.description = description;
+            this.description = "A modest weapon to start with.";
             equipType = EquipType.Hand;
         }
     }

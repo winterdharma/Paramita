@@ -49,25 +49,25 @@ namespace Paramita.Scenes
             menuComponent.Update(gameTime);
 
             if (menuComponent.MouseOver 
-                && GameRef.InputDevices.CheckMouseReleased(MouseButtons.Left))
+                && InputDevices.CheckMouseReleased(MouseButtons.Left))
             {
                 if (menuComponent.SelectedIndex == 0)
                 {
-                    GameRef.InputDevices.FlushInput();
+                    InputDevices.FlushInput();
                     GameRef.GameScene.SetUpNewGame();
                     manager.PushScene(GameRef.GameScene, PlayerIndexInControl);
                 }
                 // Loading saved games is not implemented yet
                 else if (menuComponent.SelectedIndex == 1)
                 {
-                    GameRef.InputDevices.FlushInput();
+                    InputDevices.FlushInput();
                     GameRef.GameScene.LoadSavedGame();
                     manager.PushScene(GameRef.GameScene, PlayerIndexInControl);
                 }
                 // Options screen is not implemented yet
                 else if (menuComponent.SelectedIndex == 2)
                 {
-                    GameRef.InputDevices.FlushInput();
+                    InputDevices.FlushInput();
                 }
                 else if (menuComponent.SelectedIndex == 3)
                 {

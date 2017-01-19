@@ -15,18 +15,16 @@ namespace Paramita.Items.Valuables
 
     public class Coins : Valuable
     {
-        private string description;
         private int number;
 
         public int Number { get { return number; } }
 
 
 
-        public Coins(Texture2D texture, Rectangle rect, string description, int number) 
-            : base(texture, rect)
+        public Coins(Texture2D texture, int number) 
+            : base(texture)
         {
             name = "Gold Coin";
-            this.description = description;
             this.number = number;
         }
 

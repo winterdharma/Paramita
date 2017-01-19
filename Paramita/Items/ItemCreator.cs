@@ -1,9 +1,9 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items.Armors;
 using Paramita.Items.Consumables;
 using Paramita.Items.Valuables;
 using Paramita.Items.Weapons;
+using System.Collections.Generic;
 
 namespace Paramita.Items
 {
@@ -20,65 +20,51 @@ namespace Paramita.Items
 
     public static class ItemCreator
     {
-        private static Rectangle[] spritesheetMap = new Rectangle[5] {
-                new Rectangle(0,0,32,32),
-                new Rectangle(0,31,32,32),
-                new Rectangle(0,63,32,32),
-                new Rectangle(0,95,32,32),
-                // This rectangle is the lower right cornor of the spritesheet
-                // and should be left transparent for items that need no sprite
-                // like natural weapons, etc.
-                new Rectangle(447,447,32,32)
-            };
-        private static Texture2D spritesheet;
+        private static Dictionary<ItemType, Texture2D> spritesheets = new Dictionary<ItemType, Texture2D>();
 
-        public static Texture2D Sprites
+        public static Dictionary<ItemType, Texture2D> Spritesheets
         {
-            get { return spritesheet; }
-            set { spritesheet = value; }
+            get { return spritesheets; }
+            set { spritesheets = value; }
         }
 
  
         // This item has no visible sprite
         public static Fist CreateFist()
         {
-            return new Fist(spritesheet, spritesheetMap[4]);
+            return new Fist();
         }
 
         // This item has no visible sprite
         public static Bite CreateBite()
         {
-            return new Bite(spritesheet, spritesheetMap[4]);
+            return new Bite();
         }
 
         public static ShortSword CreateShortSword()
         {
-            return new ShortSword(spritesheet, spritesheetMap[(int)ItemType.ShortSword],
-                "A short sword for test games.");
+            return new ShortSword(spritesheets[ItemType.ShortSword]);
         }
 
 
 
         public static Coins CreateCoins(int number)
         {
-            return new Coins(spritesheet, spritesheetMap[(int)ItemType.Coins], 
-                "A quantity of gold coins.", number);
+            return new Coins(spritesheets[ItemType.Coins], number);
         }
 
 
 
         public static Meat CreateMeat()
         {
-            return new Meat(spritesheet, spritesheetMap[(int)ItemType.Meat],
-                "An edible chunk of salted shank.");
+            return new Meat(spritesheets[ItemType.Meat]);
         }
 
 
 
         public static Buckler CreateBuckler()
         {
-            return new Buckler(spritesheet, spritesheetMap[(int)ItemType.Shield],
-                "A handy shield.");
+            return new Buckler(spritesheets[ItemType.Shield]);
         }
     }
 }

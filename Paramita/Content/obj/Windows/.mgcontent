@@ -4,19 +4,19 @@
   <Platform>Windows</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/player.png</File>
-    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/hound.png</File>
     <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/white.png</File>
     <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/titlescreen.png</File>
     <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/menuscreen.png</File>
     <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/InterfaceFont.spritefont</File>
     <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/wooden-button.png</File>
     <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/tileset1.png</File>
-    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/femaleplayer.png</File>
-    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/maleplayer.png</File>
-    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/item_sprites.png</File>
     <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/black_background.png</File>
+    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/Items/buckler.png</File>
+    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/Items/coins.png</File>
+    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/Items/meat.png</File>
+    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/Items/short_sword.png</File>
+    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/SentientBeings/giant_rat.png</File>
+    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/SentientBeings/human_player.png</File>
     <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/black_background1.png</File>
-    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/sentientbeing_sprites.png</File>
   </SourceFiles>
 </SourceFileCollection>

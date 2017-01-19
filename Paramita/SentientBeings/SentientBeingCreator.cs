@@ -7,33 +7,34 @@ using System.Collections.Generic;
 
 namespace Paramita.SentientBeings
 {
-    public enum SentientBeingType
+    public enum BeingType
     {
-        GiantRat
+        GiantRat,
+        HumanPlayer
     }
 
     public static class SentientBeingCreator
     {
-        private static Texture2D sprites;
-        private static Rectangle[] spriteMap = new Rectangle[2] {
-                new Rectangle(0,0,32,32),
-                new Rectangle(31,0,32,32)
-            };
+        private static Dictionary<BeingType, Texture2D> spritesheets = new Dictionary<BeingType, Texture2D>();
+       
         public static GameScene gameScene;
 
 
-        public static Texture2D Sprites
+        public static Dictionary<BeingType, Texture2D> Spritesheets
         {
-            get { return sprites; }
-            set { sprites = value; }
+            get { return spritesheets; }
+            set { spritesheets = value; }
         }
 
 
+        public static Player CreateHumanPlayer()
+        {
+            return new Player(gameScene, "Wesley", spritesheets[BeingType.HumanPlayer]);
+        }
 
         public static GiantRat CreateGiantRat()
         {
-            return new GiantRat(gameScene, sprites, spriteMap[(int)SentientBeingType.GiantRat],
-                spriteMap[(int)SentientBeingType.GiantRat + 1]);
+            return new GiantRat(gameScene, spritesheets[BeingType.GiantRat]);
         }
     }
 }

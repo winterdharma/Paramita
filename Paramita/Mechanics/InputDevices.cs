@@ -19,28 +19,28 @@ namespace Paramita.Mechanics
 
     public class InputDevices : GameComponent
     {
-        private KeyboardState currentKeyboardState = Keyboard.GetState();
-        private KeyboardState previousKeyboardState = Keyboard.GetState();
-        private MouseState currentMouseState = Mouse.GetState();
-        private MouseState previousMouseState = Mouse.GetState();
+        private static KeyboardState currentKeyboardState = Keyboard.GetState();
+        private static KeyboardState previousKeyboardState = Keyboard.GetState();
+        private static MouseState currentMouseState = Mouse.GetState();
+        private static MouseState previousMouseState = Mouse.GetState();
 
 
-        public MouseState CurrentMouseState
+        public static MouseState CurrentMouseState
         {
             get { return currentMouseState; }
         }
 
-        public KeyboardState CurrentKeyboardState
+        public static KeyboardState CurrentKeyboardState
         {
             get { return currentKeyboardState; }
         }
 
-        public KeyboardState PreviousKeyboardState
+        public static KeyboardState PreviousKeyboardState
         {
             get { return previousKeyboardState; }
         }
 
-        public MouseState PreviousMouseState
+        public static MouseState PreviousMouseState
         {
             get { return previousMouseState; }
         }
@@ -64,21 +64,21 @@ namespace Paramita.Mechanics
         }
 
 
-        public void FlushInput()
+        public static void FlushInput()
         {
             currentMouseState = previousMouseState;
             currentKeyboardState = previousKeyboardState;
         }
 
 
-        public bool CheckKeyReleased(Keys key)
+        public static bool CheckKeyReleased(Keys key)
         {
             return currentKeyboardState.IsKeyUp(key) &&
             previousKeyboardState.IsKeyDown(key);
         }
 
 
-        public bool CheckMouseReleased(MouseButtons button)
+        public static bool CheckMouseReleased(MouseButtons button)
         {
             switch (button)
             {
@@ -100,7 +100,7 @@ namespace Paramita.Mechanics
          * representing the direction that was moved, if any, that can be
          * used to adjust the current position to find the tile moved to.
          */ 
-        public Compass Moved()
+        public static Compass Moved()
         {
             if (IsUp())
                 return Compass.North;
@@ -124,7 +124,7 @@ namespace Paramita.Mechanics
 
 
         // Checks for an ItemSelection input and returns an integer
-        public int CheckIfItemSelected()
+        public static int CheckIfItemSelected()
         {
             if (IsNumberOne())
                 return 1;
@@ -152,7 +152,7 @@ namespace Paramita.Mechanics
 
 
         // Checks for an InventoryAction input and returns the corresponding action
-        public InventoryActions CheckForInventoryAction()
+        public static InventoryActions CheckForInventoryAction()
         {
             if(IsDKeyPressed())
                 return InventoryActions.Drop;
@@ -169,51 +169,51 @@ namespace Paramita.Mechanics
         /*
          * These methods provide keymapping to movement directions on the keyboard.
          * When checking for player movement input, call these methods.
-         */ 
+         */
 
-        public bool IsLeft()
+        private static bool IsLeft()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.NumPad4)
                 && PreviousKeyboardState.IsKeyUp(Keys.NumPad4);
         }
 
-        public bool IsRight()
+        private static bool IsRight()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.NumPad6)
                 && PreviousKeyboardState.IsKeyUp(Keys.NumPad6);
         }
 
-        public bool IsDown()
+        private static bool IsDown()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.NumPad2)
                 && PreviousKeyboardState.IsKeyUp(Keys.NumPad2);
         }
 
-        public bool IsUp()
+        private static bool IsUp()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.NumPad8)
                 && PreviousKeyboardState.IsKeyUp(Keys.NumPad8);
         }
 
-        public bool IsUpperLeft()
+        private static bool IsUpperLeft()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.NumPad7)
                 && PreviousKeyboardState.IsKeyUp(Keys.NumPad7);
         }
 
-        public bool IsUpperRight()
+        private static bool IsUpperRight()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.NumPad9)
                 && PreviousKeyboardState.IsKeyUp(Keys.NumPad9);
         }
 
-        public bool IsLowerLeft()
+        private static bool IsLowerLeft()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.NumPad1)
                 && PreviousKeyboardState.IsKeyUp(Keys.NumPad1);
         }
 
-        public bool IsLowerRight()
+        private static bool IsLowerRight()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.NumPad3)
                 && PreviousKeyboardState.IsKeyUp(Keys.NumPad3);
@@ -223,61 +223,61 @@ namespace Paramita.Mechanics
         /*
          * These methods check for a number (0 to 9) key being pressed
          */
-        public bool IsNumberOne()
+        private static bool IsNumberOne()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.D1)
                 && PreviousKeyboardState.IsKeyUp(Keys.D1);
         }
 
-        public bool IsNumberTwo()
+        private static bool IsNumberTwo()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.D2)
                 && PreviousKeyboardState.IsKeyUp(Keys.D2);
         }
 
-        public bool IsNumberThree()
+        private static bool IsNumberThree()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.D3)
                 && PreviousKeyboardState.IsKeyUp(Keys.D3);
         }
 
-        public bool IsNumberFour()
+        private static bool IsNumberFour()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.D4)
                 && PreviousKeyboardState.IsKeyUp(Keys.D4);
         }
 
-        public bool IsNumberFive()
+        private static bool IsNumberFive()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.D5)
                 && PreviousKeyboardState.IsKeyUp(Keys.D5);
         }
 
-        public bool IsNumberSix()
+        private static bool IsNumberSix()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.D6)
                 && PreviousKeyboardState.IsKeyUp(Keys.D6);
         }
 
-        public bool IsNumberSeven()
+        private static bool IsNumberSeven()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.D7)
                 && PreviousKeyboardState.IsKeyUp(Keys.D7);
         }
 
-        public bool IsNumberEight()
+        private static bool IsNumberEight()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.D8)
                 && PreviousKeyboardState.IsKeyUp(Keys.D8);
         }
 
-        public bool IsNumberNine()
+        private static bool IsNumberNine()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.D9)
                 && PreviousKeyboardState.IsKeyUp(Keys.D9);
         }
 
-        public bool IsNumberZero()
+        private static bool IsNumberZero()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.D0)
                 && PreviousKeyboardState.IsKeyUp(Keys.D0);
@@ -286,25 +286,25 @@ namespace Paramita.Mechanics
         /*
          *  These methods check for key presses that correspond to InventoryActions
          */
-        public bool IsDKeyPressed()
+        private static bool IsDKeyPressed()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.D)
                 && PreviousKeyboardState.IsKeyUp(Keys.D);
         }
 
-        public bool IsEKeyPressed()
+        private static bool IsEKeyPressed()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.E)
                 && PreviousKeyboardState.IsKeyUp(Keys.E);
         }
 
-        public bool IsUKeyPressed()
+        private static bool IsUKeyPressed()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.U)
                 && PreviousKeyboardState.IsKeyUp(Keys.U);
         }
 
-        public bool IsCKeyPressed()
+        private static bool IsCKeyPressed()
         {
             return CurrentKeyboardState.IsKeyDown(Keys.C)
                 && PreviousKeyboardState.IsKeyUp(Keys.C);

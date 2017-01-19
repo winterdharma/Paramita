@@ -16,8 +16,8 @@ namespace Paramita.Items
 
         public int Encumbrance { get { return encumbrance; } }
 
-        public Armor(Texture2D texture, Rectangle rect) 
-            : base(texture, rect)
+        public Armor(Texture2D texture) 
+            : base(texture)
         {
         }
     }

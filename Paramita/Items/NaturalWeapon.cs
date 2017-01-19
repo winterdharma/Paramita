@@ -22,7 +22,7 @@ namespace Paramita.Items
      */
     public class NaturalWeapon : Weapon
     {
-        public NaturalWeapon(Texture2D texture, Rectangle rect, int damage, int attack, int defense, int length) : base(texture, rect, damage, attack, defense, length)
+        public NaturalWeapon(int damage, int attack, int defense, int length, Texture2D texture = null) : base(damage, attack, defense, length, texture = null)
         {
         }
     }

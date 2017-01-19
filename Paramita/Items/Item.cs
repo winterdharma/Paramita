@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Paramita.UI;
 using System;
 
 namespace Paramita.Items
@@ -16,14 +17,17 @@ namespace Paramita.Items
     public abstract class Item : IEquatable<Item>
     {
         private static int counter;
-        private int id; // used to identify specific items
+        private int id;
         protected string name;
-
-        // private vector2 position; <= needed for drawing?
+        protected Sprite sprite;
 
         // Basic Properties all Items should have
-        public Texture2D Texture { get; private set; }
-        public Rectangle TextureRect { get; private set;}
+        public Sprite Sprite
+        {
+            get { return sprite; }
+            private set { sprite = value; }
+        }
+
         protected EquipType equipType;
 
         public EquipType EquipType
@@ -32,10 +36,13 @@ namespace Paramita.Items
             protected set { equipType = value; } 
         }
 
-        public Item(Texture2D texture, Rectangle textureRect)
+        public Item(Texture2D texture = null)
         {
-            Texture = texture;
-            TextureRect = textureRect;
+            if(texture != null)
+            {
+                sprite = new Sprite(texture, new Rectangle(0, 0, 32, 32));
+            }
+
             id = counter;
             counter++;
         }
