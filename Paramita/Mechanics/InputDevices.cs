@@ -102,21 +102,21 @@ namespace Paramita.Mechanics
          */ 
         public static Compass Moved()
         {
-            if (IsUp())
+            if (IsKeyPressed(Keys.NumPad8))
                 return Compass.North;
-            else if (IsDown())
+            else if (IsKeyPressed(Keys.NumPad2))
                 return Compass.South;
-            else if (IsLeft())
+            else if (IsKeyPressed(Keys.NumPad4))
                 return Compass.West;
-            else if (IsRight())
+            else if (IsKeyPressed(Keys.NumPad6))
                 return Compass.East;
-            else if (IsUpperLeft())
+            else if (IsKeyPressed(Keys.NumPad7))
                 return Compass.Northwest;
-            else if (IsUpperRight())
+            else if (IsKeyPressed(Keys.NumPad9))
                 return Compass.Northeast;
-            else if (IsLowerLeft())
+            else if (IsKeyPressed(Keys.NumPad1))
                 return Compass.Southwest;
-            else if (IsLowerRight())
+            else if (IsKeyPressed(Keys.NumPad3))
                 return Compass.Southeast;
 
             return Compass.None; 
@@ -126,25 +126,25 @@ namespace Paramita.Mechanics
         // Checks for an ItemSelection input and returns an integer
         public static int CheckIfItemSelected()
         {
-            if (IsNumberOne())
+            if (IsKeyPressed(Keys.D1))
                 return 1;
-            if (IsNumberTwo())
+            if (IsKeyPressed(Keys.D2))
                 return 2;
-            if (IsNumberThree())
+            if (IsKeyPressed(Keys.D3))
                 return 3;
-            if (IsNumberFour())
+            if (IsKeyPressed(Keys.D4))
                 return 4;
-            if (IsNumberFive())
+            if (IsKeyPressed(Keys.D5))
                 return 5;
-            if (IsNumberSix())
+            if (IsKeyPressed(Keys.D6))
                 return 6;
-            if (IsNumberSeven())
+            if (IsKeyPressed(Keys.D7))
                 return 7;
-            if (IsNumberEight())
+            if (IsKeyPressed(Keys.D8))
                 return 8;
-            if (IsNumberNine())
+            if (IsKeyPressed(Keys.D9))
                 return 9;
-            if (IsNumberZero())
+            if (IsKeyPressed(Keys.D0))
                 return 10;
 
             return 0;
@@ -154,160 +154,25 @@ namespace Paramita.Mechanics
         // Checks for an InventoryAction input and returns the corresponding action
         public static InventoryActions CheckForInventoryAction()
         {
-            if(IsDKeyPressed())
+            if(IsKeyPressed(Keys.D))
                 return InventoryActions.Drop;
-            if (IsEKeyPressed())
+            if (IsKeyPressed(Keys.E))
                 return InventoryActions.Equip;
-            if (IsUKeyPressed())
+            if (IsKeyPressed(Keys.U))
                 return InventoryActions.Use;
-            if (IsCKeyPressed())
+            if (IsKeyPressed(Keys.C))
                 return InventoryActions.Cancel;
+            if (IsKeyPressed(Keys.I))
+                return InventoryActions.TogglePanel;
 
             return InventoryActions.None;
         }
 
-        /*
-         * These methods provide keymapping to movement directions on the keyboard.
-         * When checking for player movement input, call these methods.
-         */
-
-        private static bool IsLeft()
+        
+        private static bool IsKeyPressed(Keys key)
         {
-            return CurrentKeyboardState.IsKeyDown(Keys.NumPad4)
-                && PreviousKeyboardState.IsKeyUp(Keys.NumPad4);
-        }
-
-        private static bool IsRight()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.NumPad6)
-                && PreviousKeyboardState.IsKeyUp(Keys.NumPad6);
-        }
-
-        private static bool IsDown()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.NumPad2)
-                && PreviousKeyboardState.IsKeyUp(Keys.NumPad2);
-        }
-
-        private static bool IsUp()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.NumPad8)
-                && PreviousKeyboardState.IsKeyUp(Keys.NumPad8);
-        }
-
-        private static bool IsUpperLeft()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.NumPad7)
-                && PreviousKeyboardState.IsKeyUp(Keys.NumPad7);
-        }
-
-        private static bool IsUpperRight()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.NumPad9)
-                && PreviousKeyboardState.IsKeyUp(Keys.NumPad9);
-        }
-
-        private static bool IsLowerLeft()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.NumPad1)
-                && PreviousKeyboardState.IsKeyUp(Keys.NumPad1);
-        }
-
-        private static bool IsLowerRight()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.NumPad3)
-                && PreviousKeyboardState.IsKeyUp(Keys.NumPad3);
-        }
-
-
-        /*
-         * These methods check for a number (0 to 9) key being pressed
-         */
-        private static bool IsNumberOne()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.D1)
-                && PreviousKeyboardState.IsKeyUp(Keys.D1);
-        }
-
-        private static bool IsNumberTwo()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.D2)
-                && PreviousKeyboardState.IsKeyUp(Keys.D2);
-        }
-
-        private static bool IsNumberThree()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.D3)
-                && PreviousKeyboardState.IsKeyUp(Keys.D3);
-        }
-
-        private static bool IsNumberFour()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.D4)
-                && PreviousKeyboardState.IsKeyUp(Keys.D4);
-        }
-
-        private static bool IsNumberFive()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.D5)
-                && PreviousKeyboardState.IsKeyUp(Keys.D5);
-        }
-
-        private static bool IsNumberSix()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.D6)
-                && PreviousKeyboardState.IsKeyUp(Keys.D6);
-        }
-
-        private static bool IsNumberSeven()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.D7)
-                && PreviousKeyboardState.IsKeyUp(Keys.D7);
-        }
-
-        private static bool IsNumberEight()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.D8)
-                && PreviousKeyboardState.IsKeyUp(Keys.D8);
-        }
-
-        private static bool IsNumberNine()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.D9)
-                && PreviousKeyboardState.IsKeyUp(Keys.D9);
-        }
-
-        private static bool IsNumberZero()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.D0)
-                && PreviousKeyboardState.IsKeyUp(Keys.D0);
-        }
-
-        /*
-         *  These methods check for key presses that correspond to InventoryActions
-         */
-        private static bool IsDKeyPressed()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.D)
-                && PreviousKeyboardState.IsKeyUp(Keys.D);
-        }
-
-        private static bool IsEKeyPressed()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.E)
-                && PreviousKeyboardState.IsKeyUp(Keys.E);
-        }
-
-        private static bool IsUKeyPressed()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.U)
-                && PreviousKeyboardState.IsKeyUp(Keys.U);
-        }
-
-        private static bool IsCKeyPressed()
-        {
-            return CurrentKeyboardState.IsKeyDown(Keys.C)
-                && PreviousKeyboardState.IsKeyUp(Keys.C);
+            return CurrentKeyboardState.IsKeyDown(key)
+                && PreviousKeyboardState.IsKeyUp(key);
         }
     }
 }
