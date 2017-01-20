@@ -15,12 +15,17 @@ namespace Paramita.Scenes
         [ContentSerializer(CollectionItemName = "Tiles")]
         private Tile[,] tiles;
         
-        Point cameraPoint;
-        Point viewPoint;
-        Point min;
-        Point max;
-        Rectangle destination;
-        Rectangle viewport;
+        private Point cameraPoint;
+        private Point viewPoint;
+        private Point min;
+        private Point max;
+        private Rectangle destination;
+        private Rectangle viewport;
+
+        private int tilesWide;
+        private int tilesHigh;
+        private int tileSize;
+        private Point mapSizeInPixels;
 
         
         [ContentSerializer]
@@ -30,27 +35,27 @@ namespace Paramita.Scenes
         public TileSet TileSet { get; set; }
 
         // Number of tiles wide and high
-        public int TilesWide { get; private set; }
-        public int TilesHigh { get; private set; }
-        public int TileSize { get; private set; }
+        public int TilesWide { get { return tilesWide; } }
+        public int TilesHigh { get { return tilesHigh; } }
+        public int TileSize { get { return tileSize; } }
 
         // Size of map in pixels
-        public Point MapSizeInPixels { get; private set; }
+        public Point MapSizeInPixels { get { return mapSizeInPixels; } }
 
 
 
 
 
-        public TileMap(Rectangle parentScreen, TileSet tileSet, Tile[,] tiles, int width, int height, string name)
+        public TileMap(Rectangle parentScreen, TileSet tileSet, Tile[,] tiles, string name)
         {
+            this.tiles = tiles;
             viewport = parentScreen;
-            TilesWide = width;
-            TilesHigh = height;
+            tilesWide = tiles.GetLength(0);
+            tilesHigh = tiles.GetLength(1);
             TileSet = tileSet;
-            TileSize = tileSet.TileSize;
-            MapSizeInPixels = new Point(width * tileSet.TileSize, height * tileSet.TileSize);
+            tileSize = tileSet.TileSize;
+            mapSizeInPixels = new Point(tilesWide * tileSize, tilesHigh * tileSize);
             MapName = name;
-            this.tiles = tiles; 
         }
 
 
@@ -168,9 +173,9 @@ namespace Paramita.Scenes
 
             min.X = Math.Max(0, cameraPoint.X - 1);
             min.Y = Math.Max(0, cameraPoint.Y - 1);
-            max.X = Math.Min(viewPoint.X + 1, TilesWide);
-            max.Y = Math.Min(viewPoint.Y + 1, TilesHigh);
-            destination = new Rectangle(0, 0, TileSize, TileSize);
+            max.X = Math.Min(viewPoint.X + 1, tilesWide);
+            max.Y = Math.Min(viewPoint.Y + 1, tilesHigh);
+            destination = new Rectangle(0, 0, tileSize, tileSize);
             Tile tile;
 
             
@@ -180,7 +185,7 @@ namespace Paramita.Scenes
                 destination.Y = y * TileSize;
                 for (int x = min.X; x < max.X; x++)
                 {
-                    tile = GetTile(new Point(x, y));
+                    tile = tiles[x, y];
                     Item[] tileItems = tile.InspectItems();
                     destination.X = x * TileSize;
 

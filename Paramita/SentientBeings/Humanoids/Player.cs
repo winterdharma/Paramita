@@ -68,7 +68,7 @@ namespace Paramita.SentientBeings
             naturalWeapons = new List<Weapon>();
             naturalWeapons.Add(ItemCreator.CreateFist());
 
-            EquipItem(naturalWeapons[0]);
+            TryToEquipItem(naturalWeapons[0]);
 
             attacks = new List<Weapon>();
             UpdateAttacks();
@@ -106,7 +106,7 @@ namespace Paramita.SentientBeings
             else
             {
                 bool moved = MoveTo(direction);
-                if (moved == true)
+                if (moved)
                 {
                     CheckForNewTileEvents();
                     // burn a calorie while walking

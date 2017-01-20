@@ -48,7 +48,7 @@ namespace Paramita.Scenes
 
         private void CreateLevel(int levelNumber)
         {
-            TileMap levelMap = new TileMap(game.ScreenRectangle, tileset, mapCreator.CreateMap(), 40, 25, "test-map");
+            TileMap levelMap = new TileMap(game.ScreenRectangle, tileset, mapCreator.CreateMap(), "test-map");
             levels.Add(levelNumber, levelMap);
         }
 

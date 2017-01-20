@@ -151,6 +151,8 @@ namespace Paramita.SentientBeings
         }
         public bool IsDead { get { return isDead; } }
 
+        public Item[] EquipmentSlots { get { return equipedItems; } }
+
 
 
 
@@ -164,126 +166,28 @@ namespace Paramita.SentientBeings
         }
 
 
+
         // helper methods for child class constructors
         protected abstract void InitializeAttributes();
         protected abstract void InitializeItemLists();
+        public abstract List<int> GetLocationForEquipType(EquipType type);
 
 
-        
         public bool TryToEquipItem(Item item)
         {
-            bool isEquiped = false;
-
-            if (EquipNaturalWeapon(item) == true)
-            {
-                isEquiped = true;
-            }
-            else if (EquipWeapon(item) == true)
-            {
-                isEquiped = true;
-            }
-            else if (EquipItem(item) == true)
-            {
-                isEquiped = true;
-            }
-
-            if (isEquiped == true)
-            {
-                UpdateAttacks();
-                UpdateShields();
-            }
-
-            return isEquiped;
+            return new EquipItem(this, item).IsEquipped;
         }
+        
 
-
-        protected bool EquipNaturalWeapon(Item item)
-        {
-            if (IsValidNaturalWeaponToEquip(item) == false)
-                return false;
-            var locations = GetLocationForEquipType(item.EquipType);
-            if (IsWeaponEquipedAtLocations(locations) == true)
-                return false;
-            if (TryToEquipItemAtLocations(item, locations) == true)
-                return true;
-
-            return false;
-        }
-
-
-        protected bool EquipWeapon(Item item)
-        {
-            if ((item is Weapon) == false)
-                return false;
-            var locations = GetLocationForEquipType(item.EquipType);
-            if (TryToReplaceNaturalWeaponAtLocations(item, locations) == true)
-                return true;
-            if (TryToEquipItemAtLocations(item, locations) == true)
-                return true;
-
-            return false;
-        }
-
-
-        private bool TryToReplaceNaturalWeaponAtLocations(Item item, List<int> locations)
-        {
-            for (int x = 0; x < locations.Count; x++)
-            {
-                int location = locations[x];
-                if (IsNaturalWeaponEquiped(location) == true)
-                {
-                    equipedItems[location] = item;
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        protected bool IsValidNaturalWeaponToEquip(Item item)
-        {
-            if (!(item is NaturalWeapon) || item.EquipType == EquipType.None)
-                return false;
-            return true;
-        }
-
-
-        protected bool IsWeaponEquipedAtLocations(List<int> locations)
-        {
-            for (int x = 0; x < locations.Count; x++)
-            {
-                int location = locations[x];
-                if (IsWeaponEquiped(location) == true)
-                    return true;
-            }
-            return false;
-        }
-
-        private bool IsNaturalWeaponEquiped(int location)
+        public bool IsNaturalWeaponEquipedAt(int location)
         {
             if ((equipedItems[location] is NaturalWeapon) == true)
                 return true;
             return false;
         }
 
-        protected abstract List<int> GetLocationForEquipType(EquipType type);
-
-
-        protected bool TryToEquipItemAtLocations(Item item, List<int> locations)
-        {
-            for (int x = 0; x < locations.Count; x++)
-            {
-                int location = locations[x];
-                if (IsEquipLocationEmpty(location) == true)
-                {
-                    EquipItemLocation(item, location);
-                    return true;
-                }
-            }
-            return false;
-        }
-
-
-        protected bool IsWeaponEquiped(int location)
+        
+        public bool IsWeaponEquippedAt(int location)
         {
             if (equipedItems[location] is Weapon)
                 return true;
@@ -291,32 +195,12 @@ namespace Paramita.SentientBeings
         }
 
 
-        protected bool IsEquipLocationEmpty(int location)
+        public bool IsEquipmentSlotEmpty(int location)
         {
-            if (equipedItems[location] == null)
+            if (EquipmentSlots[location] == null)
                 return true;
             return false;
         }
-
-
-        protected bool EquipItemLocation(Item item, int location)
-        {
-            if (equipedItems[location] != null)
-                return false;
-
-            equipedItems[location] = item;
-            return true;
-        }
-
-
-        protected bool EquipItem(Item item)
-        {
-            var locations = GetLocationForEquipType(item.EquipType);
-            if (TryToEquipItemAtLocations(item, locations) == true)
-                return true;
-            return false;
-        }
-
 
 
         protected virtual bool MoveTo(Compass direction)
@@ -333,7 +217,7 @@ namespace Paramita.SentientBeings
             // check to see if:
             //     * newTile is not outside the TileMap
             //     * newTile is walkable
-            if (newTile != null && newTile.IsWalkable == true)
+            if (newTile != null && newTile.IsWalkable)
             {
                 CurrentTile = newTile;
                 return true;
@@ -356,6 +240,25 @@ namespace Paramita.SentientBeings
             }
         }
 
+
+        // helper method for CombatManager that returns the weapon in the being's
+        // Attacks list that is the longest one (used for resolving defender repel attacks)
+        // If there are > 1 weapon with the longest length, returns the first one that appears
+        // in the Attacks list
+        public Weapon GetLongestWeapon()
+        {
+            Weapon longestWeapon = attacks[0];
+
+            if (attacks.Count > 1)
+            {
+                for (int x = 1; x < attacks.Count; x++)
+                {
+                    if (attacks[x].Length > longestWeapon.Length)
+                        longestWeapon = attacks[x];
+                }
+            }
+            return longestWeapon;
+        }
 
 
         // Applies damage to the being's hitPoints
@@ -407,26 +310,6 @@ namespace Paramita.SentientBeings
         {
             sprite.Draw(gameTime, spriteBatch);
         }
-
-        // helper method for CombatManager that returns the weapon in the being's
-        // Attacks list that is the longest one (used for resolving defender repel attacks)
-        // If there are > 1 weapon with the longest length, returns the first one that appears
-        // in the Attacks list
-        public Weapon GetLongestWeapon()
-        {
-            Weapon longestWeapon = attacks[0];
-
-            if(attacks.Count > 1)
-            {
-                for (int x = 1; x < attacks.Count; x++)
-                {
-                    if (attacks[x].Length > longestWeapon.Length)
-                        longestWeapon = attacks[x];
-                }
-            }
-            return longestWeapon;
-        }
-
 
 
         // the default string equivalent for this being

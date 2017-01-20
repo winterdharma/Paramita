@@ -61,6 +61,7 @@
     <Compile Include="Mechanics\Combat\DamageRoll.cs" />
     <Compile Include="Mechanics\Dice.cs" />
     <Compile Include="Mechanics\Direction.cs" />
+    <Compile Include="Mechanics\EquipItem.cs" />
     <Compile Include="Mechanics\InputDevices.cs" />
     <Compile Include="Mechanics\Combat\MeeleeAttack.cs" />
     <Compile Include="Mechanics\MoraleCheck.cs" />

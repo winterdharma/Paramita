@@ -39,7 +39,7 @@ namespace Paramita.SentientBeings.Animals
             naturalWeapons = new List<Weapon>();
             naturalWeapons.Add(ItemCreator.CreateBite());
 
-            EquipItem(naturalWeapons[0]);
+            TryToEquipItem(naturalWeapons[0]);
 
             attacks = new List<Weapon>();
             UpdateAttacks();

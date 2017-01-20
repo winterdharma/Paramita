@@ -46,7 +46,7 @@ namespace Paramita.SentientBeings
         }
 
 
-        protected override List<int> GetLocationForEquipType(EquipType type)
+        public override List<int> GetLocationForEquipType(EquipType type)
         {
             List<int> locations = new List<int>();
             if (type == EquipType.Body)

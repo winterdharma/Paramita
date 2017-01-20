@@ -80,7 +80,7 @@ namespace Paramita.SentientBeings
         }
 
 
-        protected override List<int> GetLocationForEquipType(EquipType type)
+        public override List<int> GetLocationForEquipType(EquipType type)
         {
             List<int> locations = new List<int>();
             if (type == EquipType.Hand)
@@ -103,40 +103,40 @@ namespace Paramita.SentientBeings
         public void RemoveItem(Item item)
         {
 
-            for (int x = 0; x < unequipedItems.Length; x++)
+            for (int i = 0; i < unequipedItems.Length; i++)
             {
-                if (unequipedItems[x] != null && unequipedItems[x].Equals(item))
+                if (unequipedItems[i] != null && unequipedItems[i].Equals(item))
                 {
-                    unequipedItems[x] = null;
+                    unequipedItems[i] = null;
                     return;
                 }
             }
 
-            for (int x = 0; x < equipedItems.Length; x++)
+            for (int i = 0; i < equipedItems.Length; i++)
             {
-                if (equipedItems[x] != null && equipedItems[x].Equals(item))
+                if (equipedItems[i] != null && equipedItems[i].Equals(item))
                 {
-                    equipedItems[x] = null;
-                    TryToReplaceWithNaturalWeapon(item, x);
+                    equipedItems[i] = null;
+                    TryToReplaceWithNaturalWeapon(item.EquipType, i);
                 }
             }
 
         }
 
 
-        private void TryToReplaceWithNaturalWeapon(Item item, int location)
+        private void TryToReplaceWithNaturalWeapon(EquipType type, int location)
         {
-            if ((item is Weapon) == false)
-                return;
+            var locations = GetLocationForEquipType(type);
 
-            var locations = GetLocationForEquipType(item.EquipType);
-
-            if (IsWeaponEquipedAtLocations(locations) == true)
-                return;
+            for(int i = 0; i < locations.Count; i++)
+            {
+                if (IsWeaponEquippedAt(locations[i]))
+                    return;
+            }
 
             for(int x = 0; x < naturalWeapons.Count; x++)
             {
-                if(naturalWeapons[x].EquipType == item.EquipType)
+                if(naturalWeapons[x].EquipType == type)
                 {
                     equipedItems[location] = naturalWeapons[x];
                 }
