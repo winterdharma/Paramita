@@ -134,11 +134,11 @@ namespace Paramita.SentientBeings
                     return;
             }
 
-            for(int x = 0; x < naturalWeapons.Count; x++)
+            for(int i = 0; i < naturalWeapons.Count; i++)
             {
-                if(naturalWeapons[x].EquipType == type)
+                if(naturalWeapons[i].EquipType == type)
                 {
-                    equipedItems[location] = naturalWeapons[x];
+                    equipedItems[location] = naturalWeapons[i];
                 }
             }
         }

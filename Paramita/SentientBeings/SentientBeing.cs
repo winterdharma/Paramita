@@ -21,34 +21,20 @@ namespace Paramita.SentientBeings
      */ 
     public abstract class SentientBeing
     {
-        // the string returned by ToString()
         protected string name;
 
-        // reference to the GameScene for access to GameScene.Map
         protected GameScene gameScene;
 
-        // used to determine SentientBeing's placement on a TileMap
         protected Tile currentTile;
-
-        // used to display SentientBeing in the UI
         protected BeingSprite sprite;
 
-        // items in a being's possession - how these arrays are implemented 
-        // is defined by child classes of SentientBeing
         protected Item[] unequipedItems;
         protected Item[] equipedItems;
 
-        // a list of the natural weapons a being possesses (fist, bite, claw, etc)
-        // *  these define a being's default attack without equiped weapon items
-        // *  some beings (like animals) only use these natural weapons
-        // *  for other beings, equiped items will replace these
         protected List<Weapon> naturalWeapons;
-
-        // a list of the weapons a being attacks with (could be > 1 or 0)
         protected List<Weapon> attacks;
         protected List<Shield> shields;
 
-        // combat related attributes
         protected int hitPoints;
         protected int protection;
         protected int shieldProtection;
@@ -85,6 +71,7 @@ namespace Paramita.SentientBeings
         public List<Shield> Shields { get { return shields; } }
         public int HitPoints { get { return hitPoints; } }
         public int Protection { get { return protection; } }
+
         public int ShieldProtection
         {
             get
@@ -203,128 +190,6 @@ namespace Paramita.SentientBeings
         }
 
 
-        protected virtual bool MoveTo(Compass direction)
-        {
-            // exit if no direction was given
-            if(direction == Compass.None)
-            {
-                return false;
-            }
-
-            sprite.Facing = direction;
-            Tile newTile = gameScene.Map.GetTile(CurrentTile.TilePoint + Direction.GetPoint(direction));
-
-            // check to see if:
-            //     * newTile is not outside the TileMap
-            //     * newTile is walkable
-            if (newTile != null && newTile.IsWalkable)
-            {
-                CurrentTile = newTile;
-                return true;
-            }
-            return false;
-        }
-
-
-
-        // conduct all of a being's attacks for the turn
-        public void Attack(SentientBeing defender)
-        {
-            Attack attack;
-            GameScene.PostNewStatus(this + " attacked " + defender + ".");
-            for(int x = 0; x < attacks.Count; x++)
-            {
-                attack = new Attack(this, attacks[x], defender);
-                if ( this.IsDead || defender.IsDead)
-                    break;
-            }
-        }
-
-
-        // helper method for CombatManager that returns the weapon in the being's
-        // Attacks list that is the longest one (used for resolving defender repel attacks)
-        // If there are > 1 weapon with the longest length, returns the first one that appears
-        // in the Attacks list
-        public Weapon GetLongestWeapon()
-        {
-            Weapon longestWeapon = attacks[0];
-
-            if (attacks.Count > 1)
-            {
-                for (int x = 1; x < attacks.Count; x++)
-                {
-                    if (attacks[x].Length > longestWeapon.Length)
-                        longestWeapon = attacks[x];
-                }
-            }
-            return longestWeapon;
-        }
-
-
-        // Applies damage to the being's hitPoints
-        // Validates that damage is greater than zero before applying damage
-        public void TakeDamage(int damage)
-        {
-            if(damage > 0)
-            {
-                hitPoints -= damage;
-                CheckForDeath();
-            }
-        }
-
-
-        public void IncrementTimesAttacked()
-        {
-            timesAttacked++;
-        }
-
-
-        public void AddEncumbranceToFatigue()
-        {
-            int totalEncumbrance = GetTotalEncumbrance();
-
-            fatigue += totalEncumbrance;
-        }
-
-
-
-        public virtual void Update(GameTime gameTime)
-        {
-            if(fatigue > 0)
-                fatigue--;
-            CheckForDeath();
-            sprite.Update(gameTime);
-        }
-
-
-        // Checks being's @hitPoints and sets @isDead to true if zero or less
-        private void CheckForDeath()
-        {
-            if (hitPoints < 1)
-                isDead = true;
-        }
-
-
-
-        public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch)
-        {
-            sprite.Draw(gameTime, spriteBatch);
-        }
-
-
-        // the default string equivalent for this being
-        public override string ToString()
-        {
-            return name;
-        }
-
-
-
-        // This method is the verbose report on a sentient being
-        public abstract string GetDescription();
-
-
-
         // Checks the being's equip items for Weapons or NaturalWeapons
         public void UpdateAttacks()
         {
@@ -367,13 +232,89 @@ namespace Paramita.SentientBeings
             }
         }
 
+
+        protected virtual bool MoveTo(Compass direction)
+        {
+            if(direction == Compass.None)
+            {
+                return false;
+            }
+
+            sprite.Facing = direction;
+            Tile newTile = gameScene.Map.GetTile(CurrentTile.TilePoint + Direction.GetPoint(direction));
+
+            if (newTile != null && newTile.IsWalkable)
+            {
+                CurrentTile = newTile;
+                return true;
+            }
+            return false;
+        }
+
+
+
+        // conduct all of a being's attacks for the turn
+        public void Attack(SentientBeing defender)
+        {
+            Attack attack;
+            GameScene.PostNewStatus(this + " attacked " + defender + ".");
+            for(int x = 0; x < attacks.Count; x++)
+            {
+                attack = new Attack(this, attacks[x], defender);
+                if ( this.IsDead || defender.IsDead)
+                    break;
+            }
+        }
+
+
+        // used to check for a RepelMeeleeAttack attempt
+        public Weapon GetLongestWeapon()
+        {
+            Weapon longestWeapon = attacks[0];
+
+            if (attacks.Count > 1)
+            {
+                for (int x = 1; x < attacks.Count; x++)
+                {
+                    if (attacks[x].Length > longestWeapon.Length)
+                        longestWeapon = attacks[x];
+                }
+            }
+            return longestWeapon;
+        }
+
+
+        public void TakeDamage(int damage)
+        {
+            if(damage > 0)
+            {
+                hitPoints -= damage;
+                CheckForDeath();
+            }
+        }
+
+
+        public void IncrementTimesAttacked()
+        {
+            timesAttacked++;
+        }
+
+
+        public void AddEncumbranceToFatigue()
+        {
+            int totalEncumbrance = GetTotalEncumbrance();
+
+            fatigue += totalEncumbrance;
+        }
+
+
         protected int GetTotalEncumbrance()
         {
             int total = encumbrance;
 
-            for(int x = 0; x < equipedItems.Length; x++)
+            for (int i = 0; i < equipedItems.Length; i++)
             {
-                total += GetItemEncumbrance(equipedItems[x]);
+                total += GetItemEncumbrance(equipedItems[i]);
             }
 
             return total;
@@ -395,5 +336,37 @@ namespace Paramita.SentientBeings
             return 0;
         }
 
+        public virtual void Update(GameTime gameTime)
+        {
+            if(fatigue > 0)
+                fatigue--;
+            CheckForDeath();
+            sprite.Update(gameTime);
+        }
+
+
+        private void CheckForDeath()
+        {
+            if (hitPoints < 1)
+                isDead = true;
+        }
+
+
+
+        public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            sprite.Draw(gameTime, spriteBatch);
+        }
+
+
+        // the default string equivalent for this being
+        public override string ToString()
+        {
+            return name;
+        }
+
+
+        // This method is the verbose report on a sentient being
+        public abstract string GetDescription();
     }
 }
