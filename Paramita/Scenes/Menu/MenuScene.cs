@@ -36,7 +36,7 @@ namespace Paramita.Scenes
 
         protected override void LoadContent()
         {
-            spriteFont = content.Load<SpriteFont>("InterfaceFont");
+            spriteFont = GameController.ArialBold;
             background = content.Load<Texture2D>("menuscreen");
             button = content.Load<Texture2D>("wooden-button");
 

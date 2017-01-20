@@ -49,12 +49,6 @@
 /processorParam:TextureFormat=Color
 /build:menuscreen.png
 
-#begin InterfaceFont.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:TextureFormat=Compressed
-/build:InterfaceFont.spritefont
-
 #begin wooden-button.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -174,4 +168,22 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:black_background1.png
+
+#begin Fonts/InterfaceFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:Fonts/InterfaceFont.spritefont
+
+#begin Fonts/lucida_console.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:Fonts/lucida_console.spritefont
+
+#begin Fonts/noto_sans.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:Fonts/noto_sans.spritefont
 

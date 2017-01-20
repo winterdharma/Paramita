@@ -4,6 +4,7 @@ using Paramita.Items;
 using Paramita.Items.Weapons;
 using Paramita.Scenes.Game;
 using Paramita.SentientBeings;
+using Paramita.UI;
 using System.Collections.Generic;
 
 namespace Paramita.Scenes
@@ -60,8 +61,8 @@ namespace Paramita.Scenes
                 new TileSet("tileset1", tilesheet, 8, 8, 32),
                 GameController.random);
             
-            statuses = new StatusMessages(GameRef.Font, 10, new Point(0,720));
-            inventoryPanel = new Inventory(GameRef.Font, GameRef.ScreenRectangle, GameRef.InputDevices, player, inventory_background, 10);
+            statuses = new StatusMessages(GameController.ArialBold, 10, new Point(0,720));
+            inventoryPanel = new Inventory(GameRef.ScreenRectangle, player, inventory_background, 10);
         }
 
 

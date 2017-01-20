@@ -30,7 +30,6 @@ C:\Users\Charlie\Desktop\Paramita\Paramita\obj\x86\Debug\Paramita.pdb
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\menuscreen.xnb
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\titlescreen.xnb
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\GameFont.xnb
-C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\InterfaceFont.xnb
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\wooden-button.xnb
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\tileset1.xnb
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\black_background.xnb
@@ -42,3 +41,6 @@ C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\Images\
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\Images\SentientBeings\human_player.xnb
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\black_background1.xnb
 C:\Users\Charlie\Desktop\Paramita\Paramita\obj\x86\Debug\Paramita.csprojResolveAssemblyReference.cache
+C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\Fonts\InterfaceFont.xnb
+C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\Fonts\lucida_console.xnb
+C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\Fonts\noto_sans.xnb

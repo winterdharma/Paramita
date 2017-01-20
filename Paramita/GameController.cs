@@ -25,7 +25,10 @@ namespace Paramita
         public MenuScene MenuScene { get; private set; }
         public GameScene GameScene { get; private set; }
         public InputDevices InputDevices { get; private set; }
-        public SpriteFont Font { get; private set; }
+        public static SpriteFont ArialBold { get; private set; }
+        public static SpriteFont LucidaConsole { get; private set; }
+        public static SpriteFont NotoSans { get; private set; }
+
 
 
 
@@ -77,7 +80,9 @@ namespace Paramita
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            Font = Content.Load<SpriteFont>("InterfaceFont");
+            ArialBold = Content.Load<SpriteFont>("Fonts\\InterfaceFont");
+            LucidaConsole = Content.Load<SpriteFont>("Fonts\\lucida_console");
+            NotoSans = Content.Load<SpriteFont>("Fonts\\noto_sans");
         }
 
 

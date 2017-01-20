@@ -68,7 +68,7 @@
     <Compile Include="Mechanics\Combat\RepelMeeleeAttack.cs" />
     <Compile Include="UI\BeingSprite.cs" />
     <Compile Include="UI\Sprite.cs" />
-    <Compile Include="Scenes\Game\Inventory.cs" />
+    <Compile Include="UI\Inventory.cs" />
     <Compile Include="Scenes\Game\StatusMessages.cs" />
     <Compile Include="Scenes\Game\TileMapCreator.cs" />
     <Compile Include="Scenes\Menu\MenuComponent.cs" />
@@ -126,7 +126,9 @@
     <MonoGameContentReference Include="Content\Content.mgcb" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Content\InterfaceFont.spritefont" />
+    <None Include="Content\Fonts\InterfaceFont.spritefont" />
+    <None Include="Content\Fonts\lucida_console.spritefont" />
+    <None Include="Content\Fonts\noto_sans.spritefont" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

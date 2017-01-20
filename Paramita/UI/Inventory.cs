@@ -4,7 +4,7 @@ using Paramita.Items;
 using Paramita.Mechanics;
 using Paramita.SentientBeings;
 
-namespace Paramita.Scenes.Game
+namespace Paramita.UI
 {
     public enum InventoryActions
     {
@@ -38,7 +38,7 @@ namespace Paramita.Scenes.Game
 
         private string heading = "Inventory";
         private Vector2 headingPosition;
-
+        
         private string toggleOpen = "[+]";
         private string toggleClosed = "[-]";
         private Vector2 togglePosition;
@@ -51,19 +51,17 @@ namespace Paramita.Scenes.Game
         private string cancelHint =     "Press (c) to Cancel Selection";
         private Vector2 hintPosition;
 
-        private InputDevices input;
         private int itemSelected;
         private Player player;
         private Texture2D background;
-        private SpriteFont font;
+        private SpriteFont fontHeader = GameController.ArialBold;
+        private SpriteFont fontText = GameController.NotoSans;
         private bool isOpen = false;
 
         
 
-        public Inventory(SpriteFont font, Rectangle parentScreen, InputDevices inputDevices, Player player, Texture2D background, int maxItems)
+        public Inventory(Rectangle parentScreen, Player player, Texture2D background, int maxItems)
         {
-            this.font = font;
-            input = inputDevices;
             this.player = player;
             this.background = background;
             this.maxItems = maxItems;
@@ -75,16 +73,16 @@ namespace Paramita.Scenes.Game
             panelRectangle = new Rectangle(panelOrigin.X, 
                 panelOrigin.Y, panelWidth, panelHeightClosed);
 
-            Vector2 headingSize = font.MeasureString(heading);
+            Vector2 headingSize = fontHeader.MeasureString(heading);
             headingPosition = new Vector2( 
                 panelRectangle.Left + ((panelWidth / 2) - (headingSize.X / 2)), 
-                (panelRectangle.Top + 10) );
+                (panelRectangle.Top + 5) );
 
             togglePosition = new Vector2(
-                panelRectangle.Right - 30, (panelRectangle.Top + 10));
+                panelRectangle.Right - 30, (panelRectangle.Top + 5));
 
             hintPosition = new Vector2(
-                panelRectangle.Left + 10, panelRectangle.Bottom - 60);
+                panelRectangle.Left + 10, panelHeightOpen - 60);
             itemSelected = 0;
         }
 
@@ -173,7 +171,7 @@ namespace Paramita.Scenes.Game
             }
 
             if(selectionInput > 0)
-                itemSelected = InputDevices.CheckIfItemSelected();
+                itemSelected = selectionInput;
 
             if(itemSelected > 0 && itemSelected <= maxItems)
             {
@@ -188,73 +186,6 @@ namespace Paramita.Scenes.Game
                 }
             }
         }
-
-
-
-        // Called by GameScene.Update() to check for changes or input to handle
-        public void Update(GameTime gameTime)
-        {
-            itemDescriptions = GetPlayerItemStrings();
-            HandleInput();
-        }
-
-
-        // Called by GameScene.Draw()
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
-        {
-            if(isOpen)
-            {
-                spriteBatch.Begin();
-
-                panelRectangle.Height = panelHeightOpen;
-                spriteBatch.Draw(background, panelRectangle, Color.White);
-
-                spriteBatch.DrawString(font, heading, headingPosition, Color.White);
-                spriteBatch.DrawString(font, toggleClosed, togglePosition, Color.White);
-
-                Vector2 itemOrigin = new Vector2(panelRectangle.Left + 10, headingPosition.Y + 20);
-                Color fontColor = Color.White;
-                for (int x = 0; x < itemDescriptions.Length; x++)
-                {
-                    if (itemSelected == (x + 1) && GetPlayerItem(itemSelected) != null)
-                    {
-                        fontColor = Color.Red;
-                    }
-
-                    string line = labels[x] + itemDescriptions[x];
-                    spriteBatch.DrawString(font, line, itemOrigin, fontColor);
-                    fontColor = Color.White;
-                    itemOrigin.Y += 20;
-                }
-
-                if (itemSelected != 0 && itemSelected <= maxItems && GetPlayerItem(itemSelected) != null)
-                {
-                    spriteBatch.DrawString(font, dropHint, hintPosition, fontColor);
-                    spriteBatch.DrawString(font, cancelHint,
-                        new Vector2(hintPosition.X, hintPosition.Y + 15), fontColor);
-                }
-                else
-                {
-                    spriteBatch.DrawString(font, selectHint, hintPosition, fontColor);
-                }
-
-                spriteBatch.End();
-            }
-            else
-            {
-                spriteBatch.Begin();
-
-                panelRectangle.Height = panelHeightClosed;
-                spriteBatch.Draw(background, panelRectangle, Color.White);
-
-                spriteBatch.DrawString(font, heading, headingPosition, Color.White);
-                spriteBatch.DrawString(font, toggleOpen, togglePosition, Color.White);
-
-                spriteBatch.End();
-            }
-        }
-
-
 
         // Maps the item number in the Inventory list to the corresponding Item in the
         // player object. (The first five are equipment slots and second five are in
@@ -287,7 +218,80 @@ namespace Paramita.Scenes.Game
                 default:
                     return null;
             }
+        }
 
+
+        // Called by GameScene.Update() to check for changes or input to handle
+        public void Update(GameTime gameTime)
+        {
+            itemDescriptions = GetPlayerItemStrings();
+            HandleInput();
+        }
+
+
+        // Called by GameScene.Draw()
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            spriteBatch.Begin();
+
+            if (isOpen)
+                DrawOpenPanel(spriteBatch);
+            else
+                DrawClosedPanel(spriteBatch);
+
+            spriteBatch.End();
+        }
+
+
+        private void DrawOpenPanel(SpriteBatch spriteBatch)
+        {
+            // draw background
+            panelRectangle.Height = panelHeightOpen;
+            spriteBatch.Draw(background, panelRectangle, Color.White);
+
+            // draw header and toggle symbol
+            spriteBatch.DrawString(fontHeader, heading, headingPosition, Color.White);
+            spriteBatch.DrawString(fontText, toggleClosed, togglePosition, Color.White);
+
+            // draw the list of items in player's inventory
+            Vector2 itemOrigin = new Vector2(panelRectangle.Left + 10, headingPosition.Y + 20);
+            Color fontColor = Color.White;
+            for (int x = 0; x < itemDescriptions.Length; x++)
+            {
+                if (itemSelected == (x + 1) && GetPlayerItem(itemSelected) != null)
+                {
+                    fontColor = Color.Red;
+                }
+
+                string line = labels[x] + itemDescriptions[x];
+                spriteBatch.DrawString(fontText, line, itemOrigin, fontColor);
+                fontColor = Color.White;
+                itemOrigin.Y += 20;
+            }
+
+            // check if an item has been selected and draw appropos hint text
+            if (itemSelected != 0 && itemSelected <= maxItems && GetPlayerItem(itemSelected) != null)
+            {
+                spriteBatch.DrawString(fontText, dropHint, hintPosition, fontColor);
+                spriteBatch.DrawString(fontText, cancelHint,
+                    new Vector2(hintPosition.X, hintPosition.Y + 15), fontColor);
+            }
+            else
+            {
+                spriteBatch.DrawString(fontText, selectHint, hintPosition, fontColor);
+            }
+        }
+
+
+        private void DrawClosedPanel(SpriteBatch spriteBatch)
+        {
+            // draw panel background
+            panelRectangle.Height = panelHeightClosed;
+            spriteBatch.Draw(background, panelRectangle, Color.White);
+
+            // draw the header and toggle symbol
+            spriteBatch.DrawString(fontHeader, heading, headingPosition, Color.White);
+            spriteBatch.DrawString(fontText, toggleOpen, togglePosition, Color.White);
         }
     }
 }
