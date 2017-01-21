@@ -1,9 +1,10 @@
 ﻿using Paramita.Items;
+using Paramita.Items.Weapons;
 using Paramita.SentientBeings;
 using System;
 using System.Collections.Generic;
 
-namespace Paramita.Scenes
+namespace Paramita.Levels
 {
     /*
      * This class handles the creation and storage of TileMaps
@@ -12,16 +13,16 @@ namespace Paramita.Scenes
 
     public class LevelManager
     {
-        public Dictionary<int, TileMap> levels; // (Level number, level tilemap)
-        private TileMap currentMap;
+        public Dictionary<int, Level> levels;
+        private Level currentLevel;
         private TileMapCreator mapCreator;
         private TileSet tileset;
         private GameController game;
 
-        public TileMap CurrentMap
+        public Level CurrentLevel
         {
-            get { return currentMap; }
-            private set { currentMap = value; }
+            get { return currentLevel; }
+            private set { currentLevel = value; }
         }
         
 
@@ -31,7 +32,7 @@ namespace Paramita.Scenes
             this.game = game;
             mapCreator = new TileMapCreator(40, 25, 10, 8, 3, random);
             this.tileset = tileset;
-            levels = new Dictionary<int, TileMap>();
+            levels = new Dictionary<int, Level>();
         }
 
        
@@ -40,26 +41,25 @@ namespace Paramita.Scenes
         {
             if(levels.ContainsKey(levelNumber) == false)
             {
-                CreateLevel(levelNumber);
+                Create(levelNumber);
             }
 
             SetLevel(levelNumber);
         }
 
-        private void CreateLevel(int levelNumber)
+        public void Create(int number, Player player = null)
         {
-            TileMap levelMap = new TileMap(game.ScreenRectangle, tileset, mapCreator.CreateMap(), "test-map");
-            levels.Add(levelNumber, levelMap);
+            Level newLevel = LevelFactory.CreateLevel(number);
         }
 
         
 
         private void SetLevel(int levelNumber)
         {
-            CurrentMap = levels[levelNumber];
+            CurrentLevel = levels[levelNumber];
         }
 
-        public Dictionary<int, TileMap> GetLevels()
+        public Dictionary<int, Level> GetLevels()
         { return levels; }
     }
 }

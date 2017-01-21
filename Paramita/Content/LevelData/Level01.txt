@@ -1,0 +1,9 @@
+﻿LevelWidth:60
+LevelHeight:80
+GiantRat:10
+ShortSword:1
+Buckler:1
+Meat:2
+StoryEvent:Introduction:"You've spent the majority of your short and brutal life as a slave laborer for a tribe of kobolds. 
+						 One morning you wake in your sleeping cell to discover the chains you were shackled with have rusted
+						 to the point of breaking. You stand amazed. You are free."

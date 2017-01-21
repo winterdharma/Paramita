@@ -60,7 +60,7 @@ namespace Paramita.UI
 
         
 
-        public Inventory(Rectangle parentScreen, Player player, Texture2D background, int maxItems)
+        public Inventory(Player player, Texture2D background, int maxItems)
         {
             this.player = player;
             this.background = background;
@@ -69,6 +69,7 @@ namespace Paramita.UI
             labels = CreateItemLabels(maxItems);
             itemDescriptions = GetPlayerItemStrings();
 
+            Rectangle parentScreen = GameController.ScreenRectangle;
             panelOrigin = new Point(parentScreen.Width - (panelWidth), 0);
             panelRectangle = new Rectangle(panelOrigin.X, 
                 panelOrigin.Y, panelWidth, panelHeightClosed);

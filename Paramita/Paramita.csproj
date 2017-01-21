@@ -56,6 +56,8 @@
     <Compile Include="Items\NaturalWeapons\Bite.cs" />
     <Compile Include="Items\NaturalWeapons\Fist.cs" />
     <Compile Include="Items\Weapons\ShortSword.cs" />
+    <Compile Include="Levels\LevelData.cs" />
+    <Compile Include="Levels\StoryEvent.cs" />
     <Compile Include="Mechanics\Combat\Attack.cs" />
     <Compile Include="Mechanics\Combat\AttackRoll.cs" />
     <Compile Include="Mechanics\Combat\DamageRoll.cs" />
@@ -66,11 +68,12 @@
     <Compile Include="Mechanics\Combat\MeeleeAttack.cs" />
     <Compile Include="Mechanics\MoraleCheck.cs" />
     <Compile Include="Mechanics\Combat\RepelMeeleeAttack.cs" />
+    <Compile Include="Levels\Level.cs" />
     <Compile Include="UI\BeingSprite.cs" />
     <Compile Include="UI\Sprite.cs" />
     <Compile Include="UI\Inventory.cs" />
     <Compile Include="Scenes\Game\StatusMessages.cs" />
-    <Compile Include="Scenes\Game\TileMapCreator.cs" />
+    <Compile Include="Levels\TileMapCreator.cs" />
     <Compile Include="Scenes\Menu\MenuComponent.cs" />
     <Compile Include="Scenes\Game\GameScene.cs" />
     <Compile Include="Scenes\Menu\MenuScene.cs" />
@@ -78,10 +81,10 @@
     <Compile Include="Scenes\Scene.cs" />
     <Compile Include="Scenes\SceneManager.cs" />
     <Compile Include="UI\Animation.cs" />
-    <Compile Include="Scenes\Game\Tile.cs" />
-    <Compile Include="Scenes\Game\LevelManager.cs" />
-    <Compile Include="Scenes\Game\TileMap.cs" />
-    <Compile Include="Scenes\Game\TileSet.cs" />
+    <Compile Include="Levels\Tile.cs" />
+    <Compile Include="Levels\LevelManager.cs" />
+    <Compile Include="Levels\TileMap.cs" />
+    <Compile Include="Levels\TileSet.cs" />
     <Compile Include="Scenes\Game\Camera.cs" />
     <Compile Include="SentientBeings\Animal.cs" />
     <Compile Include="SentientBeings\Animals\GiantRat.cs" />
@@ -115,6 +118,7 @@
     <Content Include="Content\Images\Items\short_sword.png" />
     <Content Include="Content\Images\SentientBeings\giant_rat.png" />
     <Content Include="Content\Images\SentientBeings\human_player.png" />
+    <Content Include="Content\LevelData\Level01.txt" />
     <Content Include="Content\menuscreen.png" />
     <Content Include="Content\tileset1.png" />
     <Content Include="Content\titlescreen.png" />

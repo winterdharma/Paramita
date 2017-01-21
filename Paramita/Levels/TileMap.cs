@@ -2,13 +2,14 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items;
+using Paramita.Scenes;
 using System;
 using System.Collections.Generic;
 
 // need to continue getting this working - merging RogueSharp Map
 // and the TileLayer class together.
 
-namespace Paramita.Scenes
+namespace Paramita.Levels
 {
     public class TileMap
     {
@@ -20,7 +21,7 @@ namespace Paramita.Scenes
         private Point min;
         private Point max;
         private Rectangle destination;
-        private Rectangle viewport;
+        private Rectangle viewport = GameController.ScreenRectangle;
 
         private int tilesWide;
         private int tilesHigh;
@@ -46,10 +47,9 @@ namespace Paramita.Scenes
 
 
 
-        public TileMap(Rectangle parentScreen, TileSet tileSet, Tile[,] tiles, string name)
+        public TileMap(TileSet tileSet, Tile[,] tiles, string name)
         {
             this.tiles = tiles;
-            viewport = parentScreen;
             tilesWide = tiles.GetLength(0);
             tilesHigh = tiles.GetLength(1);
             TileSet = tileSet;

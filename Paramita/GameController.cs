@@ -13,18 +13,21 @@ namespace Paramita
     public class GameController : Game
     {
         public static Random random = new Random();
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
-        GameTime gameTime;
+        private GraphicsDeviceManager graphics;
+        private SpriteBatch spriteBatch;
+        private Rectangle screenRectangle;
+        private GameTime gameTime;
+
         public GameTime GameTime { get { return GameTime; } }
         public SpriteBatch SpriteBatch { get { return spriteBatch; } }
-        public Rectangle ScreenRectangle { get; private set; }
+        public static Rectangle ScreenRectangle { get { return ScreenRectangle; } }
 
         public SceneManager SceneManager { get; private set; }
         public TitleScene TitleScene { get; private set; }
         public MenuScene MenuScene { get; private set; }
         public GameScene GameScene { get; private set; }
         public InputDevices InputDevices { get; private set; }
+
         public static SpriteFont ArialBold { get; private set; }
         public static SpriteFont LucidaConsole { get; private set; }
         public static SpriteFont NotoSans { get; private set; }
@@ -38,9 +41,9 @@ namespace Paramita
             graphics = new GraphicsDeviceManager(this);
             
             Content.RootDirectory = "Content";
-            ScreenRectangle = new Rectangle(0, 0, 1280, 720);
-            graphics.PreferredBackBufferWidth = ScreenRectangle.Width;
-            graphics.PreferredBackBufferHeight = ScreenRectangle.Height;
+            screenRectangle = new Rectangle(0, 0, 1280, 720);
+            graphics.PreferredBackBufferWidth = screenRectangle.Width;
+            graphics.PreferredBackBufferHeight = screenRectangle.Height;
 
             InputDevices = new InputDevices(this);
 

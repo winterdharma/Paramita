@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 // The TileSet class provides access to the 2D tile images found in a tilesheet.
 // The class represents the tiles of a single tilesheet. Multiple TileSets can be
 // instantiated to access multiple sheets of tile images.
-namespace Paramita.Scenes
+namespace Paramita.Levels
 {
     public class TileSet
     {

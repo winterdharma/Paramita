@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items;
 using Paramita.Items.Weapons;
+using Paramita.Levels;
 using Paramita.Scenes.Game;
 using Paramita.SentientBeings;
 using Paramita.UI;
@@ -14,22 +15,16 @@ namespace Paramita.Scenes
     {
         private LevelManager levelManager;
         private Player player;
-        private List<SentientBeing> npcs;
+        
         private int levelNumber;
-
+        private Level currentLevel;
         private static StatusMessages statuses;
         private Inventory inventoryPanel;
 
         private Texture2D tilesheet;
         private Texture2D inventory_background;
 
-        private bool isPlayersTurn = true;
-
-        public bool IsPlayersTurn
-        {
-            get { return isPlayersTurn; }
-            set { isPlayersTurn = value; }
-        }
+       
 
         public Player Player { get { return player; } }
 
@@ -38,8 +33,12 @@ namespace Paramita.Scenes
             private set { levelNumber = value; }
         }
 
-        public TileMap Map { get { return levelManager.CurrentMap; } }
-
+        public TileMap Map { get { return CurrentLevel.TileMap; } }
+        public Level CurrentLevel
+        {
+            get { return currentLevel; }
+            set { currentLevel = value; }
+        }
 
         public GameScene(GameController game) : base(game)
         {
@@ -51,8 +50,6 @@ namespace Paramita.Scenes
         {
             base.Initialize(); // This calls LoadContent()
 
-            npcs = new List<SentientBeing>();
-
             SentientBeingCreator.gameScene = this;
             player = SentientBeingCreator.CreateHumanPlayer();
 
@@ -62,7 +59,7 @@ namespace Paramita.Scenes
                 GameController.random);
             
             statuses = new StatusMessages(GameController.ArialBold, 10, new Point(0,720));
-            inventoryPanel = new Inventory(GameRef.ScreenRectangle, player, inventory_background, 10);
+            inventoryPanel = new Inventory(player, inventory_background, 10);
         }
 
 
@@ -89,35 +86,12 @@ namespace Paramita.Scenes
             // update the UI panels
             statuses.Update(gameTime);
             inventoryPanel.Update(gameTime);
+            currentLevel.Update(gameTime);
 
-            // remove dead npcs before updating them
-            for (int x = 0; x < npcs.Count; x++)
-            {
-                if (npcs[x].IsDead == true)
-                {
-                    npcs.Remove(npcs[x]);
-                }
-            }
-
-            // check for player's input until he moves
-            if (isPlayersTurn == true)
-            {
-                player.Update(gameTime);
-            }
-            // give the npcs a turn after the player moves
-            else
-            {
-                for (int x = 0; x < npcs.Count; x++)
-                {
-                    npcs[x].TimesAttacked = 0;
-                    npcs[x].Update(gameTime);
-                }
-                isPlayersTurn = true;
-                player.TimesAttacked = 0;
-            }
+            
 
             //move the camera to center on the player
-            Camera.LockToSprite(Map, player.Sprite.Position, GameRef.ScreenRectangle);
+            Camera.LockToSprite(Map, player.Sprite.Position, GameController.ScreenRectangle);
 
             base.Update(gameTime);
         }
@@ -127,18 +101,8 @@ namespace Paramita.Scenes
         public override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
-
-            if(Map != null)
-            {
-                Map.Draw(gameTime, GameRef.SpriteBatch);
-            }
-
-            player.Draw(gameTime, GameRef.SpriteBatch);
-
-            for(int x = 0; x < npcs.Count; x++)
-            {
-                npcs[x].Draw(gameTime, GameRef.SpriteBatch);
-            }
+            CurrentLevel.Draw(gameTime, GameRef.SpriteBatch);
+            
 
             statuses.Draw(gameTime, GameRef.SpriteBatch);
             inventoryPanel.Draw(gameTime, GameRef.SpriteBatch);
@@ -152,41 +116,13 @@ namespace Paramita.Scenes
         // implemented.
         public void SetUpNewGame()
         {
-            LevelNumber = 1;
-            levelManager.MoveToLevel(levelNumber);
-            player.CurrentTile = Map.FindTileType(TileType.StairsUp);
-
-            var giantRat = SentientBeingCreator.CreateGiantRat();
-            npcs.Add(giantRat);
-            giantRat.CurrentTile = GetEmptyWalkableTile();
-
-            ShortSword sword = ItemCreator.CreateShortSword();
-            GetEmptyWalkableTile().AddItem(sword);
-
-            var coins = ItemCreator.CreateCoins(1);
-            GetEmptyWalkableTile().AddItem(coins);
-            var meat = ItemCreator.CreateMeat();
-            GetEmptyWalkableTile().AddItem(meat);
-            var shield = ItemCreator.CreateBuckler();
-            GetEmptyWalkableTile().AddItem(shield);
+            levelNumber = 1;
+            levelManager.Create(levelNumber, player);
         }
 
 
 
-        // returns a suitable starting tile for the player or enemy
-        // Does not check for empty state yet
-        private Tile GetEmptyWalkableTile()
-        {
-            while (true)
-            {
-                int x = GameController.random.Next(Map.TilesWide-1);
-                int y = GameController.random.Next(Map.TilesHigh-1);
-                if (Map.IsTileWalkable(x, y))
-                {
-                    return Map.GetTile(new Point(x, y));
-                }
-            }
-        }
+        
 
 
 
@@ -223,38 +159,6 @@ namespace Paramita.Scenes
         public static void PostNewStatus(string message)
         {
             statuses.AddMessage(message);
-        }
-
-
-
-        // Iterates over the @npcs list of active NPCs to find if one of them is
-        // currently on @tile
-        public bool IsNpcOnTile(Tile tile)
-        {
-            for(int x = 0; x < npcs.Count; x++)
-            {
-                if(npcs[x].CurrentTile == tile)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-
-
-        // Finds the NPC that is located on @tile. If none is there, null is returned
-        // (this method should be called after IsNpcOnTile check)
-        public SentientBeing GetNpcOnTile(Tile tile)
-        {
-            for (int x = 0; x < npcs.Count; x++)
-            {
-                if (npcs[x].CurrentTile == tile)
-                {
-                    return npcs[x];
-                }
-            }
-            return null;
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Paramita.Items.Valuables;
 using Paramita.Items.Consumables;
 using System;
+using Paramita.Levels;
 
 namespace Paramita.SentientBeings
 {
@@ -97,11 +98,11 @@ namespace Paramita.SentientBeings
 
             Tile tile = gameScene.Map.GetTile(CurrentTile.TilePoint + Direction.GetPoint(direction));
 
-            SentientBeing npc = gameScene.GetNpcOnTile(tile);
+            SentientBeing npc = gameScene.CurrentLevel.GetNpcOnTile(tile);
             if (npc is SentientBeing)
             {
                 Attack(npc);
-                gameScene.IsPlayersTurn = false;
+                gameScene.CurrentLevel.IsPlayersTurn = false;
             }
             else
             {
@@ -112,7 +113,7 @@ namespace Paramita.SentientBeings
                     // burn a calorie while walking
                     ExpendSustanence();
                     // toggle the turn flag so Npcs will go next
-                    gameScene.IsPlayersTurn = false;
+                    gameScene.CurrentLevel.IsPlayersTurn = false;
                 }
             }
         }

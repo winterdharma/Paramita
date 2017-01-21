@@ -2,7 +2,7 @@
 using Paramita.Items;
 using System.Collections.Generic;
 
-namespace Paramita.Scenes
+namespace Paramita.Levels
 {
 
     // These types are translated to a graphical equivalent when the TileMap is drawn to screen

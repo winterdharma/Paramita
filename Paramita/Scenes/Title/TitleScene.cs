@@ -22,7 +22,7 @@ namespace Paramita.Scenes
 
         public TitleScene(GameController game) : base(game) {
             // see Initialize() and LoadContent() for instantiation tasks
-            backgroundDestination = game.ScreenRectangle;
+            backgroundDestination = GameController.ScreenRectangle;
         }
 
 
