@@ -179,9 +179,9 @@ namespace Paramita.SentientBeings
             level = LevelManager.CurrentLevel;
 
             if (levelChange < 0)
-                currentTile = level.GetStairsUpTile();
+                CurrentTile = level.GetStairsDownTile();
             else if (levelChange > 0)
-                currentTile = level.GetStairsDownTile();
+                CurrentTile = level.GetStairsUpTile();
 
             GameScene.PostNewStatus("You are now on level " + LevelManager.LevelNumber + ".");
         }

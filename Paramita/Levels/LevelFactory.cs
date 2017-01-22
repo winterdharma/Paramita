@@ -100,7 +100,7 @@ namespace Paramita.Levels
 
             if (data.Bucklers > 0)
             {
-                for (int i = 0; i < data.GiantRats; i++)
+                for (int i = 0; i < data.Bucklers; i++)
                 {
                     items.Add(ItemCreator.CreateBuckler());
                 }
@@ -108,7 +108,7 @@ namespace Paramita.Levels
 
             if (data.Meat > 0)
             {
-                for (int i = 0; i < data.GiantRats; i++)
+                for (int i = 0; i < data.Meat; i++)
                 {
                     items.Add(ItemCreator.CreateMeat());
                 }

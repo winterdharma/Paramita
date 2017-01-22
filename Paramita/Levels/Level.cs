@@ -135,14 +135,14 @@ namespace Paramita.Levels
             // remove dead npcs before updating them
             for (int x = 0; x < npcs.Count; x++)
             {
-                if (npcs[x].IsDead == true)
+                if (npcs[x].IsDead)
                 {
                     npcs.Remove(npcs[x]);
                 }
             }
 
             // check for player's input until he moves
-            if (isPlayersTurn == true)
+            if (isPlayersTurn)
             {
                 player.Update(gameTime);
             }
