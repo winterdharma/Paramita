@@ -1,0 +1,112 @@
+﻿using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Reflection;
+using Paramita.Data;
+using Paramita.SentientBeings;
+using Paramita.Items;
+using Paramita.Scenes;
+
+namespace Paramita.Levels
+{
+    public static class LevelFactory
+    {
+        private const string LEVEL_01 = "Paramita.Data.Levels.Level01.txt";
+
+        
+
+
+        public static Level CreateLevel(int levelNumber)
+        {
+            var levelData = GetLevelData(levelNumber);
+            var newLevel = new Level();
+            newLevel.TileMap = CreateTileMap(levelData);
+            newLevel.Items = CreateItems(levelData);
+            newLevel.Npcs = CreateNpcs(levelData, newLevel);
+            return newLevel;
+        }
+
+
+        
+
+
+        private static LevelData GetLevelData(int levelNumber)
+        {
+            string levelTxtFile = "";
+            switch (levelNumber)
+            {
+                case 1:
+                    levelTxtFile = LEVEL_01;
+                    break;
+                default:
+                    levelTxtFile = LEVEL_01;
+                    break;
+            }
+
+            return new LevelData(levelTxtFile);
+        }
+
+
+        private static TileMap CreateTileMap(LevelData data)
+        {
+            var mapCreator = new TileMapCreator(data.LevelWidth, data.LevelHeight, 20, 20, 10, GameController.random);
+            return new TileMap(GameScene.tileset, mapCreator.CreateMap(), "level 1");
+        }
+
+
+
+
+        private static List<SentientBeing> CreateNpcs(LevelData data, Level level)
+        {
+            var npcs = new List<SentientBeing>();
+
+            if (data.GiantRats > 0)
+            {
+                for(int i = 0; i < data.GiantRats; i++)
+                {
+                    var rat = SentientBeingCreator.CreateGiantRat(level);
+                    rat.CurrentTile = level.GetEmptyWalkableTile();
+                    npcs.Add(rat);
+                }
+            }
+
+            return npcs;
+        }
+
+
+
+        private static List<Item> CreateItems(LevelData data)
+        {
+            var items = new List<Item>();
+
+            if (data.ShortSwords > 0)
+            {
+                for (int i = 0; i < data.ShortSwords; i++)
+                {
+                    items.Add(ItemCreator.CreateShortSword());
+                }
+            }
+
+            if (data.Bucklers > 0)
+            {
+                for (int i = 0; i < data.GiantRats; i++)
+                {
+                    items.Add(ItemCreator.CreateBuckler());
+                }
+            }
+
+            if (data.Meat > 0)
+            {
+                for (int i = 0; i < data.GiantRats; i++)
+                {
+                    items.Add(ItemCreator.CreateMeat());
+                }
+            }
+
+            return items;
+        }
+    }
+}

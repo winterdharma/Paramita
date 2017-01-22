@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items;
+using Paramita.Levels;
 using Paramita.Scenes;
 using Paramita.SentientBeings.Animals;
 using System.Collections.Generic;
@@ -27,14 +28,14 @@ namespace Paramita.SentientBeings
         }
 
 
-        public static Player CreateHumanPlayer()
+        public static Player CreateHumanPlayer(Level level)
         {
-            return new Player(gameScene, "Wesley", spritesheets[BeingType.HumanPlayer]);
+            return new Player(gameScene, level, "Wesley", spritesheets[BeingType.HumanPlayer]);
         }
 
-        public static GiantRat CreateGiantRat()
+        public static GiantRat CreateGiantRat(Level level)
         {
-            return new GiantRat(gameScene, spritesheets[BeingType.GiantRat]);
+            return new GiantRat(gameScene, level, spritesheets[BeingType.GiantRat]);
         }
     }
 }

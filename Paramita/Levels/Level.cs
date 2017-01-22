@@ -28,11 +28,42 @@ namespace Paramita.Levels
             set { isPlayersTurn = value; }
         }
 
-        public TileMap TileMap { get { return tileMap; } }
+        public TileMap TileMap
+        {
+            get { return tileMap; }
+            set { tileMap = value; }
+        }
 
+        public List<SentientBeing> Npcs
+        {
+            get { return npcs; }
+            set { npcs = value; }
+        }
 
+        public List<Item> Items
+        {
+            get { return items; }
+            set { items = value; }
+        }
 
-        public Level(TileMap map, List<Item> items, List<SentientBeing> npcs, List<StoryEvent> events, Player player = null)
+        public List<StoryEvent> StoryEvents
+        {
+            get { return storyEvents; }
+            set { storyEvents = value; }
+        }
+
+        public Player Player
+        {
+            get { return player; }
+            set { player = value; }
+        }
+
+        public Level()
+        {
+
+        }
+
+        public Level(TileMap map, List<Item> items, List<SentientBeing> npcs, List<StoryEvent> events = null, Player player = null)
         {
             tileMap = map;
             this.items = items;
@@ -43,9 +74,14 @@ namespace Paramita.Levels
 
 
 
+        public Tile GetStairsUpTile()
+        {
+            return tileMap.FindTileType(TileType.StairsUp);
+        }
+
         // returns a suitable starting tile for the player or enemy
         // Does not check for empty state yet
-        private Tile GetEmptyWalkableTile()
+        public Tile GetEmptyWalkableTile()
         {
             while (true)
             {

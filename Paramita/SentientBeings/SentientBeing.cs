@@ -25,6 +25,7 @@ namespace Paramita.SentientBeings
         protected string name;
 
         protected GameScene gameScene;
+        protected Level level;
 
         protected Tile currentTile;
         protected BeingSprite sprite;
@@ -62,7 +63,7 @@ namespace Paramita.SentientBeings
             set
             {
                 currentTile = value;
-                sprite.Position = gameScene.Map.GetTilePosition(currentTile);
+                sprite.Position = level.TileMap.GetTilePosition(currentTile);
             } 
         }
         
@@ -144,9 +145,10 @@ namespace Paramita.SentientBeings
 
 
 
-        public SentientBeing(GameScene gameScene, Texture2D spritesheet)
+        public SentientBeing(GameScene gameScene, Level level, Texture2D spritesheet)
         {
             this.gameScene = gameScene;
+            this.level = level;
             var frame = new Rectangle(0, 0, 32, 32);
             sprite = new BeingSprite(spritesheet, frame);
 
@@ -242,7 +244,7 @@ namespace Paramita.SentientBeings
             }
 
             sprite.Facing = direction;
-            Tile newTile = gameScene.Map.GetTile(CurrentTile.TilePoint + Direction.GetPoint(direction));
+            Tile newTile = level.TileMap.GetTile(CurrentTile.TilePoint + Direction.GetPoint(direction));
 
             if (newTile != null && newTile.IsWalkable)
             {

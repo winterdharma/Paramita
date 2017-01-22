@@ -15,12 +15,12 @@ namespace Paramita
         public static Random random = new Random();
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-        private Rectangle screenRectangle;
+        private static Rectangle screenRectangle;
         private GameTime gameTime;
 
-        public GameTime GameTime { get { return GameTime; } }
+        public GameTime GameTime { get { return gameTime; } }
         public SpriteBatch SpriteBatch { get { return spriteBatch; } }
-        public static Rectangle ScreenRectangle { get { return ScreenRectangle; } }
+        public static Rectangle ScreenRectangle { get { return screenRectangle; } }
 
         public SceneManager SceneManager { get; private set; }
         public TitleScene TitleScene { get; private set; }

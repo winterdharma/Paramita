@@ -41,6 +41,8 @@
     <StartupObject>Paramita.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Data\DataFile.cs" />
+    <Compile Include="Data\Levels\LevelData.cs" />
     <Compile Include="Items\Armor.cs" />
     <Compile Include="Items\Shields\Buckler.cs" />
     <Compile Include="Items\Consumable.cs" />
@@ -56,7 +58,7 @@
     <Compile Include="Items\NaturalWeapons\Bite.cs" />
     <Compile Include="Items\NaturalWeapons\Fist.cs" />
     <Compile Include="Items\Weapons\ShortSword.cs" />
-    <Compile Include="Levels\LevelData.cs" />
+    <Compile Include="Levels\LevelFactory.cs" />
     <Compile Include="Levels\StoryEvent.cs" />
     <Compile Include="Mechanics\Combat\Attack.cs" />
     <Compile Include="Mechanics\Combat\AttackRoll.cs" />
@@ -118,7 +120,9 @@
     <Content Include="Content\Images\Items\short_sword.png" />
     <Content Include="Content\Images\SentientBeings\giant_rat.png" />
     <Content Include="Content\Images\SentientBeings\human_player.png" />
-    <Content Include="Content\LevelData\Level01.txt" />
+    <EmbeddedResource Include="Data\Levels\Level01.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <Content Include="Content\menuscreen.png" />
     <Content Include="Content\tileset1.png" />
     <Content Include="Content\titlescreen.png" />

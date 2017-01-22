@@ -6,6 +6,7 @@ using Paramita.Scenes;
 using System.Linq;
 using System;
 using System.Collections.Generic;
+using Paramita.Levels;
 
 namespace Paramita.SentientBeings
 {
@@ -60,8 +61,8 @@ namespace Paramita.SentientBeings
 
 
 
-        public Humanoid(GameScene gameScene, Texture2D sprites) 
-            : base(gameScene, sprites)
+        public Humanoid(GameScene gameScene, Level level, Texture2D sprites) 
+            : base(gameScene, level, sprites)
         {
 
         }

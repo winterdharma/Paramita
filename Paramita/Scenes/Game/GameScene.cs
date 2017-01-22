@@ -23,7 +23,7 @@ namespace Paramita.Scenes
 
         private Texture2D tilesheet;
         private Texture2D inventory_background;
-
+        public static TileSet tileset;
        
 
         public Player Player { get { return player; } }
@@ -36,8 +36,7 @@ namespace Paramita.Scenes
         public TileMap Map { get { return CurrentLevel.TileMap; } }
         public Level CurrentLevel
         {
-            get { return currentLevel; }
-            set { currentLevel = value; }
+            get { return levelManager.CurrentLevel; }
         }
 
         public GameScene(GameController game) : base(game)
@@ -49,15 +48,16 @@ namespace Paramita.Scenes
         public override void Initialize()
         {
             base.Initialize(); // This calls LoadContent()
-
+            
             SentientBeingCreator.gameScene = this;
-            player = SentientBeingCreator.CreateHumanPlayer();
+
+            tileset = new TileSet("tileset1", tilesheet, 8, 8, 32); 
 
             levelManager = new LevelManager(
                 GameRef,
                 new TileSet("tileset1", tilesheet, 8, 8, 32),
                 GameController.random);
-            
+            SetUpNewGame();
             statuses = new StatusMessages(GameController.ArialBold, 10, new Point(0,720));
             inventoryPanel = new Inventory(player, inventory_background, 10);
         }
@@ -86,7 +86,7 @@ namespace Paramita.Scenes
             // update the UI panels
             statuses.Update(gameTime);
             inventoryPanel.Update(gameTime);
-            currentLevel.Update(gameTime);
+            CurrentLevel.Update(gameTime);
 
             
 
@@ -110,20 +110,15 @@ namespace Paramita.Scenes
 
 
 
-        // This is called from the MenuScene and creates the first level.
-        // Currently, this is a simple test level. The item creation should
-        // be moved to the LevelManager when the level generation fully
-        // implemented.
         public void SetUpNewGame()
         {
             levelNumber = 1;
-            levelManager.Create(levelNumber, player);
+            var firstLevel = levelManager.Create(levelNumber);
+            player = SentientBeingCreator.CreateHumanPlayer(firstLevel);
+            firstLevel.Player = player;
+            player.CurrentTile = firstLevel.GetStairsUpTile();
+            levelManager.MoveToLevel(levelNumber, player);
         }
-
-
-
-        
-
 
 
         /*

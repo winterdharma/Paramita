@@ -33,8 +33,8 @@ namespace Paramita.SentientBeings
 
 
 
-        public Player(GameScene gameScene, string name, Texture2D sprites) 
-            : base(gameScene, sprites)
+        public Player(GameScene gameScene, Level level, string name, Texture2D sprites) 
+            : base(gameScene, level, sprites)
         {
             this.name = name;
             
@@ -96,7 +96,7 @@ namespace Paramita.SentientBeings
             // check for movement input and store the direction returned
             Compass direction = InputDevices.Moved();
 
-            Tile tile = gameScene.Map.GetTile(CurrentTile.TilePoint + Direction.GetPoint(direction));
+            Tile tile = level.TileMap.GetTile(CurrentTile.TilePoint + Direction.GetPoint(direction));
 
             SentientBeing npc = gameScene.CurrentLevel.GetNpcOnTile(tile);
             if (npc is SentientBeing)

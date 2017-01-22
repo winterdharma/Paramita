@@ -37,9 +37,9 @@ namespace Paramita.Levels
 
        
 
-        public void MoveToLevel(int levelNumber)
+        public void MoveToLevel(int levelNumber, Player player = null)
         {
-            if(levels.ContainsKey(levelNumber) == false)
+            if(!levels.ContainsKey(levelNumber))
             {
                 Create(levelNumber);
             }
@@ -47,12 +47,13 @@ namespace Paramita.Levels
             SetLevel(levelNumber);
         }
 
-        public void Create(int number, Player player = null)
+        public Level Create(int number)
         {
-            Level newLevel = LevelFactory.CreateLevel(number);
+            levels[number] = LevelFactory.CreateLevel(number);
+            return levels[number];
         }
 
-        
+
 
         private void SetLevel(int levelNumber)
         {

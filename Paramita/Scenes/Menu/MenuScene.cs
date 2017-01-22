@@ -54,7 +54,7 @@ namespace Paramita.Scenes
                 if (menuComponent.SelectedIndex == 0)
                 {
                     InputDevices.FlushInput();
-                    GameRef.GameScene.SetUpNewGame();
+                    //GameRef.GameScene.SetUpNewGame();
                     manager.PushScene(GameRef.GameScene, PlayerIndexInControl);
                 }
                 // Loading saved games is not implemented yet
