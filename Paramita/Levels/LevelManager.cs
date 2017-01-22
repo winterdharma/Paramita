@@ -11,43 +11,46 @@ namespace Paramita.Levels
      * and provides access to them for level transitions.
      */
 
-    public class LevelManager
+    public static class LevelManager
     {
-        public Dictionary<int, Level> levels;
-        private Level currentLevel;
-        private TileMapCreator mapCreator;
-        private TileSet tileset;
-        private GameController game;
+        private static Dictionary<int, Level> levels = new Dictionary<int, Level>();
+        private static Level currentLevel;
+        private static int levelNumber;
 
-        public Level CurrentLevel
+
+        public static int LevelNumber
+        {
+            get { return levelNumber; }
+            set { levelNumber = value; }
+        }
+
+        public static Level CurrentLevel
         {
             get { return currentLevel; }
-            private set { currentLevel = value; }
+            set { currentLevel = value; }
         }
-        
 
 
-        public LevelManager(GameController game, TileSet tileset, Random random)
+        public static void ChangeLevel(int change, Player player)
         {
-            this.game = game;
-            mapCreator = new TileMapCreator(40, 25, 10, 8, 3, random);
-            this.tileset = tileset;
-            levels = new Dictionary<int, Level>();
+            levelNumber += change;
+
+            MoveToLevel(levelNumber, player);
         }
 
-       
 
-        public void MoveToLevel(int levelNumber, Player player = null)
+        public static void MoveToLevel(int levelNumber, Player player)
         {
             if(!levels.ContainsKey(levelNumber))
             {
                 Create(levelNumber);
             }
 
-            SetLevel(levelNumber);
+            SetLevel(levelNumber, player);
         }
 
-        public Level Create(int number)
+
+        public static Level Create(int number)
         {
             levels[number] = LevelFactory.CreateLevel(number);
             return levels[number];
@@ -55,12 +58,14 @@ namespace Paramita.Levels
 
 
 
-        private void SetLevel(int levelNumber)
+        private static void SetLevel(int levelNumber, Player player)
         {
+            CurrentLevel.Player = null;
             CurrentLevel = levels[levelNumber];
+            CurrentLevel.Player = player;
         }
 
-        public Dictionary<int, Level> GetLevels()
+        public static Dictionary<int, Level> GetLevels()
         { return levels; }
     }
 }

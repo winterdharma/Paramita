@@ -27,13 +27,14 @@ namespace Paramita.Levels
         private int tilesHigh;
         private int tileSize;
         private Point mapSizeInPixels;
+        private TileSet tileSet;
 
         
         [ContentSerializer]
         public string MapName { get; private set; }
 
         [ContentSerializer]
-        public TileSet TileSet { get; set; }
+        public TileSet TileSet { get { return tileSet; } }
 
         // Number of tiles wide and high
         public int TilesWide { get { return tilesWide; } }
@@ -52,7 +53,7 @@ namespace Paramita.Levels
             this.tiles = tiles;
             tilesWide = tiles.GetLength(0);
             tilesHigh = tiles.GetLength(1);
-            TileSet = tileSet;
+            this.tileSet = tileSet;
             tileSize = tileSet.TileSize;
             mapSizeInPixels = new Point(tilesWide * tileSize, tilesHigh * tileSize);
             MapName = name;
@@ -197,9 +198,9 @@ namespace Paramita.Levels
                      Camera.Transformation);
 
                     spriteBatch.Draw(
-                    TileSet.Texture,
+                    tileSet.Texture,
                     destination,
-                    TileSet.GetRectForTileType(tile.TileType),
+                    tileSet.GetRectForTileType(tile.TileType),
                     Color.White);
 
                     spriteBatch.End();

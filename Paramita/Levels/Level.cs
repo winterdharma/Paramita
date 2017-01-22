@@ -79,6 +79,11 @@ namespace Paramita.Levels
             return tileMap.FindTileType(TileType.StairsUp);
         }
 
+        public Tile GetStairsDownTile()
+        {
+            return tileMap.FindTileType(TileType.StairsDown);
+        }
+
         // returns a suitable starting tile for the player or enemy
         // Does not check for empty state yet
         public Tile GetEmptyWalkableTile()

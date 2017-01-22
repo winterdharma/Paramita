@@ -28,8 +28,8 @@ namespace Paramita.SentientBeings
         protected int body = 3;
         protected int tail = 4;
 
-        public Animal(GameScene gameScene, Level level, Texture2D sprites) 
-            : base(gameScene, level, sprites)
+        public Animal(Level level, Texture2D sprites) 
+            : base(level, sprites)
         {
         }
 

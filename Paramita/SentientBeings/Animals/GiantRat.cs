@@ -9,8 +9,8 @@ namespace Paramita.SentientBeings.Animals
 {
     public class GiantRat : Animal, INpc
     {
-        public GiantRat(GameScene gameScene, Level level, Texture2D sprites) 
-            : base(gameScene, level, sprites)
+        public GiantRat(Level level, Texture2D sprites) 
+            : base(level, sprites)
         {
             InitializeAttributes();
             InitializeItemLists();
@@ -62,10 +62,10 @@ namespace Paramita.SentientBeings.Animals
         // is next to it and attacks if true.
         public void PerformAI()
         {
-            Tile playerTile = gameScene.Player.CurrentTile;
+            Tile playerTile = level.Player.CurrentTile;
             if(CurrentTile.AdjacentTo(playerTile) == true)
             {
-                Attack(gameScene.Player);
+                Attack(level.Player);
             }
         }
     }

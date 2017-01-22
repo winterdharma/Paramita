@@ -9,14 +9,28 @@ using Paramita.Data;
 using Paramita.SentientBeings;
 using Paramita.Items;
 using Paramita.Scenes;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Paramita.Levels
 {
     public static class LevelFactory
     {
         private const string LEVEL_01 = "Paramita.Data.Levels.Level01.txt";
-
+        private static Texture2D tilesheet;
+        private static TileSet tileSet;
         
+        public static Texture2D Tilesheet
+        {
+            get { return tilesheet; }
+            set { tilesheet = value; }
+        }
+
+        public static TileSet TileSet
+        {
+            set { tileSet = value; }
+        }
+
+
 
 
         public static Level CreateLevel(int levelNumber)
@@ -28,9 +42,6 @@ namespace Paramita.Levels
             newLevel.Npcs = CreateNpcs(levelData, newLevel);
             return newLevel;
         }
-
-
-        
 
 
         private static LevelData GetLevelData(int levelNumber)
@@ -53,10 +64,8 @@ namespace Paramita.Levels
         private static TileMap CreateTileMap(LevelData data)
         {
             var mapCreator = new TileMapCreator(data.LevelWidth, data.LevelHeight, 20, 20, 10, GameController.random);
-            return new TileMap(GameScene.tileset, mapCreator.CreateMap(), "level 1");
+            return new TileMap(tileSet, mapCreator.CreateMap(), "level 1");
         }
-
-
 
 
         private static List<SentientBeing> CreateNpcs(LevelData data, Level level)
@@ -75,7 +84,6 @@ namespace Paramita.Levels
 
             return npcs;
         }
-
 
 
         private static List<Item> CreateItems(LevelData data)

@@ -61,8 +61,8 @@ namespace Paramita.SentientBeings
 
 
 
-        public Humanoid(GameScene gameScene, Level level, Texture2D sprites) 
-            : base(gameScene, level, sprites)
+        public Humanoid(Level level, Texture2D sprites) 
+            : base(level, sprites)
         {
 
         }

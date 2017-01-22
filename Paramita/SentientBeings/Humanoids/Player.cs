@@ -33,8 +33,8 @@ namespace Paramita.SentientBeings
 
 
 
-        public Player(GameScene gameScene, Level level, string name, Texture2D sprites) 
-            : base(gameScene, level, sprites)
+        public Player(Level level, string name, Texture2D sprites) 
+            : base(level, sprites)
         {
             this.name = name;
             
@@ -98,11 +98,11 @@ namespace Paramita.SentientBeings
 
             Tile tile = level.TileMap.GetTile(CurrentTile.TilePoint + Direction.GetPoint(direction));
 
-            SentientBeing npc = gameScene.CurrentLevel.GetNpcOnTile(tile);
+            SentientBeing npc = LevelManager.CurrentLevel.GetNpcOnTile(tile);
             if (npc is SentientBeing)
             {
                 Attack(npc);
-                gameScene.CurrentLevel.IsPlayersTurn = false;
+                LevelManager.CurrentLevel.IsPlayersTurn = false;
             }
             else
             {
@@ -113,7 +113,7 @@ namespace Paramita.SentientBeings
                     // burn a calorie while walking
                     ExpendSustanence();
                     // toggle the turn flag so Npcs will go next
-                    gameScene.CurrentLevel.IsPlayersTurn = false;
+                    LevelManager.CurrentLevel.IsPlayersTurn = false;
                 }
             }
         }
@@ -163,15 +163,28 @@ namespace Paramita.SentientBeings
             switch(tileType)
             {
                 case TileType.StairsUp:
-                    if(gameScene.LevelNumber > 1)
-                        gameScene.ChangeLevel(-1);
+                    if(LevelManager.LevelNumber > 1)
+                        ChangeLevel(-1);
                     break;
                 case TileType.StairsDown:
-                    gameScene.ChangeLevel(1);
+                    ChangeLevel(1);
                     break;
             }
         }
 
+
+        private void ChangeLevel(int levelChange)
+        {
+            LevelManager.ChangeLevel(levelChange, this);
+            level = LevelManager.CurrentLevel;
+
+            if (levelChange < 0)
+                currentTile = level.GetStairsUpTile();
+            else if (levelChange > 0)
+                currentTile = level.GetStairsDownTile();
+
+            GameScene.PostNewStatus("You are now on level " + LevelManager.LevelNumber + ".");
+        }
 
 
         // decrement's the player's sustanence value and writes messages to

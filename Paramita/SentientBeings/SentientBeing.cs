@@ -24,7 +24,6 @@ namespace Paramita.SentientBeings
     {
         protected string name;
 
-        protected GameScene gameScene;
         protected Level level;
 
         protected Tile currentTile;
@@ -145,9 +144,8 @@ namespace Paramita.SentientBeings
 
 
 
-        public SentientBeing(GameScene gameScene, Level level, Texture2D spritesheet)
+        public SentientBeing(Level level, Texture2D spritesheet)
         {
-            this.gameScene = gameScene;
             this.level = level;
             var frame = new Rectangle(0, 0, 32, 32);
             sprite = new BeingSprite(spritesheet, frame);

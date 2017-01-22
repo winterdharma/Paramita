@@ -18,7 +18,6 @@ namespace Paramita.SentientBeings
     {
         private static Dictionary<BeingType, Texture2D> spritesheets = new Dictionary<BeingType, Texture2D>();
        
-        public static GameScene gameScene;
 
 
         public static Dictionary<BeingType, Texture2D> Spritesheets
@@ -30,12 +29,12 @@ namespace Paramita.SentientBeings
 
         public static Player CreateHumanPlayer(Level level)
         {
-            return new Player(gameScene, level, "Wesley", spritesheets[BeingType.HumanPlayer]);
+            return new Player(level, "Wesley", spritesheets[BeingType.HumanPlayer]);
         }
 
         public static GiantRat CreateGiantRat(Level level)
         {
-            return new GiantRat(gameScene, level, spritesheets[BeingType.GiantRat]);
+            return new GiantRat(level, spritesheets[BeingType.GiantRat]);
         }
     }
 }
