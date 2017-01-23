@@ -7,6 +7,9 @@ namespace Paramita.Data
         private string levelPath;
         private int levelWidth;
         private int levelHeight;
+        private int maxRooms;
+        private int maxRoomSize;
+        private int minRoomSize;
         private int giantRats;
         private int shortSwords;
         private int bucklers;
@@ -15,6 +18,9 @@ namespace Paramita.Data
 
         public int LevelWidth { get { return levelWidth; } }
         public int LevelHeight { get { return levelHeight; } }
+        public int MaxRooms { get { return maxRooms; } }
+        public int MaxRoomSize { get { return maxRoomSize; } }
+        public int MinRoomSize { get { return minRoomSize; } }
 
         public int GiantRats { get { return giantRats; } }
 
@@ -57,6 +63,15 @@ namespace Paramita.Data
                     break;
                 case "LevelHeight":
                     levelHeight = int.Parse(value);
+                    break;
+                case "MaxRooms":
+                    maxRooms = int.Parse(value);
+                    break;
+                case "MaxRoomSize":
+                    maxRoomSize = int.Parse(value);
+                    break;
+                case "MinRoomSize":
+                    minRoomSize = int.Parse(value);
                     break;
                 case "GiantRat":
                     giantRats = int.Parse(value);

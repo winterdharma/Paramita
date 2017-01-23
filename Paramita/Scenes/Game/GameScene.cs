@@ -46,7 +46,6 @@ namespace Paramita.Scenes
         }
 
 
-
         protected override void LoadContent()
         {
             LevelFactory.Tilesheet = content.Load<Texture2D>("tileset1");
@@ -61,7 +60,6 @@ namespace Paramita.Scenes
 
             inventory_background = content.Load<Texture2D>("black_background1");
         }
-
 
 
         public override void Update(GameTime gameTime)

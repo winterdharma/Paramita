@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items;
 using Paramita.Scenes;
 using System;
-using System.Collections.Generic;
 
 // need to continue getting this working - merging RogueSharp Map
 // and the TileLayer class together.
@@ -29,7 +28,8 @@ namespace Paramita.Levels
         private Point mapSizeInPixels;
         private TileSet tileSet;
 
-        
+        private const string unsupportedTileType = "A TileType was supplied that is not supported for this search.";
+
         [ContentSerializer]
         public string MapName { get; private set; }
 
@@ -119,9 +119,12 @@ namespace Paramita.Levels
             switch(type)
             {
                 case TileType.StairsUp:
-                    return FindStairsUpTile();
+                    return FindTileByType(TileType.StairsUp);
                 case TileType.StairsDown:
-                    return FindStairsDownTile();
+                    return FindTileByType(TileType.StairsDown);
+                default:
+                    Console.WriteLine(unsupportedTileType + "(" + type + ")");
+                    break;
             }
             return null;
         }
@@ -129,32 +132,19 @@ namespace Paramita.Levels
 
 
         // conducts a linear search of @tiles and returns the first StairsDown tile encountered
-        private Tile FindStairsDownTile()
+        private Tile FindTileByType(TileType type)
         {
             for(int x = 0; x < TilesWide; x++)
             {
                 for(int y = 0; y < TilesHigh; y++)
                 {
-                    if (tiles[x, y].TileType == TileType.StairsDown)
+                    if (tiles[x, y].TileType == type)
                         return tiles[x, y];
                 }
             }
             return null;
         }
 
-        // conducts a linear search of @tiles and returns the first StairsUp tile encountered
-        private Tile FindStairsUpTile()
-        {
-            for (int x = 0; x < TilesWide; x++)
-            {
-                for (int y = 0; y < TilesHigh; y++)
-                {
-                    if (tiles[x, y].TileType == TileType.StairsUp)
-                        return tiles[x, y];
-                }
-            }
-            return null;
-        }
 
         public void Update(GameTime gameTime)
         {
@@ -178,8 +168,6 @@ namespace Paramita.Levels
             max.Y = Math.Min(viewPoint.Y + 1, tilesHigh);
             destination = new Rectangle(0, 0, tileSize, tileSize);
             Tile tile;
-
-            
 
             for (int y = min.Y; y < max.Y; y++)
             {

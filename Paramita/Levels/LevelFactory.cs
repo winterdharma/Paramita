@@ -63,7 +63,8 @@ namespace Paramita.Levels
 
         private static TileMap CreateTileMap(LevelData data)
         {
-            var mapCreator = new TileMapCreator(data.LevelWidth, data.LevelHeight, 20, 20, 10, GameController.random);
+            var mapCreator = new TileMapCreator(data.LevelWidth, data.LevelHeight, data.MaxRooms, 
+                data.MaxRoomSize, data.MinRoomSize, GameController.random);
             return new TileMap(tileSet, mapCreator.CreateMap(), "level 1");
         }
 
