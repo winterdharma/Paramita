@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Paramita.Levels
+namespace Paramita.Engine
 {
-    public class StoryEvent
+    public class Class1
     {
     }
 }

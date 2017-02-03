@@ -1,13 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items;
-using Paramita.Mechanics;
 using Paramita.Scenes;
 using System.Collections.Generic;
 using System;
 using System.Linq;
 using Paramita.UI;
+using Paramita.UI.Input;
 using Paramita.Levels;
+using Paramita.Mechanics;
 
 namespace Paramita.SentientBeings
 {
@@ -149,7 +150,6 @@ namespace Paramita.SentientBeings
             this.level = level;
             var frame = new Rectangle(0, 0, 32, 32);
             sprite = new BeingSprite(spritesheet, frame);
-
             sprite.Facing = Compass.East;
         }
 

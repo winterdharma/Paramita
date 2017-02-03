@@ -18,7 +18,6 @@ namespace Paramita.Levels
         private TileMap tileMap;
         private List<SentientBeing> npcs;
         private List<Item> items;
-        private List<StoryEvent> storyEvents;
         private Player player;
         private bool isPlayersTurn = true;
 
@@ -46,11 +45,6 @@ namespace Paramita.Levels
             set { items = value; }
         }
 
-        public List<StoryEvent> StoryEvents
-        {
-            get { return storyEvents; }
-            set { storyEvents = value; }
-        }
 
         public Player Player
         {
@@ -63,12 +57,12 @@ namespace Paramita.Levels
 
         }
 
-        public Level(TileMap map, List<Item> items, List<SentientBeing> npcs, List<StoryEvent> events = null, Player player = null)
+        public Level(TileMap map, List<Item> items, List<SentientBeing> npcs, Player player = null)
         {
             tileMap = map;
             this.items = items;
             this.npcs = npcs;
-            storyEvents = events;
+            
             this.player = player;
         }
 

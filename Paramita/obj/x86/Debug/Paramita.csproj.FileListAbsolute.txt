@@ -45,3 +45,6 @@ C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\SharpDX.Direct3
 C:\Users\Charlie\Desktop\Paramita\Paramita\obj\x86\Debug\Paramita.exe
 C:\Users\Charlie\Desktop\Paramita\Paramita\obj\x86\Debug\Paramita.pdb
 C:\Users\Charlie\Desktop\Paramita\Paramita\obj\x86\Debug\Paramita.csprojResolveAssemblyReference.cache
+C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Paramita.exe.config
+C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Paramita.UI.dll
+C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Paramita.UI.pdb

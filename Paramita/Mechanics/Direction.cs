@@ -1,8 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+using Paramita.UI.Input;
 
 namespace Paramita.Mechanics
 {
-    public enum Compass {
+    public enum CompassApp {
         North = 0,
         Northeast,
         East,

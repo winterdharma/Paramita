@@ -1,13 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items;
-using Paramita.Mechanics;
 using Paramita.Scenes;
 using System.Collections.Generic;
 using Paramita.Items.Valuables;
 using Paramita.Items.Consumables;
 using System;
 using Paramita.Levels;
+using Paramita.UI.Input;
+using Microsoft.Xna.Framework.Input;
 
 namespace Paramita.SentientBeings
 {
@@ -37,7 +38,7 @@ namespace Paramita.SentientBeings
             : base(level, sprites)
         {
             this.name = name;
-            
+            InputDevices.OnKeyWasPressed += HandleMoveInput;
             InitializeAttributes();
             InitializeItemLists();
         }
@@ -85,18 +86,15 @@ namespace Paramita.SentientBeings
 
         public override void Update(GameTime gameTime)
         {
-            HandleInput();
+            //HandleInput();
             base.Update(gameTime);
         }
 
 
         // This method polls InputDevices for player input and responds
-        private void HandleInput()
+        private void HandleInput(Compass direction)
         {
-            // check for movement input and store the direction returned
-            Compass direction = InputDevices.Moved();
-
-            Tile tile = level.TileMap.GetTile(CurrentTile.TilePoint + Direction.GetPoint(direction));
+            Tile tile = level.TileMap.GetTile(CurrentTile.TilePoint + Mechanics.Direction.GetPoint(direction));
 
             SentientBeing npc = LevelManager.CurrentLevel.GetNpcOnTile(tile);
             if (npc is SentientBeing)
@@ -118,6 +116,19 @@ namespace Paramita.SentientBeings
             }
         }
 
+        private void HandleMoveInput(object sender, KeyWasPressedEventArgs e)
+        {
+            Compass direction = Compass.None;
+            if (e.Key == Keys.Left)
+                direction = Compass.West;
+            else if (e.Key == Keys.Right)
+                direction = Compass.East;
+            else if (e.Key == Keys.Up)
+                direction = Compass.North;
+            else if (e.Key == Keys.Down)
+                direction = Compass.South;
+            HandleInput(direction);
+        }
 
 
        /*  

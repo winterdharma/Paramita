@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -13,7 +13,8 @@
     <AssemblyName>Paramita</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MonoGamePlatform>Windows</MonoGamePlatform>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -59,7 +60,6 @@
     <Compile Include="Items\NaturalWeapons\Fist.cs" />
     <Compile Include="Items\Weapons\ShortSword.cs" />
     <Compile Include="Levels\LevelFactory.cs" />
-    <Compile Include="Levels\StoryEvent.cs" />
     <Compile Include="Mechanics\Combat\Attack.cs" />
     <Compile Include="Mechanics\Combat\AttackRoll.cs" />
     <Compile Include="Mechanics\Combat\DamageRoll.cs" />
@@ -134,6 +134,7 @@
     <MonoGameContentReference Include="Content\Content.mgcb" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Content\Fonts\InterfaceFont.spritefont" />
     <None Include="Content\Fonts\lucida_console.spritefont" />
     <None Include="Content\Fonts\noto_sans.spritefont" />
@@ -143,6 +144,12 @@
     <Folder Include="Content\Images\Scenes\" />
     <Folder Include="Content\Images\Tiles\" />
     <Folder Include="Items\Armors\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Paramita.UI\Paramita.UI.csproj">
+      <Project>{17123559-4620-4241-b9d0-237856df95ee}</Project>
+      <Name>Paramita.UI</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />

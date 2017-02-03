@@ -3,10 +3,11 @@ using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items;
 using Paramita.Mechanics;
 using Paramita.SentientBeings;
+using Paramita.UI.Input;
 
 namespace Paramita.UI
 {
-    public enum InventoryActions
+    public enum InventoryActionsApp
     {
         Drop,
         Use,
@@ -163,8 +164,8 @@ namespace Paramita.UI
 
         private void HandleInput()
         {
-            InventoryActions action = InputDevices.CheckForInventoryAction();
-            int selectionInput = InputDevices.CheckIfItemSelected();
+            InventoryActions action = Input.InputDevices.CheckForInventoryAction();
+            int selectionInput = Input.InputDevices.CheckIfItemSelected();
 
             if (action == InventoryActions.TogglePanel)
             {

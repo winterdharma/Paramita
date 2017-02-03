@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.Mechanics;
 using Paramita.Scenes;
+using Paramita.UI.Input;
 
 namespace Paramita.UI
 {
@@ -19,7 +20,7 @@ namespace Paramita.UI
         public Compass Facing
         {
             get { return facing; }
-            set { facing = value; }
+            set { facing = value; SetCurrentSprite(); }
         }
 
         public BeingSprite(Texture2D spritesheet, Rectangle frame) : base(spritesheet, frame)

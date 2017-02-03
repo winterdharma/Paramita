@@ -5,16 +5,50 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paramita", "Paramita\Paramita.csproj", "{A28A77DB-F3E9-41D8-A348-5F95B65A27B5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paramita.UI", "Paramita.UI\Paramita.UI.csproj", "{17123559-4620-4241-B9D0-237856DF95EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paramita.Content", "Paramita.Content\Paramita.Content.csproj", "{DF20D851-8CBA-4AE5-AC16-0C14F02E7F45}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paramita.Engine", "Paramita.Engine\Paramita.Engine.csproj", "{11AFB65E-097C-45F2-B7A2-9C70912A3973}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A28A77DB-F3E9-41D8-A348-5F95B65A27B5}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{A28A77DB-F3E9-41D8-A348-5F95B65A27B5}.Debug|x86.ActiveCfg = Debug|x86
 		{A28A77DB-F3E9-41D8-A348-5F95B65A27B5}.Debug|x86.Build.0 = Debug|x86
+		{A28A77DB-F3E9-41D8-A348-5F95B65A27B5}.Release|Any CPU.ActiveCfg = Release|x86
 		{A28A77DB-F3E9-41D8-A348-5F95B65A27B5}.Release|x86.ActiveCfg = Release|x86
 		{A28A77DB-F3E9-41D8-A348-5F95B65A27B5}.Release|x86.Build.0 = Release|x86
+		{17123559-4620-4241-B9D0-237856DF95EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17123559-4620-4241-B9D0-237856DF95EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17123559-4620-4241-B9D0-237856DF95EE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{17123559-4620-4241-B9D0-237856DF95EE}.Debug|x86.Build.0 = Debug|Any CPU
+		{17123559-4620-4241-B9D0-237856DF95EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17123559-4620-4241-B9D0-237856DF95EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17123559-4620-4241-B9D0-237856DF95EE}.Release|x86.ActiveCfg = Release|Any CPU
+		{17123559-4620-4241-B9D0-237856DF95EE}.Release|x86.Build.0 = Release|Any CPU
+		{DF20D851-8CBA-4AE5-AC16-0C14F02E7F45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF20D851-8CBA-4AE5-AC16-0C14F02E7F45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF20D851-8CBA-4AE5-AC16-0C14F02E7F45}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DF20D851-8CBA-4AE5-AC16-0C14F02E7F45}.Debug|x86.Build.0 = Debug|Any CPU
+		{DF20D851-8CBA-4AE5-AC16-0C14F02E7F45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF20D851-8CBA-4AE5-AC16-0C14F02E7F45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF20D851-8CBA-4AE5-AC16-0C14F02E7F45}.Release|x86.ActiveCfg = Release|Any CPU
+		{DF20D851-8CBA-4AE5-AC16-0C14F02E7F45}.Release|x86.Build.0 = Release|Any CPU
+		{11AFB65E-097C-45F2-B7A2-9C70912A3973}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11AFB65E-097C-45F2-B7A2-9C70912A3973}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11AFB65E-097C-45F2-B7A2-9C70912A3973}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{11AFB65E-097C-45F2-B7A2-9C70912A3973}.Debug|x86.Build.0 = Debug|Any CPU
+		{11AFB65E-097C-45F2-B7A2-9C70912A3973}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11AFB65E-097C-45F2-B7A2-9C70912A3973}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11AFB65E-097C-45F2-B7A2-9C70912A3973}.Release|x86.ActiveCfg = Release|Any CPU
+		{11AFB65E-097C-45F2-B7A2-9C70912A3973}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

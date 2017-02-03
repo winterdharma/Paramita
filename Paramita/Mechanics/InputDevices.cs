@@ -1,11 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Paramita.UI;
+using Paramita.UI.Input;
 
 namespace Paramita.Mechanics
 {
 
-    public enum MouseButtons
+    public enum MouseButtonsApp
         {
             Left,
             Right,
@@ -73,17 +74,17 @@ namespace Paramita.Mechanics
         }
 
 
-        public static bool CheckMouseReleased(MouseButtons button)
+        public static bool CheckMouseReleased(MouseButtonsApp button)
         {
             switch (button)
             {
-                case MouseButtons.Left:
+                case MouseButtonsApp.Left:
                     return (CurrentMouseState.LeftButton == ButtonState.Released) &&
                     (PreviousMouseState.LeftButton == ButtonState.Pressed);
-                case MouseButtons.Right:
+                case MouseButtonsApp.Right:
                     return (CurrentMouseState.RightButton == ButtonState.Released) &&
                     (PreviousMouseState.RightButton == ButtonState.Pressed);
-                case MouseButtons.Middle:
+                case MouseButtonsApp.Middle:
                     return (CurrentMouseState.MiddleButton == ButtonState.Released) &&
                     (PreviousMouseState.MiddleButton == ButtonState.Pressed);
             }

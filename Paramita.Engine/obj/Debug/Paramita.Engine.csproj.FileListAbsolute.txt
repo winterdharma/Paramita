@@ -1,0 +1,5 @@
+C:\Users\Charlie\Desktop\Paramita\Paramita.Engine\bin\Debug\Paramita.Engine.dll
+C:\Users\Charlie\Desktop\Paramita\Paramita.Engine\bin\Debug\Paramita.Engine.pdb
+C:\Users\Charlie\Desktop\Paramita\Paramita.Engine\obj\Debug\Paramita.Engine.csprojResolveAssemblyReference.cache
+C:\Users\Charlie\Desktop\Paramita\Paramita.Engine\obj\Debug\Paramita.Engine.dll
+C:\Users\Charlie\Desktop\Paramita\Paramita.Engine\obj\Debug\Paramita.Engine.pdb

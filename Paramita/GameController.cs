@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Paramita.Mechanics;
+using Paramita.UI.Input;
 using Paramita.Scenes;
 using System;
 
@@ -45,7 +45,7 @@ namespace Paramita
             graphics.PreferredBackBufferWidth = screenRectangle.Width;
             graphics.PreferredBackBufferHeight = screenRectangle.Height;
 
-            InputDevices = new InputDevices(this);
+            InputDevices = new InputDevices();
 
             SceneManager = new SceneManager(this);
             Components.Add(SceneManager);
