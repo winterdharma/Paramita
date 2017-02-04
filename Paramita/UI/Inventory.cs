@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items;
-using Paramita.Mechanics;
 using Paramita.SentientBeings;
 using Paramita.UI.Input;
+using System;
 
 namespace Paramita.UI
 {
@@ -52,7 +52,7 @@ namespace Paramita.UI
         private string cancelHint =     "Press (c) to Cancel Selection";
         private Vector2 hintPosition;
 
-        private int itemSelected;
+        private int _itemSelected;
         private Player player;
         private Texture2D background;
         private SpriteFont fontHeader = GameController.ArialBold;
@@ -66,6 +66,22 @@ namespace Paramita.UI
             this.player = player;
             this.background = background;
             this.maxItems = maxItems;
+
+            InputDevices.OnD0KeyWasPressed += HandleSelect0Input;
+            InputDevices.OnD1KeyWasPressed += HandleSelect1Input;
+            InputDevices.OnD2KeyWasPressed += HandleSelect2Input;
+            InputDevices.OnD3KeyWasPressed += HandleSelect3Input;
+            InputDevices.OnD4KeyWasPressed += HandleSelect4Input;
+            InputDevices.OnD5KeyWasPressed += HandleSelect5Input;
+            InputDevices.OnD6KeyWasPressed += HandleSelect6Input;
+            InputDevices.OnD7KeyWasPressed += HandleSelect7Input;
+            InputDevices.OnD8KeyWasPressed += HandleSelect8Input;
+            InputDevices.OnD9KeyWasPressed += HandleSelect9Input;
+            InputDevices.OnDKeyWasPressed += HandleDropInput;
+            InputDevices.OnEKeyWasPressed += HandleEquipInput;
+            InputDevices.OnUKeyWasPressed += HandleUseInput;
+            InputDevices.OnCKeyWasPressed += HandleCancelInput;
+            InputDevices.OnIKeyWasPressed += HandleToggleInput;
 
             labels = CreateItemLabels(maxItems);
             itemDescriptions = GetPlayerItemStrings();
@@ -85,7 +101,7 @@ namespace Paramita.UI
 
             hintPosition = new Vector2(
                 panelRectangle.Left + 10, panelHeightOpen - 60);
-            itemSelected = 0;
+            _itemSelected = 0;
         }
 
 
@@ -162,32 +178,107 @@ namespace Paramita.UI
         }
 
 
-        private void HandleInput()
+        private void HandleInput(InventoryActions action)
         {
-            InventoryActions action = Input.InputDevices.CheckForInventoryAction();
-            int selectionInput = Input.InputDevices.CheckIfItemSelected();
-
             if (action == InventoryActions.TogglePanel)
-            {
                 isOpen = !isOpen;
-            }
+
+            int selectionInput = 0;
+            if((int)action > 0 && (int)action < 11)
+                selectionInput = (int)action;
 
             if(selectionInput > 0)
-                itemSelected = selectionInput;
+                _itemSelected = selectionInput;
 
-            if(itemSelected > 0 && itemSelected <= maxItems)
+            if(_itemSelected > 0 && _itemSelected <= maxItems)
             {
                 if(action == InventoryActions.Drop)
                 {
-                    player.DropItem(GetPlayerItem(itemSelected));
-                    itemSelected = 0;
+                    player.DropItem(GetPlayerItem(_itemSelected));
+                    _itemSelected = 0;
                 }
                 else if(action == InventoryActions.Cancel)
                 {
-                    itemSelected = 0;
+                    _itemSelected = 0;
                 }
             }
         }
+
+        private void HandleSelect0Input(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Select0);
+        }
+
+        private void HandleSelect1Input(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Select1);
+        }
+
+        private void HandleSelect2Input(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Select2);
+        }
+
+        private void HandleSelect3Input(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Select3);
+        }
+
+        private void HandleSelect4Input(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Select4);
+        }
+
+        private void HandleSelect5Input(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Select5);
+        }
+
+        private void HandleSelect6Input(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Select6);
+        }
+
+        private void HandleSelect7Input(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Select7);
+        }
+
+        private void HandleSelect8Input(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Select8);
+        }
+
+        private void HandleSelect9Input(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Select9);
+        }
+
+        private void HandleDropInput(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Drop);
+        }
+
+        private void HandleEquipInput(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Equip);
+        }
+
+        private void HandleUseInput(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Use);
+        }
+
+        private void HandleCancelInput(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Cancel);
+        }
+
+        private void HandleToggleInput(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.TogglePanel);
+        }
+
 
         // Maps the item number in the Inventory list to the corresponding Item in the
         // player object. (The first five are equipment slots and second five are in
@@ -227,7 +318,7 @@ namespace Paramita.UI
         public void Update(GameTime gameTime)
         {
             itemDescriptions = GetPlayerItemStrings();
-            HandleInput();
+            //HandleInput();
         }
 
 
@@ -260,7 +351,7 @@ namespace Paramita.UI
             Color fontColor = Color.White;
             for (int x = 0; x < itemDescriptions.Length; x++)
             {
-                if (itemSelected == (x + 1) && GetPlayerItem(itemSelected) != null)
+                if (_itemSelected == (x + 1) && GetPlayerItem(_itemSelected) != null)
                 {
                     fontColor = Color.Red;
                 }
@@ -272,7 +363,7 @@ namespace Paramita.UI
             }
 
             // check if an item has been selected and draw appropos hint text
-            if (itemSelected != 0 && itemSelected <= maxItems && GetPlayerItem(itemSelected) != null)
+            if (_itemSelected != 0 && _itemSelected <= maxItems && GetPlayerItem(_itemSelected) != null)
             {
                 spriteBatch.DrawString(fontText, dropHint, hintPosition, fontColor);
                 spriteBatch.DrawString(fontText, cancelHint,

@@ -38,7 +38,12 @@ namespace Paramita.SentientBeings
             : base(level, sprites)
         {
             this.name = name;
-            InputDevices.OnKeyWasPressed += HandleMoveInput;
+
+            InputDevices.OnLeftKeyWasPressed += HandleMoveLeftInput;
+            InputDevices.OnRightKeyWasPressed += HandleMoveRightInput;
+            InputDevices.OnUpKeyWasPressed += HandleMoveUpInput;
+            InputDevices.OnDownKeyWasPressed += HandleMoveDownInput;
+
             InitializeAttributes();
             InitializeItemLists();
         }
@@ -116,25 +121,34 @@ namespace Paramita.SentientBeings
             }
         }
 
-        private void HandleMoveInput(object sender, KeyWasPressedEventArgs e)
+        private void HandleMoveLeftInput(object sender, EventArgs e)
         {
-            Compass direction = Compass.None;
-            if (e.Key == Keys.Left)
-                direction = Compass.West;
-            else if (e.Key == Keys.Right)
-                direction = Compass.East;
-            else if (e.Key == Keys.Up)
-                direction = Compass.North;
-            else if (e.Key == Keys.Down)
-                direction = Compass.South;
+            Compass direction = Compass.West;
             HandleInput(direction);
         }
 
+        private void HandleMoveRightInput(object sender, EventArgs e)
+        {
+            Compass direction = Compass.East;
+            HandleInput(direction);
+        }
 
-       /*  
-        *  This method is called immediately when CurrentTile is changed in Update() to check for
-        *  any events that are triggered by the new tile, such as picking up items, changing levels, etc.
-        */
+        private void HandleMoveUpInput(object sender, EventArgs e)
+        {
+            Compass direction = Compass.North;
+            HandleInput(direction);
+        }
+
+        private void HandleMoveDownInput(object sender, EventArgs e)
+        {
+            Compass direction = Compass.South;
+            HandleInput(direction);
+        }
+
+        /*  
+         *  This method is called immediately when CurrentTile is changed in Update() to check for
+         *  any events that are triggered by the new tile, such as picking up items, changing levels, etc.
+         */
         private void CheckForNewTileEvents()
         {
             // check for items in the new tile and pick the first item present
