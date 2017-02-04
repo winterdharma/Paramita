@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Paramita.UI.Input;
 using System;
 
@@ -15,7 +14,7 @@ namespace Paramita.Scenes
         SpriteFont font;
         TimeSpan elapsed;
         Vector2 position;
-        string message = "PRESS SPACE TO CONTINUE";
+        string message = "PRESS ANY KEY TO CONTINUE";
 
 
 
@@ -23,6 +22,8 @@ namespace Paramita.Scenes
         public TitleScene(GameController game) : base(game) {
             // see Initialize() and LoadContent() for instantiation tasks
             backgroundDestination = GameController.ScreenRectangle;
+            InputDevices.OnAnyKeyWasPressed += HandleInput;
+            InputDevices.OnLeftMouseButtonClicked += HandleInput;
         }
 
 
@@ -54,26 +55,17 @@ namespace Paramita.Scenes
         }
 
 
-
-        /* 
-         *  Called by GameController when this @Scene is the @CurrentScene in SceneManager
-         *  Watches for player input and triggers SceneManager to change to the MenuScene.
-         */
         public override void Update(GameTime gameTime)
         {
-            PlayerIndex? index = null;
             elapsed += gameTime.ElapsedGameTime;
-
-            if(InputDevices.CheckKeyReleased(Keys.Space) ||
-                InputDevices.CheckKeyReleased(Keys.Enter) ||
-                InputDevices.CheckMouseReleased(MouseButtons.Left))
-            {
-                manager.ChangeScene(GameRef.MenuScene, index);
-            }
 
             base.Update(gameTime);
         }
 
+        private void HandleInput(object sender, EventArgs e)
+        {
+            manager.ChangeScene(GameRef.MenuScene, null);
+        }
 
 
         /* 

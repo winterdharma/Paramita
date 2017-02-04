@@ -7,14 +7,24 @@ using System;
 
 namespace Paramita.UI
 {
-    public enum InventoryActionsApp
+    public enum InventoryActions
     {
+        None,
+        Select1,
+        Select2,
+        Select3,
+        Select4,
+        Select5,
+        Select6,
+        Select7,
+        Select8,
+        Select9,
+        Select0,
         Drop,
         Use,
         Equip,
         Cancel,
-        TogglePanel,
-        None
+        TogglePanel
     }
 
 

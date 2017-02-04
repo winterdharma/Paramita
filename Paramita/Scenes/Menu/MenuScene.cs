@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.UI.Input;
+using System;
 
 namespace Paramita.Scenes
 {
@@ -16,7 +17,7 @@ namespace Paramita.Scenes
 
         public MenuScene(GameController game) : base(game)
         {
-            
+            InputDevices.OnLeftMouseButtonClicked += HandleMouseClick;
         }
 
 
@@ -45,35 +46,33 @@ namespace Paramita.Scenes
 
         public override void Update(GameTime gameTime)
         {
-            menuComponent.Update(gameTime);
+            base.Update(gameTime);
+        }
 
-            if (menuComponent.MouseOver 
-                && InputDevices.CheckMouseReleased(MouseButtons.Left))
+        private void HandleMouseClick(object sender, EventArgs e)
+        {
+            if (menuComponent.MouseOver)
             {
                 if (menuComponent.SelectedIndex == 0)
                 {
-                    InputDevices.FlushInput();
-                    //GameRef.GameScene.SetUpNewGame();
                     manager.PushScene(GameRef.GameScene, PlayerIndexInControl);
                 }
-                // Loading saved games is not implemented yet
+                
                 else if (menuComponent.SelectedIndex == 1)
                 {
-                    InputDevices.FlushInput();
-                    GameRef.GameScene.LoadSavedGame();
-                    manager.PushScene(GameRef.GameScene, PlayerIndexInControl);
+                    // Loading saved games is not implemented yet
+                    //GameRef.GameScene.LoadSavedGame();
+                    //manager.PushScene(GameRef.GameScene, PlayerIndexInControl);
                 }
-                // Options screen is not implemented yet
                 else if (menuComponent.SelectedIndex == 2)
                 {
-                    InputDevices.FlushInput();
+                    // Options screen is not implemented yet
                 }
                 else if (menuComponent.SelectedIndex == 3)
                 {
                     Game.Exit();
                 }
             }
-            base.Update(gameTime);
         }
 
 

@@ -9,6 +9,7 @@ using System;
 using Paramita.Levels;
 using Paramita.UI.Input;
 using Microsoft.Xna.Framework.Input;
+using Paramita.Mechanics;
 
 namespace Paramita.SentientBeings
 {

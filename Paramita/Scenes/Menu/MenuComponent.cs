@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Paramita.UI.Input;
+using System;
 using System.Collections.Generic;
 
 namespace Paramita.Scenes
@@ -18,7 +18,7 @@ namespace Paramita.Scenes
         Color normalColor = Color.White;
         Color hiliteColor = Color.Red;
         Texture2D texture;
-        Vector2 position;
+        Vector2 _menuPosition;
 
 
         public int SelectedIndex
@@ -40,7 +40,11 @@ namespace Paramita.Scenes
             mouseOver = false;
             this.spriteFont = spriteFont;
             this.texture = texture;
-            this.position = position;
+            _menuPosition = position;
+
+            InputDevices.OnUpKeyWasPressed += HandleUpInput;
+            InputDevices.OnDownKeyWasPressed += HandleDownInput;
+            InputDevices.OnMousePositionChanged += HandleMouseMove;
 
             // create an array of rectangles that are used to detect which button is selected with a mouse
             menuItemRects = new Rectangle[menuItems.Length];
@@ -79,38 +83,42 @@ namespace Paramita.Scenes
 
         public override void Update(GameTime gameTime)
         {
-            Vector2 menuPosition = position;
-            Point p = InputDevices.CurrentMouseState.Position;
+            
+        }
+
+
+        private void HandleMouseMove(object sender, MouseEventArgs e)
+        {
+            var mousePosition = e.Position;
             mouseOver = false;
 
             for (int i = 0; i < menuItems.Count; i++)
             {
-                if (menuItemRects[i].Contains(p) == true)
+                if (menuItemRects[i].Contains(mousePosition))
                 {
                     selectedIndex = i;
                     mouseOver = true;
                 }
             }
-
-            if (InputDevices.CheckKeyReleased(Keys.Up))
-            {
-                selectedIndex--;
-                if (selectedIndex < 0)
-                    selectedIndex = menuItems.Count - 1;
-            }
-            else if (InputDevices.CheckKeyReleased(Keys.Down))
-            {
-                selectedIndex++;
-                if (selectedIndex > menuItems.Count - 1)
-                    selectedIndex = 0;
-            }
         }
 
+        private void HandleUpInput(object sender, EventArgs e)
+        {
+            selectedIndex--;
+            if (selectedIndex < 0)
+                selectedIndex = menuItems.Count - 1;
+        }
 
+        private void HandleDownInput(object sender, EventArgs e)
+        {
+            selectedIndex++;
+            if (selectedIndex > menuItems.Count - 1)
+                selectedIndex = 0;
+        }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            Vector2 menuPosition = position;
+            Vector2 menuPosition = _menuPosition;
             Color myColor;
             for (int i = 0; i < menuItems.Count; i++)
             {

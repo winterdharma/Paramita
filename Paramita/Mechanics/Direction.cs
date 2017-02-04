@@ -3,7 +3,7 @@ using Paramita.UI.Input;
 
 namespace Paramita.Mechanics
 {
-    public enum CompassApp {
+    public enum Compass {
         North = 0,
         Northeast,
         East,
