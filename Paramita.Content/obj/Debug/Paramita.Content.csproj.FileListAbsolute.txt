@@ -1,5 +1,0 @@
-C:\Users\Charlie\Desktop\Paramita\Paramita.Content\bin\Debug\Paramita.Content.dll
-C:\Users\Charlie\Desktop\Paramita\Paramita.Content\bin\Debug\Paramita.Content.pdb
-C:\Users\Charlie\Desktop\Paramita\Paramita.Content\obj\Debug\Paramita.Content.csprojResolveAssemblyReference.cache
-C:\Users\Charlie\Desktop\Paramita\Paramita.Content\obj\Debug\Paramita.Content.dll
-C:\Users\Charlie\Desktop\Paramita\Paramita.Content\obj\Debug\Paramita.Content.pdb
