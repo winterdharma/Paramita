@@ -22,8 +22,6 @@ namespace Paramita.Scenes
         public TitleScene(GameController game) : base(game) {
             // see Initialize() and LoadContent() for instantiation tasks
             backgroundDestination = GameController.ScreenRectangle;
-            InputDevices.OnAnyKeyWasPressed += HandleInput;
-            InputDevices.OnLeftMouseButtonClicked += HandleInput;
         }
 
 
@@ -65,6 +63,7 @@ namespace Paramita.Scenes
         private void HandleInput(object sender, EventArgs e)
         {
             manager.ChangeScene(GameRef.MenuScene, null);
+            Hide();
         }
 
 
@@ -88,6 +87,20 @@ namespace Paramita.Scenes
             GameRef.SpriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        public override void Hide()
+        {
+            base.Hide();
+            InputDevices.OnAnyKeyWasPressed -= HandleInput;
+            InputDevices.OnLeftMouseButtonClicked -= HandleInput;
+        }
+
+        public override void Show()
+        {
+            base.Show();
+            InputDevices.OnAnyKeyWasPressed += HandleInput;
+            InputDevices.OnLeftMouseButtonClicked += HandleInput;
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Paramita.UI
      *         Polls InputDevices for user input
      *         Provides the UI for equiping and dropping items
      */
-    public class Inventory
+    public class InventoryPanel
     {
         private int maxItems;
         private string[] labels;
@@ -71,7 +71,7 @@ namespace Paramita.UI
 
         
 
-        public Inventory(Player player, Texture2D background, int maxItems)
+        public InventoryPanel(Player player, Texture2D background, int maxItems)
         {
             this.player = player;
             this.background = background;

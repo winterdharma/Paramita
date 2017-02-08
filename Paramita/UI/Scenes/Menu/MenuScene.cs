@@ -17,7 +17,7 @@ namespace Paramita.Scenes
 
         public MenuScene(GameController game) : base(game)
         {
-            InputDevices.OnLeftMouseButtonClicked += HandleMouseClick;
+           
         }
 
 
@@ -56,6 +56,7 @@ namespace Paramita.Scenes
                 if (menuComponent.SelectedIndex == 0)
                 {
                     manager.PushScene(GameRef.GameScene, PlayerIndexInControl);
+                    Hide();
                 }
                 
                 else if (menuComponent.SelectedIndex == 1)
@@ -75,6 +76,19 @@ namespace Paramita.Scenes
             }
         }
 
+
+        public override void Hide()
+        {
+            base.Hide();
+            InputDevices.OnLeftMouseButtonClicked -= HandleMouseClick;
+
+        }
+
+        public override void Show()
+        {
+            base.Show();
+            InputDevices.OnLeftMouseButtonClicked += HandleMouseClick;
+        }
 
         public override void Draw(GameTime gameTime)
         {

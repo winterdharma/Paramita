@@ -4,11 +4,9 @@ using Paramita.Items;
 using Paramita.Scenes;
 using System.Collections.Generic;
 using Paramita.Items.Valuables;
-using Paramita.Items.Consumables;
 using System;
 using Paramita.Levels;
 using Paramita.UI.Input;
-using Microsoft.Xna.Framework.Input;
 using Paramita.Mechanics;
 
 namespace Paramita.SentientBeings
@@ -100,7 +98,7 @@ namespace Paramita.SentientBeings
         // This method polls InputDevices for player input and responds
         private void HandleInput(Compass direction)
         {
-            Tile tile = level.TileMap.GetTile(CurrentTile.TilePoint + Mechanics.Direction.GetPoint(direction));
+            Tile tile = level.TileMap.GetTile(CurrentTile.TilePoint + Direction.GetPoint(direction));
 
             SentientBeing npc = LevelManager.CurrentLevel.GetNpcOnTile(tile);
             if (npc is SentientBeing)

@@ -1,0 +1,9 @@
+﻿LevelWidth:40
+LevelHeight:40
+MaxRooms:12
+MaxRoomSize:10
+MinRoomSize:3
+GiantRat:10
+ShortSword:1
+Buckler:1
+Meat:2

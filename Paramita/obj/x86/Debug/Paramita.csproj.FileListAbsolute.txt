@@ -17,7 +17,6 @@ C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\Images\
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\Images\Items\short_sword.xnb
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\Images\SentientBeings\giant_rat.xnb
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\Images\SentientBeings\human_player.xnb
-C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Data\Levels\Level01.txt
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Paramita.exe
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Paramita.pdb
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\MonoGame.Framework.dll
@@ -46,5 +45,4 @@ C:\Users\Charlie\Desktop\Paramita\Paramita\obj\x86\Debug\Paramita.exe
 C:\Users\Charlie\Desktop\Paramita\Paramita\obj\x86\Debug\Paramita.pdb
 C:\Users\Charlie\Desktop\Paramita\Paramita\obj\x86\Debug\Paramita.csprojResolveAssemblyReference.cache
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Paramita.exe.config
-C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Paramita.UI.dll
-C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Paramita.UI.pdb
+C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\Data\Levels\Level01.txt

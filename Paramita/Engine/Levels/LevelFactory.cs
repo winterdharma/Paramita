@@ -15,7 +15,7 @@ namespace Paramita.Levels
 {
     public static class LevelFactory
     {
-        private const string LEVEL_01 = "Paramita.Data.Levels.Level01.txt";
+        private const string LEVEL_01 = "Paramita.GameLogic.Data.Levels.Level01.txt";
         private static Texture2D tilesheet;
         private static TileSet tileSet;
         

@@ -96,10 +96,7 @@ namespace Paramita.Scenes
 
         protected internal virtual void OnSceneChanged()
         {
-            if(SceneChanged != null)
-            {
-                SceneChanged(this, null);
-            }
+            SceneChanged?.Invoke(this, null);
         }
     }
 }

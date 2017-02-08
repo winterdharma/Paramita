@@ -12,8 +12,8 @@ namespace Paramita.Scenes
     public class GameScene : Scene
     {
         private Player player;        
-        private static StatusMessages statuses;
-        private Inventory inventoryPanel;
+        private static StatusPanel statuses;
+        private InventoryPanel inventoryPanel;
 
         private Texture2D inventory_background;
 
@@ -41,8 +41,8 @@ namespace Paramita.Scenes
 
             SetUpNewGame();
 
-            statuses = new StatusMessages(GameController.ArialBold, 10, new Point(0,720));
-            inventoryPanel = new Inventory(player, inventory_background, 10);
+            statuses = new StatusPanel(GameController.ArialBold, 10, new Point(0,720));
+            inventoryPanel = new InventoryPanel(player, inventory_background, 10);
         }
 
 

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Paramita.Scenes
 {
-    public class MenuComponent : Scene
+    public class MenuComponent //: Scene
     {
         SpriteFont spriteFont;
         readonly List<string> menuItems = new List<string>();
@@ -35,7 +35,7 @@ namespace Paramita.Scenes
 
 
         public MenuComponent(GameController game, SpriteFont spriteFont, Texture2D texture, string[] menuItems, Vector2 position)
-        : base(game)
+        //: base(game)
         {
             mouseOver = false;
             this.spriteFont = spriteFont;
@@ -81,10 +81,10 @@ namespace Paramita.Scenes
 
 
 
-        public override void Update(GameTime gameTime)
-        {
+        //public override void Update(GameTime gameTime)
+        //{
             
-        }
+        //}
 
 
         private void HandleMouseMove(object sender, MouseEventArgs e)

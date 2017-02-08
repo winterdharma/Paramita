@@ -73,8 +73,8 @@
     <Compile Include="UI\BeingSprite.cs" />
     <Compile Include="UI\Input\InputDevices.cs" />
     <Compile Include="UI\Sprite.cs" />
-    <Compile Include="UI\Scenes\Game\Inventory.cs" />
-    <Compile Include="UI\Scenes\Game\StatusMessages.cs" />
+    <Compile Include="UI\Scenes\Game\InventoryPanel.cs" />
+    <Compile Include="UI\Scenes\Game\StatusPanel.cs" />
     <Compile Include="Engine\Levels\TileMapCreator.cs" />
     <Compile Include="UI\Scenes\Menu\MenuComponent.cs" />
     <Compile Include="UI\Scenes\Game\GameScene.cs" />

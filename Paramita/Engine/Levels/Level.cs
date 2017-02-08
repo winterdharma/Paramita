@@ -62,7 +62,6 @@ namespace Paramita.Levels
             tileMap = map;
             this.items = items;
             this.npcs = npcs;
-            
             this.player = player;
         }
 

@@ -4,7 +4,7 @@ using System;
 
 namespace Paramita.Scenes.Game
 {
-    public class StatusMessages
+    public class StatusPanel
     {
         private int maxMessages;
         private string[] messages;
@@ -19,7 +19,7 @@ namespace Paramita.Scenes.Game
 
 
 
-        public StatusMessages(SpriteFont font, int maxMsgs, Point origin)
+        public StatusPanel(SpriteFont font, int maxMsgs, Point origin)
         {
             maxMessages = maxMsgs;
 
