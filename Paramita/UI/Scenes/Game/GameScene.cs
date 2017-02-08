@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Paramita.GameLogic;
 using Paramita.Items;
 using Paramita.Levels;
 using Paramita.Scenes.Game;
@@ -11,6 +12,7 @@ namespace Paramita.Scenes
 
     public class GameScene : Scene
     {
+        private Dungeon _dungeon;
         private Player player;        
         private static StatusPanel statuses;
         private InventoryPanel inventoryPanel;
@@ -36,7 +38,7 @@ namespace Paramita.Scenes
         public override void Initialize()
         {
             base.Initialize(); // This calls LoadContent()
-            
+            _dungeon = new Dungeon();
             LevelFactory.TileSet = new TileSet("tileset1", LevelFactory.Tilesheet, 8, 8, 32);
 
             SetUpNewGame();
@@ -65,6 +67,7 @@ namespace Paramita.Scenes
         public override void Update(GameTime gameTime)
         {
             // update the UI panels
+            _dungeon.Update();
             statuses.Update(gameTime);
             inventoryPanel.Update(gameTime);
             CurrentLevel.Update(gameTime);

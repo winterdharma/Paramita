@@ -19,7 +19,8 @@ namespace Paramita.GameLogic.Data
 
         public List<string> LoadLinesFrom(string resourcePath)
         {
-            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcePath);
+            var resourceNames = GetType().Assembly.GetManifestResourceNames();
+            var stream = GetType().Assembly.GetManifestResourceStream(resourcePath);
             TextReader reader = new StreamReader(stream);
 
             List<string> lines = new List<string>();

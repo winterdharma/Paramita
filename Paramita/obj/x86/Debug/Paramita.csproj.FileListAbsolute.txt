@@ -17,9 +17,13 @@ C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\Images\
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\Images\Items\short_sword.xnb
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\Images\SentientBeings\giant_rat.xnb
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\Images\SentientBeings\human_player.xnb
+C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Data\Levels\Level01.txt
+C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\Data\Levels\Level01.txt
+C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Paramita.exe.config
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Paramita.exe
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Paramita.pdb
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\MonoGame.Framework.dll
+C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Paramita.GameLogic.dll
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\RogueSharp.dll
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\SharpDX.MediaFoundation.dll
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\SharpDX.dll
@@ -30,6 +34,7 @@ C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\SharpDX.Direct2
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\SharpDX.XInput.dll
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\SharpDX.RawInput.dll
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\SharpDX.Direct3D9.dll
+C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Paramita.GameLogic.pdb
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\MonoGame.Framework.xml
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\RogueSharp.xml
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\SharpDX.MediaFoundation.xml
@@ -41,8 +46,6 @@ C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\SharpDX.Direct2
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\SharpDX.XInput.xml
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\SharpDX.RawInput.xml
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\SharpDX.Direct3D9.xml
+C:\Users\Charlie\Desktop\Paramita\Paramita\obj\x86\Debug\Paramita.csprojResolveAssemblyReference.cache
 C:\Users\Charlie\Desktop\Paramita\Paramita\obj\x86\Debug\Paramita.exe
 C:\Users\Charlie\Desktop\Paramita\Paramita\obj\x86\Debug\Paramita.pdb
-C:\Users\Charlie\Desktop\Paramita\Paramita\obj\x86\Debug\Paramita.csprojResolveAssemblyReference.cache
-C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Paramita.exe.config
-C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\Data\Levels\Level01.txt

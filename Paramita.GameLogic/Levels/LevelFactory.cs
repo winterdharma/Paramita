@@ -7,9 +7,9 @@ namespace Paramita.GameLogic.Levels
 {
     public static class LevelFactory
     {
-        private const string LEVEL_01 = "Paramita.Content.Data.Levels.Level01.txt";
+        private const string LEVEL_01 = "Paramita.GameLogic.Data.Levels.Level01.txt";
 
-
+        
         public static Level CreateLevel(int levelNumber)
         {
             var levelData = GetLevelData(levelNumber);
@@ -41,7 +41,7 @@ namespace Paramita.GameLogic.Levels
         private static TileMap CreateTileMap(LevelData data)
         {
             var mapCreator = new TileMapCreator(data.LevelWidth, data.LevelHeight, data.MaxRooms, 
-                data.MaxRoomSize, data.MinRoomSize, Game._random);
+                data.MaxRoomSize, data.MinRoomSize, Dungeon._random);
             return new TileMap(mapCreator.CreateMap(), "level 1");
         }
 

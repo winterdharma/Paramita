@@ -175,7 +175,7 @@ namespace Paramita.GameLogic.Actors
             switch(tileType)
             {
                 case TileType.StairsUp:
-                    if(Game.CurrentLevelNumber > 1)
+                    if(Dungeon.CurrentLevelNumber > 1)
                         OnLevelChange?.Invoke(this, new LevelChangeEventArgs(-1));
                     break;
                 case TileType.StairsDown:

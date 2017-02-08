@@ -123,8 +123,8 @@ namespace Paramita.GameLogic.Levels
         {
             while (true)
             {
-                int x = Game._random.Next(tileMap.TilesWide - 1);
-                int y = Game._random.Next(tileMap.TilesHigh - 1);
+                int x = Dungeon._random.Next(tileMap.TilesWide - 1);
+                int y = Dungeon._random.Next(tileMap.TilesHigh - 1);
                 if (tileMap.IsTileWalkable(x, y))
                 {
                     return tileMap.GetTile(new Point(x, y));

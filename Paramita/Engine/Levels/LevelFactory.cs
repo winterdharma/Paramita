@@ -1,21 +1,14 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
+﻿using System.Collections.Generic;
 using Paramita.Data;
 using Paramita.SentientBeings;
 using Paramita.Items;
-using Paramita.Scenes;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Paramita.Levels
 {
     public static class LevelFactory
     {
-        private const string LEVEL_01 = "Paramita.GameLogic.Data.Levels.Level01.txt";
+        private const string LEVEL_01 = "Paramita.Content.Data.Levels.Level01.txt";
         private static Texture2D tilesheet;
         private static TileSet tileSet;
         

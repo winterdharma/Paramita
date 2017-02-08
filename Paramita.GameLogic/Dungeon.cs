@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Paramita.GameLogic
 {
-    public class Game
+    public class Dungeon
     {
         internal static Random _random;
         private static Dictionary<int, Level> _levels;
@@ -24,7 +24,7 @@ namespace Paramita.GameLogic
         }
 
 
-        public Game()
+        public Dungeon()
         {
             _random = new Random();
             _player = new Player("Wesley");
