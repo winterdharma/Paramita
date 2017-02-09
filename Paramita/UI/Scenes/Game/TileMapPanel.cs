@@ -1,20 +1,43 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Paramita.GameLogic.Actors;
+using Paramita.GameLogic.Items;
 using Paramita.GameLogic.Levels;
+using Paramita.GameLogic.Mechanics;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace Paramita.UI.Scenes.Game
 {
-    class TileMapPanel
+    public enum SpriteType
+    {
+        Tile_Floor,
+        Tile_Wall,
+        Tile_Door,
+        Tile_StairsUp,
+        Tile_StairsDown,
+        Actor_GiantRat,
+        Actor_Player,
+        Item_Buckler,
+        Item_ShortSword,
+        Item_Coins,
+        Item_Meat
+    }
+
+    public class TileMapPanel
     {
         private Rectangle _viewport;
+        private Vector2 _playerPosition;
         private Rectangle _drawFrame;
-        public static Dictionary<TileType, Texture2D> _spritesheets = new Dictionary<TileType, Texture2D>();
-        private Sprite[,] _spriteArray2D;
+        public static Dictionary<SpriteType, Texture2D> _spritesheets = new Dictionary<SpriteType, Texture2D>();
+        private Sprite[,] _tileArray;
+        private Sprite[,] _itemArray;
+        private BeingSprite[,] _actorArray;
         private const int TILE_SIZE = 32;
+        private Point _mapSizeInPixels;
 
-        public static Dictionary<TileType, Texture2D> Spritesheets
+        public static Dictionary<SpriteType, Texture2D> Spritesheets
         {
             get { return _spritesheets; }
             set { _spritesheets = value; }
@@ -22,11 +45,17 @@ namespace Paramita.UI.Scenes.Game
 
 
 
-        public TileMapPanel(TileType[,] typeArray)
+        public TileMapPanel(TileType[,] tileArray, Tuple<ItemType>[,] itemArray, 
+            Tuple<BeingType, Compass, bool>[,] actorArray)
         {
             _viewport = GameController.ScreenRectangle;
-            _spriteArray2D = CreateTileSprites(typeArray);
             _drawFrame = new Rectangle(0, 0, TILE_SIZE, TILE_SIZE);
+            _tileArray = CreateTileSprites(tileArray);
+            _mapSizeInPixels = 
+                new Point(tileArray.GetLength(1) * TILE_SIZE, tileArray.GetLength(0) * TILE_SIZE);
+            _itemArray = CreateItemSprites(itemArray);
+            _actorArray = CreateActorSprites(actorArray);
+            _playerPosition = GetPlayerPosition(actorArray);
         }
 
 
@@ -42,24 +71,137 @@ namespace Paramita.UI.Scenes.Game
                 for(int j = 0; j < typeArray.GetLength(1); j++)
                 {
                     type = typeArray[i, j];
-                    spriteArray[i, j] = new Sprite(_spritesheets[type], _drawFrame);
+                    spriteArray[i, j] = new Sprite(_spritesheets[GetSpriteType(type)], _drawFrame);
                     spriteArray[i, j].Position = new Vector2(j * TILE_SIZE, i * TILE_SIZE);
                 }
             }
             return spriteArray;
         }
 
+        private Sprite[,] CreateItemSprites(Tuple<ItemType>[,] typeArray)
+        {
+            var spriteArray = new Sprite[typeArray.GetLength(0), typeArray.GetLength(1)];
+
+            ItemType type;
+
+            for (int i = 0; i < typeArray.GetLength(0); i++)
+            {
+                for (int j = 0; j < typeArray.GetLength(1); j++)
+                {
+                    if(typeArray[i,j] != null)
+                    {
+                        type = typeArray[i, j].Item1;
+                        spriteArray[i, j] = new Sprite(_spritesheets[GetSpriteType(type)], _drawFrame);
+                        spriteArray[i, j].Position = new Vector2(j * TILE_SIZE, i * TILE_SIZE);
+                    }
+                }
+            }
+
+            return spriteArray;
+        }
+
+        private BeingSprite[,] CreateActorSprites(Tuple<BeingType, Compass, bool>[,] typeArray)
+        {
+            var spriteArray = new BeingSprite[typeArray.GetLength(0), typeArray.GetLength(1)];
+
+            BeingType type; Compass facing;
+
+            for (int i = 0; i < typeArray.GetLength(0); i++)
+            {
+                for (int j = 0; j < typeArray.GetLength(1); j++)
+                {
+                    if(typeArray[i, j] != null)
+                    {
+                        type = typeArray[i, j].Item1;
+                        facing = typeArray[i, j].Item2;
+                        spriteArray[i, j] = new BeingSprite(_spritesheets[GetSpriteType(type)], _drawFrame);
+                        spriteArray[i, j].Facing = facing;
+                        spriteArray[i, j].Position = new Vector2(j * TILE_SIZE, i * TILE_SIZE);
+                    }
+                }
+            }
+
+            return spriteArray;
+        }
+
+        private Vector2 GetPlayerPosition(Tuple<BeingType, Compass, bool>[,] array)
+        {
+            var position = Vector2.Zero;
+
+            for(int i = 0; i < array.GetLength(0); i++)
+			{
+                for (int j = 0; j < array.GetLength(1); j++)
+                {
+                    if(array[i,j] != null && array[i,j].Item3)
+                    {
+                        position = new Vector2(j * TILE_SIZE, i * TILE_SIZE);
+                    }
+                }
+            }
+
+            return position;
+        }
+
+        private SpriteType GetSpriteType(TileType type)
+        {
+            switch (type)
+            {
+                case TileType.Door:
+                    return SpriteType.Tile_Door;
+                case TileType.Floor:
+                    return SpriteType.Tile_Floor;
+                case TileType.StairsDown:
+                    return SpriteType.Tile_StairsDown;
+                case TileType.StairsUp:
+                    return SpriteType.Tile_StairsUp;
+                case TileType.Wall:
+                    return SpriteType.Tile_Wall;
+                default:
+                    throw new NotImplementedException("TileMapPanel.GetSpriteType(): TileType not implemented.");
+            }
+        }
+
+        private SpriteType GetSpriteType(ItemType type)
+        {
+            switch (type)
+            {
+                case ItemType.Coins:
+                    return SpriteType.Item_Coins;
+                case ItemType.Meat:
+                    return SpriteType.Item_Meat;
+                case ItemType.Shield:
+                    return SpriteType.Item_Buckler;
+                case ItemType.ShortSword:
+                    return SpriteType.Item_ShortSword;
+                default:
+                    throw new NotImplementedException("TileMapPanel.GetSpriteType(): ItemType not implemented.");
+            }
+        }
+
+        private SpriteType GetSpriteType(BeingType type)
+        {
+            switch (type)
+            {
+                case BeingType.GiantRat:
+                    return SpriteType.Actor_GiantRat;
+                case BeingType.HumanPlayer:
+                    return SpriteType.Actor_Player;
+                default:
+                    throw new NotImplementedException("TileMapPanel.GetSpriteType(): BeingType not implemented.");
+            }
+        }
+
 
         public void Update(GameTime gameTime)
         {
-            
+            Camera.LockToSprite(_mapSizeInPixels, _playerPosition, _viewport);
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             Point min; Point max;
-            int tilesHigh = _spriteArray2D.GetLength(0);
-            int tilesWide = _spriteArray2D.GetLength(1);
+            int tilesHigh = _tileArray.GetLength(0);
+            int tilesWide = _tileArray.GetLength(1);
             Point cameraPoint = PositionToArrayIndices(Camera.Position);
             Point viewPoint = PositionToArrayIndices(
                 new Vector2(
@@ -73,15 +215,19 @@ namespace Paramita.UI.Scenes.Game
             max.X = Math.Min(viewPoint.X + 1, tilesWide);
             max.Y = Math.Min(viewPoint.Y + 1, tilesHigh);
             var drawFrame = _drawFrame; 
-            Sprite sprite;
+            Sprite tileSprite;
+            Sprite itemSprite;
+            BeingSprite actorSprite;
 
             for (int i = min.X; i < max.X; i++)
             {
                 drawFrame.Y = i * TILE_SIZE;
                 for (int j = min.Y; j < max.Y; j++)
                 {
-                    sprite = _spriteArray2D[i, j];
-                    //Item[] tileItems = tile.InspectItems();
+                    tileSprite = _tileArray[i, j];
+                    itemSprite = _itemArray[i, j];
+                    actorSprite = _actorArray[i, j];
+
                     drawFrame.X = j * TILE_SIZE;
 
                     spriteBatch.Begin(
@@ -92,16 +238,28 @@ namespace Paramita.UI.Scenes.Game
                      Camera.Transformation);
 
                     spriteBatch.Draw(
-                        sprite.Texture,
+                        tileSprite.Texture,
                         drawFrame,
                         Color.White);
 
-                    spriteBatch.End();
+                    if (itemSprite != null)
+                    {
+                        spriteBatch.Draw(
+                            itemSprite.Texture,
+                            drawFrame,
+                            Color.White);
+                    }
 
-                    //if (tileItems.Length > 0)
-                    //{
-                    //    tileItems[0].Sprite.Draw(gameTime, spriteBatch);
-                    //}
+                    if (actorSprite != null)
+                    {
+                        spriteBatch.Draw(
+                            actorSprite.Texture,
+                            drawFrame,
+                            actorSprite.Textures[actorSprite.Facing],
+                            Color.White);
+                    }
+
+                    spriteBatch.End();                 
                 }
             }
         }

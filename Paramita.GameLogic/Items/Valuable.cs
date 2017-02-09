@@ -8,7 +8,7 @@
      */
     public abstract class Valuable : Item
     {
-        public Valuable() : base()
+        public Valuable(ItemType type) : base(type)
         {
         }
     }

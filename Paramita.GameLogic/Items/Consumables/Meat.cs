@@ -10,7 +10,7 @@
             get { return sustenance; }
         }
 
-        public Meat() : base()
+        public Meat() : base(ItemType.Meat)
         {
             name = "Salted Meat";
             this.description = "A chunk of tasty salted meat.";

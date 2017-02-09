@@ -2,6 +2,8 @@
 using Paramita.GameLogic.Actors;
 using System;
 using System.Collections.Generic;
+using Paramita.GameLogic.Items;
+using Paramita.GameLogic.Mechanics;
 
 namespace Paramita.GameLogic
 {
@@ -32,6 +34,7 @@ namespace Paramita.GameLogic
             _currentLevelNumber = 1;
             _currentLevel = LevelFactory.CreateLevel(_currentLevelNumber);
             _currentLevel.Player = _player;
+            _player.CurrentTile = _currentLevel.GetStairsUpTile();
             _levels[_currentLevelNumber] = _currentLevel;
             SubscribeToLevelEvents();
         }
@@ -41,6 +44,18 @@ namespace Paramita.GameLogic
         {
             var tileTypeArray = _currentLevel.TileMap.ConvertMapToTileTypes();
             return tileTypeArray;
+        }
+
+        public Tuple<ItemType>[,] GetCurrentLevelItems()
+        {
+            var itemTypeArray = _currentLevel.TileMap.ConvertMapToItemTypes();
+            return itemTypeArray;
+        }
+
+        public Tuple<BeingType, Compass, bool>[,] GetCurrentLevelActors()
+        {
+            var beingTypeArray = _currentLevel.ConvertMapToBeingTypes();
+            return beingTypeArray;
         }
 
 

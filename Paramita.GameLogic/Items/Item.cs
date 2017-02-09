@@ -4,6 +4,16 @@ using System;
 
 namespace Paramita.GameLogic.Items
 {
+    public enum ItemType
+    {
+        ShortSword = 0,
+        Shield,
+        Coins,
+        Meat,
+        Fist,
+        Bite
+    }
+
     public enum EquipType
     {
         None = 0,
@@ -13,24 +23,22 @@ namespace Paramita.GameLogic.Items
         Feet
     }
 
+
     public abstract class Item : IEquatable<Item>
     {
         private static int counter;
         private int id;
         protected string name;
 
-        protected EquipType equipType;
+        public EquipType EquipType { get; protected set; }
+        public ItemType ItemType { get; protected set; }
 
-        public EquipType EquipType
-        {
-            get { return equipType; }
-            protected set { equipType = value; } 
-        }
 
-        public Item()
+        public Item(ItemType itemType)
         {
             id = counter;
             counter++;
+            ItemType = itemType;
         }
 
         /*

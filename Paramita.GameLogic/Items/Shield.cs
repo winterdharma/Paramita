@@ -13,7 +13,7 @@
         public int Protection { get { return protection; } }
 
 
-        public Shield(int prot, int defMod, int parry, int enc) : base()
+        public Shield(int prot, int defMod, int parry, int enc, ItemType type) : base(type)
         {
             encumbrance = enc;
             this.parry = parry;

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Paramita.Mechanics;
+using Paramita.GameLogic.Mechanics;
 using Paramita.UI.Scenes;
 
 namespace Paramita.UI
@@ -14,7 +14,7 @@ namespace Paramita.UI
     public class BeingSprite : Sprite
     {
         private Compass facing = Compass.East;
-        private Dictionary<Compass, Rectangle> textures;
+        public Dictionary<Compass, Rectangle> Textures { get; private set; }
 
         public Compass Facing
         {
@@ -24,7 +24,7 @@ namespace Paramita.UI
 
         public BeingSprite(Texture2D spritesheet, Rectangle frame) : base(spritesheet, frame)
         {
-            textures = SetTextures();
+            Textures = SetTextures();
         }
 
 
@@ -65,7 +65,7 @@ namespace Paramita.UI
             spriteBatch.Draw(
                 Texture,
                 position,
-                textures[facing],
+                Textures[facing],
                 Color.White
                 );
 

@@ -54,7 +54,7 @@ namespace Paramita.GameLogic.Actors
 
 
 
-        public Humanoid() : base()
+        public Humanoid(BeingType type) : base(type)
         {
 
         }

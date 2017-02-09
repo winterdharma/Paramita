@@ -9,7 +9,7 @@
      */
     public abstract class Consumable : Item
     {
-        public Consumable() : base()
+        public Consumable(ItemType type) : base(type)
         {
         }
     }

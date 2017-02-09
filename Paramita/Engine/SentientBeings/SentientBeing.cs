@@ -150,7 +150,7 @@ namespace Paramita.SentientBeings
             this.level = level;
             var frame = new Rectangle(0, 0, 32, 32);
             sprite = new BeingSprite(spritesheet, frame);
-            sprite.Facing = Compass.East;
+            sprite.Facing = (GameLogic.Mechanics.Compass)Compass.East;
         }
 
 
@@ -241,7 +241,7 @@ namespace Paramita.SentientBeings
                 return false;
             }
 
-            sprite.Facing = direction;
+            sprite.Facing = (GameLogic.Mechanics.Compass)direction;
             Tile newTile = level.TileMap.GetTile(CurrentTile.TilePoint + Direction.GetPoint(direction));
 
             if (newTile != null && newTile.IsWalkable)

@@ -18,6 +18,12 @@ namespace Paramita.GameLogic.Actors
      * This is just a sketchy starting point of variables for all beings.
      */
 
+    public enum BeingType
+    {
+        GiantRat,
+        HumanPlayer
+    }
+
     public class MoveEventArgs : EventArgs
     {
         public Compass Direction { get; private set; }
@@ -62,6 +68,8 @@ namespace Paramita.GameLogic.Actors
 
         
         // public accessors
+        public BeingType BeingType { get; protected set; }
+
         public Tile CurrentTile
         {
             get { return currentTile; }
@@ -143,9 +151,9 @@ namespace Paramita.GameLogic.Actors
         public event EventHandler<MoveEventArgs> OnMove;
 
 
-        public Actor()
+        public Actor(BeingType beingType)
         {
-            var frame = new Rectangle(0, 0, 32, 32);
+            BeingType = beingType;
             Facing = Compass.East;
         }
 

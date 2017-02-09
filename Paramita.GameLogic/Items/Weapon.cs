@@ -20,7 +20,7 @@
         public int Length { get { return length; } }
 
 
-        public Weapon(int damage, int attack, int defense, int length) : base()
+        public Weapon(int damage, int attack, int defense, int length, ItemType type) : base(type)
         {
             this.damage = damage;
             attackModifier = attack;

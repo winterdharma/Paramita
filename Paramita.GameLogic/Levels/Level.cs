@@ -76,6 +76,26 @@ namespace Paramita.GameLogic.Levels
             }
         }
 
+        // The bool is an IsPlayer flag used by UI
+        public Tuple<BeingType, Compass, bool>[,] ConvertMapToBeingTypes()
+        {
+            var typeArray = new Tuple<BeingType, Compass, bool>[TileMap.TilesHigh, TileMap.TilesWide];
+
+            var playerTile = _player.CurrentTile.TilePoint;
+            typeArray[playerTile.X, playerTile.Y] = 
+                new Tuple<BeingType, Compass, bool>(_player.BeingType, _player.Facing, true);
+
+            for (int i = 0; i < _npcs.Count; i++)
+            {
+                var npc = (Actor)_npcs[i];
+                var npcTile = npc.CurrentTile.TilePoint;
+                typeArray[npcTile.X, npcTile.Y] = 
+                    new Tuple<BeingType, Compass, bool>(npc.BeingType, npc.Facing, false);
+            }
+
+            return typeArray;
+        }
+
         private void HandleActorMove(object sender, MoveEventArgs eventArgs)
         {
             Actor actor = sender as Actor;
@@ -115,6 +135,16 @@ namespace Paramita.GameLogic.Levels
         public Tile GetStairsDownTile()
         {
             return tileMap.FindTileType(TileType.StairsDown);
+        }
+
+
+        public void PlaceItemsOnTileMap(List<Item> items)
+        {
+            for(int i = 0; i < items.Count; i++)
+            {
+                var tile = GetEmptyWalkableTile();
+                tile.AddItem(items[i]);
+            }
         }
 
         // returns a suitable starting tile for the player or enemy

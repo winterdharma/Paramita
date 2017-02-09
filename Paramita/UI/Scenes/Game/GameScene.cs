@@ -42,7 +42,8 @@ namespace Paramita.UI.Scenes
             LevelFactory.TileSet = new TileSet("tileset1", LevelFactory.Tilesheet, 8, 8, 32);
 
             SetUpNewGame();
-            _tileMapPanel = new TileMapPanel(_dungeon.GetCurrentLevelTiles());
+            _tileMapPanel = new TileMapPanel(_dungeon.GetCurrentLevelTiles(), 
+                _dungeon.GetCurrentLevelItems(), _dungeon.GetCurrentLevelActors());
             statuses = new StatusPanel(GameController.ArialBold, 10, new Point(0,720));
             inventoryPanel = new InventoryPanel(player, inventory_background, 10);
         }
@@ -57,11 +58,19 @@ namespace Paramita.UI.Scenes
             ItemCreator.Spritesheets.Add(ItemType.Shield, content.Load<Texture2D>("Images\\Items\\buckler"));
             ItemCreator.Spritesheets.Add(ItemType.ShortSword, content.Load<Texture2D>("Images\\Items\\short_sword"));
 
-            TileMapPanel.Spritesheets.Add(GameLogic.Levels.TileType.Floor, content.Load<Texture2D>("Images\\Tiles\\floor"));
-            //TileMapPanel.Spritesheets.Add(GameLogic.Levels.TileType.Door, content.Load<Texture2D>("Images\\Tiles\\door"));
-            TileMapPanel.Spritesheets.Add(GameLogic.Levels.TileType.Wall, content.Load<Texture2D>("Images\\Tiles\\wall"));
-            TileMapPanel.Spritesheets.Add(GameLogic.Levels.TileType.StairsUp, content.Load<Texture2D>("Images\\Tiles\\stairs_up"));
-            TileMapPanel.Spritesheets.Add(GameLogic.Levels.TileType.StairsDown, content.Load<Texture2D>("Images\\Tiles\\stairs_down"));
+            TileMapPanel.Spritesheets.Add(SpriteType.Tile_Floor, content.Load<Texture2D>("Images\\Tiles\\floor"));
+            // Door tiles not yet implemented
+            //TileMapPanel.Spritesheets.Add(SpriteType.Tile_Door, content.Load<Texture2D>("Images\\Tiles\\door"));
+            TileMapPanel.Spritesheets.Add(SpriteType.Tile_Wall, content.Load<Texture2D>("Images\\Tiles\\wall"));
+            TileMapPanel.Spritesheets.Add(SpriteType.Tile_StairsUp, content.Load<Texture2D>("Images\\Tiles\\stairs_up"));
+            TileMapPanel.Spritesheets.Add(SpriteType.Tile_StairsDown, content.Load<Texture2D>("Images\\Tiles\\stairs_down"));
+            TileMapPanel.Spritesheets.Add(SpriteType.Item_Coins, content.Load<Texture2D>("Images\\Items\\coins"));
+            TileMapPanel.Spritesheets.Add(SpriteType.Item_Meat, content.Load<Texture2D>("Images\\Items\\meat"));
+            TileMapPanel.Spritesheets.Add(SpriteType.Item_Buckler, content.Load<Texture2D>("Images\\Items\\buckler"));
+            TileMapPanel.Spritesheets.Add(SpriteType.Item_ShortSword, content.Load<Texture2D>("Images\\Items\\short_sword"));
+            TileMapPanel.Spritesheets.Add(SpriteType.Actor_GiantRat, content.Load<Texture2D>("Images\\SentientBeings\\giant_rat"));
+            TileMapPanel.Spritesheets.Add(SpriteType.Actor_Player, content.Load<Texture2D>("Images\\SentientBeings\\human_player"));
+
 
             SentientBeingCreator.Spritesheets.Add(BeingType.GiantRat, content.Load<Texture2D>("Images\\SentientBeings\\giant_rat"));
             SentientBeingCreator.Spritesheets.Add(BeingType.HumanPlayer, content.Load<Texture2D>("Images\\SentientBeings\\human_player"));
@@ -77,10 +86,7 @@ namespace Paramita.UI.Scenes
             _tileMapPanel.Update(gameTime);
             statuses.Update(gameTime);
             inventoryPanel.Update(gameTime);
-            CurrentLevel.Update(gameTime);
-
-            //move the camera to center on the player
-            Camera.LockToSprite(Map, player.Sprite.Position, GameController.ScreenRectangle);
+            //CurrentLevel.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -88,7 +94,7 @@ namespace Paramita.UI.Scenes
 
         public override void Draw(GameTime gameTime)
         {
-            base.Draw(gameTime);
+            //base.Draw(gameTime);
             //CurrentLevel.Draw(gameTime, GameRef.SpriteBatch);
 
             _tileMapPanel.Draw(gameTime, GameRef.SpriteBatch);

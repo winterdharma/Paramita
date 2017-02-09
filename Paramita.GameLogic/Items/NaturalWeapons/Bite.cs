@@ -2,11 +2,10 @@
 {
     public class Bite : NaturalWeapon
     {
-        public Bite() 
-            : base(2, 0, -1, 0)
+        public Bite() : base(2, 0, -1, 0, ItemType.Bite)
         {
             name = "Bite";
-            equipType = EquipType.None;
+            EquipType = EquipType.None;
         }
     }
 }

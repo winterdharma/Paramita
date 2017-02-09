@@ -13,7 +13,7 @@
 
         public int Encumbrance { get { return encumbrance; } }
 
-        public Armor() : base()
+        public Armor(ItemType type) : base(type)
         {
         }
     }

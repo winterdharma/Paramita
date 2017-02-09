@@ -5,11 +5,11 @@
         private string description;
 
 
-        public Buckler() : base(14, 0, 2, 0)
+        public Buckler() : base(14, 0, 2, 0, ItemType.Shield)
         {
             name = "Buckler";
             this.description = "A small shield for parrying attacks.";
-            equipType = EquipType.Hand;
+            EquipType = EquipType.Hand;
         }
 
 

@@ -7,7 +7,7 @@ namespace Paramita.GameLogic.Actors.Animals
     public class GiantRat : Animal, INpc
     {
         public GiantRat() 
-            : base()
+            : base(BeingType.GiantRat)
         {
             InitializeAttributes();
             InitializeItemLists();

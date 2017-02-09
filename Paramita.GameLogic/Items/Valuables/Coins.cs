@@ -17,7 +17,7 @@
 
 
 
-        public Coins(int number) : base()
+        public Coins(int number) : base(ItemType.Coins)
         {
             name = "Gold Coin";
             this.number = number;

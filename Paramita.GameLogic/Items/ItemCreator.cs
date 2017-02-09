@@ -7,15 +7,7 @@ using System.Collections.Generic;
 
 namespace Paramita.GameLogic.Items
 {
-    public enum ItemType
-    {
-        ShortSword = 0,
-        Shield,
-        Coins,
-        Meat,
-        Fist,
-        Bite
-    }
+    
 
 
     public static class ItemCreator

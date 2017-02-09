@@ -4,11 +4,11 @@
     {
         string description;
         
-        public ShortSword() : base(5, 0, 2, 1)
+        public ShortSword() : base(5, 0, 2, 1, ItemType.ShortSword)
         {
             name = "Short Sword";
             this.description = "A modest weapon to start with.";
-            equipType = EquipType.Hand;
+            EquipType = EquipType.Hand;
         }
     }
 }

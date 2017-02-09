@@ -22,7 +22,7 @@ namespace Paramita.GameLogic.Actors
         protected int body = 3;
         protected int tail = 4;
 
-        public Animal() : base()
+        public Animal(BeingType type) : base(type)
         {
         }
 

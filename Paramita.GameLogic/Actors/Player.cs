@@ -41,8 +41,7 @@ namespace Paramita.GameLogic.Actors
 
         public event EventHandler<LevelChangeEventArgs> OnLevelChange;
 
-        public Player(string name) 
-            : base()
+        public Player(string name) : base(BeingType.HumanPlayer)
         {
             this.name = name;
 

@@ -15,7 +15,9 @@ namespace Paramita.GameLogic.Levels
             var levelData = GetLevelData(levelNumber);
             var newLevel = new Level();
             newLevel.TileMap = CreateTileMap(levelData);
-            newLevel.Items = CreateItems(levelData);
+            var items = CreateItems(levelData);
+            newLevel.PlaceItemsOnTileMap(items);
+            
             newLevel.Npcs = CreateNpcs(levelData, newLevel);
             return newLevel;
         }
@@ -54,7 +56,7 @@ namespace Paramita.GameLogic.Levels
             {
                 for(int i = 0; i < data.GiantRats; i++)
                 {
-                    var rat = ActorCreator.CreateGiantRat(level);
+                    var rat = ActorCreator.CreateGiantRat();
                     rat.CurrentTile = level.GetEmptyWalkableTile();
                     npcs.Add((INpc)rat);
                 }
