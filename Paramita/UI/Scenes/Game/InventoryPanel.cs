@@ -5,7 +5,7 @@ using Paramita.SentientBeings;
 using Paramita.UI.Input;
 using System;
 
-namespace Paramita.UI
+namespace Paramita.UI.Scenes.Game
 {
     public enum InventoryActions
     {

@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items;
 using Paramita.Levels;
-using Paramita.Scenes;
 using System.Collections.Generic;
 
 namespace Paramita.SentientBeings.Animals

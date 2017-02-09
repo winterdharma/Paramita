@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items;
-using Paramita.Scenes;
+using Paramita.UI.Scenes;
 using System;
 
 // need to continue getting this working - merging RogueSharp Map

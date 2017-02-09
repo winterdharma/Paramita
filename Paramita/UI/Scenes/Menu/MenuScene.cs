@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Paramita.UI.Input;
 using System;
 
-namespace Paramita.Scenes
+namespace Paramita.UI.Scenes
 {
 
 

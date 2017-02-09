@@ -4,7 +4,7 @@ using Paramita.UI.Input;
 using System;
 using System.Collections.Generic;
 
-namespace Paramita.Scenes
+namespace Paramita.UI.Scenes
 {
     public class MenuComponent //: Scene
     {

@@ -2,8 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.Mechanics;
-using Paramita.Scenes;
-using Paramita.UI.Input;
+using Paramita.UI.Scenes;
 
 namespace Paramita.UI
 {
@@ -64,7 +63,7 @@ namespace Paramita.UI
                 Camera.Transformation);
 
             spriteBatch.Draw(
-                texture,
+                Texture,
                 position,
                 textures[facing],
                 Color.White

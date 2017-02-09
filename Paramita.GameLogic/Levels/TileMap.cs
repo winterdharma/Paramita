@@ -8,10 +8,10 @@ namespace Paramita.GameLogic.Levels
     public class TileMap
     {
         [ContentSerializer(CollectionItemName = "Tiles")]
-        private Tile[,] tiles;
+        private Tile[,] _tiles;
 
-        private int tilesWide;
-        private int tilesHigh;
+        private int _tilesWide;
+        private int _tilesHigh;
 
         private const string unsupportedTileType = "A TileType was supplied that is not supported for this search.";
 
@@ -19,25 +19,39 @@ namespace Paramita.GameLogic.Levels
         public string MapName { get; private set; }
 
         // Number of tiles wide and high
-        public int TilesWide { get { return tilesWide; } }
-        public int TilesHigh { get { return tilesHigh; } }
+        public int TilesWide { get { return _tilesWide; } }
+        public int TilesHigh { get { return _tilesHigh; } }
         
 
 
         public TileMap(Tile[,] tiles, string name)
         {
-            this.tiles = tiles;
-            tilesWide = tiles.GetLength(0);
-            tilesHigh = tiles.GetLength(1);
+            this._tiles = tiles;
+            _tilesWide = tiles.GetLength(0);
+            _tilesHigh = tiles.GetLength(1);
             MapName = name;
         }
 
 
 
+        public TileType[,] ConvertMapToTileTypes()
+        {
+            var typeArray = new TileType[_tilesHigh, _tilesWide];
+            for(int i = 0; i < _tiles.GetLength(0); i++)
+            {
+                for(int j = 0; j < _tiles.GetLength(1); j++)
+                {
+                    typeArray[i, j] = _tiles[i, j].TypeOfTile;
+                }
+            }
+            return typeArray;
+        }
+
+
         // Sets a specific Tile in tiles[,] to a new Tile
         public void SetTile(Point coord, Tile newTile)
         {
-            tiles[coord.X, coord.Y] = newTile;
+            _tiles[coord.X, coord.Y] = newTile;
         }
 
 
@@ -53,7 +67,7 @@ namespace Paramita.GameLogic.Levels
                 return null;
             }
 
-            return tiles[coord.X, coord.Y];
+            return _tiles[coord.X, coord.Y];
         }
 
 
@@ -61,7 +75,7 @@ namespace Paramita.GameLogic.Levels
         // return the value of IsWalkable property on Tile at (x,y) on the map
         public bool IsTileWalkable(int x, int y)
         {
-            return tiles[x, y].IsWalkable;
+            return _tiles[x, y].IsWalkable;
         }
         
 
@@ -89,8 +103,8 @@ namespace Paramita.GameLogic.Levels
             {
                 for(int y = 0; y < TilesHigh; y++)
                 {
-                    if (tiles[x, y].TypeOfTile == type)
-                        return tiles[x, y];
+                    if (_tiles[x, y].TypeOfTile == type)
+                        return _tiles[x, y];
                 }
             }
             return null;

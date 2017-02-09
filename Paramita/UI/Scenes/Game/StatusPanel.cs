@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
-namespace Paramita.Scenes.Game
+namespace Paramita.UI.Scenes.Game
 {
     public class StatusPanel
     {

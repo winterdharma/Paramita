@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using System;
 using System.Collections.Generic;
 
-namespace Paramita.Scenes
+namespace Paramita.UI.Scenes
 {
     /*
      * This is the base class for Scenes of the App. 

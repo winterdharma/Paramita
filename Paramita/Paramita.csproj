@@ -72,6 +72,7 @@
     <Compile Include="Engine\Levels\Level.cs" />
     <Compile Include="UI\BeingSprite.cs" />
     <Compile Include="UI\Input\InputDevices.cs" />
+    <Compile Include="UI\Scenes\Game\TileMapPanel.cs" />
     <Compile Include="UI\Sprite.cs" />
     <Compile Include="UI\Scenes\Game\InventoryPanel.cs" />
     <Compile Include="UI\Scenes\Game\StatusPanel.cs" />
@@ -123,6 +124,10 @@
     <EmbeddedResource Include="Content\Data\Levels\Level01.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+    <Content Include="Content\Images\Tiles\floor.png" />
+    <Content Include="Content\Images\Tiles\stairs_down.png" />
+    <Content Include="Content\Images\Tiles\stairs_up.png" />
+    <Content Include="Content\Images\Tiles\wall.png" />
     <Content Include="Content\menuscreen.png" />
     <Content Include="Content\tileset1.png" />
     <Content Include="Content\titlescreen.png" />
@@ -142,7 +147,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\Images\Scenes\" />
-    <Folder Include="Content\Images\Tiles\" />
     <Folder Include="Engine\Items\Armors\" />
   </ItemGroup>
   <ItemGroup>

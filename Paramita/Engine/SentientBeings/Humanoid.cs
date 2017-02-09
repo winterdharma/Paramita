@@ -1,10 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items;
-using Paramita.Items.Weapons;
-using Paramita.Scenes;
-using System.Linq;
-using System;
 using System.Collections.Generic;
 using Paramita.Levels;
 

@@ -1,5 +1,5 @@
 ﻿using Paramita.Items;
-using Paramita.Scenes;
+using Paramita.UI.Scenes;
 using Paramita.SentientBeings;
 using System;
 using System.Collections.Generic;

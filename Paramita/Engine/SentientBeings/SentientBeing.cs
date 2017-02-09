@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.Items;
-using Paramita.Scenes;
+using Paramita.UI.Scenes;
 using System.Collections.Generic;
 using System;
 using System.Linq;

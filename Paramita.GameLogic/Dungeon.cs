@@ -37,6 +37,13 @@ namespace Paramita.GameLogic
         }
 
 
+        public TileType[,] GetCurrentLevelTiles()
+        {
+            var tileTypeArray = _currentLevel.TileMap.ConvertMapToTileTypes();
+            return tileTypeArray;
+        }
+
+
         private void SubscribeToLevelEvents()
         {
             _currentLevel.OnLevelChange += HandleLevelChange;

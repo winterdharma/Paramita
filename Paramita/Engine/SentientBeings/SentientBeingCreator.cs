@@ -1,8 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Paramita.Items;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Paramita.Levels;
-using Paramita.Scenes;
 using Paramita.SentientBeings.Animals;
 using System.Collections.Generic;
 
