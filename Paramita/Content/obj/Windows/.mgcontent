@@ -20,5 +20,9 @@
     <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Fonts/InterfaceFont.spritefont</File>
     <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Fonts/lucida_console.spritefont</File>
     <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Fonts/noto_sans.spritefont</File>
+    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/Tiles/floor.png</File>
+    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/Tiles/stairs_down.png</File>
+    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/Tiles/stairs_up.png</File>
+    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/Tiles/wall.png</File>
   </SourceFiles>
 </SourceFileCollection>

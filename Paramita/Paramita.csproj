@@ -42,62 +42,25 @@
     <StartupObject>Paramita.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Data\DataFile.cs" />
-    <Compile Include="Data\Levels\LevelData.cs" />
-    <Compile Include="Items\Armor.cs" />
-    <Compile Include="Items\Shields\Buckler.cs" />
-    <Compile Include="Items\Consumable.cs" />
-    <Compile Include="Items\Consumables\Meat.cs" />
-    <Compile Include="Items\IContainer.cs" />
-    <Compile Include="Items\Item.cs" />
-    <Compile Include="Items\ItemCreator.cs" />
-    <Compile Include="Items\NaturalWeapon.cs" />
-    <Compile Include="Items\Shield.cs" />
-    <Compile Include="Items\Valuable.cs" />
-    <Compile Include="Items\Valuables\Coins.cs" />
-    <Compile Include="Items\Weapon.cs" />
-    <Compile Include="Items\NaturalWeapons\Bite.cs" />
-    <Compile Include="Items\NaturalWeapons\Fist.cs" />
-    <Compile Include="Items\Weapons\ShortSword.cs" />
-    <Compile Include="Levels\LevelFactory.cs" />
-    <Compile Include="Mechanics\Combat\Attack.cs" />
-    <Compile Include="Mechanics\Combat\AttackRoll.cs" />
-    <Compile Include="Mechanics\Combat\DamageRoll.cs" />
-    <Compile Include="Mechanics\Dice.cs" />
-    <Compile Include="Mechanics\Direction.cs" />
-    <Compile Include="Mechanics\EquipItem.cs" />
-    <Compile Include="Mechanics\Combat\MeeleeAttack.cs" />
-    <Compile Include="Mechanics\MoraleCheck.cs" />
-    <Compile Include="Mechanics\Combat\RepelMeeleeAttack.cs" />
-    <Compile Include="Levels\Level.cs" />
+    <Compile Include="Content\Data\DataFile.cs" />
+    <Compile Include="Content\Data\Levels\LevelData.cs" />
     <Compile Include="UI\BeingSprite.cs" />
+    <Compile Include="UI\Input\InputDevices.cs" />
+    <Compile Include="UI\Scenes\Game\TileMapPanel.cs" />
     <Compile Include="UI\Sprite.cs" />
-    <Compile Include="UI\Inventory.cs" />
-    <Compile Include="Scenes\Game\StatusMessages.cs" />
-    <Compile Include="Levels\TileMapCreator.cs" />
-    <Compile Include="Scenes\Menu\MenuComponent.cs" />
-    <Compile Include="Scenes\Game\GameScene.cs" />
-    <Compile Include="Scenes\Menu\MenuScene.cs" />
-    <Compile Include="Scenes\Title\TitleScene.cs" />
-    <Compile Include="Scenes\Scene.cs" />
-    <Compile Include="Scenes\SceneManager.cs" />
+    <Compile Include="UI\Scenes\Game\InventoryPanel.cs" />
+    <Compile Include="UI\Scenes\Game\StatusPanel.cs" />
+    <Compile Include="UI\Scenes\Menu\MenuComponent.cs" />
+    <Compile Include="UI\Scenes\Game\GameScene.cs" />
+    <Compile Include="UI\Scenes\Menu\MenuScene.cs" />
+    <Compile Include="UI\Scenes\Title\TitleScene.cs" />
+    <Compile Include="UI\Scenes\Scene.cs" />
+    <Compile Include="UI\Scenes\SceneManager.cs" />
     <Compile Include="UI\Animation.cs" />
-    <Compile Include="Levels\Tile.cs" />
-    <Compile Include="Levels\LevelManager.cs" />
-    <Compile Include="Levels\TileMap.cs" />
-    <Compile Include="Levels\TileSet.cs" />
-    <Compile Include="Scenes\Game\Camera.cs" />
-    <Compile Include="SentientBeings\Animal.cs" />
-    <Compile Include="SentientBeings\Animals\GiantRat.cs" />
+    <Compile Include="UI\Scenes\Game\Camera.cs" />
     <Compile Include="GameController.cs" />
-    <Compile Include="SentientBeings\Humanoid.cs" />
-    <Compile Include="SentientBeings\INpc.cs" />
-    <Compile Include="SentientBeings\PathToPlayer.cs" />
-    <Compile Include="SentientBeings\Humanoids\Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SentientBeings\SentientBeing.cs" />
-    <Compile Include="SentientBeings\SentientBeingCreator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
@@ -119,9 +82,13 @@
     <Content Include="Content\Images\Items\short_sword.png" />
     <Content Include="Content\Images\SentientBeings\giant_rat.png" />
     <Content Include="Content\Images\SentientBeings\human_player.png" />
-    <EmbeddedResource Include="Data\Levels\Level01.txt">
+    <EmbeddedResource Include="Content\Data\Levels\Level01.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+    <Content Include="Content\Images\Tiles\floor.png" />
+    <Content Include="Content\Images\Tiles\stairs_down.png" />
+    <Content Include="Content\Images\Tiles\stairs_up.png" />
+    <Content Include="Content\Images\Tiles\wall.png" />
     <Content Include="Content\menuscreen.png" />
     <Content Include="Content\tileset1.png" />
     <Content Include="Content\titlescreen.png" />
@@ -141,13 +108,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\Images\Scenes\" />
-    <Folder Include="Content\Images\Tiles\" />
-    <Folder Include="Items\Armors\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Paramita.UI\Paramita.UI.csproj">
-      <Project>{17123559-4620-4241-b9d0-237856df95ee}</Project>
-      <Name>Paramita.UI</Name>
+    <ProjectReference Include="..\Paramita.GameLogic\Paramita.GameLogic.csproj">
+      <Project>{02d54c08-97df-44d3-ad44-d3845898e635}</Project>
+      <Name>Paramita.GameLogic</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

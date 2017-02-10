@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Paramita.Scenes;
+using Paramita.UI.Scenes;
 
 
 namespace Paramita.UI
@@ -13,7 +13,6 @@ namespace Paramita.UI
      */
     public class Sprite
     {
-        protected Texture2D texture;
         protected Rectangle frame;
         protected Vector2 position;
 
@@ -23,12 +22,12 @@ namespace Paramita.UI
             set { position = value; }
         }
 
-
+        public Texture2D Texture { get; set; }
 
 
         public Sprite(Texture2D spritesheet, Rectangle frame)
         {
-            texture = spritesheet;
+            Texture = spritesheet;
             this.frame = frame;
         }
 
@@ -50,7 +49,7 @@ namespace Paramita.UI
                 Camera.Transformation);
 
             spriteBatch.Draw(
-                texture,
+                Texture,
                 position,
                 frame,
                 Color.White

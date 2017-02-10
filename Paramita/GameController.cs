@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Paramita.UI.Input;
-using Paramita.Scenes;
+using Paramita.UI.Scenes;
 using System;
 
 namespace Paramita
