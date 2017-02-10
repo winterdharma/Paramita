@@ -11,7 +11,7 @@ namespace Paramita.GameLogic
     {
         internal static Random _random;
         private static Dictionary<int, Level> _levels;
-        private Player _player;
+        private static Player _player;
 
         private static int _currentLevelNumber;
         private static Level _currentLevel;
@@ -24,7 +24,7 @@ namespace Paramita.GameLogic
         {
             get { return _currentLevel; }
         }
-
+        public static Player Player { get { return _player; } }
 
         public Dungeon()
         {

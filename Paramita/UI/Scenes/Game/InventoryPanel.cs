@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Paramita.Items;
-using Paramita.SentientBeings;
+using Paramita.GameLogic.Actors;
+using Paramita.GameLogic.Items;
 using Paramita.UI.Input;
 using System;
 
