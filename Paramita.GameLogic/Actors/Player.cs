@@ -95,33 +95,8 @@ namespace Paramita.GameLogic.Actors
             base.Update();
         }
 
-
-        private void HandleMoveLeftInput(object sender, EventArgs e)
-        {
-            Compass direction = Compass.West;
-            HandleInput(direction);
-        }
-
-        private void HandleMoveRightInput(object sender, EventArgs e)
-        {
-            Compass direction = Compass.East;
-            HandleInput(direction);
-        }
-
-        private void HandleMoveUpInput(object sender, EventArgs e)
-        {
-            Compass direction = Compass.North;
-            HandleInput(direction);
-        }
-
-        private void HandleMoveDownInput(object sender, EventArgs e)
-        {
-            Compass direction = Compass.South;
-            HandleInput(direction);
-        }
-
         // This method handles player input actions (currently only movement)
-        private void HandleInput(Compass direction)
+        internal void HandleInput(Compass direction)
         {
             if (MoveTo(direction))
             {

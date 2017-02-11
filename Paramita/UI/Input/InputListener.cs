@@ -17,7 +17,7 @@ namespace Paramita.UI.Input
     }
 
 
-    public class InputDevices
+    public static class InputListener
     {
         private static KeyboardState _currentKeyboardState = Keyboard.GetState();
         private static KeyboardState _previousKeyboardState = Keyboard.GetState();
@@ -78,13 +78,13 @@ namespace Paramita.UI.Input
 
         
 
-        public InputDevices()
-        {
-        }
+        //public InputListener()
+        //{
+        //}
 
 
 
-        public void Update(GameTime gameTime)
+        public static void Update()
         {
             _previousKeyboardState = _currentKeyboardState;
             _currentKeyboardState = Keyboard.GetState();
@@ -96,7 +96,7 @@ namespace Paramita.UI.Input
         }
 
 
-        private void CheckForKeyboardInput()
+        private static void CheckForKeyboardInput()
         {
             WasAnyKeyPressed();
             WasLeftKeyPressed();
@@ -144,7 +144,7 @@ namespace Paramita.UI.Input
             WasEnterKeyPressed();
         }
 
-        public void CheckForMouseInput()
+        public static void CheckForMouseInput()
         {
             WasLeftMouseButtonClicked();
             WasMiddleMouseButtonClicked();
@@ -154,444 +154,444 @@ namespace Paramita.UI.Input
         }
 
 
-        private void WasLeftMouseButtonClicked()
+        private static void WasLeftMouseButtonClicked()
         {
             if (_currentMouseState.LeftButton == ButtonState.Released
                 && _previousMouseState.LeftButton == ButtonState.Pressed)
             {
-                OnLeftMouseButtonClicked?.Invoke(this, EventArgs.Empty);
+                OnLeftMouseButtonClicked?.Invoke(null, EventArgs.Empty);
             }
         }
 
-        private void WasMiddleMouseButtonClicked()
+        private static void WasMiddleMouseButtonClicked()
         {
             if (_currentMouseState.MiddleButton == ButtonState.Released
                 && _previousMouseState.MiddleButton == ButtonState.Pressed)
             {
-                OnMiddleMouseButtonClicked?.Invoke(this, EventArgs.Empty);
+                OnMiddleMouseButtonClicked?.Invoke(null, EventArgs.Empty);
             }
         }
 
-        private void WasRightMouseButtonClicked()
+        private static void WasRightMouseButtonClicked()
         {
             if (_currentMouseState.RightButton == ButtonState.Released
                 && _previousMouseState.RightButton == ButtonState.Pressed)
             {
-                OnRightMouseButtonClicked?.Invoke(this, EventArgs.Empty);
+                OnRightMouseButtonClicked?.Invoke(null, EventArgs.Empty);
             }
         }
 
-        private void WasMouseScrollWheelMoved()
+        private static void WasMouseScrollWheelMoved()
         {
             if (_currentMouseState.ScrollWheelValue != _previousMouseState.ScrollWheelValue)
             {
-                OnMouseScrollWheelMoved?.Invoke(this, 
+                OnMouseScrollWheelMoved?.Invoke(null, 
                     new MouseEventArgs(_currentMouseState.Position, _currentMouseState.ScrollWheelValue));
             }
         }
 
-        private void WasMousePositionChanged()
+        private static void WasMousePositionChanged()
         {
             if (_currentMouseState.Position != _previousMouseState.Position)
             {
-                OnMousePositionChanged?.Invoke(this, 
+                OnMousePositionChanged?.Invoke(null, 
                     new MouseEventArgs(_currentMouseState.Position, _currentMouseState.ScrollWheelValue));
             }
         }
 
 
-        private void WasLeftKeyPressed()
+        private static void WasLeftKeyPressed()
         {
             if(_currentKeyboardState.IsKeyDown(Keys.Left)
                 && _previousKeyboardState.IsKeyUp(Keys.Left))
             {
-                OnLeftKeyWasPressed?.Invoke(this, EventArgs.Empty);         
+                OnLeftKeyWasPressed?.Invoke(null, EventArgs.Empty);         
             }
         }
 
-        private void WasRightKeyPressed()
+        private static void WasRightKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.Right)
                 && _previousKeyboardState.IsKeyUp(Keys.Right))
             {
-                OnRightKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnRightKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasUpKeyPressed()
+        private static void WasUpKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.Up)
                 && _previousKeyboardState.IsKeyUp(Keys.Up))
             {
-                OnUpKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnUpKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
 
-        private void WasDownKeyPressed()
+        private static void WasDownKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.Down)
                 && _previousKeyboardState.IsKeyUp(Keys.Down))
             {
-                OnDownKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnDownKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasD0KeyPressed()
+        private static void WasD0KeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.D0)
                 && _previousKeyboardState.IsKeyUp(Keys.D0))
             {
-                OnD0KeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnD0KeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasD1KeyPressed()
+        private static void WasD1KeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.D1)
                 && _previousKeyboardState.IsKeyUp(Keys.D1))
             {
-                OnD1KeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnD1KeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasD2KeyPressed()
+        private static void WasD2KeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.D2)
                 && _previousKeyboardState.IsKeyUp(Keys.D2))
             {
-                OnD2KeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnD2KeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasD3KeyPressed()
+        private static void WasD3KeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.D3)
                 && _previousKeyboardState.IsKeyUp(Keys.D3))
             {
-                OnD3KeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnD3KeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasD4KeyPressed()
+        private static void WasD4KeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.D4)
                 && _previousKeyboardState.IsKeyUp(Keys.D4))
             {
-                OnD4KeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnD4KeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasD5KeyPressed()
+        private static void WasD5KeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.D5)
                 && _previousKeyboardState.IsKeyUp(Keys.D5))
             {
-                OnD5KeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnD5KeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasD6KeyPressed()
+        private static void WasD6KeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.D6)
                 && _previousKeyboardState.IsKeyUp(Keys.D6))
             {
-                OnD6KeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnD6KeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasD7KeyPressed()
+        private static void WasD7KeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.D7)
                 && _previousKeyboardState.IsKeyUp(Keys.D7))
             {
-                OnD7KeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnD7KeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasD8KeyPressed()
+        private static void WasD8KeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.D8)
                 && _previousKeyboardState.IsKeyUp(Keys.D8))
             {
-                OnD8KeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnD8KeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasD9KeyPressed()
+        private static void WasD9KeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.D9)
                 && _previousKeyboardState.IsKeyUp(Keys.D9))
             {
-                OnD9KeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnD9KeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasAKeyPressed()
+        private static void WasAKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.A)
                 && _previousKeyboardState.IsKeyUp(Keys.A))
             {
-                OnAKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnAKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasBKeyPressed()
+        private static void WasBKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.B)
                 && _previousKeyboardState.IsKeyUp(Keys.B))
             {
-                OnBKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnBKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasCKeyPressed()
+        private static void WasCKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.C)
                 && _previousKeyboardState.IsKeyUp(Keys.C))
             {
-                OnCKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnCKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasDKeyPressed()
+        private static void WasDKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.D)
                 && _previousKeyboardState.IsKeyUp(Keys.D))
             {
-                OnDKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnDKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasEKeyPressed()
+        private static void WasEKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.E)
                 && _previousKeyboardState.IsKeyUp(Keys.E))
             {
-                OnEKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnEKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasFKeyPressed()
+        private static void WasFKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.F)
                 && _previousKeyboardState.IsKeyUp(Keys.F))
             {
-                OnFKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnFKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasGKeyPressed()
+        private static void WasGKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.G)
                 && _previousKeyboardState.IsKeyUp(Keys.G))
             {
-                OnGKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnGKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasHKeyPressed()
+        private static void WasHKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.H)
                 && _previousKeyboardState.IsKeyUp(Keys.H))
             {
-                OnHKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnHKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasIKeyPressed()
+        private static void WasIKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.I)
                 && _previousKeyboardState.IsKeyUp(Keys.I))
             {
-                OnIKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnIKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasJKeyPressed()
+        private static void WasJKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.J)
                 && _previousKeyboardState.IsKeyUp(Keys.J))
             {
-                OnJKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnJKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasKKeyPressed()
+        private static void WasKKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.K)
                 && _previousKeyboardState.IsKeyUp(Keys.K))
             {
-                OnKKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnKKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasLKeyPressed()
+        private static void WasLKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.L)
                 && _previousKeyboardState.IsKeyUp(Keys.L))
             {
-                OnLKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnLKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasMKeyPressed()
+        private static void WasMKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.M)
                 && _previousKeyboardState.IsKeyUp(Keys.M))
             {
-                OnMKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnMKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasNKeyPressed()
+        private static void WasNKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.N)
                 && _previousKeyboardState.IsKeyUp(Keys.N))
             {
-                OnNKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnNKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasOKeyPressed()
+        private static void WasOKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.O)
                 && _previousKeyboardState.IsKeyUp(Keys.O))
             {
-                OnOKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnOKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasPKeyPressed()
+        private static void WasPKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.P)
                 && _previousKeyboardState.IsKeyUp(Keys.P))
             {
-                OnPKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnPKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasQKeyPressed()
+        private static void WasQKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.Q)
                 && _previousKeyboardState.IsKeyUp(Keys.Q))
             {
-                OnQKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnQKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasRKeyPressed()
+        private static void WasRKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.R)
                 && _previousKeyboardState.IsKeyUp(Keys.R))
             {
-                OnRKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnRKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasSKeyPressed()
+        private static void WasSKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.S)
                 && _previousKeyboardState.IsKeyUp(Keys.S))
             {
-                OnSKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnSKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasTKeyPressed()
+        private static void WasTKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.T)
                 && _previousKeyboardState.IsKeyUp(Keys.T))
             {
-                OnTKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnTKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasUKeyPressed()
+        private static void WasUKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.U)
                 && _previousKeyboardState.IsKeyUp(Keys.U))
             {
-                OnUKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnUKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasVKeyPressed()
+        private static void WasVKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.V)
                 && _previousKeyboardState.IsKeyUp(Keys.V))
             {
-                OnVKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnVKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasWKeyPressed()
+        private static void WasWKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.W)
                 && _previousKeyboardState.IsKeyUp(Keys.W))
             {
-                OnWKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnWKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasXKeyPressed()
+        private static void WasXKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.X)
                 && _previousKeyboardState.IsKeyUp(Keys.X))
             {
-                OnXKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnXKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasYKeyPressed()
+        private static void WasYKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.Y)
                 && _previousKeyboardState.IsKeyUp(Keys.Y))
             {
-                OnYKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnYKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasZKeyPressed()
+        private static void WasZKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.Z)
                 && _previousKeyboardState.IsKeyUp(Keys.Z))
             {
-                OnZKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnZKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasSpaceKeyPressed()
+        private static void WasSpaceKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.Space)
                 && _previousKeyboardState.IsKeyUp(Keys.Space))
             {
-                OnSpaceKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnSpaceKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasEscapeKeyPressed()
+        private static void WasEscapeKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.Escape)
                 && _previousKeyboardState.IsKeyUp(Keys.Escape))
             {
-                OnEscapeKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnEscapeKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
             
-        private void WasEnterKeyPressed()
+        private static void WasEnterKeyPressed()
         {
             if (_currentKeyboardState.IsKeyDown(Keys.Enter)
                 && _previousKeyboardState.IsKeyUp(Keys.Enter))
             {
-                OnEnterKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnEnterKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
 
-        private void WasAnyKeyPressed()
+        private static void WasAnyKeyPressed()
         {
             if(_currentKeyboardState != _previousKeyboardState)
             {
-                OnAnyKeyWasPressed?.Invoke(this, EventArgs.Empty);
+                OnAnyKeyWasPressed?.Invoke(null, EventArgs.Empty);
             }
         }
     }

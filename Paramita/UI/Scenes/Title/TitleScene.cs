@@ -92,15 +92,15 @@ namespace Paramita.UI.Scenes
         public override void Hide()
         {
             base.Hide();
-            InputDevices.OnAnyKeyWasPressed -= HandleInput;
-            InputDevices.OnLeftMouseButtonClicked -= HandleInput;
+            InputListener.OnAnyKeyWasPressed -= HandleInput;
+            InputListener.OnLeftMouseButtonClicked -= HandleInput;
         }
 
         public override void Show()
         {
             base.Show();
-            InputDevices.OnAnyKeyWasPressed += HandleInput;
-            InputDevices.OnLeftMouseButtonClicked += HandleInput;
+            InputListener.OnAnyKeyWasPressed += HandleInput;
+            InputListener.OnLeftMouseButtonClicked += HandleInput;
         }
     }
 }

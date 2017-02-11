@@ -26,6 +26,8 @@ namespace Paramita.GameLogic
         }
         public static Player Player { get { return _player; } }
 
+        public static event EventHandler<MoveEventArgs> OnActorMoveUINotification; 
+
         public Dungeon()
         {
             _random = new Random();
@@ -39,7 +41,9 @@ namespace Paramita.GameLogic
             SubscribeToLevelEvents();
         }
 
-
+        #region Public API Methods
+        
+        #region UI TileMap Initialization API
         public TileType[,] GetCurrentLevelTiles()
         {
             var tileTypeArray = _currentLevel.TileMap.ConvertMapToTileTypes();
@@ -57,11 +61,24 @@ namespace Paramita.GameLogic
             var beingTypeArray = _currentLevel.ConvertMapToBeingTypes();
             return beingTypeArray;
         }
+        #endregion
+
+        #region Player Input Handlers
+        public static void MovePlayer(Compass direction)
+        {
+            _player.HandleInput(direction);
+        }
+        
+        #endregion
+        
+        #endregion
+
 
 
         private void SubscribeToLevelEvents()
         {
             _currentLevel.OnLevelChange += HandleLevelChange;
+            _currentLevel.OnActorWasMoved += HandleActorMovement;
         }
 
 
@@ -76,6 +93,13 @@ namespace Paramita.GameLogic
                 _player.CurrentTile = _currentLevel.GetStairsUpTile();
             _currentLevel.Player = _player;
         }
+
+
+        private void HandleActorMovement(object sender, MoveEventArgs eventArgs)
+        {
+            OnActorMoveUINotification(null, eventArgs);
+        }
+
 
         public void Update()
         {

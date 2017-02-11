@@ -19,7 +19,7 @@ namespace Paramita.UI.Scenes
 
         
 
-        // Keeps the Camera's position within the bounds of the viewPort
+        // Keeps the Camera's rectangle within the bounds of the viewPort
         public static void LockCamera(Point mapSizeInPixels, Rectangle viewport)
         {
             Position = new Vector2(

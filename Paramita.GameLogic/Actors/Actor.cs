@@ -27,10 +27,12 @@ namespace Paramita.GameLogic.Actors
     public class MoveEventArgs : EventArgs
     {
         public Compass Direction { get; private set; }
+        public Point TilePoint { get; private set; }
          
-        public MoveEventArgs(Compass direction)
+        public MoveEventArgs(Compass direction, Point tilePoint)
         {
             Direction = direction;
+            TilePoint = tilePoint;
         }
     }
 
@@ -39,7 +41,7 @@ namespace Paramita.GameLogic.Actors
     {
         protected string name;
 
-        protected Tile currentTile;
+        protected Tile _currentTile;
 
         protected Item[] unequipedItems;
         protected Item[] equipedItems;
@@ -72,10 +74,10 @@ namespace Paramita.GameLogic.Actors
 
         public Tile CurrentTile
         {
-            get { return currentTile; }
+            get { return _currentTile; }
             set
             {
-                currentTile = value;
+                _currentTile = value;
             } 
         }
         
@@ -148,8 +150,7 @@ namespace Paramita.GameLogic.Actors
 
         public Item[] EquipmentSlots { get { return equipedItems; } }
 
-        public event EventHandler<MoveEventArgs> OnMove;
-
+        public event EventHandler<MoveEventArgs> OnMoveAttempt;
 
         public Actor(BeingType beingType)
         {
@@ -246,7 +247,7 @@ namespace Paramita.GameLogic.Actors
             Facing = direction;
             Tile currentTile = CurrentTile;
             // check to see if the bool check for tile change works as expected
-            OnMove?.Invoke(this, new MoveEventArgs(direction));
+            OnMoveAttempt?.Invoke(this, new MoveEventArgs(direction, Point.Zero));
 
             Tile newTile = CurrentTile;
             if (newTile == currentTile)

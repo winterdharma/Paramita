@@ -42,9 +42,9 @@ namespace Paramita.UI.Scenes
             this.texture = texture;
             _menuPosition = position;
 
-            InputDevices.OnUpKeyWasPressed += HandleUpInput;
-            InputDevices.OnDownKeyWasPressed += HandleDownInput;
-            InputDevices.OnMousePositionChanged += HandleMouseMove;
+            InputListener.OnUpKeyWasPressed += HandleUpInput;
+            InputListener.OnDownKeyWasPressed += HandleDownInput;
+            InputListener.OnMousePositionChanged += HandleMouseMove;
 
             // create an array of rectangles that are used to detect which button is selected with a mouse
             menuItemRects = new Rectangle[menuItems.Length];

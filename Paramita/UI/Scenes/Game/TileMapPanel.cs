@@ -5,8 +5,8 @@ using Paramita.GameLogic.Items;
 using Paramita.GameLogic.Levels;
 using Paramita.GameLogic.Mechanics;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using Paramita.GameLogic;
 
 namespace Paramita.UI.Scenes.Game
 {
@@ -52,10 +52,11 @@ namespace Paramita.UI.Scenes.Game
             _drawFrame = new Rectangle(0, 0, TILE_SIZE, TILE_SIZE);
             _tileArray = CreateTileSprites(tileArray);
             _mapSizeInPixels = 
-                new Point(tileArray.GetLength(1) * TILE_SIZE, tileArray.GetLength(0) * TILE_SIZE);
+                new Point(tileArray.GetLength(0) * TILE_SIZE, tileArray.GetLength(1) * TILE_SIZE);
             _itemArray = CreateItemSprites(itemArray);
             _actorArray = CreateActorSprites(actorArray);
             _playerPosition = GetPlayerPosition(actorArray);
+            SubscribeToDungeonNotifications();
         }
 
 
@@ -116,7 +117,7 @@ namespace Paramita.UI.Scenes.Game
                         facing = typeArray[i, j].Item2;
                         spriteArray[i, j] = new BeingSprite(_spritesheets[GetSpriteType(type)], _drawFrame);
                         spriteArray[i, j].Facing = facing;
-                        spriteArray[i, j].Position = new Vector2(j * TILE_SIZE, i * TILE_SIZE);
+                        spriteArray[i, j].Position = new Vector2(i * TILE_SIZE, j * TILE_SIZE);
                     }
                 }
             }
@@ -134,7 +135,7 @@ namespace Paramita.UI.Scenes.Game
                 {
                     if(array[i,j] != null && array[i,j].Item3)
                     {
-                        position = new Vector2(j * TILE_SIZE, i * TILE_SIZE);
+                        position = new Vector2(i * TILE_SIZE, j * TILE_SIZE);
                     }
                 }
             }
@@ -192,6 +193,29 @@ namespace Paramita.UI.Scenes.Game
         }
 
 
+        private void SubscribeToDungeonNotifications()
+        {
+            Dungeon.OnActorMoveUINotification += HandleOnActorWasMoved;
+        }
+
+        private void HandleOnActorWasMoved(object sender, MoveEventArgs eventArgs)
+        {
+            Point oldTile = eventArgs.TilePoint - Direction.GetPoint(eventArgs.Direction);
+            var sprite = _actorArray[oldTile.X, oldTile.Y];
+
+            if (sprite.Position == _playerPosition)
+            {
+                sprite.Position = new Vector2(eventArgs.TilePoint.X * TILE_SIZE, eventArgs.TilePoint.Y * TILE_SIZE);
+                _playerPosition = sprite.Position;
+            }
+            else
+                sprite.Position = new Vector2(eventArgs.TilePoint.X * TILE_SIZE, eventArgs.TilePoint.Y * TILE_SIZE);
+
+            _actorArray[eventArgs.TilePoint.X, eventArgs.TilePoint.Y] = sprite;
+            _actorArray[oldTile.X, oldTile.Y] = null;
+        }
+
+
         public void Update(GameTime gameTime)
         {
             Camera.LockToSprite(_mapSizeInPixels, _playerPosition, _viewport);
@@ -200,8 +224,8 @@ namespace Paramita.UI.Scenes.Game
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             Point min; Point max;
-            int tilesHigh = _tileArray.GetLength(0);
-            int tilesWide = _tileArray.GetLength(1);
+            int tilesWide = _tileArray.GetLength(0);
+            int tilesHigh = _tileArray.GetLength(1);
             Point cameraPoint = PositionToArrayIndices(Camera.Position);
             Point viewPoint = PositionToArrayIndices(
                 new Vector2(
@@ -221,14 +245,14 @@ namespace Paramita.UI.Scenes.Game
 
             for (int i = min.X; i < max.X; i++)
             {
-                drawFrame.Y = i * TILE_SIZE;
+                drawFrame.X = i * TILE_SIZE;
                 for (int j = min.Y; j < max.Y; j++)
                 {
                     tileSprite = _tileArray[i, j];
                     itemSprite = _itemArray[i, j];
                     actorSprite = _actorArray[i, j];
 
-                    drawFrame.X = j * TILE_SIZE;
+                    drawFrame.Y = j * TILE_SIZE;
 
                     spriteBatch.Begin(
                      SpriteSortMode.Deferred,
@@ -266,7 +290,7 @@ namespace Paramita.UI.Scenes.Game
 
         private Point PositionToArrayIndices(Vector2 position)
         {
-            return new Point((int)position.Y / TILE_SIZE, (int)position.X / TILE_SIZE);
+            return new Point((int)position.X / TILE_SIZE, (int)position.Y / TILE_SIZE);
         }
     }
 }

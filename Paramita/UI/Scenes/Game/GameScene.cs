@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.GameLogic;
+using Paramita.UI.Input;
 using Paramita.UI.Scenes.Game;
 
 namespace Paramita.UI.Scenes
@@ -10,8 +11,8 @@ namespace Paramita.UI.Scenes
     {
         private Dungeon _dungeon;
         private TileMapPanel _tileMapPanel;        
-        private static StatusPanel statuses;
-        private InventoryPanel inventoryPanel;
+        private static StatusPanel _statusPanel;
+        private InventoryPanel _inventoryPanel;
 
         private Texture2D inventory_background;
 
@@ -28,12 +29,13 @@ namespace Paramita.UI.Scenes
         public override void Initialize()
         {
             base.Initialize(); // This calls LoadContent()
+            InputResponder.SubscribeToInputEvents();
             _dungeon = new Dungeon();
 
             _tileMapPanel = new TileMapPanel(_dungeon.GetCurrentLevelTiles(), 
                 _dungeon.GetCurrentLevelItems(), _dungeon.GetCurrentLevelActors());
-            statuses = new StatusPanel(GameController.ArialBold, 10, new Point(0,720));
-            inventoryPanel = new InventoryPanel(Dungeon.Player, inventory_background, 10);
+            _statusPanel = new StatusPanel(GameController.ArialBold, 10, new Point(0,720));
+            _inventoryPanel = new InventoryPanel(Dungeon.Player, inventory_background, 10);
         }
 
 
@@ -61,8 +63,8 @@ namespace Paramita.UI.Scenes
             // update the UI panels
             _dungeon.Update();
             _tileMapPanel.Update(gameTime);
-            statuses.Update(gameTime);
-            inventoryPanel.Update(gameTime);
+            _statusPanel.Update(gameTime);
+            _inventoryPanel.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -71,13 +73,13 @@ namespace Paramita.UI.Scenes
         public override void Draw(GameTime gameTime)
         {
             _tileMapPanel.Draw(gameTime, GameRef.SpriteBatch);
-            statuses.Draw(gameTime, GameRef.SpriteBatch);
-            inventoryPanel.Draw(gameTime, GameRef.SpriteBatch);
+            _statusPanel.Draw(gameTime, GameRef.SpriteBatch);
+            _inventoryPanel.Draw(gameTime, GameRef.SpriteBatch);
         }
 
         public static void PostNewStatus(string message)
         {
-            statuses.AddMessage(message);
+            _statusPanel.AddMessage(message);
         }
     }
 }

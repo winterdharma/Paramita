@@ -26,7 +26,6 @@ namespace Paramita
         public TitleScene TitleScene { get; private set; }
         public MenuScene MenuScene { get; private set; }
         public GameScene GameScene { get; private set; }
-        public InputDevices InputDevices { get; private set; }
 
         public static SpriteFont ArialBold { get; private set; }
         public static SpriteFont LucidaConsole { get; private set; }
@@ -38,14 +37,13 @@ namespace Paramita
 
         public GameController()
         {
+            InputListener.OnEscapeKeyWasPressed += HandleExitInput;
             graphics = new GraphicsDeviceManager(this);
             
             Content.RootDirectory = "Content";
             screenRectangle = new Rectangle(0, 0, 1280, 720);
             graphics.PreferredBackBufferWidth = screenRectangle.Width;
             graphics.PreferredBackBufferHeight = screenRectangle.Height;
-
-            InputDevices = new InputDevices();
 
             SceneManager = new SceneManager(this);
             Components.Add(SceneManager);
@@ -59,6 +57,11 @@ namespace Paramita
         }
 
 
+
+        private void HandleExitInput(object sender, EventArgs e)
+        {
+            Exit();
+        }
 
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -109,12 +112,9 @@ namespace Paramita
         protected override void Update(GameTime gameTime)
         {
             this.gameTime = gameTime;
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
-                Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
+            
             // check for user input
-            InputDevices.Update(gameTime);
+            InputListener.Update();
             // call Update() on the active @Scene object
             SceneManager.CurrentScene.Update(gameTime);
         }

@@ -33,7 +33,14 @@ namespace Paramita.GameLogic.Levels
         public List<INpc> Npcs
         {
             get { return _npcs; }
-            set { _npcs = value; }
+            set
+            {
+                _npcs = value;
+                foreach (Actor npc in _npcs)
+                {
+                    npc.OnMoveAttempt += HandleActorMove;
+                }
+            }
         }
 
         public List<Item> Items
@@ -46,10 +53,16 @@ namespace Paramita.GameLogic.Levels
         public Player Player
         {
             get { return _player; }
-            set { _player = value; }
+            set
+            {
+                _player = value;
+                _player.OnMoveAttempt += HandleActorMove;
+                _player.OnLevelChange += HandleLevelChange;
+            }
         }
 
         public event EventHandler<LevelChangeEventArgs> OnLevelChange;
+        public event EventHandler<MoveEventArgs> OnActorWasMoved;
 
         public Level()
         {
@@ -61,25 +74,15 @@ namespace Paramita.GameLogic.Levels
             tileMap = map;
             this.items = items;
             _npcs = npcs;
-            SubscribeToActorEvents();
             _player = player;
         }
 
 
-        private void SubscribeToActorEvents()
-        {
-            _player.OnMove += HandleActorMove;
-            _player.OnLevelChange += HandleLevelChange;
-            foreach(Actor npc in _npcs)
-            {
-                npc.OnMove += HandleActorMove;
-            }
-        }
 
         // The bool is an IsPlayer flag used by UI
         public Tuple<BeingType, Compass, bool>[,] ConvertMapToBeingTypes()
         {
-            var typeArray = new Tuple<BeingType, Compass, bool>[TileMap.TilesHigh, TileMap.TilesWide];
+            var typeArray = new Tuple<BeingType, Compass, bool>[TileMap.TilesWide, TileMap.TilesHigh];
 
             var playerTile = _player.CurrentTile.TilePoint;
             typeArray[playerTile.X, playerTile.Y] = 
@@ -116,6 +119,7 @@ namespace Paramita.GameLogic.Levels
             else if(newTile != null && newTile.IsWalkable)
             {
                 actor.CurrentTile = newTile;
+                OnActorWasMoved?.Invoke(actor, new MoveEventArgs(direction, actor.CurrentTile.TilePoint));
                 _isPlayersTurn = actor is Player ? false : _isPlayersTurn;
             }
         }

@@ -77,21 +77,21 @@ namespace Paramita.UI.Scenes.Game
             this.background = background;
             this.maxItems = maxItems;
 
-            InputDevices.OnD0KeyWasPressed += HandleSelect0Input;
-            InputDevices.OnD1KeyWasPressed += HandleSelect1Input;
-            InputDevices.OnD2KeyWasPressed += HandleSelect2Input;
-            InputDevices.OnD3KeyWasPressed += HandleSelect3Input;
-            InputDevices.OnD4KeyWasPressed += HandleSelect4Input;
-            InputDevices.OnD5KeyWasPressed += HandleSelect5Input;
-            InputDevices.OnD6KeyWasPressed += HandleSelect6Input;
-            InputDevices.OnD7KeyWasPressed += HandleSelect7Input;
-            InputDevices.OnD8KeyWasPressed += HandleSelect8Input;
-            InputDevices.OnD9KeyWasPressed += HandleSelect9Input;
-            InputDevices.OnDKeyWasPressed += HandleDropInput;
-            InputDevices.OnEKeyWasPressed += HandleEquipInput;
-            InputDevices.OnUKeyWasPressed += HandleUseInput;
-            InputDevices.OnCKeyWasPressed += HandleCancelInput;
-            InputDevices.OnIKeyWasPressed += HandleToggleInput;
+            InputListener.OnD0KeyWasPressed += HandleSelect0Input;
+            InputListener.OnD1KeyWasPressed += HandleSelect1Input;
+            InputListener.OnD2KeyWasPressed += HandleSelect2Input;
+            InputListener.OnD3KeyWasPressed += HandleSelect3Input;
+            InputListener.OnD4KeyWasPressed += HandleSelect4Input;
+            InputListener.OnD5KeyWasPressed += HandleSelect5Input;
+            InputListener.OnD6KeyWasPressed += HandleSelect6Input;
+            InputListener.OnD7KeyWasPressed += HandleSelect7Input;
+            InputListener.OnD8KeyWasPressed += HandleSelect8Input;
+            InputListener.OnD9KeyWasPressed += HandleSelect9Input;
+            InputListener.OnDKeyWasPressed += HandleDropInput;
+            InputListener.OnEKeyWasPressed += HandleEquipInput;
+            InputListener.OnUKeyWasPressed += HandleUseInput;
+            InputListener.OnCKeyWasPressed += HandleCancelInput;
+            InputListener.OnIKeyWasPressed += HandleToggleInput;
 
             labels = CreateItemLabels(maxItems);
             itemDescriptions = GetPlayerItemStrings();

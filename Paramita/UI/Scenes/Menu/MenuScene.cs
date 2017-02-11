@@ -80,14 +80,14 @@ namespace Paramita.UI.Scenes
         public override void Hide()
         {
             base.Hide();
-            InputDevices.OnLeftMouseButtonClicked -= HandleMouseClick;
+            InputListener.OnLeftMouseButtonClicked -= HandleMouseClick;
 
         }
 
         public override void Show()
         {
             base.Show();
-            InputDevices.OnLeftMouseButtonClicked += HandleMouseClick;
+            InputListener.OnLeftMouseButtonClicked += HandleMouseClick;
         }
 
         public override void Draw(GameTime gameTime)

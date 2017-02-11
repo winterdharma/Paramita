@@ -45,7 +45,8 @@
     <Compile Include="Content\Data\DataFile.cs" />
     <Compile Include="Content\Data\Levels\LevelData.cs" />
     <Compile Include="UI\BeingSprite.cs" />
-    <Compile Include="UI\Input\InputDevices.cs" />
+    <Compile Include="UI\Input\InputListener.cs" />
+    <Compile Include="UI\Input\InputResponder.cs" />
     <Compile Include="UI\Scenes\Game\TileMapPanel.cs" />
     <Compile Include="UI\Sprite.cs" />
     <Compile Include="UI\Scenes\Game\InventoryPanel.cs" />
