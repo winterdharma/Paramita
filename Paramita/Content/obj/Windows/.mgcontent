@@ -5,10 +5,6 @@
   <Config />
   <SourceFiles>
     <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/white.png</File>
-    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/titlescreen.png</File>
-    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/menuscreen.png</File>
-    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/wooden-button.png</File>
-    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/tileset1.png</File>
     <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/black_background.png</File>
     <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/Items/buckler.png</File>
     <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/Items/coins.png</File>
@@ -24,5 +20,14 @@
     <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/Tiles/stairs_down.png</File>
     <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/Tiles/stairs_up.png</File>
     <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/Tiles/wall.png</File>
+    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/Tiles/door.png</File>
+    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/Scenes/menuscreen.png</File>
+    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/Scenes/titlescreen.png</File>
+    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/Scenes/wooden-button.png</File>
+    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/Scenes/inventory_body.png</File>
+    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/Scenes/inventory_feet.png</File>
+    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/Scenes/inventory_hand.png</File>
+    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/Scenes/inventory_head.png</File>
+    <File>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/Scenes/inventory_other.png</File>
   </SourceFiles>
 </SourceFileCollection>

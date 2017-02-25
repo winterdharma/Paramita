@@ -21,41 +21,22 @@ namespace Paramita.UI.Scenes
 
     public abstract partial class Scene : DrawableGameComponent
     {
-        protected GameController GameRef;
+        protected GameController _game;
 
-        protected Scene tag;
-        protected readonly SceneManager manager;
-        protected ContentManager content;
-        protected readonly List<GameComponent> childComponents;
-        protected PlayerIndex? indexInControl;
- 
-
-
-        public PlayerIndex? PlayerIndexInControl
-        {
-            get { return indexInControl; }
-            set { indexInControl = value; }
-        }
-
-        public List<GameComponent> Components
-        {
-            get { return childComponents; }
-        }
-
-        public Scene Tag
-        {
-            get { return tag; }
-        }
+        protected readonly SceneManager _manager;
+        protected ContentManager _content;
+        protected readonly List<GameComponent> _components;
+        
+        public List<GameComponent> Components { get { return _components; } }
 
 
 
         public Scene(GameController game) : base(game)
         {
-            GameRef = game;
-            tag = this;
-            childComponents = new List<GameComponent>();
-            content = Game.Content;
-            manager = (SceneManager)Game.Services.GetService(typeof(SceneManager));
+            _game = game;
+            _components = new List<GameComponent>();
+            _content = Game.Content;
+            _manager = (SceneManager)Game.Services.GetService(typeof(SceneManager));
         }
 
 
@@ -67,7 +48,7 @@ namespace Paramita.UI.Scenes
 
         public override void Update(GameTime gameTime)
         {
-            foreach (GameComponent component in childComponents)
+            foreach (GameComponent component in _components)
             { 
                 if (component.Enabled)
                     component.Update(gameTime);
@@ -80,16 +61,16 @@ namespace Paramita.UI.Scenes
         {
             base.Draw(gameTime);
 
-            foreach(GameComponent component in childComponents)
+            foreach(GameComponent component in _components)
             {
                 if (component is DrawableGameComponent && ((DrawableGameComponent)component).Visible)
                     ((DrawableGameComponent)component).Draw(gameTime);
             }
         }
 
-        protected internal virtual void StateChanged(object sender, EventArgs e)
+        protected internal virtual void SceneChanged(object sender, EventArgs e)
         {
-            if(manager.CurrentScene == tag) { Show(); }
+            if(_manager.CurrentScene == this) { Show(); }
             else { Hide(); }
         }
 
@@ -98,7 +79,7 @@ namespace Paramita.UI.Scenes
             Enabled = true;
             Visible = true;
 
-            foreach(GameComponent component in childComponents)
+            foreach(GameComponent component in _components)
             {
                 component.Enabled = true;
                 if(component is DrawableGameComponent)
@@ -113,7 +94,7 @@ namespace Paramita.UI.Scenes
             Enabled = false;
             Visible = false;
 
-            foreach (GameComponent component in childComponents)
+            foreach (GameComponent component in _components)
             {
                 component.Enabled = false;
                 if (component is DrawableGameComponent)

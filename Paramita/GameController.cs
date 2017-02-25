@@ -12,15 +12,15 @@ namespace Paramita
     /// </summary>
     public class GameController : Game
     {
-        public static Random random = new Random();
-        private GraphicsDeviceManager graphics;
-        private SpriteBatch spriteBatch;
-        private static Rectangle screenRectangle;
-        private GameTime gameTime;
+        public static Random _random = new Random();
+        private GraphicsDeviceManager _graphics;
+        private static SpriteBatch _spriteBatch;
+        private static Rectangle _screenRectangle;
+        private static GameTime _gameTime;
 
-        public GameTime GameTime { get { return gameTime; } }
-        public SpriteBatch SpriteBatch { get { return spriteBatch; } }
-        public static Rectangle ScreenRectangle { get { return screenRectangle; } }
+        public static GameTime GameTime { get { return _gameTime; } }
+        public static SpriteBatch SpriteBatch { get { return _spriteBatch; } }
+        public static Rectangle ScreenRectangle { get { return _screenRectangle; } }
 
         public SceneManager SceneManager { get; private set; }
         public TitleScene TitleScene { get; private set; }
@@ -38,12 +38,14 @@ namespace Paramita
         public GameController()
         {
             InputListener.OnEscapeKeyWasPressed += HandleExitInput;
-            graphics = new GraphicsDeviceManager(this);
+
+            _graphics = new GraphicsDeviceManager(this);
             
+            _screenRectangle = new Rectangle(0, 0, 1280, 720);
+            _graphics.PreferredBackBufferWidth = _screenRectangle.Width;
+            _graphics.PreferredBackBufferHeight = _screenRectangle.Height;
+
             Content.RootDirectory = "Content";
-            screenRectangle = new Rectangle(0, 0, 1280, 720);
-            graphics.PreferredBackBufferWidth = screenRectangle.Width;
-            graphics.PreferredBackBufferHeight = screenRectangle.Height;
 
             SceneManager = new SceneManager(this);
             Components.Add(SceneManager);
@@ -53,7 +55,7 @@ namespace Paramita
             MenuScene = new MenuScene(this);
             GameScene = new GameScene(this);
             
-            SceneManager.ChangeScene(TitleScene, PlayerIndex.One);
+            SceneManager.ChangeScene(TitleScene);
         }
 
 
@@ -85,7 +87,7 @@ namespace Paramita
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
             ArialBold = Content.Load<SpriteFont>("Fonts\\InterfaceFont");
             LucidaConsole = Content.Load<SpriteFont>("Fonts\\lucida_console");
             NotoSans = Content.Load<SpriteFont>("Fonts\\noto_sans");
@@ -111,7 +113,7 @@ namespace Paramita
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            this.gameTime = gameTime;
+            _gameTime = gameTime;
             
             // check for user input
             InputListener.Update();

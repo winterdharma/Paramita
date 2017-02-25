@@ -2,31 +2,29 @@
 {
     public class Meat : Consumable
     {
-        private string description;
-        private int sustenance;
+        private const string NAME = "meat";
+        private const string DESCRIPTION = "A chunk of tasty salted meat.";
+        private const int SUSTENANCE = 480;
 
         public int Sustanence
         {
-            get { return sustenance; }
+            get { return SUSTENANCE; }
         }
 
         public Meat() : base(ItemType.Meat)
         {
-            name = "Salted Meat";
-            this.description = "A chunk of tasty salted meat.";
-            sustenance = 480;
         }
 
 
 
         public override string ToString()
         {
-            return "a chunk of " + name;
+            return NAME;
         }
 
         public override string GetDescription()
         {
-            return description;
+            return DESCRIPTION;
         }
     }
 }

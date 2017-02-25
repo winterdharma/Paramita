@@ -2,13 +2,22 @@
 {
     public class ShortSword : Weapon
     {
-        string description;
-        
+        private const string NAME = "short_sword";
+        private const string DESCRIPTION = "A modest weapon to start with.";
+
         public ShortSword() : base(5, 0, 2, 1, ItemType.ShortSword)
         {
-            name = "Short Sword";
-            this.description = "A modest weapon to start with.";
             EquipType = EquipType.Hand;
+        }
+
+        public override string ToString()
+        {
+            return NAME;
+        }
+
+        public override string GetDescription()
+        {
+            return DESCRIPTION;
         }
     }
 }

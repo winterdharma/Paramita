@@ -9,78 +9,78 @@ namespace Paramita.UI.Scenes
 
     public class MenuScene : Scene
     {
-        Texture2D background;
-        SpriteFont spriteFont;
-        MenuComponent menuComponent;
-        Texture2D button;
+        private Texture2D _background;
+        private SpriteFont _fontArialBold;
+        private MenuComponent _menuButtons;
+        private Texture2D _buttonTexture;
 
 
-        public MenuScene(GameController game) : base(game)
-        {
-           
-        }
+
+        public MenuScene(GameController game) : base(game) { }
 
 
 
         public override void Initialize()
         {
             base.Initialize();
+            InitializeMenuComponent();
+        }
 
+
+        private void InitializeMenuComponent()
+        {
             string[] menuItems = { "NEW GAME", "CONTINUE", "OPTIONS", "EXIT" };
-            Vector2 position = new Vector2();
-            position.Y = 90;
-            position.X = 1200 - button.Width;
-            menuComponent = new MenuComponent(GameRef, spriteFont, button, menuItems, position);
+            Vector2 position = new Vector2( (1200 - _buttonTexture.Width), 90);
+            _menuButtons = new MenuComponent(_fontArialBold, _buttonTexture, menuItems, position);
         }
 
 
         protected override void LoadContent()
         {
-            spriteFont = GameController.ArialBold;
-            background = content.Load<Texture2D>("menuscreen");
-            button = content.Load<Texture2D>("wooden-button");
-
-            base.LoadContent();
+            _fontArialBold = GameController.ArialBold;
+            _background = _content.Load<Texture2D>("Images\\Scenes\\menuscreen");
+            _buttonTexture = _content.Load<Texture2D>("Images\\Scenes\\wooden-button");
         }
 
-
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-        }
 
         private void HandleMouseClick(object sender, EventArgs e)
         {
-            if (menuComponent.MouseOver)
+            if (_menuButtons.MouseOver)
             {
-                if (menuComponent.SelectedIndex == 0)
-                {
-                    manager.PushScene(GameRef.GameScene, PlayerIndexInControl);
-                    Hide();
-                }
-                
-                else if (menuComponent.SelectedIndex == 1)
-                {
-                    // Loading saved games is not implemented yet
-                    //GameRef.GameScene.LoadSavedGame();
-                    //manager.PushScene(GameRef.GameScene, PlayerIndexInControl);
-                }
-                else if (menuComponent.SelectedIndex == 2)
-                {
-                    // Options screen is not implemented yet
-                }
-                else if (menuComponent.SelectedIndex == 3)
-                {
-                    Game.Exit();
-                }
+                HandleMenuItemSelected(sender, e);
             }
         }
 
+        private void HandleMenuItemSelected(object sender, EventArgs e)
+        {
+            if (_menuButtons.SelectedIndex == 0)
+            {
+                _manager.PushScene(_game.GameScene);
+                Hide();
+            }
+
+            else if (_menuButtons.SelectedIndex == 1)
+            {
+                // Loading saved games is not implemented yet
+                //GameRef.GameScene.LoadSavedGame();
+                //manager.PushScene(GameRef.GameScene, PlayerIndexInControl);
+            }
+            else if (_menuButtons.SelectedIndex == 2)
+            {
+                // Options screen is not implemented yet
+            }
+            else if (_menuButtons.SelectedIndex == 3)
+            {
+                Game.Exit();
+            }
+        }
 
         public override void Hide()
         {
             base.Hide();
             InputListener.OnLeftMouseButtonClicked -= HandleMouseClick;
+            InputListener.OnEnterKeyWasPressed -= HandleMenuItemSelected;
+
 
         }
 
@@ -88,16 +88,17 @@ namespace Paramita.UI.Scenes
         {
             base.Show();
             InputListener.OnLeftMouseButtonClicked += HandleMouseClick;
+            InputListener.OnEnterKeyWasPressed += HandleMenuItemSelected;
         }
 
         public override void Draw(GameTime gameTime)
         {
-            GameRef.SpriteBatch.Begin();
+            GameController.SpriteBatch.Begin();
 
-            GameRef.SpriteBatch.Draw(background, Vector2.Zero, Color.White);
-            menuComponent.Draw(gameTime, GameRef.SpriteBatch);
+            GameController.SpriteBatch.Draw(_background, Vector2.Zero, Color.White);
+            _menuButtons.Draw(gameTime, GameController.SpriteBatch);
 
-            GameRef.SpriteBatch.End();
+            GameController.SpriteBatch.End();
 
             base.Draw(gameTime);
         }

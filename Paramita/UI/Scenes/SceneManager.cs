@@ -4,34 +4,22 @@ using System.Collections.Generic;
 
 namespace Paramita.UI.Scenes
 {
-    public interface ISceneManager
-    {
-        Scene CurrentScene { get; }
-        event EventHandler SceneChanged;
-
-        void PushScene(Scene scene, PlayerIndex? index);
-        void PopScene();
-        bool ContainsScene(Scene scene);
-    }
-
-
     /*
      * The Scene Manager handles transitions from one game scene 
      * to the next. It registers itself as a service.
      */
-    public class SceneManager : GameComponent, ISceneManager
+    public class SceneManager : GameComponent
     {
-        private readonly Stack<Scene> scenesStack = new Stack<Scene>();
+        private readonly Stack<Scene> _scenesStack = new Stack<Scene>();
 
-        private const int startDrawOrder = 5000;
-        private const int drawOrderInc = 50;
-        private int drawOrder;
+        private const int START_DRAW_ORDER = 5000;
+        private int _drawOrder;
 
         public event EventHandler SceneChanged;
 
         public Scene CurrentScene
         {
-            get { return scenesStack.Peek(); }
+            get { return _scenesStack.Peek(); }
         }
 
 
@@ -41,57 +29,51 @@ namespace Paramita.UI.Scenes
         }
 
 
-        public void PushScene(Scene scene, PlayerIndex? index)
+        public void PushScene(Scene scene)
         {
-            drawOrder += drawOrderInc;
-            AddScene(scene, index);
+            AddScene(scene);
             OnSceneChanged();
         }
 
-        public void AddScene(Scene state, PlayerIndex? index)
+        public void AddScene(Scene scene)
         {
-            scenesStack.Push(state);
-            state.PlayerIndexInControl = index;
-            //Game.Components.Add(state);
-            SceneChanged += state.StateChanged;
+            _scenesStack.Push(scene);
+            SceneChanged += scene.SceneChanged;
         }
 
         public void PopScene()
         {
-            if(scenesStack.Count != 0)
+            if(_scenesStack.Count != 0)
             {
                 RemoveScene();
-                drawOrder -= drawOrderInc;
                 OnSceneChanged();
             }
         }
 
         public void RemoveScene()
         {
-            Scene scene = scenesStack.Peek();
-            SceneChanged -= scene.StateChanged;
-            Game.Components.Remove(scene);
-            scenesStack.Pop();
+            Scene scene = _scenesStack.Peek();
+            SceneChanged -= scene.SceneChanged;
+            _scenesStack.Pop();
         }
 
-        public void ChangeScene(Scene scene, PlayerIndex? index)
+        public void ChangeScene(Scene scene)
         {
-            while(scenesStack.Count > 0)
+            while(_scenesStack.Count > 0)
             {
                 RemoveScene();
             }
 
-            drawOrder = startDrawOrder;
-            scene.DrawOrder = drawOrder;
-            drawOrder += drawOrderInc;
+            _drawOrder = START_DRAW_ORDER;
+            scene.DrawOrder = _drawOrder;
 
-            AddScene(scene, index);
+            AddScene(scene);
             OnSceneChanged();
         }
 
         public bool ContainsScene(Scene scene)
         {
-            return scenesStack.Contains(scene);
+            return _scenesStack.Contains(scene);
         }
 
         protected internal virtual void OnSceneChanged()

@@ -32,8 +32,8 @@ namespace Paramita.UI
         {
             var dictionary = new Dictionary<Compass, Rectangle>();
 
-            dictionary.Add(Compass.East, new Rectangle(0, 0, frame.Width, frame.Height));
-            dictionary.Add(Compass.West, new Rectangle(32, 0, frame.Width, frame.Height));
+            dictionary.Add(Compass.East, new Rectangle(0, 0, Frame.Width, Frame.Height));
+            dictionary.Add(Compass.West, new Rectangle(32, 0, Frame.Width, Frame.Height));
 
             return dictionary;
         }
