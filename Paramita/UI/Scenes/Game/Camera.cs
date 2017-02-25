@@ -5,21 +5,15 @@ namespace Paramita.UI.Scenes
 {
     public static class Camera
     {
-        public static Vector2 Position { get;  set; }
+        public static Vector2 Position { get;  private set; }
 
-
-        // Create a matrix for the camera to offset everything we draw,
-        // the map and our objects. since the camera coordinates are where
-        // the camera is, we offset everything by the negative of that to simulate
-        // a camera moving. We also cast to integers to avoid filtering artifacts.
         public static Matrix Transformation
         {
             get { return Matrix.CreateTranslation(new Vector3(-Position, 0f)); }
         }
 
         
-
-        // Keeps the Camera's rectangle within the bounds of the viewPort
+        // Keeps the viewport within the bounds of the TileMap so that it stops scrolling when an edge is reached
         public static void LockCamera(Point mapSizeInPixels, Rectangle viewport)
         {
             Position = new Vector2(
@@ -28,8 +22,9 @@ namespace Paramita.UI.Scenes
             );
         }
 
-        // Sets the Camera's position centered on the Sprite, except when it would move the viewPort's bounds
-        // would move outside the bounds of the TileMap.
+
+        // Sets the Camera's position so that the viewport is centered on @position, then checks to see if the
+        // viewport is outside of the TileMap's bounds
         public static void LockToSprite(Point mapSizeInPixels, Vector2 position, Rectangle viewport)
         {
             Position = new Vector2(

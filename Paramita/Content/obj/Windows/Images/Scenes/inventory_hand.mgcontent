@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <SourceFile>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/wooden-button.png</SourceFile>
-  <SourceTime>2016-12-21T20:21:02.5031571-06:00</SourceTime>
-  <DestFile>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/bin/Windows/wooden-button.xnb</DestFile>
-  <DestTime>2016-12-24T18:49:11.7741393-06:00</DestTime>
+  <SourceFile>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Images/Scenes/inventory_hand.png</SourceFile>
+  <SourceTime>2017-02-13T09:15:56.6599087-06:00</SourceTime>
+  <DestFile>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/bin/Windows/Images/Scenes/inventory_hand.xnb</DestFile>
+  <DestTime>2017-02-13T09:27:36.6129437-06:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2016-03-30T01:36:08-05:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

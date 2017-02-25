@@ -6,138 +6,133 @@ using System.Collections.Generic;
 
 namespace Paramita.UI.Scenes
 {
-    public class MenuComponent //: Scene
+    public class MenuComponent
     {
-        SpriteFont spriteFont;
-        readonly List<string> menuItems = new List<string>();
-        Rectangle[] menuItemRects;
-        int selectedIndex = 0;
-        bool mouseOver;
-        int width;
-        int height;
+        SpriteFont _spriteFont;
+        readonly List<string> _menuItems;
+        Rectangle[] _menuItemRectangles;
+        int _selectedIndex;
+        bool _mouseOver;
+        int _menuWidth;
+        int _menuHeight;
         Color normalColor = Color.White;
         Color hiliteColor = Color.Red;
-        Texture2D texture;
+        Texture2D _texture;
         Vector2 _menuPosition;
 
 
         public int SelectedIndex
         {
-            get { return selectedIndex; }
+            get { return _selectedIndex; }
         }
 
 
         public bool MouseOver
         {
-            get { return mouseOver; }
+            get { return _mouseOver; }
         }
 
 
 
-        public MenuComponent(GameController game, SpriteFont spriteFont, Texture2D texture, string[] menuItems, Vector2 position)
-        //: base(game)
+        public MenuComponent(SpriteFont spriteFont, Texture2D texture, string[] menuItems, Vector2 position)
         {
-            mouseOver = false;
-            this.spriteFont = spriteFont;
-            this.texture = texture;
+            _spriteFont = spriteFont;
+            _texture = texture;
             _menuPosition = position;
+            _menuItems = new List<string>(menuItems);
+
+            InitializeMenuItemRectangles();
 
             InputListener.OnUpKeyWasPressed += HandleUpInput;
             InputListener.OnDownKeyWasPressed += HandleDownInput;
             InputListener.OnMousePositionChanged += HandleMouseMove;
 
-            // create an array of rectangles that are used to detect which button is selected with a mouse
-            menuItemRects = new Rectangle[menuItems.Length];
-            Vector2 menuItemPos = position;
-            for (int x = 0; x < menuItems.Length; x++)
-            {
-                this.menuItems.Add(menuItems[x]);
-                menuItemRects[x] = new Rectangle((int)menuItemPos.X, (int)menuItemPos.Y,
-                texture.Width, texture.Height);
-
-                menuItemPos.Y += texture.Height + 50; // adjust for the next button rectangle
-            }
-
             MeasureMenu();
         }
 
+
+        private void InitializeMenuItemRectangles()
+        {
+            _menuItemRectangles = new Rectangle[_menuItems.Count];
+            Vector2 menuItemPos = _menuPosition;
+            for (int x = 0; x < _menuItems.Count; x++)
+            {
+                _menuItemRectangles[x] = new Rectangle((int)menuItemPos.X, (int)menuItemPos.Y,
+                _texture.Width, _texture.Height);
+
+                menuItemPos.Y += _texture.Height + 50; // adjust for the next button rectangle
+            }
+        }
 
 
         // Sets the component's width and height fields and checks that the width will be large enough
         // to accomodate the strings that are in menuItems.
         private void MeasureMenu()
         {
-            width = texture.Width;
-            height = 0;
-            foreach (string s in menuItems)
+            _menuWidth = _texture.Width;
+            _menuHeight = 0;
+            foreach (string str in _menuItems)
             {
-                Vector2 size = spriteFont.MeasureString(s);
-                if (size.X > width)
-                    width = (int)size.X;
-                height += texture.Height + 50;
+                Vector2 size = _spriteFont.MeasureString(str);
+                if (size.X > _menuWidth)
+                    _menuWidth = (int)size.X;
+                _menuHeight += _texture.Height + 50;
             }
-            height -= 50;
+            _menuHeight -= 50;
         }
-
-
-
-        //public override void Update(GameTime gameTime)
-        //{
-            
-        //}
 
 
         private void HandleMouseMove(object sender, MouseEventArgs e)
         {
             var mousePosition = e.Position;
-            mouseOver = false;
+            _mouseOver = false;
 
-            for (int i = 0; i < menuItems.Count; i++)
+            for (int i = 0; i < _menuItems.Count; i++)
             {
-                if (menuItemRects[i].Contains(mousePosition))
+                if (_menuItemRectangles[i].Contains(mousePosition))
                 {
-                    selectedIndex = i;
-                    mouseOver = true;
+                    _selectedIndex = i;
+                    _mouseOver = true;
                 }
             }
         }
 
         private void HandleUpInput(object sender, EventArgs e)
         {
-            selectedIndex--;
-            if (selectedIndex < 0)
-                selectedIndex = menuItems.Count - 1;
+            _selectedIndex--;
+            if (_selectedIndex < 0)
+                _selectedIndex = _menuItems.Count - 1;
         }
 
         private void HandleDownInput(object sender, EventArgs e)
         {
-            selectedIndex++;
-            if (selectedIndex > menuItems.Count - 1)
-                selectedIndex = 0;
+            _selectedIndex++;
+            if (_selectedIndex > _menuItems.Count - 1)
+                _selectedIndex = 0;
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             Vector2 menuPosition = _menuPosition;
             Color myColor;
-            for (int i = 0; i < menuItems.Count; i++)
+            for (int i = 0; i < _menuItems.Count; i++)
             {
-                if (i == selectedIndex)
+                if (i == _selectedIndex)
                     myColor = hiliteColor;
                 else
                     myColor = normalColor;
 
-                spriteBatch.Draw(texture, menuPosition, Color.White);
+                spriteBatch.Draw(_texture, menuPosition, Color.White);
 
-                Vector2 textSize = spriteFont.MeasureString(menuItems[i]);
-                Vector2 textPosition = menuPosition + new Vector2((int)(texture.Width -
-                    textSize.X) / 2, (int)(texture.Height - textSize.Y) / 2);
+                Vector2 textSize = _spriteFont.MeasureString(_menuItems[i]);
+                Vector2 textPosition = menuPosition + new Vector2((int)(_texture.Width -
+                    textSize.X) / 2, (int)(_texture.Height - textSize.Y) / 2);
 
-                spriteBatch.DrawString(spriteFont,
-                    menuItems[i],
+                spriteBatch.DrawString(_spriteFont,
+                    _menuItems[i],
                     textPosition,
                     myColor);
-                menuPosition.Y += texture.Height + 50;
+                menuPosition.Y += _texture.Height + 50;
             }
         }
     }

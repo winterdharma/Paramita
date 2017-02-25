@@ -10,21 +10,6 @@ using Paramita.GameLogic;
 
 namespace Paramita.UI.Scenes.Game
 {
-    public enum SpriteType
-    {
-        Tile_Floor,
-        Tile_Wall,
-        Tile_Door,
-        Tile_StairsUp,
-        Tile_StairsDown,
-        Actor_GiantRat,
-        Actor_Player,
-        Item_Buckler,
-        Item_ShortSword,
-        Item_Coins,
-        Item_Meat
-    }
-
     public class TileMapPanel
     {
         private Rectangle _viewport;
@@ -72,7 +57,7 @@ namespace Paramita.UI.Scenes.Game
                 for(int j = 0; j < typeArray.GetLength(1); j++)
                 {
                     type = typeArray[i, j];
-                    spriteArray[i, j] = new Sprite(_spritesheets[GetSpriteType(type)], _drawFrame);
+                    spriteArray[i, j] = new Sprite(_spritesheets[Sprite.GetSpriteType(type)], _drawFrame);
                     spriteArray[i, j].Position = new Vector2(j * TILE_SIZE, i * TILE_SIZE);
                 }
             }
@@ -92,7 +77,7 @@ namespace Paramita.UI.Scenes.Game
                     if(typeArray[i,j] != null)
                     {
                         type = typeArray[i, j].Item1;
-                        spriteArray[i, j] = new Sprite(_spritesheets[GetSpriteType(type)], _drawFrame);
+                        spriteArray[i, j] = new Sprite(ItemTextures.ItemTextureMap[Sprite.GetSpriteType(type)], _drawFrame);
                         spriteArray[i, j].Position = new Vector2(j * TILE_SIZE, i * TILE_SIZE);
                     }
                 }
@@ -115,7 +100,7 @@ namespace Paramita.UI.Scenes.Game
                     {
                         type = typeArray[i, j].Item1;
                         facing = typeArray[i, j].Item2;
-                        spriteArray[i, j] = new BeingSprite(_spritesheets[GetSpriteType(type)], _drawFrame);
+                        spriteArray[i, j] = new BeingSprite(_spritesheets[Sprite.GetSpriteType(type)], _drawFrame);
                         spriteArray[i, j].Facing = facing;
                         spriteArray[i, j].Position = new Vector2(i * TILE_SIZE, j * TILE_SIZE);
                     }
@@ -141,55 +126,6 @@ namespace Paramita.UI.Scenes.Game
             }
 
             return position;
-        }
-
-        private SpriteType GetSpriteType(TileType type)
-        {
-            switch (type)
-            {
-                case TileType.Door:
-                    return SpriteType.Tile_Door;
-                case TileType.Floor:
-                    return SpriteType.Tile_Floor;
-                case TileType.StairsDown:
-                    return SpriteType.Tile_StairsDown;
-                case TileType.StairsUp:
-                    return SpriteType.Tile_StairsUp;
-                case TileType.Wall:
-                    return SpriteType.Tile_Wall;
-                default:
-                    throw new NotImplementedException("TileMapPanel.GetSpriteType(): TileType not implemented.");
-            }
-        }
-
-        private SpriteType GetSpriteType(ItemType type)
-        {
-            switch (type)
-            {
-                case ItemType.Coins:
-                    return SpriteType.Item_Coins;
-                case ItemType.Meat:
-                    return SpriteType.Item_Meat;
-                case ItemType.Shield:
-                    return SpriteType.Item_Buckler;
-                case ItemType.ShortSword:
-                    return SpriteType.Item_ShortSword;
-                default:
-                    throw new NotImplementedException("TileMapPanel.GetSpriteType(): ItemType not implemented.");
-            }
-        }
-
-        private SpriteType GetSpriteType(BeingType type)
-        {
-            switch (type)
-            {
-                case BeingType.GiantRat:
-                    return SpriteType.Actor_GiantRat;
-                case BeingType.HumanPlayer:
-                    return SpriteType.Actor_Player;
-                default:
-                    throw new NotImplementedException("TileMapPanel.GetSpriteType(): BeingType not implemented.");
-            }
         }
 
 

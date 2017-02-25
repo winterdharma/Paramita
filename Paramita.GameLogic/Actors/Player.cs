@@ -200,6 +200,62 @@ namespace Paramita.GameLogic.Actors
             }
         }
 
+        // This method is called by Dungeon when a UI event calls for the player to drop an item
+        public void DropItem(string slot, ItemType itemType)
+        {
+            Item item = null;
+            switch (slot)
+            {
+                case "left_hand":
+                    if (itemType.Equals(LeftHandItem.ItemType))
+                        item = LeftHandItem;
+                    break;
+                case "right_hand":
+                    if (itemType.Equals(RightHandItem.ItemType))
+                        item = RightHandItem;
+                    break;
+                case "head":
+                    if (itemType.Equals(HeadItem.ItemType))
+                        item = HeadItem;
+                    break;
+                case "body":
+                    if (itemType.Equals(BodyItem.ItemType))
+                        item = BodyItem;
+                    break;
+                case "feet":
+                    if (itemType.Equals(FeetItem.ItemType))
+                        item = FeetItem;
+                    break;
+                case "other1":
+                    if (itemType.Equals(UnequipedItems[0].ItemType))
+                        item = UnequipedItems[0];
+                    break;
+                case "other2":
+                    if (itemType.Equals(UnequipedItems[1].ItemType))
+                        item = UnequipedItems[1];
+                    break;
+                case "other3":
+                    if (itemType.Equals(UnequipedItems[2].ItemType))
+                        item = UnequipedItems[2];
+                    break;
+                case "other4":
+                    if (itemType.Equals(UnequipedItems[3].ItemType))
+                        item = UnequipedItems[3];
+                    break;
+                case "other5":
+                    if (itemType.Equals(UnequipedItems[4].ItemType))
+                        item = UnequipedItems[4];
+                    break;
+            }
+
+            if (item != null)
+            {
+                DropItem(item);
+            }
+            else
+                throw new Exception("Player.DropItem(string,string) found no item to drop.");
+        }
+
         public override bool AddItem(Item item)
         {
             if (AddCoins(item))

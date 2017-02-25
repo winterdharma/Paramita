@@ -9,19 +9,22 @@ namespace Paramita.UI.Scenes
 
     public class TitleScene : Scene
     {
-        Texture2D background;
-        Rectangle backgroundDestination;
-        SpriteFont font;
-        TimeSpan elapsed;
-        Vector2 position;
-        string message = "PRESS ANY KEY TO CONTINUE";
+        private Texture2D _background;
+        private Rectangle _screenRectangle;
+        private SpriteFont _fontArialBold;
+        private TimeSpan _elapsedTime;
+        private Color _messageColor;
+        private Color WHITE = new Color(1f, 1f, 1f);
+        private Vector2 _messagePosition;
+        private const string MESSAGE = "PRESS ANY KEY TO CONTINUE";
 
 
 
 
-        public TitleScene(GameController game) : base(game) {
-            // see Initialize() and LoadContent() for instantiation tasks
-            backgroundDestination = GameController.ScreenRectangle;
+        public TitleScene(GameController game) : base(game)
+        {
+            _screenRectangle = GameController.ScreenRectangle;
+            _elapsedTime = TimeSpan.Zero;
         }
 
 
@@ -31,38 +34,38 @@ namespace Paramita.UI.Scenes
          */
         public override void Initialize()
         {
-            base.Initialize(); // calls LoadContent()
-
-            //backgroundDestination = GameController.ScreenRectangle;
-
-            // these variables are used to display the @message on the screen when Draw() is called
-            font = GameController.ArialBold;
-            elapsed = TimeSpan.Zero;
-            Vector2 size = font.MeasureString(message);
-            position = new Vector2((backgroundDestination.Width - size.X) / 2,
-                backgroundDestination.Bottom - 50 - font.LineSpacing);
+            //base.Initialize(); // calls LoadContent()
+            LoadContent();
+            _fontArialBold = GameController.ArialBold;
+            SetMessagePosition();
         }
 
+        private void SetMessagePosition()
+        {
+            Vector2 size = _fontArialBold.MeasureString(MESSAGE);
+            _messagePosition = new Vector2((_screenRectangle.Width - size.X) / 2,
+                _screenRectangle.Bottom - 50 - _fontArialBold.LineSpacing);
+        }
 
         /*
          * Called once by base.Initialize()
          */
         protected override void LoadContent()
         {
-            background = content.Load<Texture2D>("titlescreen");
+            _background = _content.Load<Texture2D>("Images\\Scenes\\titlescreen");
         }
 
 
         public override void Update(GameTime gameTime)
         {
-            elapsed += gameTime.ElapsedGameTime;
-
+            _elapsedTime += gameTime.ElapsedGameTime;
+            _messageColor = WHITE * (float)Math.Abs(Math.Sin(_elapsedTime.TotalSeconds * 2));
             base.Update(gameTime);
         }
 
         private void HandleInput(object sender, EventArgs e)
         {
-            manager.ChangeScene(GameRef.MenuScene, null);
+            _manager.ChangeScene(_game.MenuScene);
             Hide();
         }
 
@@ -73,18 +76,13 @@ namespace Paramita.UI.Scenes
          */
         public override void Draw(GameTime gameTime)
         {
-            GameRef.SpriteBatch.Begin();
+            GameController.SpriteBatch.Begin();
 
-            GameRef.SpriteBatch.Draw(background, backgroundDestination, Color.White);
+            GameController.SpriteBatch.Draw(_background, _screenRectangle, Color.White);
 
-            // Causes the @message to slowly blink on and off by applying a Sine
-            // function to the alpha channel
-            Color color = new Color(1f, 1f, 1f) *
-            (float)Math.Abs(Math.Sin(elapsed.TotalSeconds * 2));
+            GameController.SpriteBatch.DrawString(_fontArialBold, MESSAGE, _messagePosition, _messageColor);
 
-            GameRef.SpriteBatch.DrawString(font, message, position, color);
-
-            GameRef.SpriteBatch.End();
+            GameController.SpriteBatch.End();
 
             base.Draw(gameTime);
         }

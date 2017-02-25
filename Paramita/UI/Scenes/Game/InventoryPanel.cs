@@ -1,9 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Paramita.GameLogic.Actors;
+using Paramita.GameLogic;
 using Paramita.GameLogic.Items;
 using Paramita.UI.Input;
 using System;
+using System.Collections.Generic;
 
 namespace Paramita.UI.Scenes.Game
 {
@@ -28,55 +29,150 @@ namespace Paramita.UI.Scenes.Game
     }
 
 
+    public class InventoryEventArgs : EventArgs
+    {
+        public string InventorySlot { get; private set; }
+        public ItemType InventoryItem { get; private set; }
+
+        public InventoryEventArgs(string inventorySlot, ItemType inventoryItem)
+        {
+            InventorySlot = inventorySlot;
+            InventoryItem = inventoryItem;
+        }
+    }
+
     /*
      * This class:
-     *         Handles the display of the player's inventory
-     *         Polls InputDevices for user input
-     *         Provides the UI for equiping and dropping items
+     *     Displays the player's inventory and other stats
+     *     Provides the UI for equiping, using, and dropping items
+     *     Responds to player inventory input events
+     *     Raises player inventory change events 
      */
     public class InventoryPanel
     {
-        private int maxItems;
-        private string[] labels;
-        private string[] itemDescriptions;
+        private List<string> _inventorySlots = new List<string>()
+            { "none","left_hand", "right_hand", "head", "body", "feet",
+                "other1", "other2", "other3", "other4", "other5"};
 
-        private Point panelOrigin;
+        private static Dictionary<string, Texture2D> _defaultSlotTextures 
+            = new Dictionary<string, Texture2D>();
+
+        private Dictionary<string, ItemType> _inventory 
+            = new Dictionary<string, ItemType>();
+        private int _gold = 0;
+
+        private Dictionary<string, Sprite> _inventorySprites
+            = new Dictionary<string, Sprite>();
+
+        private Point _panelOrigin;
         private Rectangle panelRectangle;
-        private int panelWidth = 250;
-        private int panelHeightOpen = 330;
-        private int panelHeightClosed = 30;
+        private const int PANEL_WIDTH = 250;
+        private const int PANEL_HEIGHT_OPEN = 330;
+        private const int PANEL_HEIGHT_CLOSED = 30;
 
+        private Vector2 _headingPosition;
+        private Vector2 _togglePosition;
+        private Vector2 _hintPosition;
+        private Vector2 _spritePosition;
 
-        private string heading = "Inventory";
-        private Vector2 headingPosition;
-        
-        private string toggleOpen = "[+]";
-        private string toggleClosed = "[-]";
-        private Vector2 togglePosition;
-
-        private string selectHint =     "Press (0-9) to Select Item";
-        private string dropHint =       "Press (d) to Drop Item";
-        private string useHint =        "Press (u) to Use Item";
-        private string equipHint =      "Press (e) to Equip Item";
-        private string unequipHint =    "Press (e) to Unequip Item";
-        private string cancelHint =     "Press (c) to Cancel Selection";
-        private Vector2 hintPosition;
-
-        private int _itemSelected;
-        private Player player;
-        private Texture2D background;
         private SpriteFont fontHeader = GameController.ArialBold;
         private SpriteFont fontText = GameController.NotoSans;
-        private bool isOpen = false;
 
-        
+        private const string HEADING = "Inventory";
+        private const string TOGGLE_OPEN = "[+]";
+        private const string TOGGLE_CLOSED = "[-]";
+        private string selectHint = "Press (0-9) to Select Item";
+        private string dropHint = "Press (d) to Drop Item";
+        private string useHint = "Press (u) to Use Item";
+        private string equipHint = "Press (e) to Equip Item";
+        private string unequipHint = "Press (e) to Unequip Item";
+        private string cancelHint = "Press (c) to Cancel Selection";
 
-        public InventoryPanel(Player player, Texture2D background, int maxItems)
+        private int _itemSelected;
+        private bool _isOpen = false;
+
+        public static event EventHandler<InventoryEventArgs> OnPlayerDroppedItem;
+        public static event EventHandler<InventoryEventArgs> OnPlayerEquippedItem;
+        public static event EventHandler<InventoryEventArgs> OnPlayerUsedItem;
+
+        public InventoryPanel()
         {
-            this.player = player;
-            this.background = background;
-            this.maxItems = maxItems;
+            SubscribeToInputEvents();
 
+            GetPlayerData();
+
+            InitializePanel();
+        }
+
+        #region Properties
+        public static Dictionary<string, Texture2D> DefaultTextures
+        {
+            get { return _defaultSlotTextures; }
+            set { _defaultSlotTextures = value; }
+        }
+
+        public Dictionary<string, ItemType> Inventory
+        {
+            set
+            {
+                _inventory = value;
+                CreateInventorySprites(_inventory);
+            }
+        }
+
+        #region Inventory Property helpers
+
+        private void CreateInventorySprites(Dictionary<string, ItemType> _inventory)
+        {
+            Rectangle frame = new Rectangle(0, 0, 32, 32);
+            foreach (string type in _inventory.Keys)
+            {
+                var spriteType = Sprite.GetSpriteType(_inventory[type]);
+                if (spriteType == SpriteType.None)
+                {
+                    _inventorySprites[type] =
+                        new Sprite(_defaultSlotTextures[GetDefaultTextureKey(type)], frame);
+                }
+                else
+                {
+                    _inventorySprites[type] =
+                        new Sprite(ItemTextures.ItemTextureMap[spriteType], frame);
+                }
+            }
+        }
+
+        private string GetDefaultTextureKey(string str)
+        {
+            switch (str)
+            {
+                case "right_hand":
+                case "left_hand":
+                    return "default_hand";
+                case "head":
+                    return "default_head";
+                case "body":
+                    return "default_body";
+                case "feet":
+                    return "default_feet";
+                case "other1":
+                case "other2":
+                case "other3":
+                case "other4":
+                case "other5":
+                    return "default_other";
+                default:
+                    throw new NotImplementedException("InventoryPanel.GetDefaultTextureType():"
+                        + " Unknown type from Dungeon.GetPlayerInventory()");
+            }
+        }
+        #endregion
+
+        #endregion
+
+        #region Constructor Helpers
+
+        private void SubscribeToInputEvents()
+        {
             InputListener.OnD0KeyWasPressed += HandleSelect0Input;
             InputListener.OnD1KeyWasPressed += HandleSelect1Input;
             InputListener.OnD2KeyWasPressed += HandleSelect2Input;
@@ -92,106 +188,47 @@ namespace Paramita.UI.Scenes.Game
             InputListener.OnUKeyWasPressed += HandleUseInput;
             InputListener.OnCKeyWasPressed += HandleCancelInput;
             InputListener.OnIKeyWasPressed += HandleToggleInput;
+        }
 
-            labels = CreateItemLabels(maxItems);
-            itemDescriptions = GetPlayerItemStrings();
 
+        private void GetPlayerData()
+        {
+            var playerData = Dungeon.GetPlayerInventory();
+            Inventory = playerData.Item1;
+            _gold = playerData.Item2;
+        }
+
+
+        private void InitializePanel()
+        {
             Rectangle parentScreen = GameController.ScreenRectangle;
-            panelOrigin = new Point(parentScreen.Width - (panelWidth), 0);
-            panelRectangle = new Rectangle(panelOrigin.X, 
-                panelOrigin.Y, panelWidth, panelHeightClosed);
+            _panelOrigin = new Point(parentScreen.Width - (PANEL_WIDTH), 0);
+            panelRectangle = new Rectangle(_panelOrigin.X,
+                _panelOrigin.Y, PANEL_WIDTH, PANEL_HEIGHT_CLOSED);
 
-            Vector2 headingSize = fontHeader.MeasureString(heading);
-            headingPosition = new Vector2( 
-                panelRectangle.Left + ((panelWidth / 2) - (headingSize.X / 2)), 
-                (panelRectangle.Top + 5) );
+            Vector2 headingSize = fontHeader.MeasureString(HEADING);
+            _headingPosition = new Vector2(
+                panelRectangle.Left + ((PANEL_WIDTH / 2) - (headingSize.X / 2)),
+                (panelRectangle.Top + 5));
 
-            togglePosition = new Vector2(
+            _togglePosition = new Vector2(
                 panelRectangle.Right - 30, (panelRectangle.Top + 5));
 
-            hintPosition = new Vector2(
-                panelRectangle.Left + 10, panelHeightOpen - 60);
+            _spritePosition = new Vector2( // (5 sprites * 37 pixels - 5 / 2) = 90 pixels
+                panelRectangle.Left + ((PANEL_WIDTH / 2) - 90),
+                _headingPosition.Y + 30);
+
+            _hintPosition = new Vector2(
+                panelRectangle.Left + 10, PANEL_HEIGHT_OPEN - 60);
             _itemSelected = 0;
         }
+        #endregion
 
-
-
-        // Generates the item labels for the inventory list given the size of the inventory
-        private string[] CreateItemLabels(int numberOfLabels)
-        {
-            string[] labels = new string[numberOfLabels + 1];
-
-            labels[0] = "L Hand: ";
-            labels[1] = "R Hand: ";
-            labels[2] = "Head: ";
-            labels[3] = "Body: ";
-            labels[4] = "Feet: ";
-
-            for (int x = 5; x < numberOfLabels; x++)
-            {
-                labels[x] = "Misc" + (x - 4).ToString() + ": ";
-            }
-
-            labels[numberOfLabels] = "Gold: ";
-            return labels;
-        }
-
-
-
-        // Gets the player's Item list and converts it to a string[] for display on the panel
-        private string[] GetPlayerItemStrings()
-        {
-            Item[] playerItems = player.UnequipedItems;
-            string[] itemStrings = new string[11];
-
-            // check for player's equiped item slots
-            if(player.LeftHandItem != null)
-                itemStrings[0] = player.LeftHandItem.ToString();
-            else
-                itemStrings[0] = "";
-
-            if (player.RightHandItem != null)
-                itemStrings[1] = player.RightHandItem.ToString();
-            else
-                itemStrings[1] = "";
-
-            if (player.HeadItem != null)
-                itemStrings[2] = player.HeadItem.ToString();
-            else
-                itemStrings[2] = "";
-
-            if (player.BodyItem != null)
-                itemStrings[3] = player.BodyItem.ToString();
-            else
-                itemStrings[3] = "";
- 
-            if (player.FeetItem != null)
-                itemStrings[4] = player.FeetItem.ToString();
-            else
-                itemStrings[4] = "";
-
-            // check for the player's unequiped slots
-            for (int x = 5; x < itemStrings.Length-1; x++)
-            {
-                if(playerItems[x-5] != null)
-                {
-                    itemStrings[x] = playerItems[x-5].ToString();
-                }
-                else
-                {
-                    itemStrings[x] = "";
-                }
-            }
-            itemStrings[10] = player.Gold.ToString();
-
-            return itemStrings;
-        }
-
-
+        #region Input Handlers
         private void HandleInput(InventoryActions action)
         {
             if (action == InventoryActions.TogglePanel)
-                isOpen = !isOpen;
+                _isOpen = !_isOpen;
 
             int selectionInput = 0;
             if((int)action > 0 && (int)action < 11)
@@ -200,11 +237,13 @@ namespace Paramita.UI.Scenes.Game
             if(selectionInput > 0)
                 _itemSelected = selectionInput;
 
-            if(_itemSelected > 0 && _itemSelected <= maxItems)
+            if(_itemSelected > 0 && _itemSelected <= _inventory.Count)
             {
                 if(action == InventoryActions.Drop)
                 {
-                    player.DropItem(GetPlayerItem(_itemSelected));
+                    string slot = _inventorySlots[_itemSelected];
+                    OnPlayerDroppedItem?.Invoke(null,
+                        new InventoryEventArgs(slot, _inventory[slot]) );
                     _itemSelected = 0;
                 }
                 else if(action == InventoryActions.Cancel)
@@ -288,47 +327,14 @@ namespace Paramita.UI.Scenes.Game
         {
             HandleInput(InventoryActions.TogglePanel);
         }
+        #endregion
 
-
-        // Maps the item number in the Inventory list to the corresponding Item in the
-        // player object. (The first five are equipment slots and second five are in
-        // player.Items.
-        // Accepts an integer and returns the proper item from Player.
-        private Item GetPlayerItem(int itemSelected)
-        {
-            switch (itemSelected)
-            {
-                case 1:
-                    return player.LeftHandItem;
-                case 2:
-                    return player.RightHandItem;
-                case 3:
-                    return player.HeadItem;
-                case 4:
-                    return player.BodyItem;
-                case 5:
-                    return player.FeetItem;
-                case 6:
-                    return player.UnequipedItems[0];
-                case 7:
-                    return player.UnequipedItems[1];
-                case 8:
-                    return player.UnequipedItems[2];
-                case 9:
-                    return player.UnequipedItems[3];
-                case 10:
-                    return player.UnequipedItems[4];
-                default:
-                    return null;
-            }
-        }
-
+        
 
         // Called by GameScene.Update() to check for changes or input to handle
         public void Update(GameTime gameTime)
         {
-            itemDescriptions = GetPlayerItemStrings();
-            //HandleInput();
+            GetPlayerData();
         }
 
 
@@ -337,7 +343,7 @@ namespace Paramita.UI.Scenes.Game
         {
             spriteBatch.Begin();
 
-            if (isOpen)
+            if (_isOpen)
                 DrawOpenPanel(spriteBatch);
             else
                 DrawClosedPanel(spriteBatch);
@@ -345,56 +351,78 @@ namespace Paramita.UI.Scenes.Game
             spriteBatch.End();
         }
 
-
+        #region Draw Method Helpers
         private void DrawOpenPanel(SpriteBatch spriteBatch)
         {
             // draw background
-            panelRectangle.Height = panelHeightOpen;
-            spriteBatch.Draw(background, panelRectangle, Color.White);
+            panelRectangle.Height = PANEL_HEIGHT_OPEN;
+            spriteBatch.Draw(_defaultSlotTextures["background"], panelRectangle, Color.White);
 
             // draw header and toggle symbol
-            spriteBatch.DrawString(fontHeader, heading, headingPosition, Color.White);
-            spriteBatch.DrawString(fontText, toggleClosed, togglePosition, Color.White);
+            spriteBatch.DrawString(fontHeader, HEADING, _headingPosition, Color.White);
+            spriteBatch.DrawString(fontText, TOGGLE_CLOSED, _togglePosition, Color.White);
 
             // draw the list of items in player's inventory
-            Vector2 itemOrigin = new Vector2(panelRectangle.Left + 10, headingPosition.Y + 20);
-            Color fontColor = Color.White;
-            for (int x = 0; x < itemDescriptions.Length; x++)
+            string slot = "";
+            Sprite sprite;
+            Vector2 position = _spritePosition;
+            Color color = Color.White;
+            Color normalColor = Color.White;
+            Color selectedColor = Color.Red;
+            for(int i = 1; i < 6; i++)
             {
-                if (_itemSelected == (x + 1) && GetPlayerItem(_itemSelected) != null)
-                {
-                    fontColor = Color.Red;
-                }
+                if (i == _itemSelected)
+                    color = selectedColor;
+                else
+                    color = normalColor;
 
-                string line = labels[x] + itemDescriptions[x];
-                spriteBatch.DrawString(fontText, line, itemOrigin, fontColor);
-                fontColor = Color.White;
-                itemOrigin.Y += 20;
+                slot = _inventorySlots[i];
+                sprite = _inventorySprites[slot];
+                sprite.Position = position;
+                spriteBatch.Draw(
+                    sprite.Texture,
+                    sprite.Position,
+                    sprite.Frame,
+                    color
+                );
+                position.X += 37;
             }
 
-            // check if an item has been selected and draw appropos hint text
-            if (_itemSelected != 0 && _itemSelected <= maxItems && GetPlayerItem(_itemSelected) != null)
+            position = _spritePosition;
+            position.Y += 37;
+            for(int j = 6; j < 11; j++)
             {
-                spriteBatch.DrawString(fontText, dropHint, hintPosition, fontColor);
-                spriteBatch.DrawString(fontText, cancelHint,
-                    new Vector2(hintPosition.X, hintPosition.Y + 15), fontColor);
+                if (j == _itemSelected)
+                    color = selectedColor;
+                else
+                    color = normalColor;
+
+                slot = _inventorySlots[j];
+                sprite = _inventorySprites[slot];
+                sprite.Position = position;
+                spriteBatch.Draw(
+                    sprite.Texture,
+                    sprite.Position,
+                    sprite.Frame,
+                    color
+                );
+                position.X += 37;
             }
-            else
-            {
-                spriteBatch.DrawString(fontText, selectHint, hintPosition, fontColor);
-            }
+
+            // Add other information items like amount of gold, weapon & armor stats, etc
         }
 
 
         private void DrawClosedPanel(SpriteBatch spriteBatch)
         {
             // draw panel background
-            panelRectangle.Height = panelHeightClosed;
-            spriteBatch.Draw(background, panelRectangle, Color.White);
+            panelRectangle.Height = PANEL_HEIGHT_CLOSED;
+            spriteBatch.Draw(_defaultSlotTextures["background"], panelRectangle, Color.White);
 
             // draw the header and toggle symbol
-            spriteBatch.DrawString(fontHeader, heading, headingPosition, Color.White);
-            spriteBatch.DrawString(fontText, toggleOpen, togglePosition, Color.White);
+            spriteBatch.DrawString(fontHeader, HEADING, _headingPosition, Color.White);
+            spriteBatch.DrawString(fontText, TOGGLE_OPEN, _togglePosition, Color.White);
         }
+        #endregion
     }
 }
