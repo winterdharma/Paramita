@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <SourceFile>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/Fonts/noto_sans.spritefont</SourceFile>
-  <SourceTime>2017-01-22T13:43:00.1816248-06:00</SourceTime>
+  <SourceTime>2017-02-27T21:50:56.8131595-06:00</SourceTime>
   <DestFile>C:/Users/Charlie/Desktop/Paramita/Paramita/Content/bin/Windows/Fonts/noto_sans.xnb</DestFile>
-  <DestTime>2017-01-22T17:08:18.5021924-06:00</DestTime>
+  <DestTime>2017-02-27T21:53:03.672557-06:00</DestTime>
   <Importer>FontDescriptionImporter</Importer>
   <ImporterTime>2016-03-30T01:36:08-05:00</ImporterTime>
   <Processor>FontDescriptionProcessor</Processor>

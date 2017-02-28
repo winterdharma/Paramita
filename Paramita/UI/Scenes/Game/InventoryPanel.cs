@@ -64,9 +64,10 @@ namespace Paramita.UI.Scenes.Game
         private Dictionary<string, Sprite> _inventorySprites
             = new Dictionary<string, Sprite>();
 
-        private Point _panelOrigin;
-        private Rectangle panelRectangle;
+        private Rectangle _panelRectangle;
         private const int PANEL_WIDTH = 250;
+        private const int PANEL_WIDTH_OPEN = 250;
+        private const int PANEL_WIDTH_CLOSED = 150;
         private const int PANEL_HEIGHT_OPEN = 330;
         private const int PANEL_HEIGHT_CLOSED = 30;
 
@@ -78,9 +79,8 @@ namespace Paramita.UI.Scenes.Game
         private SpriteFont fontHeader = GameController.ArialBold;
         private SpriteFont fontText = GameController.NotoSans;
 
-        private const string HEADING = "Inventory";
-        private const string TOGGLE_OPEN = "[+]";
-        private const string TOGGLE_CLOSED = "[-]";
+        private const string HEADING = "(I)nventory";
+        private const string TOGGLE_CLOSED = "[X]";
         private string selectHint = "Press (0-9) to Select Item";
         private string dropHint = "Press (d) to Drop Item";
         private string useHint = "Press (u) to Use Item";
@@ -117,6 +117,18 @@ namespace Paramita.UI.Scenes.Game
             {
                 _inventory = value;
                 CreateInventorySprites(_inventory);
+            }
+        }
+
+        public bool IsOpen
+        {
+            get { return _isOpen; }
+            set
+            {
+                _isOpen = value;
+                _panelRectangle.Location = GetPanelOrigin(_isOpen);
+                _panelRectangle.Size = GetPanelSize(_isOpen);
+                _headingPosition = GetHeadingPosition(HEADING, _panelRectangle);
             }
         }
 
@@ -165,6 +177,45 @@ namespace Paramita.UI.Scenes.Game
                         + " Unknown type from Dungeon.GetPlayerInventory()");
             }
         }
+
+        private Point GetPanelOrigin(bool isOpen, int offsetFromTop = 0, int offsetFromRight = 0)
+        {
+            Rectangle parentScreen = GameController.ScreenRectangle;
+            if (isOpen)
+            {
+                return new Point(
+                parentScreen.Width - PANEL_WIDTH_OPEN - offsetFromRight,
+                offsetFromTop);
+            }
+            else
+            {
+                return new Point(
+                parentScreen.Width - PANEL_WIDTH_CLOSED - offsetFromRight,
+                offsetFromTop);
+            }
+
+        }
+
+        private Point GetPanelSize(bool isOpen)
+        {
+            if (isOpen)
+            {
+                return new Point(PANEL_WIDTH_OPEN, PANEL_HEIGHT_OPEN);
+            }
+            else
+            {
+                return new Point(PANEL_WIDTH_CLOSED, PANEL_HEIGHT_CLOSED);
+            }
+        }
+
+        private Vector2 GetHeadingPosition(string heading, Rectangle panelRect, int offsetTop = 5)
+        {
+            var headingSize = fontHeader.MeasureString(heading);
+            return new Vector2(
+                panelRect.Left + ((panelRect.Width / 2) - (headingSize.X / 2)),
+                (panelRect.Top + offsetTop));
+        }
+
         #endregion
 
         #endregion
@@ -173,6 +224,7 @@ namespace Paramita.UI.Scenes.Game
 
         private void SubscribeToInputEvents()
         {
+            InputListener.OnLeftMouseButtonClicked += HandleLeftClick;
             InputListener.OnD0KeyWasPressed += HandleSelect0Input;
             InputListener.OnD1KeyWasPressed += HandleSelect1Input;
             InputListener.OnD2KeyWasPressed += HandleSelect2Input;
@@ -201,34 +253,28 @@ namespace Paramita.UI.Scenes.Game
 
         private void InitializePanel()
         {
-            Rectangle parentScreen = GameController.ScreenRectangle;
-            _panelOrigin = new Point(parentScreen.Width - (PANEL_WIDTH), 0);
-            panelRectangle = new Rectangle(_panelOrigin.X,
-                _panelOrigin.Y, PANEL_WIDTH, PANEL_HEIGHT_CLOSED);
+            IsOpen = false;
 
-            Vector2 headingSize = fontHeader.MeasureString(HEADING);
-            _headingPosition = new Vector2(
-                panelRectangle.Left + ((PANEL_WIDTH / 2) - (headingSize.X / 2)),
-                (panelRectangle.Top + 5));
-
+            var toggleSize = fontHeader.MeasureString(TOGGLE_CLOSED);
             _togglePosition = new Vector2(
-                panelRectangle.Right - 30, (panelRectangle.Top + 5));
-
+                _panelRectangle.Right - toggleSize.X, (_panelRectangle.Top + 5));
+  
             _spritePosition = new Vector2( // (5 sprites * 37 pixels - 5 / 2) = 90 pixels
-                panelRectangle.Left + ((PANEL_WIDTH / 2) - 90),
-                _headingPosition.Y + 30);
+                _panelRectangle.Right - ((PANEL_WIDTH_OPEN / 2) + 90),
+                _panelRectangle.Top + 60);
 
             _hintPosition = new Vector2(
-                panelRectangle.Left + 10, PANEL_HEIGHT_OPEN - 60);
+                _panelRectangle.Left + 10, PANEL_HEIGHT_OPEN - 60);
             _itemSelected = 0;
         }
+
         #endregion
 
         #region Input Handlers
         private void HandleInput(InventoryActions action)
         {
             if (action == InventoryActions.TogglePanel)
-                _isOpen = !_isOpen;
+                IsOpen = !IsOpen;
 
             int selectionInput = 0;
             if((int)action > 0 && (int)action < 11)
@@ -249,6 +295,22 @@ namespace Paramita.UI.Scenes.Game
                 else if(action == InventoryActions.Cancel)
                 {
                     _itemSelected = 0;
+                }
+            }
+        }
+
+        private void HandleLeftClick(object sender, MouseEventArgs e)
+        {
+            if(!_isOpen && e.Position.X > _panelRectangle.X && e.Position.Y < _panelRectangle.Bottom)
+            {
+                IsOpen = true;
+            }
+            else
+            {
+                var toggleSize = fontHeader.MeasureString(TOGGLE_CLOSED);
+                if(e.Position.X > _togglePosition.X && e.Position.Y < _togglePosition.Y + toggleSize.Y)
+                {
+                    IsOpen = false;
                 }
             }
         }
@@ -343,7 +405,7 @@ namespace Paramita.UI.Scenes.Game
         {
             spriteBatch.Begin();
 
-            if (_isOpen)
+            if (IsOpen)
                 DrawOpenPanel(spriteBatch);
             else
                 DrawClosedPanel(spriteBatch);
@@ -355,8 +417,8 @@ namespace Paramita.UI.Scenes.Game
         private void DrawOpenPanel(SpriteBatch spriteBatch)
         {
             // draw background
-            panelRectangle.Height = PANEL_HEIGHT_OPEN;
-            spriteBatch.Draw(_defaultSlotTextures["background"], panelRectangle, Color.White);
+            _panelRectangle.Height = PANEL_HEIGHT_OPEN;
+            spriteBatch.Draw(_defaultSlotTextures["background"], _panelRectangle, Color.White);
 
             // draw header and toggle symbol
             spriteBatch.DrawString(fontHeader, HEADING, _headingPosition, Color.White);
@@ -415,13 +477,12 @@ namespace Paramita.UI.Scenes.Game
 
         private void DrawClosedPanel(SpriteBatch spriteBatch)
         {
-            // draw panel background
-            panelRectangle.Height = PANEL_HEIGHT_CLOSED;
-            spriteBatch.Draw(_defaultSlotTextures["background"], panelRectangle, Color.White);
+            // draw panel background 
+            spriteBatch.Draw(_defaultSlotTextures["background"], _panelRectangle, Color.Blue);
 
             // draw the header and toggle symbol
             spriteBatch.DrawString(fontHeader, HEADING, _headingPosition, Color.White);
-            spriteBatch.DrawString(fontText, TOGGLE_OPEN, _togglePosition, Color.White);
+            //spriteBatch.DrawString(fontText, TOGGLE_OPEN, _togglePosition, Color.White);
         }
         #endregion
     }
