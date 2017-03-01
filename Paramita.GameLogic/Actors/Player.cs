@@ -40,6 +40,7 @@ namespace Paramita.GameLogic.Actors
         }
 
         public event EventHandler<LevelChangeEventArgs> OnLevelChange;
+        public event EventHandler<InventoryChangeEventArgs> OnInventoryChange;
 
         public Player(string name) : base(BeingType.HumanPlayer)
         {
@@ -90,6 +91,29 @@ namespace Paramita.GameLogic.Actors
         public void SavePlayer() { }
 
 
+        public Tuple<Dictionary<string, ItemType>, int> GetInventory()
+        {
+            var playerInventory = new Dictionary<string, ItemType>();
+
+            playerInventory["left_hand"] = LeftHandItem != null ? LeftHandItem.ItemType : ItemType.None;
+            playerInventory["right_hand"] = RightHandItem != null ? RightHandItem.ItemType : ItemType.None;
+            playerInventory["head"] = HeadItem != null ? HeadItem.ItemType : ItemType.None;
+            playerInventory["body"] = BodyItem != null ? BodyItem.ItemType : ItemType.None;
+            playerInventory["feet"] = FeetItem != null ? FeetItem.ItemType : ItemType.None;
+
+            Item[] playerOtherItems = UnequipedItems;
+            string label; int num = 0;
+            foreach (var item in playerOtherItems)
+            {
+                num++;
+                label = "other" + num;
+                playerInventory[label] = item != null ? item.ItemType : ItemType.None;
+            }
+
+            return new Tuple<Dictionary<string, ItemType>, int>(playerInventory, Gold);
+        }
+
+
         public override void Update()
         {
             base.Update();
@@ -130,6 +154,7 @@ namespace Paramita.GameLogic.Actors
             if (AddItem(items[0]) == true)
             {
                 CurrentTile.RemoveItem(items[0]);
+                OnInventoryChange?.Invoke(this, new InventoryChangeEventArgs(Dungeon.GetPlayerInventory() ));
 
                 if (items[0] is Coins)
                 {
@@ -195,6 +220,7 @@ namespace Paramita.GameLogic.Actors
             if (itemToDrop != null && !(itemToDrop is NaturalWeapon))
             {
                 RemoveItem(itemToDrop);
+                OnInventoryChange?.Invoke(this, new InventoryChangeEventArgs(Dungeon.GetPlayerInventory()));
                 CurrentTile.AddItem(itemToDrop);
                 //GameScene.PostNewStatus("You dropped a " + itemToDrop.ToString() + ".");
             }

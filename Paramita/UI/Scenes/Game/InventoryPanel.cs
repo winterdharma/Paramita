@@ -95,12 +95,16 @@ namespace Paramita.UI.Scenes.Game
         public static event EventHandler<InventoryEventArgs> OnPlayerEquippedItem;
         public static event EventHandler<InventoryEventArgs> OnPlayerUsedItem;
 
+
+
         public InventoryPanel()
         {
             InitializePanel();
             SubscribeToInputEvents();
             GetPlayerData();
         }
+
+
 
         #region Properties
         public static Dictionary<string, Texture2D> DefaultTextures
@@ -129,9 +133,8 @@ namespace Paramita.UI.Scenes.Game
             }
         }
 
-        #region Inventory Property helpers
 
-        
+        #region Inventory Property helpers
 
         private string GetDefaultTextureKey(string str)
         {
@@ -156,6 +159,30 @@ namespace Paramita.UI.Scenes.Game
                     throw new NotImplementedException("InventoryPanel.GetDefaultTextureType():"
                         + " Unknown type from Dungeon.GetPlayerInventory()");
             }
+        }
+
+        #endregion
+
+        #endregion
+
+
+        
+        private void InitializePanel()
+        {
+            _isOpen = false;
+            _itemSelected = 0;
+            UpdatePanelRectangle();
+            InitializeTextElements();
+            
+        }
+
+
+
+        #region PanelRectangle
+        private void UpdatePanelRectangle()
+        {
+            _panelRectangle.Location = GetPanelOrigin(_isOpen);
+            _panelRectangle.Size = GetPanelSize(_isOpen);
         }
 
         private Point GetPanelOrigin(bool isOpen, int offsetFromTop = 0, int offsetFromRight = 0)
@@ -188,35 +215,20 @@ namespace Paramita.UI.Scenes.Game
             }
         }
 
+        private void TogglePanelOpenOrClosed()
+        {
+            IsOpen = !IsOpen; 
+            // IsOpen property setter calls UpdatePanelRectangle() and UpdateHeadingPosition()
+        }
+
         #endregion
 
-        #endregion
-
-        #region Constructor Helpers
-
-        private void InitializePanel()
-        {
-            _isOpen = false;
-            _itemSelected = 0;
-            UpdatePanelRectangle();
-            InitializeTextElements();
-            
-        }
-
-        private void UpdatePanelRectangle()
-        {
-            _panelRectangle.Location = GetPanelOrigin(_isOpen);
-            _panelRectangle.Size = GetPanelSize(_isOpen);
-        }
-
-        private void UpdateHeadingPosition()
-        {
-            _heading.Position = GetHeadingPosition(_heading.Text, _panelRectangle, _heading.Font);
-        }
+        
 
         private void SubscribeToInputEvents()
         {
-            InputListener.OnLeftMouseButtonClicked += HandleLeftClick;
+            InputListener.OnLeftMouseButtonClicked += HandleLeftMouseClickEvents;
+            InputListener.OnMousePositionChanged += HandleMouseOverEvents;
             InputListener.OnD0KeyWasPressed += HandleSelect0Input;
             InputListener.OnD1KeyWasPressed += HandleSelect1Input;
             InputListener.OnD2KeyWasPressed += HandleSelect2Input;
@@ -232,17 +244,25 @@ namespace Paramita.UI.Scenes.Game
             InputListener.OnUKeyWasPressed += HandleUseInput;
             InputListener.OnCKeyWasPressed += HandleCancelInput;
             InputListener.OnIKeyWasPressed += HandleToggleInput;
+            Dungeon.OnInventoryChangeUINotification += HandleInventoryChange;
         }
 
 
         private void GetPlayerData()
         {
             var playerData = Dungeon.GetPlayerInventory();
-            Inventory = playerData.Item1;
-            _gold = playerData.Item2;
+            UpdateInventoryData(playerData);
+        }
+
+        private void UpdateInventoryData(Tuple<Dictionary<string, ItemType>, int> inventoryData)
+        {
+            Inventory = inventoryData.Item1;
+            _gold = inventoryData.Item2;
         }
 
 
+
+        #region SpriteElements
         private void CreateSpriteElements()
         {
             _spriteElements = new List<SpriteElement>();
@@ -255,6 +275,7 @@ namespace Paramita.UI.Scenes.Game
                 spriteElement.Texture = GetSpriteElementTexture(slot, _inventory[slot]);
                 spriteElement.Position = GetSpriteElementPosition(i-1);
                 spriteElement.Color = GetSpriteElementColor(i);
+                spriteElement.Rectangle = new Rectangle((int)spriteElement.Position.X, (int)spriteElement.Position.Y, 32, 32);
                 _spriteElements.Add(spriteElement);
             }
         }
@@ -290,9 +311,12 @@ namespace Paramita.UI.Scenes.Game
                 return Color.Red;
             else
                 return Color.White;
-
         }
+        #endregion
 
+
+
+        #region TextElements
         private void CreateTextElements()
         {
             _textElements = new List<TextElement>();
@@ -402,6 +426,10 @@ namespace Paramita.UI.Scenes.Game
                 (panelRect.Top + offsetTop));
         }
 
+        private void UpdateHeadingPosition()
+        {
+            _heading.Position = GetHeadingPosition(_heading.Text, _panelRectangle, _heading.Font);
+        }
 
         private List<TextElement> GetHintTextElements()
         {
@@ -427,12 +455,12 @@ namespace Paramita.UI.Scenes.Game
 
         #endregion
 
+
+
+
         #region Input Handlers
         private void HandleInput(InventoryActions action)
         {
-            if (action == InventoryActions.TogglePanel)
-                IsOpen = !IsOpen;
-
             int selectionInput = 0;
             if((int)action > 0 && (int)action < 11)
                 selectionInput = (int)action;
@@ -458,22 +486,48 @@ namespace Paramita.UI.Scenes.Game
             }
         }
 
-        private void HandleLeftClick(object sender, MouseEventArgs e)
+        private void HandleInventoryChange(object sender, InventoryChangeEventArgs e)
+        {
+            UpdateInventoryData(e.Inventory);
+            
+        }
+
+
+        #region Mouse Input Events
+        private void HandleMouseOverEvents(object sender, MouseEventArgs e)
+        {
+            // update SpriteElement tints to indicate getting or losing focus
+            foreach(var sprite in _spriteElements)
+            {
+                if (e.Position.X > sprite.Rectangle.Left && e.Position.X < sprite.Rectangle.Right
+                    && e.Position.Y > sprite.Rectangle.Top && e.Position.Y < sprite.Rectangle.Bottom)
+                {
+                    sprite.Color = Color.Red;
+                }
+                else
+                    sprite.Color = Color.White;
+            }
+        }
+
+        private void HandleLeftMouseClickEvents(object sender, MouseEventArgs e)
         {
             if(!_isOpen && e.Position.X > _panelRectangle.X && e.Position.Y < _panelRectangle.Bottom)
             {
-                IsOpen = true;
+                TogglePanelOpenOrClosed();
             }
             else
             {
                 var toggleSize = _toggleText.Font.MeasureString(_toggleText.Text);
                 if(e.Position.X > _toggleText.Position.X && e.Position.Y < _toggleText.Position.Y + toggleSize.Y)
                 {
-                    IsOpen = false;
+                    TogglePanelOpenOrClosed();
                 }
             }
         }
+        #endregion
 
+
+        #region Keyboard Input Events
         private void HandleSelect0Input(object sender, EventArgs e)
         {
             HandleInput(InventoryActions.Select0);
@@ -546,20 +600,23 @@ namespace Paramita.UI.Scenes.Game
 
         private void HandleToggleInput(object sender, EventArgs e)
         {
-            HandleInput(InventoryActions.TogglePanel);
+            TogglePanelOpenOrClosed();
+            //HandleInput(InventoryActions.TogglePanel);
         }
         #endregion
+        #endregion
 
-        
+
 
         // Called by GameScene.Update() to check for changes or input to handle
         public void Update(GameTime gameTime)
         {
-            GetPlayerData();
             CreateTextElements();
         }
 
 
+
+        #region Draw Methods
         // Called by GameScene.Draw()
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
@@ -573,11 +630,9 @@ namespace Paramita.UI.Scenes.Game
             spriteBatch.End();
         }
 
-        #region Draw Method Helpers
         private void DrawOpenPanel(SpriteBatch spriteBatch)
         {
             // draw background
-            _panelRectangle.Height = PANEL_HEIGHT_OPEN;
             spriteBatch.Draw(_defaultSlotTextures["background"], _panelRectangle, Color.White);
 
             // draw sprite elements
@@ -609,6 +664,7 @@ namespace Paramita.UI.Scenes.Game
             
             spriteBatch.DrawString(_heading.Font, _heading.Text, _heading.Position, _heading.Color);
         }
+
         #endregion
     }
 }

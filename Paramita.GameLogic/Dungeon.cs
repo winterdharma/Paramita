@@ -7,6 +7,16 @@ using Paramita.GameLogic.Mechanics;
 
 namespace Paramita.GameLogic
 {
+
+    public class InventoryChangeEventArgs : EventArgs
+    {
+        public Tuple<Dictionary<string, ItemType>, int> Inventory { get; }
+        public InventoryChangeEventArgs(Tuple<Dictionary<string, ItemType>, int> inventory)
+        {
+            Inventory = inventory;
+        }
+    }
+
     public class Dungeon
     {
         internal static Random _random;
@@ -26,7 +36,8 @@ namespace Paramita.GameLogic
         }
         public static Player Player { get { return _player; } }
 
-        public static event EventHandler<MoveEventArgs> OnActorMoveUINotification; 
+        public static event EventHandler<MoveEventArgs> OnActorMoveUINotification;
+        public static event EventHandler<InventoryChangeEventArgs> OnInventoryChangeUINotification;
 
         public Dungeon()
         {
@@ -78,24 +89,7 @@ namespace Paramita.GameLogic
         
         public static Tuple<Dictionary<string, ItemType>, int> GetPlayerInventory()
         {
-            var playerInventory = new Dictionary<string, ItemType>();
-
-            playerInventory["left_hand"] = _player.LeftHandItem != null ? _player.LeftHandItem.ItemType : ItemType.None;
-            playerInventory["right_hand"] = _player.RightHandItem != null ? _player.RightHandItem.ItemType : ItemType.None;
-            playerInventory["head"] = _player.HeadItem != null ? _player.HeadItem.ItemType : ItemType.None;
-            playerInventory["body"] = _player.BodyItem != null ? _player.BodyItem.ItemType : ItemType.None;
-            playerInventory["feet"] = _player.FeetItem != null ? _player.FeetItem.ItemType : ItemType.None;
-
-            Item[] playerOtherItems = _player.UnequipedItems;
-            string label; int num = 0;
-            foreach(var item in playerOtherItems)
-            {
-                num++;
-                label = "other" + num;
-                playerInventory[label] = item != null ? item.ItemType : ItemType.None;
-            }
-
-            return new Tuple<Dictionary<string, ItemType>, int>(playerInventory, _player.Gold);
+            return _player.GetInventory();
         }
 
 
@@ -107,6 +101,7 @@ namespace Paramita.GameLogic
         {
             _currentLevel.OnLevelChange += HandleLevelChange;
             _currentLevel.OnActorWasMoved += HandleActorMovement;
+            _player.OnInventoryChange += HandleInventoryChange;
         }
 
 
@@ -127,6 +122,12 @@ namespace Paramita.GameLogic
         {
             OnActorMoveUINotification(null, eventArgs);
         }
+
+        private void HandleInventoryChange(object sender, InventoryChangeEventArgs eventArgs)
+        {
+            OnInventoryChangeUINotification(null, eventArgs);
+        }
+
 
 
         public void Update()
