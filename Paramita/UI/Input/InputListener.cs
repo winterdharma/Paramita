@@ -70,9 +70,9 @@ namespace Paramita.UI.Input
         public static event EventHandler<EventArgs> OnAnyKeyWasPressed;
 
 
-        public static event EventHandler<EventArgs> OnLeftMouseButtonClicked;
-        public static event EventHandler<EventArgs> OnMiddleMouseButtonClicked;
-        public static event EventHandler<EventArgs> OnRightMouseButtonClicked;
+        public static event EventHandler<MouseEventArgs> OnLeftMouseButtonClicked;
+        public static event EventHandler<MouseEventArgs> OnMiddleMouseButtonClicked;
+        public static event EventHandler<MouseEventArgs> OnRightMouseButtonClicked;
         public static event EventHandler<MouseEventArgs> OnMousePositionChanged;
         public static event EventHandler<MouseEventArgs> OnMouseScrollWheelMoved;
 
@@ -159,7 +159,8 @@ namespace Paramita.UI.Input
             if (_currentMouseState.LeftButton == ButtonState.Released
                 && _previousMouseState.LeftButton == ButtonState.Pressed)
             {
-                OnLeftMouseButtonClicked?.Invoke(null, EventArgs.Empty);
+                OnLeftMouseButtonClicked?.Invoke(null, 
+                    new MouseEventArgs(_currentMouseState.Position, _currentMouseState.ScrollWheelValue));
             }
         }
 
@@ -168,7 +169,8 @@ namespace Paramita.UI.Input
             if (_currentMouseState.MiddleButton == ButtonState.Released
                 && _previousMouseState.MiddleButton == ButtonState.Pressed)
             {
-                OnMiddleMouseButtonClicked?.Invoke(null, EventArgs.Empty);
+                OnMiddleMouseButtonClicked?.Invoke(null, 
+                    new MouseEventArgs(_currentMouseState.Position, _currentMouseState.ScrollWheelValue));
             }
         }
 
@@ -177,7 +179,8 @@ namespace Paramita.UI.Input
             if (_currentMouseState.RightButton == ButtonState.Released
                 && _previousMouseState.RightButton == ButtonState.Pressed)
             {
-                OnRightMouseButtonClicked?.Invoke(null, EventArgs.Empty);
+                OnRightMouseButtonClicked?.Invoke(null, 
+                    new MouseEventArgs(_currentMouseState.Position, _currentMouseState.ScrollWheelValue));
             }
         }
 
