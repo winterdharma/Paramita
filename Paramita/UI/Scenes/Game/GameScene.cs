@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.GameLogic;
+using Paramita.GameLogic.Items;
 using Paramita.UI.Input;
 using Paramita.UI.Scenes.Game;
 
@@ -37,10 +38,10 @@ namespace Paramita.UI.Scenes
 
         protected override void LoadContent()
         {
-            ItemTextures.ItemTextureMap[SpriteType.Item_Coins] = _content.Load<Texture2D>("Images\\Items\\coins");
-            ItemTextures.ItemTextureMap[SpriteType.Item_Meat] = _content.Load<Texture2D>("Images\\Items\\meat");
-            ItemTextures.ItemTextureMap[SpriteType.Item_Buckler] = _content.Load<Texture2D>("Images\\Items\\buckler");
-            ItemTextures.ItemTextureMap[SpriteType.Item_ShortSword] = _content.Load<Texture2D>("Images\\Items\\short_sword");
+            ItemTextures.ItemTextureMap[ItemType.Coins] = _content.Load<Texture2D>("Images\\Items\\coins");
+            ItemTextures.ItemTextureMap[ItemType.Meat] = _content.Load<Texture2D>("Images\\Items\\meat");
+            ItemTextures.ItemTextureMap[ItemType.Shield] = _content.Load<Texture2D>("Images\\Items\\buckler");
+            ItemTextures.ItemTextureMap[ItemType.ShortSword] = _content.Load<Texture2D>("Images\\Items\\short_sword");
 
             TileMapPanel.Spritesheets.Add(SpriteType.Tile_Floor, _content.Load<Texture2D>("Images\\Tiles\\floor"));
             TileMapPanel.Spritesheets.Add(SpriteType.Tile_Door, _content.Load<Texture2D>("Images\\Tiles\\door"));
@@ -51,6 +52,7 @@ namespace Paramita.UI.Scenes
             TileMapPanel.Spritesheets.Add(SpriteType.Actor_Player, _content.Load<Texture2D>("Images\\SentientBeings\\human_player"));
 
             InventoryPanel.DefaultTextures.Add("background", _content.Load<Texture2D>("black_background1"));
+            InventoryPanel.DefaultTextures["white_background"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_bg_white");
             InventoryPanel.DefaultTextures.Add("default_hand", _content.Load<Texture2D>("Images\\Scenes\\inventory_hand"));
             InventoryPanel.DefaultTextures.Add("default_head", _content.Load<Texture2D>("Images\\Scenes\\inventory_head"));
             InventoryPanel.DefaultTextures.Add("default_body", _content.Load<Texture2D>("Images\\Scenes\\inventory_body"));

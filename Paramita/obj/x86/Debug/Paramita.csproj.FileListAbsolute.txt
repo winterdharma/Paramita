@@ -57,3 +57,4 @@ C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\Images\
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\Images\Scenes\inventory_hand.xnb
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\Images\Scenes\inventory_head.xnb
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\Images\Scenes\inventory_other.xnb
+C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Content\Images\Scenes\inventory_bg_white.xnb

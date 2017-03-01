@@ -61,32 +61,32 @@ namespace Paramita.UI.Scenes.Game
             = new Dictionary<string, ItemType>();
         private int _gold = 0;
 
-        private Dictionary<string, Sprite> _inventorySprites
-            = new Dictionary<string, Sprite>();
+        private List<SpriteElement> _spriteElements;
+        private List<TextElement> _textElements;
 
         private Rectangle _panelRectangle;
-        private const int PANEL_WIDTH = 250;
         private const int PANEL_WIDTH_OPEN = 250;
         private const int PANEL_WIDTH_CLOSED = 150;
         private const int PANEL_HEIGHT_OPEN = 330;
         private const int PANEL_HEIGHT_CLOSED = 30;
 
-        private Vector2 _headingPosition;
-        private Vector2 _togglePosition;
-        private Vector2 _hintPosition;
-        private Vector2 _spritePosition;
+        private Vector2 _itemInfoPosition;
 
-        private SpriteFont fontHeader = GameController.ArialBold;
-        private SpriteFont fontText = GameController.NotoSans;
+        private TextElement _heading;
+        private TextElement _toggleText;
+        private TextElement _unequipText;
+        private TextElement _equipText;
+        private TextElement _dropText;
+        private TextElement _cancelText;
 
         private const string HEADING = "(I)nventory";
         private const string TOGGLE_CLOSED = "[X]";
-        private string selectHint = "Press (0-9) to Select Item";
-        private string dropHint = "Press (d) to Drop Item";
-        private string useHint = "Press (u) to Use Item";
-        private string equipHint = "Press (e) to Equip Item";
-        private string unequipHint = "Press (e) to Unequip Item";
-        private string cancelHint = "Press (c) to Cancel Selection";
+        private const string SELECT_HINT = "Press (0-9) to Select Item ";
+        private const string DROP_HINT = "(D)rop Item";
+        private const string USE_HINT = "(U)se Item";
+        private const string EQUIP_HINT = "(E)quip Item";
+        private const string UNEQUIP_HINT = "Un(e)quip Item";
+        private const string CANCEL_HINT = "(C)ancel Selection";
 
         private int _itemSelected;
         private bool _isOpen = false;
@@ -97,11 +97,9 @@ namespace Paramita.UI.Scenes.Game
 
         public InventoryPanel()
         {
-            SubscribeToInputEvents();
-
-            GetPlayerData();
-
             InitializePanel();
+            SubscribeToInputEvents();
+            GetPlayerData();
         }
 
         #region Properties
@@ -116,7 +114,7 @@ namespace Paramita.UI.Scenes.Game
             set
             {
                 _inventory = value;
-                CreateInventorySprites(_inventory);
+                CreateSpriteElements();
             }
         }
 
@@ -126,32 +124,14 @@ namespace Paramita.UI.Scenes.Game
             set
             {
                 _isOpen = value;
-                _panelRectangle.Location = GetPanelOrigin(_isOpen);
-                _panelRectangle.Size = GetPanelSize(_isOpen);
-                _headingPosition = GetHeadingPosition(HEADING, _panelRectangle);
+                UpdatePanelRectangle();
+                UpdateHeadingPosition();
             }
         }
 
         #region Inventory Property helpers
 
-        private void CreateInventorySprites(Dictionary<string, ItemType> _inventory)
-        {
-            Rectangle frame = new Rectangle(0, 0, 32, 32);
-            foreach (string type in _inventory.Keys)
-            {
-                var spriteType = Sprite.GetSpriteType(_inventory[type]);
-                if (spriteType == SpriteType.None)
-                {
-                    _inventorySprites[type] =
-                        new Sprite(_defaultSlotTextures[GetDefaultTextureKey(type)], frame);
-                }
-                else
-                {
-                    _inventorySprites[type] =
-                        new Sprite(ItemTextures.ItemTextureMap[spriteType], frame);
-                }
-            }
-        }
+        
 
         private string GetDefaultTextureKey(string str)
         {
@@ -208,19 +188,31 @@ namespace Paramita.UI.Scenes.Game
             }
         }
 
-        private Vector2 GetHeadingPosition(string heading, Rectangle panelRect, int offsetTop = 5)
-        {
-            var headingSize = fontHeader.MeasureString(heading);
-            return new Vector2(
-                panelRect.Left + ((panelRect.Width / 2) - (headingSize.X / 2)),
-                (panelRect.Top + offsetTop));
-        }
-
         #endregion
 
         #endregion
 
         #region Constructor Helpers
+
+        private void InitializePanel()
+        {
+            _isOpen = false;
+            _itemSelected = 0;
+            UpdatePanelRectangle();
+            InitializeTextElements();
+            
+        }
+
+        private void UpdatePanelRectangle()
+        {
+            _panelRectangle.Location = GetPanelOrigin(_isOpen);
+            _panelRectangle.Size = GetPanelSize(_isOpen);
+        }
+
+        private void UpdateHeadingPosition()
+        {
+            _heading.Position = GetHeadingPosition(_heading.Text, _panelRectangle, _heading.Font);
+        }
 
         private void SubscribeToInputEvents()
         {
@@ -251,21 +243,186 @@ namespace Paramita.UI.Scenes.Game
         }
 
 
-        private void InitializePanel()
+        private void CreateSpriteElements()
         {
-            IsOpen = false;
+            _spriteElements = new List<SpriteElement>();
+            string slot;
+            for(int i = 1; i < _inventorySlots.Count; i++)
+            {
+                slot = _inventorySlots[i];
+                var spriteElement = new SpriteElement();
+                spriteElement.Label = slot;
+                spriteElement.Texture = GetSpriteElementTexture(slot, _inventory[slot]);
+                spriteElement.Position = GetSpriteElementPosition(i-1);
+                spriteElement.Color = GetSpriteElementColor(i);
+                _spriteElements.Add(spriteElement);
+            }
+        }
 
-            var toggleSize = fontHeader.MeasureString(TOGGLE_CLOSED);
-            _togglePosition = new Vector2(
+        private Texture2D GetSpriteElementTexture(string slot, ItemType itemType)
+        {
+            Texture2D texture;
+            if(itemType == ItemType.None || itemType == ItemType.Fist || itemType == ItemType.Bite)
+                texture = _defaultSlotTextures[GetDefaultTextureKey(slot)];
+            else
+                texture = ItemTextures.ItemTextureMap[itemType];
+
+            return texture;
+        }
+
+        private Vector2 GetSpriteElementPosition(int position)
+        {
+            int spritesPerRow = 5;
+
+            var spritePosition = new Vector2();
+            spritePosition.X = _panelRectangle.Right - ((PANEL_WIDTH_OPEN / 2) + 90);
+            spritePosition.Y = _panelRectangle.Top + 60;
+
+            spritePosition.X += (position % spritesPerRow) * 37;
+            spritePosition.Y += (position / spritesPerRow) * 37;
+            return spritePosition;
+            
+        }
+
+        private Color GetSpriteElementColor(int index)
+        {
+            if (_itemSelected == index)
+                return Color.Red;
+            else
+                return Color.White;
+
+        }
+
+        private void CreateTextElements()
+        {
+            _textElements = new List<TextElement>();
+
+            _textElements.Add(_heading);
+            _textElements.Add(_toggleText);
+            _textElements.AddRange(GetHintTextElements());
+        }
+
+        private void InitializeTextElements()
+        {
+            ConstructHeadingElement();
+            ConstructToggleElement();
+            ConstructUnequipHintElement();
+            ConstructEquipHintElement();
+            ConstructDropHintElement();
+            ConstructCancelHintElement();           
+
+            _itemInfoPosition = new Vector2(
+                _panelRectangle.Right - (PANEL_WIDTH_OPEN - 10),
+                _panelRectangle.Top + 140); 
+        }
+
+        private void ConstructHeadingElement()
+        {
+            SpriteFont font = GameController.ArialBold;
+            _heading = new TextElement(
+                "heading",
+                HEADING,
+                font,
+                GetHeadingPosition(HEADING, _panelRectangle, font),
+                Color.White);
+        }
+
+        private void ConstructToggleElement()
+        {
+            var font = GameController.NotoSans;
+            var toggleSize = font.MeasureString(TOGGLE_CLOSED);
+            var position = new Vector2(
                 _panelRectangle.Right - toggleSize.X, (_panelRectangle.Top + 5));
-  
-            _spritePosition = new Vector2( // (5 sprites * 37 pixels - 5 / 2) = 90 pixels
-                _panelRectangle.Right - ((PANEL_WIDTH_OPEN / 2) + 90),
-                _panelRectangle.Top + 60);
 
-            _hintPosition = new Vector2(
-                _panelRectangle.Left + 10, PANEL_HEIGHT_OPEN - 60);
-            _itemSelected = 0;
+            _toggleText = new TextElement(
+                "toggle_text",
+                TOGGLE_CLOSED,
+                font,
+                position,
+                Color.White);
+        }
+
+        private void ConstructUnequipHintElement()
+        {
+            var position = new Vector2(
+               _panelRectangle.Right - (PANEL_WIDTH_OPEN - 10),
+               150);
+
+            _unequipText = new TextElement(
+                "unequip_text",
+                UNEQUIP_HINT,
+                GameController.NotoSans,
+                position,
+                Color.White);
+        }
+
+        private void ConstructEquipHintElement()
+        {
+            _equipText = new TextElement(
+                "equip_hint",
+                EQUIP_HINT,
+                GameController.NotoSans,
+                _unequipText.Position,
+                Color.White);
+        }
+
+        private void ConstructDropHintElement()
+        {
+            var font = GameController.NotoSans;
+            var position = _unequipText.Position;
+            position.Y += font.MeasureString(EQUIP_HINT).Y + 5;
+
+            _dropText = new TextElement(
+                "drop_hint",
+                DROP_HINT,
+                font,
+                position,
+                Color.White);
+        }
+
+        private void ConstructCancelHintElement()
+        {
+            var font = GameController.NotoSans;
+            var position = _dropText.Position;
+            position.Y += font.MeasureString(CANCEL_HINT).Y + 5;
+
+            _cancelText = new TextElement(
+                "cancel_hint",
+                CANCEL_HINT,
+                font,
+                position,
+                Color.White);
+        }
+
+        private Vector2 GetHeadingPosition(string heading, Rectangle panelRect, SpriteFont font, int offsetTop = 5)
+        {
+            var headingSize = font.MeasureString(heading);
+            return new Vector2(
+                panelRect.Left + ((panelRect.Width / 2) - (headingSize.X / 2)),
+                (panelRect.Top + offsetTop));
+        }
+
+
+        private List<TextElement> GetHintTextElements()
+        {
+            var hints = new List<TextElement>();
+
+            if (_itemSelected > 0 && _itemSelected < 6)
+            {
+                hints.Add(_unequipText);
+            }
+            else if (_itemSelected > 5)
+            {
+                hints.Add(_equipText);
+            }
+
+            if (_itemSelected > 0)
+            {
+                hints.Add(_dropText);
+                hints.Add(_cancelText);
+            }
+
+            return hints;
         }
 
         #endregion
@@ -281,9 +438,11 @@ namespace Paramita.UI.Scenes.Game
                 selectionInput = (int)action;
 
             if(selectionInput > 0)
+            {
                 _itemSelected = selectionInput;
+            }
 
-            if(_itemSelected > 0 && _itemSelected <= _inventory.Count)
+            if (_itemSelected > 0 && _itemSelected <= _inventory.Count)
             {
                 if(action == InventoryActions.Drop)
                 {
@@ -307,8 +466,8 @@ namespace Paramita.UI.Scenes.Game
             }
             else
             {
-                var toggleSize = fontHeader.MeasureString(TOGGLE_CLOSED);
-                if(e.Position.X > _togglePosition.X && e.Position.Y < _togglePosition.Y + toggleSize.Y)
+                var toggleSize = _toggleText.Font.MeasureString(_toggleText.Text);
+                if(e.Position.X > _toggleText.Position.X && e.Position.Y < _toggleText.Position.Y + toggleSize.Y)
                 {
                     IsOpen = false;
                 }
@@ -397,6 +556,7 @@ namespace Paramita.UI.Scenes.Game
         public void Update(GameTime gameTime)
         {
             GetPlayerData();
+            CreateTextElements();
         }
 
 
@@ -420,69 +580,34 @@ namespace Paramita.UI.Scenes.Game
             _panelRectangle.Height = PANEL_HEIGHT_OPEN;
             spriteBatch.Draw(_defaultSlotTextures["background"], _panelRectangle, Color.White);
 
-            // draw header and toggle symbol
-            spriteBatch.DrawString(fontHeader, HEADING, _headingPosition, Color.White);
-            spriteBatch.DrawString(fontText, TOGGLE_CLOSED, _togglePosition, Color.White);
-
-            // draw the list of items in player's inventory
-            string slot = "";
-            Sprite sprite;
-            Vector2 position = _spritePosition;
-            Color color = Color.White;
-            Color normalColor = Color.White;
-            Color selectedColor = Color.Red;
-            for(int i = 1; i < 6; i++)
+            // draw sprite elements
+            for(int i = 0; i < _spriteElements.Count; i++)
             {
-                if (i == _itemSelected)
-                    color = selectedColor;
-                else
-                    color = normalColor;
-
-                slot = _inventorySlots[i];
-                sprite = _inventorySprites[slot];
-                sprite.Position = position;
+                var sprite = _spriteElements[i];
+                
                 spriteBatch.Draw(
                     sprite.Texture,
                     sprite.Position,
-                    sprite.Frame,
-                    color
+                    sprite.Color
                 );
-                position.X += 37;
             }
 
-            position = _spritePosition;
-            position.Y += 37;
-            for(int j = 6; j < 11; j++)
+            // Draw text elements
+            foreach(TextElement textElement in _textElements)
             {
-                if (j == _itemSelected)
-                    color = selectedColor;
-                else
-                    color = normalColor;
-
-                slot = _inventorySlots[j];
-                sprite = _inventorySprites[slot];
-                sprite.Position = position;
-                spriteBatch.Draw(
-                    sprite.Texture,
-                    sprite.Position,
-                    sprite.Frame,
-                    color
-                );
-                position.X += 37;
+                spriteBatch.DrawString(textElement.Font, 
+                    textElement.Text, 
+                    textElement.Position, 
+                    textElement.Color);
             }
-
-            // Add other information items like amount of gold, weapon & armor stats, etc
         }
 
 
         private void DrawClosedPanel(SpriteBatch spriteBatch)
         {
-            // draw panel background 
-            spriteBatch.Draw(_defaultSlotTextures["background"], _panelRectangle, Color.Blue);
-
-            // draw the header and toggle symbol
-            spriteBatch.DrawString(fontHeader, HEADING, _headingPosition, Color.White);
-            //spriteBatch.DrawString(fontText, TOGGLE_OPEN, _togglePosition, Color.White);
+            spriteBatch.Draw(_defaultSlotTextures["white_background"], _panelRectangle, Color.DarkBlue);
+            
+            spriteBatch.DrawString(_heading.Font, _heading.Text, _heading.Position, _heading.Color);
         }
         #endregion
     }

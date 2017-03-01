@@ -77,7 +77,7 @@ namespace Paramita.UI.Scenes.Game
                     if(typeArray[i,j] != null)
                     {
                         type = typeArray[i, j].Item1;
-                        spriteArray[i, j] = new Sprite(ItemTextures.ItemTextureMap[Sprite.GetSpriteType(type)], _drawFrame);
+                        spriteArray[i, j] = new Sprite(ItemTextures.ItemTextureMap[type], _drawFrame);
                         spriteArray[i, j].Position = new Vector2(j * TILE_SIZE, i * TILE_SIZE);
                     }
                 }

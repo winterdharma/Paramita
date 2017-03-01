@@ -46,6 +46,8 @@
     <Compile Include="UI\Input\InputListener.cs" />
     <Compile Include="UI\Input\InputResponder.cs" />
     <Compile Include="UI\Scenes\Game\ItemTextures.cs" />
+    <Compile Include="UI\Scenes\Game\SpriteElement.cs" />
+    <Compile Include="UI\Scenes\Game\TextElement.cs" />
     <Compile Include="UI\Scenes\Game\TileMapPanel.cs" />
     <Compile Include="UI\Sprite.cs" />
     <Compile Include="UI\Scenes\Game\InventoryPanel.cs" />
