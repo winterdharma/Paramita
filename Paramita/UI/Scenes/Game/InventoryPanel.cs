@@ -173,7 +173,6 @@ namespace Paramita.UI.Scenes.Game
             _itemSelected = 0;
             UpdatePanelRectangle();
             InitializeTextElements();
-            
         }
 
 
@@ -267,16 +266,63 @@ namespace Paramita.UI.Scenes.Game
         {
             _spriteElements = new List<SpriteElement>();
             string slot;
-            for(int i = 1; i < _inventorySlots.Count; i++)
+
+            for (int i = 1; i < _inventorySlots.Count; i++)
             {
-                slot = _inventorySlots[i];
-                var spriteElement = new SpriteElement();
-                spriteElement.Label = slot;
-                spriteElement.Texture = GetSpriteElementTexture(slot, _inventory[slot]);
-                spriteElement.Position = GetSpriteElementPosition(i-1);
-                spriteElement.Color = GetSpriteElementColor(i);
-                spriteElement.Rectangle = new Rectangle((int)spriteElement.Position.X, (int)spriteElement.Position.Y, 32, 32);
-                _spriteElements.Add(spriteElement);
+                var sprite = new SpriteElement();
+                sprite.Label = _inventorySlots[i];
+                sprite.Texture = _defaultSlotTextures[GetDefaultTextureKey(_inventorySlots[i])];
+                sprite.Position = GetSpriteElementPosition(i - 1);
+                sprite.Color = GetSpriteElementColor(i);
+                sprite.Rectangle = new Rectangle((int)sprite.Position.X, (int)sprite.Position.Y, 32, 32);
+                _spriteElements.Add(sprite);
+            }
+
+            var tempSpriteElements = new List<SpriteElement>(_spriteElements);
+            foreach(var sprite in tempSpriteElements)
+            {
+                if(_inventory[sprite.Label] != ItemType.None 
+                    && _inventory[sprite.Label] != ItemType.Fist 
+                    && _inventory[sprite.Label] != ItemType.Bite)
+                {
+                    sprite.Color = Color.DarkSlateGray;
+                    var item = new SpriteElement();
+                    item.Label = ConvertItemTypeToString(_inventory[sprite.Label]);
+                    item.Texture = ItemTextures.ItemTextureMap[_inventory[sprite.Label]];
+                    item.Position = sprite.Position;
+                    item.Color = Color.White;
+                    item.Rectangle = sprite.Rectangle;
+                    _spriteElements.Add(item);
+                }
+            }
+
+
+
+            //for (int i = 1; i < _inventorySlots.Count; i++)
+            //{
+            //    slot = _inventorySlots[i];
+            //    var spriteElement = new SpriteElement();
+            //    spriteElement.Label = slot;
+            //    spriteElement.Texture = GetSpriteElementTexture(slot, _inventory[slot]);
+            //    spriteElement.Position = GetSpriteElementPosition(i-1);
+            //    spriteElement.Color = GetSpriteElementColor(i);
+            //    spriteElement.Rectangle = new Rectangle((int)spriteElement.Position.X, (int)spriteElement.Position.Y, 32, 32);
+            //    _spriteElements.Add(spriteElement);
+            //}
+        }
+
+        private string ConvertItemTypeToString(ItemType type)
+        {
+            switch (type)
+            {
+                case ItemType.Meat:
+                    return "meat";
+                case ItemType.Shield:
+                    return "buckler";
+                case ItemType.ShortSword:
+                    return "short_sword";
+                default:
+                    return "unknown item";
             }
         }
 
@@ -499,8 +545,7 @@ namespace Paramita.UI.Scenes.Game
             // update SpriteElement tints to indicate getting or losing focus
             foreach(var sprite in _spriteElements)
             {
-                if (e.Position.X > sprite.Rectangle.Left && e.Position.X < sprite.Rectangle.Right
-                    && e.Position.Y > sprite.Rectangle.Top && e.Position.Y < sprite.Rectangle.Bottom)
+                if(sprite.Rectangle.Contains(e.Position))
                 {
                     sprite.Color = Color.Red;
                 }
@@ -511,16 +556,30 @@ namespace Paramita.UI.Scenes.Game
 
         private void HandleLeftMouseClickEvents(object sender, MouseEventArgs e)
         {
-            if(!_isOpen && e.Position.X > _panelRectangle.X && e.Position.Y < _panelRectangle.Bottom)
+            var toggleSize = _toggleText.Font.MeasureString(_toggleText.Text);
+            if (!_isOpen && _panelRectangle.Contains(e.Position))
+            {
+                TogglePanelOpenOrClosed();
+            }
+            else if (e.Position.X > _toggleText.Position.X && e.Position.Y < _toggleText.Position.Y + toggleSize.Y)
             {
                 TogglePanelOpenOrClosed();
             }
             else
             {
-                var toggleSize = _toggleText.Font.MeasureString(_toggleText.Text);
-                if(e.Position.X > _toggleText.Position.X && e.Position.Y < _toggleText.Position.Y + toggleSize.Y)
+                foreach(var sprite in _spriteElements)
                 {
-                    TogglePanelOpenOrClosed();
+                    if(sprite.Rectangle.Contains(e.Position))
+                    {
+                        for(int i = 0; i < _inventorySlots.Count; i++)
+                        {
+                            if(sprite.Label.Equals(_inventorySlots[i]))
+                            {
+                                _itemSelected = i;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }
