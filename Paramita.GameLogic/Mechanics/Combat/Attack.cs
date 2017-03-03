@@ -1,5 +1,6 @@
 ﻿using Paramita.GameLogic.Items;
 using Paramita.GameLogic.Actors;
+using System.Collections.Generic;
 
 namespace Paramita.GameLogic.Mechanics
 {
@@ -10,12 +11,14 @@ namespace Paramita.GameLogic.Mechanics
      */
     public class Attack
     {
+        private List<string> _attackReport = new List<string>();
+
         public Actor Attacker { get; private set; }
         public Actor Defender { get; private set; }
         public Weapon Weapon { get; private set; }
         
 
-
+        public List<string> AttackReport { get { return _attackReport; } }
 
         public Attack(Actor attacker, Weapon weapon, Actor defender)
         {
@@ -31,12 +34,14 @@ namespace Paramita.GameLogic.Mechanics
 
         private void ResolveAttack()
         {
-            var repelMeeleeAttack = new RepelMeeleeAttack(this);
+            var repelMeleeAttack = new RepelMeleeAttack(this);
+            _attackReport.AddRange(repelMeleeAttack.RepelAttackLog);
 
-            if (!repelMeeleeAttack.IsSuccessful)
+            if (!repelMeleeAttack.IsSuccessful)
             {
-                Attacker.TakeDamage(repelMeeleeAttack.Damage);
-                var meeleeAttack = new MeeleeAttack(this);
+                Attacker.TakeDamage(repelMeleeAttack.Damage);
+                var meleeAttack = new MeleeAttack(this);
+                _attackReport.AddRange(meleeAttack.MeleeAttackLog);
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Paramita.GameLogic;
 using System;
 
 namespace Paramita.UI.Scenes.Game
@@ -37,8 +38,29 @@ namespace Paramita.UI.Scenes.Game
 
             CalcHeightOfMessageArea();
             lineOrigins = SetOriginsOfMessages();
+
+            Dungeon.OnStatusMsgUINotification += HandleNewStatusMessage;
         }
 
+
+        private void HandleNewStatusMessage(object sender, StatusMessageEventArgs e)
+        {
+            if (e.Message.Count == 0)
+                return;
+
+            if (e.Message.Count == 1)
+            {
+                AddMessage(e.Message[0]);
+            }
+            else
+            {
+                foreach(var msg in e.Message)
+                {
+                    AddMessage(msg);
+                }
+            }
+
+        }
 
         // Sets the anchor points for drawing each message in the status area
         private Point[] SetOriginsOfMessages()
@@ -68,7 +90,7 @@ namespace Paramita.UI.Scenes.Game
 
 
         // Adds a message to the Status area and initializes its duration and color
-        public void AddMessage(string newMsg)
+        private void AddMessage(string newMsg)
         {
             for(int x = messages.Length - 1; x > 0; x--)
             {

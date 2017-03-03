@@ -4,9 +4,31 @@ using System;
 using System.Collections.Generic;
 using Paramita.GameLogic.Items;
 using Paramita.GameLogic.Mechanics;
+using Microsoft.Xna.Framework;
 
 namespace Paramita.GameLogic
 {
+
+    public class InventoryChangeEventArgs : EventArgs
+    {
+        public Tuple<Dictionary<string, ItemType>, int> Inventory { get; }
+        public InventoryChangeEventArgs(Tuple<Dictionary<string, ItemType>, int> inventory)
+        {
+            Inventory = inventory;
+        }
+    }
+
+    public class StatusMessageEventArgs : EventArgs
+    {
+        public List<string> Message { get; }
+        public StatusMessageEventArgs(List<string> message)
+        {
+            Message = message;
+        }
+    }
+
+
+
     public class Dungeon
     {
         internal static Random _random;
@@ -26,7 +48,11 @@ namespace Paramita.GameLogic
         }
         public static Player Player { get { return _player; } }
 
-        public static event EventHandler<MoveEventArgs> OnActorMoveUINotification; 
+        public static event EventHandler<MoveEventArgs> OnActorMoveUINotification;
+        public static event EventHandler<InventoryChangeEventArgs> OnInventoryChangeUINotification;
+        public static event EventHandler<ItemEventArgs> OnItemPickedUpUINotification;
+        public static event EventHandler<ItemEventArgs> OnItemDroppedUINotification;
+        public static event EventHandler<StatusMessageEventArgs> OnStatusMsgUINotification;
 
         public Dungeon()
         {
@@ -78,24 +104,7 @@ namespace Paramita.GameLogic
         
         public static Tuple<Dictionary<string, ItemType>, int> GetPlayerInventory()
         {
-            var playerInventory = new Dictionary<string, ItemType>();
-
-            playerInventory["left_hand"] = _player.LeftHandItem != null ? _player.LeftHandItem.ItemType : ItemType.None;
-            playerInventory["right_hand"] = _player.RightHandItem != null ? _player.RightHandItem.ItemType : ItemType.None;
-            playerInventory["head"] = _player.HeadItem != null ? _player.HeadItem.ItemType : ItemType.None;
-            playerInventory["body"] = _player.BodyItem != null ? _player.BodyItem.ItemType : ItemType.None;
-            playerInventory["feet"] = _player.FeetItem != null ? _player.FeetItem.ItemType : ItemType.None;
-
-            Item[] playerOtherItems = _player.UnequipedItems;
-            string label; int num = 0;
-            foreach(var item in playerOtherItems)
-            {
-                num++;
-                label = "other" + num;
-                playerInventory[label] = item != null ? item.ItemType : ItemType.None;
-            }
-
-            return new Tuple<Dictionary<string, ItemType>, int>(playerInventory, _player.Gold);
+            return _player.GetInventory();
         }
 
 
@@ -107,6 +116,10 @@ namespace Paramita.GameLogic
         {
             _currentLevel.OnLevelChange += HandleLevelChange;
             _currentLevel.OnActorWasMoved += HandleActorMovement;
+            _player.OnInventoryChange += HandleInventoryChange;
+            _currentLevel.TileMap.OnItemAdded += HandleItemAddedToTileMap;
+            _currentLevel.TileMap.OnItemRemoved += HandleItemRemovedFromTileMap;
+            _currentLevel.OnStatusMessageSent += HandleStatusMessage;
         }
 
 
@@ -125,9 +138,28 @@ namespace Paramita.GameLogic
 
         private void HandleActorMovement(object sender, MoveEventArgs eventArgs)
         {
-            OnActorMoveUINotification(null, eventArgs);
+            OnActorMoveUINotification?.Invoke(null, eventArgs);
         }
 
+        private void HandleInventoryChange(object sender, InventoryChangeEventArgs eventArgs)
+        {
+            OnInventoryChangeUINotification?.Invoke(null, eventArgs);
+        }
+
+        private void HandleItemAddedToTileMap(object sender, ItemEventArgs eventArgs)
+        {
+            OnItemDroppedUINotification?.Invoke(null, eventArgs);
+        }
+
+        private void HandleItemRemovedFromTileMap(object sender, ItemEventArgs eventArgs)
+        {
+            OnItemPickedUpUINotification?.Invoke(null, eventArgs);
+        }
+
+        private void HandleStatusMessage(object sender, StatusMessageEventArgs eventArgs)
+        {
+            OnStatusMsgUINotification?.Invoke(null, eventArgs);
+        }
 
         public void Update()
         {

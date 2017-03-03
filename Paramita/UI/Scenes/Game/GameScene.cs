@@ -79,10 +79,5 @@ namespace Paramita.UI.Scenes
             _statusPanel.Draw(gameTime, GameController.SpriteBatch);
             _inventoryPanel.Draw(gameTime, GameController.SpriteBatch);
         }
-
-        public static void PostNewStatus(string message)
-        {
-            _statusPanel.AddMessage(message);
-        }
     }
 }
