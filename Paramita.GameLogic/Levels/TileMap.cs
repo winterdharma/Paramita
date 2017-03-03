@@ -21,18 +21,37 @@ namespace Paramita.GameLogic.Levels
         // Number of tiles wide and high
         public int TilesWide { get { return _tilesWide; } }
         public int TilesHigh { get { return _tilesHigh; } }
-        
 
+        public event EventHandler<ItemEventArgs> OnItemAdded;
+        public event EventHandler<ItemEventArgs> OnItemRemoved;
 
         public TileMap(Tile[,] tiles, string name)
         {
-            this._tiles = tiles;
+            _tiles = tiles;
             _tilesWide = tiles.GetLength(0);
             _tilesHigh = tiles.GetLength(1);
             MapName = name;
+            SubscribeToTileEvents();
         }
 
+        private void SubscribeToTileEvents()
+        {
+            foreach(var tile in _tiles)
+            {
+                tile.OnItemAddedToTile += HandleItemAddedEvent;
+                tile.OnItemRemovedFromTile += HandleItemRemovedEvent;
+            }
+        }
 
+        private void HandleItemAddedEvent(object sender, ItemEventArgs e)
+        {
+            OnItemAdded?.Invoke(this, e);
+        }
+
+        private void HandleItemRemovedEvent(object sender, ItemEventArgs e)
+        {
+            OnItemRemoved?.Invoke(this, e);
+        }
 
         public TileType[,] ConvertMapToTileTypes()
         {
@@ -105,15 +124,13 @@ namespace Paramita.GameLogic.Levels
                 case TileType.StairsDown:
                     return FindTileByType(TileType.StairsDown);
                 default:
-                    Console.WriteLine(unsupportedTileType + "(" + type + ")");
-                    break;
+                    throw new NotImplementedException("TileMap.FindTileType(): Finding " + type + " not implemented.");
             }
-            return null;
         }
 
 
 
-        // conducts a linear search of @tiles and returns the first StairsDown tile encountered
+        // conducts a linear search of @tiles and returns the first match encountered
         private Tile FindTileByType(TileType type)
         {
             for(int x = 0; x < TilesWide; x++)

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Paramita.GameLogic.Items;
 using Paramita.GameLogic.Mechanics;
+using Microsoft.Xna.Framework;
 
 namespace Paramita.GameLogic
 {
@@ -16,6 +17,7 @@ namespace Paramita.GameLogic
             Inventory = inventory;
         }
     }
+
 
     public class Dungeon
     {
@@ -38,6 +40,8 @@ namespace Paramita.GameLogic
 
         public static event EventHandler<MoveEventArgs> OnActorMoveUINotification;
         public static event EventHandler<InventoryChangeEventArgs> OnInventoryChangeUINotification;
+        public static event EventHandler<ItemEventArgs> OnItemPickedUpUINotification;
+        public static event EventHandler<ItemEventArgs> OnItemDroppedUINotification;
 
         public Dungeon()
         {
@@ -102,6 +106,8 @@ namespace Paramita.GameLogic
             _currentLevel.OnLevelChange += HandleLevelChange;
             _currentLevel.OnActorWasMoved += HandleActorMovement;
             _player.OnInventoryChange += HandleInventoryChange;
+            _currentLevel.TileMap.OnItemAdded += HandleItemAddedToTileMap;
+            _currentLevel.TileMap.OnItemRemoved += HandleItemRemovedFromTileMap;
         }
 
 
@@ -120,15 +126,23 @@ namespace Paramita.GameLogic
 
         private void HandleActorMovement(object sender, MoveEventArgs eventArgs)
         {
-            OnActorMoveUINotification(null, eventArgs);
+            OnActorMoveUINotification?.Invoke(null, eventArgs);
         }
 
         private void HandleInventoryChange(object sender, InventoryChangeEventArgs eventArgs)
         {
-            OnInventoryChangeUINotification(null, eventArgs);
+            OnInventoryChangeUINotification?.Invoke(null, eventArgs);
         }
 
+        private void HandleItemAddedToTileMap(object sender, ItemEventArgs eventArgs)
+        {
+            OnItemDroppedUINotification?.Invoke(null, eventArgs);
+        }
 
+        private void HandleItemRemovedFromTileMap(object sender, ItemEventArgs eventArgs)
+        {
+            OnItemPickedUpUINotification?.Invoke(null, eventArgs);
+        }
 
         public void Update()
         {

@@ -77,14 +77,22 @@ namespace Paramita.UI.Scenes.Game
                     if(typeArray[i,j] != null)
                     {
                         type = typeArray[i, j].Item1;
-                        spriteArray[i, j] = new Sprite(ItemTextures.ItemTextureMap[type], _drawFrame);
-                        spriteArray[i, j].Position = new Vector2(j * TILE_SIZE, i * TILE_SIZE);
+                        spriteArray[i, j] = CreateItemSprite(new Point(j, i), type);
                     }
                 }
             }
 
             return spriteArray;
         }
+
+        // Constructs an individual item sprite object for the array of item sprites
+        private Sprite CreateItemSprite(Point position, ItemType type)
+        {
+            var sprite = new Sprite(ItemTextures.ItemTextureMap[type], _drawFrame);
+            sprite.Position = new Vector2(position.X * TILE_SIZE, position.Y * TILE_SIZE);
+            return sprite;
+        }
+
 
         private BeingSprite[,] CreateActorSprites(Tuple<BeingType, Compass, bool>[,] typeArray)
         {
@@ -132,6 +140,8 @@ namespace Paramita.UI.Scenes.Game
         private void SubscribeToDungeonNotifications()
         {
             Dungeon.OnActorMoveUINotification += HandleOnActorWasMoved;
+            Dungeon.OnItemDroppedUINotification += HandleItemAddedToMap;
+            Dungeon.OnItemPickedUpUINotification += HandleItemRemovedFromMap;
         }
 
         private void HandleOnActorWasMoved(object sender, MoveEventArgs eventArgs)
@@ -141,16 +151,28 @@ namespace Paramita.UI.Scenes.Game
 
             if (sprite.Position == _playerPosition)
             {
-                sprite.Position = new Vector2(eventArgs.TilePoint.X * TILE_SIZE, eventArgs.TilePoint.Y * TILE_SIZE);
+                sprite.Position = 
+                    new Vector2(eventArgs.TilePoint.X * TILE_SIZE, eventArgs.TilePoint.Y * TILE_SIZE);
                 _playerPosition = sprite.Position;
             }
             else
-                sprite.Position = new Vector2(eventArgs.TilePoint.X * TILE_SIZE, eventArgs.TilePoint.Y * TILE_SIZE);
+                sprite.Position = 
+                    new Vector2(eventArgs.TilePoint.X * TILE_SIZE, eventArgs.TilePoint.Y * TILE_SIZE);
 
             _actorArray[eventArgs.TilePoint.X, eventArgs.TilePoint.Y] = sprite;
             _actorArray[oldTile.X, oldTile.Y] = null;
         }
 
+        private void HandleItemAddedToMap(object sender, ItemEventArgs e)
+        {
+            _itemArray[e.Location.X, e.Location.Y] = 
+                CreateItemSprite(new Point(e.Location.Y, e.Location.X), e.ItemType);
+        }
+
+        private void HandleItemRemovedFromMap(object sender, ItemEventArgs e)
+        {
+            _itemArray[e.Location.X, e.Location.Y] = null;
+        }
 
         public void Update(GameTime gameTime)
         {

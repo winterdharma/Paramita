@@ -17,6 +17,18 @@ namespace Paramita.GameLogic.Levels
         StairsDown
     }
 
+    public class ItemEventArgs : EventArgs
+    {
+        public Point Location;
+        public ItemType ItemType;
+
+        public ItemEventArgs(Point tileCoords, ItemType itemType)
+        {
+            Location = tileCoords;
+            ItemType = itemType;
+        }
+    }
+
     public class Tile : IContainer
     {
         TileType _tileType;
@@ -40,6 +52,9 @@ namespace Paramita.GameLogic.Levels
 
         //The Items on the ground here
         private List<Item> items;
+
+        public event EventHandler<ItemEventArgs> OnItemAddedToTile;
+        public event EventHandler<ItemEventArgs> OnItemRemovedFromTile;
 
         // full constructor with all properties provided
         public Tile(int x, int y, TileType type, bool isInLos = false, bool isExplored = false)
@@ -84,6 +99,7 @@ namespace Paramita.GameLogic.Levels
         public bool AddItem(Item item)
         {
             items.Add(item);
+            OnItemAddedToTile?.Invoke(this, new ItemEventArgs(TilePoint, item.ItemType));
             return true;
         }
 
@@ -92,6 +108,7 @@ namespace Paramita.GameLogic.Levels
         public void RemoveItem(Item item)
         {
             items.Remove(item);
+            OnItemRemovedFromTile?.Invoke(this, new ItemEventArgs(TilePoint, item.ItemType));
         }
 
 
