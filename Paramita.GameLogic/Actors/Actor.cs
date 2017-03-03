@@ -26,8 +26,8 @@ namespace Paramita.GameLogic.Actors
 
     public class MoveEventArgs : EventArgs
     {
-        public Compass Direction { get; private set; }
-        public Point TilePoint { get; private set; }
+        public Compass Direction { get; }
+        public Point TilePoint { get; }
          
         public MoveEventArgs(Compass direction, Point tilePoint)
         {
@@ -35,6 +35,7 @@ namespace Paramita.GameLogic.Actors
             TilePoint = tilePoint;
         }
     }
+
 
 
     public abstract class Actor
@@ -151,6 +152,7 @@ namespace Paramita.GameLogic.Actors
         public Item[] EquipmentSlots { get { return equipedItems; } }
 
         public event EventHandler<MoveEventArgs> OnMoveAttempt;
+        public event EventHandler<StatusMessageEventArgs> OnStatusMsgSent;
 
         public Actor(BeingType beingType)
         {
@@ -265,7 +267,8 @@ namespace Paramita.GameLogic.Actors
             for(int x = 0; x < attacks.Count; x++)
             {
                 attack = new Attack(this, attacks[x], defender);
-                if ( this.IsDead || defender.IsDead)
+                OnStatusMsgSent?.Invoke(this, new StatusMessageEventArgs(attack.AttackReport));
+                if ( IsDead || defender.IsDead)
                     break;
             }
         }

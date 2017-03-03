@@ -18,6 +18,16 @@ namespace Paramita.GameLogic
         }
     }
 
+    public class StatusMessageEventArgs : EventArgs
+    {
+        public List<string> Message { get; }
+        public StatusMessageEventArgs(List<string> message)
+        {
+            Message = message;
+        }
+    }
+
+
 
     public class Dungeon
     {
@@ -42,6 +52,7 @@ namespace Paramita.GameLogic
         public static event EventHandler<InventoryChangeEventArgs> OnInventoryChangeUINotification;
         public static event EventHandler<ItemEventArgs> OnItemPickedUpUINotification;
         public static event EventHandler<ItemEventArgs> OnItemDroppedUINotification;
+        public static event EventHandler<StatusMessageEventArgs> OnStatusMsgUINotification;
 
         public Dungeon()
         {
@@ -108,6 +119,7 @@ namespace Paramita.GameLogic
             _player.OnInventoryChange += HandleInventoryChange;
             _currentLevel.TileMap.OnItemAdded += HandleItemAddedToTileMap;
             _currentLevel.TileMap.OnItemRemoved += HandleItemRemovedFromTileMap;
+            _currentLevel.OnStatusMessageSent += HandleStatusMessage;
         }
 
 
@@ -142,6 +154,11 @@ namespace Paramita.GameLogic
         private void HandleItemRemovedFromTileMap(object sender, ItemEventArgs eventArgs)
         {
             OnItemPickedUpUINotification?.Invoke(null, eventArgs);
+        }
+
+        private void HandleStatusMessage(object sender, StatusMessageEventArgs eventArgs)
+        {
+            OnStatusMsgUINotification?.Invoke(null, eventArgs);
         }
 
         public void Update()

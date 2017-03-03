@@ -1,5 +1,6 @@
 ﻿using Paramita.GameLogic.Items;
 using Paramita.GameLogic.Actors;
+using System.Collections.Generic;
 
 namespace Paramita.GameLogic.Mechanics
 {
@@ -21,7 +22,7 @@ namespace Paramita.GameLogic.Mechanics
     *  If the attacker happened to be killed by the repel attack damage, his attack
     *  is aborted.
     */
-    class RepelMeeleeAttack
+    class RepelMeleeAttack
     {
         private Actor attacker;
         private Actor defender;
@@ -29,10 +30,13 @@ namespace Paramita.GameLogic.Mechanics
         private Weapon repelWeapon;
 
         private const int REPEL_ATTACK_DAMAGE = 1;
+        private readonly string REPEL_DAMAGE_REPORT = " takes " + REPEL_ATTACK_DAMAGE + " pt of damage!";
+        private const string ATTACKER_KILLED = " is killed!";
 
         private bool isSuccessful;
         private int damage;
 
+        private List<string> _repelAttackLog = new List<string>();
 
         public bool IsSuccessful
         {
@@ -44,10 +48,10 @@ namespace Paramita.GameLogic.Mechanics
             get { return damage; }
         }
 
+        public List<string> RepelAttackLog { get { return _repelAttackLog; } }
 
 
-
-        public RepelMeeleeAttack(Attack attack)
+        public RepelMeleeAttack(Attack attack)
         {
             attacker = attack.Attacker;
             defender = attack.Defender;
@@ -66,8 +70,8 @@ namespace Paramita.GameLogic.Mechanics
             {
                 var attackRoll = new AttackRoll(defender, repelWeapon, attacker);
 
-                //GameScene.PostNewStatus(attackRoll.AttackerReport);
-                //GameScene.PostNewStatus(attackRoll.DefenderReport);
+                _repelAttackLog.AddRange( 
+                    new string[] { attackRoll.AttackerReport, attackRoll.DefenderReport } );
 
                 return ResolveRepelAttackResult(attackRoll);
             }
@@ -121,7 +125,7 @@ namespace Paramita.GameLogic.Mechanics
             if (damageRoll.Damage > 0)
             {
                 damage = REPEL_ATTACK_DAMAGE;
-                //GameScene.PostNewStatus(attacker + " takes " + REPEL_ATTACK_DAMAGE + " pt of damage!");
+                _repelAttackLog.Add(attacker + REPEL_DAMAGE_REPORT);
             }
         }
 
@@ -130,7 +134,8 @@ namespace Paramita.GameLogic.Mechanics
         {
             if (attacker.IsDead)
             {
-                //GameScene.PostNewStatus(attacker + " is killed!");
+                _repelAttackLog.Add(attacker + ATTACKER_KILLED);
+                //GameScene.PostNewStatus();
                 return true;
             }
             return false;

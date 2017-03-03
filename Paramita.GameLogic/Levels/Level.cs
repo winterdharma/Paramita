@@ -39,6 +39,7 @@ namespace Paramita.GameLogic.Levels
                 foreach (Actor npc in _npcs)
                 {
                     npc.OnMoveAttempt += HandleActorMove;
+                    npc.OnStatusMsgSent += HandleStatusMessage;
                 }
             }
         }
@@ -57,12 +58,14 @@ namespace Paramita.GameLogic.Levels
             {
                 _player = value;
                 _player.OnMoveAttempt += HandleActorMove;
+                _player.OnStatusMsgSent += HandleStatusMessage;
                 _player.OnLevelChange += HandleLevelChange;
             }
         }
 
         public event EventHandler<LevelChangeEventArgs> OnLevelChange;
         public event EventHandler<MoveEventArgs> OnActorWasMoved;
+        public event EventHandler<StatusMessageEventArgs> OnStatusMessageSent;
 
         public Level()
         {
@@ -130,6 +133,10 @@ namespace Paramita.GameLogic.Levels
             OnLevelChange?.Invoke(this, eventArgs);
         }
 
+        private void HandleStatusMessage(object sender, StatusMessageEventArgs eventArgs)
+        {
+            OnStatusMessageSent?.Invoke(this, eventArgs);
+        }
 
         public Tile GetStairsUpTile()
         {
