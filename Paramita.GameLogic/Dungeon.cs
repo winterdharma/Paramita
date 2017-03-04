@@ -27,7 +27,17 @@ namespace Paramita.GameLogic
         }
     }
 
-
+    public class NewLevelEventArgs : EventArgs
+    {
+        public int LevelNumber { get; }
+        public Tuple<TileType[,], ItemType[,], Tuple<BeingType, Compass, bool>[,]> Layers { get; }
+        public NewLevelEventArgs(int levelNumber, 
+            Tuple<TileType[,], ItemType[,], Tuple<BeingType, Compass, bool>[,]> layers)
+        {
+            LevelNumber = levelNumber;
+            Layers = layers;
+        }
+    }
 
     public class Dungeon
     {
@@ -53,6 +63,7 @@ namespace Paramita.GameLogic
         public static event EventHandler<ItemEventArgs> OnItemPickedUpUINotification;
         public static event EventHandler<ItemEventArgs> OnItemDroppedUINotification;
         public static event EventHandler<StatusMessageEventArgs> OnStatusMsgUINotification;
+        public static event EventHandler<NewLevelEventArgs> OnLevelChangeUINotification;
 
         public Dungeon()
         {
@@ -64,25 +75,34 @@ namespace Paramita.GameLogic
             _currentLevel.Player = _player;
             _player.CurrentTile = _currentLevel.GetStairsUpTile();
             _levels[_currentLevelNumber] = _currentLevel;
-            SubscribeToLevelEvents();
+            SubscribeToEvents();
         }
 
         #region Public API Methods
         
         #region UI TileMap Initialization API
-        public TileType[,] GetCurrentLevelTiles()
+        private static Tuple<TileType[,], ItemType[,], Tuple<BeingType, Compass, bool>[,]> GetCurrentLevelLayers()
+        { 
+            return new Tuple<TileType[,], ItemType[,], Tuple<BeingType, Compass, bool>[,]>(
+                    GetCurrentLevelTiles(), 
+                    GetCurrentLevelItems(), 
+                    GetCurrentLevelActors()
+            );
+        }
+
+        public static TileType[,] GetCurrentLevelTiles()
         {
             var tileTypeArray = _currentLevel.TileMap.ConvertMapToTileTypes();
             return tileTypeArray;
         }
 
-        public Tuple<ItemType>[,] GetCurrentLevelItems()
+        public static ItemType[,] GetCurrentLevelItems()
         {
             var itemTypeArray = _currentLevel.TileMap.ConvertMapToItemTypes();
             return itemTypeArray;
         }
 
-        public Tuple<BeingType, Compass, bool>[,] GetCurrentLevelActors()
+        public static Tuple<BeingType, Compass, bool>[,] GetCurrentLevelActors()
         {
             var beingTypeArray = _currentLevel.ConvertMapToBeingTypes();
             return beingTypeArray;
@@ -112,51 +132,58 @@ namespace Paramita.GameLogic
 
 
 
-        private void SubscribeToLevelEvents()
+        private void SubscribeToEvents()
+        {
+            SubscribeToLevelEvents();
+            _player.OnInventoryChange += HandleInventoryChange;
+        }
+
+        private static void SubscribeToLevelEvents()
         {
             _currentLevel.OnLevelChange += HandleLevelChange;
             _currentLevel.OnActorWasMoved += HandleActorMovement;
-            _player.OnInventoryChange += HandleInventoryChange;
             _currentLevel.TileMap.OnItemAdded += HandleItemAddedToTileMap;
             _currentLevel.TileMap.OnItemRemoved += HandleItemRemovedFromTileMap;
             _currentLevel.OnStatusMessageSent += HandleStatusMessage;
         }
 
+        private static void UnsubscribeFromLevelEvents()
+        {
+            _currentLevel.OnLevelChange -= HandleLevelChange;
+            _currentLevel.OnActorWasMoved -= HandleActorMovement;
+            _currentLevel.TileMap.OnItemAdded -= HandleItemAddedToTileMap;
+            _currentLevel.TileMap.OnItemRemoved -= HandleItemRemovedFromTileMap;
+            _currentLevel.OnStatusMessageSent -= HandleStatusMessage;
+        }
 
-        private void HandleLevelChange(object sender, LevelChangeEventArgs eventArgs)
+        private static void HandleLevelChange(object sender, LevelChangeEventArgs eventArgs)
         {
             int levelChange = eventArgs.LevelChange;
-            ChangeLevel(levelChange);
-
-            if (levelChange < 0)
-                _player.CurrentTile = _currentLevel.GetStairsDownTile();
-            else if (levelChange > 0)
-                _player.CurrentTile = _currentLevel.GetStairsUpTile();
-            _currentLevel.Player = _player;
+            MoveOneLevel(levelChange);
         }
 
 
-        private void HandleActorMovement(object sender, MoveEventArgs eventArgs)
+        private static void HandleActorMovement(object sender, MoveEventArgs eventArgs)
         {
             OnActorMoveUINotification?.Invoke(null, eventArgs);
         }
 
-        private void HandleInventoryChange(object sender, InventoryChangeEventArgs eventArgs)
+        private static void HandleInventoryChange(object sender, InventoryChangeEventArgs eventArgs)
         {
             OnInventoryChangeUINotification?.Invoke(null, eventArgs);
         }
 
-        private void HandleItemAddedToTileMap(object sender, ItemEventArgs eventArgs)
+        private static void HandleItemAddedToTileMap(object sender, ItemEventArgs eventArgs)
         {
             OnItemDroppedUINotification?.Invoke(null, eventArgs);
         }
 
-        private void HandleItemRemovedFromTileMap(object sender, ItemEventArgs eventArgs)
+        private static void HandleItemRemovedFromTileMap(object sender, ItemEventArgs eventArgs)
         {
             OnItemPickedUpUINotification?.Invoke(null, eventArgs);
         }
 
-        private void HandleStatusMessage(object sender, StatusMessageEventArgs eventArgs)
+        private static void HandleStatusMessage(object sender, StatusMessageEventArgs eventArgs)
         {
             OnStatusMsgUINotification?.Invoke(null, eventArgs);
         }
@@ -172,7 +199,7 @@ namespace Paramita.GameLogic
         }
 
 
-        public static void ChangeLevel(int levelChange)
+        public static void MoveOneLevel(int levelChange)
         {
             if (levelChange == -1)
                 GoUpOneLevel();
@@ -186,11 +213,10 @@ namespace Paramita.GameLogic
         private static void GoUpOneLevel()
         {
             int levelNumber = _currentLevelNumber - 1;
-            if (levelNumber > 1)
+            if (levelNumber > 0)
             {
-                _currentLevelNumber = levelNumber;
-                _currentLevel = _levels[_currentLevelNumber];
-            }   
+                ChangeLevel(levelNumber);
+            }
         }
 
         private static void GoDownOneLevel()
@@ -198,8 +224,37 @@ namespace Paramita.GameLogic
             int levelNumber = _currentLevelNumber + 1;
             if (!_levels.ContainsKey(levelNumber))
                 CreateNextLevel(levelNumber);
+            ChangeLevel(levelNumber);
+        }
+
+        private static void ChangeLevel(int levelNumber)
+        {
+            // get the difference between current and new level number
+            int upOrDown = levelNumber - _currentLevelNumber;
+            // remove event handling for current level
+            UnsubscribeFromLevelEvents();
+            // change to the new level
             _currentLevelNumber = levelNumber;
             _currentLevel = _levels[_currentLevelNumber];
+            // add event handling for new level
+            SubscribeToLevelEvents();
+            // place the player on new level
+            PlacePlayerOnLevel(upOrDown);
+            // notify the UI of new level data
+            OnLevelChangeUINotification?.Invoke(null, new NewLevelEventArgs(_currentLevelNumber, GetCurrentLevelLayers()));
+        }
+
+        private static void PlacePlayerOnLevel(int upOrDown)
+        {
+            _currentLevel.Player = _player;
+            if(upOrDown == -1)
+            {
+                _player.CurrentTile = _currentLevel.GetStairsDownTile();
+            }
+            else if (upOrDown == 1)
+            {
+                _player.CurrentTile = _currentLevel.GetStairsUpTile();
+            }
         }
     }
 }

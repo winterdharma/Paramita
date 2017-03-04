@@ -57,10 +57,18 @@ namespace Paramita.GameLogic.Levels
             set
             {
                 _player = value;
-                _player.OnMoveAttempt += HandleActorMove;
-                _player.OnStatusMsgSent += HandleStatusMessage;
-                _player.OnLevelChange += HandleLevelChange;
+                if (_player != null)
+                {
+                    SubscribeToPlayerEvents(_player);
+                }
             }
+        }
+
+        private void SubscribeToPlayerEvents(Player player)
+        {
+            _player.OnMoveAttempt += HandleActorMove;
+            _player.OnStatusMsgSent += HandleStatusMessage;
+            _player.OnLevelChange += HandleLevelChange;
         }
 
         public event EventHandler<LevelChangeEventArgs> OnLevelChange;
@@ -129,8 +137,16 @@ namespace Paramita.GameLogic.Levels
 
         private void HandleLevelChange(object sender, LevelChangeEventArgs eventArgs)
         {
+            UnsubscribeFromPlayerEvents(_player);
             _player = null;
             OnLevelChange?.Invoke(this, eventArgs);
+        }
+
+        private void UnsubscribeFromPlayerEvents(Player player)
+        {
+            _player.OnMoveAttempt -= HandleActorMove;
+            _player.OnStatusMsgSent -= HandleStatusMessage;
+            _player.OnLevelChange -= HandleLevelChange;
         }
 
         private void HandleStatusMessage(object sender, StatusMessageEventArgs eventArgs)

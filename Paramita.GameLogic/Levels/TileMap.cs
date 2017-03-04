@@ -67,17 +67,21 @@ namespace Paramita.GameLogic.Levels
         }
 
 
-        public Tuple<ItemType>[,] ConvertMapToItemTypes()
+        public ItemType[,] ConvertMapToItemTypes()
         {
-            var typeArray = new Tuple<ItemType>[_tilesHigh, _tilesWide];
+            var typeArray = new ItemType[_tilesHigh, _tilesWide];
             for (int i = 0; i < _tiles.GetLength(0); i++)
             {
                 for (int j = 0; j < _tiles.GetLength(1); j++)
                 {
                     var items = _tiles[i, j].InspectItems();
-                    if(items.Length != 0)
+                    if(items.Length > 0)
                     {
-                        typeArray[i, j] = new Tuple<ItemType>(items[0].ItemType);
+                        typeArray[i, j] = items[0].ItemType;
+                    }
+                    else
+                    {
+                        typeArray[i, j] = ItemType.None;
                     }
                 }
             }

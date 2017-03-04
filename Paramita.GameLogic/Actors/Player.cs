@@ -171,15 +171,20 @@ namespace Paramita.GameLogic.Actors
         // Checks the TileType of Player.CurrentTile for any events that when moving to them
         private void CheckForTileTypeEvent(TileType tileType)
         {
+            int change = 0;
             switch(tileType)
             {
                 case TileType.StairsUp:
-                    if(Dungeon.CurrentLevelNumber > 1)
-                        OnLevelChange?.Invoke(this, new LevelChangeEventArgs(-1));
+                    if (Dungeon.CurrentLevelNumber > 1)
+                        change = -1;
                     break;
                 case TileType.StairsDown:
-                    OnLevelChange?.Invoke(this, new LevelChangeEventArgs(1));
+                    change = 1;
                     break;
+            }
+            if(change != 0)
+            {
+                OnLevelChange?.Invoke(this, new LevelChangeEventArgs(change));
             }
         }
 
