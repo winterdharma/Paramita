@@ -30,21 +30,26 @@ namespace Paramita.UI.Scenes.Game
 
 
 
-        public TileMapPanel(TileType[,] tileArray, Tuple<ItemType>[,] itemArray, 
-            Tuple<BeingType, Compass, bool>[,] actorArray)
+        public TileMapPanel(TileType[,] tileLayer, ItemType[,] itemLayer, 
+            Tuple<BeingType, Compass, bool>[,] actorLayer)
         {
             _viewport = GameController.ScreenRectangle;
             _drawFrame = new Rectangle(0, 0, TILE_SIZE, TILE_SIZE);
-            _tileArray = CreateTileSprites(tileArray);
-            _mapSizeInPixels = 
-                new Point(tileArray.GetLength(0) * TILE_SIZE, tileArray.GetLength(1) * TILE_SIZE);
-            _itemArray = CreateItemSprites(itemArray);
-            _actorArray = CreateActorSprites(actorArray);
-            _playerPosition = GetPlayerPosition(actorArray);
+            InitializeLevelMap(tileLayer, itemLayer, actorLayer);
             SubscribeToDungeonNotifications();
         }
 
 
+        private void InitializeLevelMap(TileType[,] tileLayer, ItemType[,] itemLayer, 
+            Tuple<BeingType, Compass, bool>[,] actorLayer)
+        {
+            _mapSizeInPixels =
+                new Point(tileLayer.GetLength(0) * TILE_SIZE, tileLayer.GetLength(1) * TILE_SIZE);
+            _tileArray = CreateTileSprites(tileLayer);
+            _itemArray = CreateItemSprites(itemLayer);
+            _actorArray = CreateActorSprites(actorLayer);
+            _playerPosition = GetPlayerPosition(actorLayer);
+        }
 
         private Sprite[,] CreateTileSprites(TileType[,] typeArray)
         {
@@ -64,7 +69,7 @@ namespace Paramita.UI.Scenes.Game
             return spriteArray;
         }
 
-        private Sprite[,] CreateItemSprites(Tuple<ItemType>[,] typeArray)
+        private Sprite[,] CreateItemSprites(ItemType[,] typeArray)
         {
             var spriteArray = new Sprite[typeArray.GetLength(0), typeArray.GetLength(1)];
 
@@ -74,9 +79,9 @@ namespace Paramita.UI.Scenes.Game
             {
                 for (int j = 0; j < typeArray.GetLength(1); j++)
                 {
-                    if(typeArray[i,j] != null)
+                    if(typeArray[i,j] != ItemType.None)
                     {
-                        type = typeArray[i, j].Item1;
+                        type = typeArray[i, j];
                         spriteArray[i, j] = CreateItemSprite(new Point(j, i), type);
                     }
                 }
@@ -142,25 +147,34 @@ namespace Paramita.UI.Scenes.Game
             Dungeon.OnActorMoveUINotification += HandleOnActorWasMoved;
             Dungeon.OnItemDroppedUINotification += HandleItemAddedToMap;
             Dungeon.OnItemPickedUpUINotification += HandleItemRemovedFromMap;
+            Dungeon.OnLevelChangeUINotification += HandleLevelChange;
+            Dungeon.OnActorRemovedUINotification += HandleActorWasRemoved;
         }
 
         private void HandleOnActorWasMoved(object sender, MoveEventArgs eventArgs)
         {
-            Point oldTile = eventArgs.TilePoint - Direction.GetPoint(eventArgs.Direction);
-            var sprite = _actorArray[oldTile.X, oldTile.Y];
+            var origin = eventArgs.Origin;
+            var destination = eventArgs.Destination;
+            var sprite = _actorArray[origin.X, origin.Y];
 
             if (sprite.Position == _playerPosition)
             {
                 sprite.Position = 
-                    new Vector2(eventArgs.TilePoint.X * TILE_SIZE, eventArgs.TilePoint.Y * TILE_SIZE);
+                    new Vector2(destination.X * TILE_SIZE, destination.Y * TILE_SIZE);
                 _playerPosition = sprite.Position;
             }
             else
                 sprite.Position = 
-                    new Vector2(eventArgs.TilePoint.X * TILE_SIZE, eventArgs.TilePoint.Y * TILE_SIZE);
+                    new Vector2(destination.X * TILE_SIZE, destination.Y * TILE_SIZE);
 
-            _actorArray[eventArgs.TilePoint.X, eventArgs.TilePoint.Y] = sprite;
-            _actorArray[oldTile.X, oldTile.Y] = null;
+            _actorArray[destination.X, destination.Y] = sprite;
+            _actorArray[origin.X, origin.Y] = null;
+        }
+
+        private void HandleActorWasRemoved(object sender, MoveEventArgs eventArgs)
+        {
+            var origin = eventArgs.Origin;
+            _actorArray[origin.X, origin.Y] = null;
         }
 
         private void HandleItemAddedToMap(object sender, ItemEventArgs e)
@@ -173,6 +187,13 @@ namespace Paramita.UI.Scenes.Game
         {
             _itemArray[e.Location.X, e.Location.Y] = null;
         }
+
+        private void HandleLevelChange(object sender, NewLevelEventArgs e)
+        {
+            InitializeLevelMap(e.Layers.Item1, e.Layers.Item2, e.Layers.Item3);
+        }
+
+
 
         public void Update(GameTime gameTime)
         {

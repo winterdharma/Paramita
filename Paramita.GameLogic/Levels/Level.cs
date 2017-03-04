@@ -40,6 +40,7 @@ namespace Paramita.GameLogic.Levels
                 {
                     npc.OnMoveAttempt += HandleActorMove;
                     npc.OnStatusMsgSent += HandleStatusMessage;
+                    npc.OnActorDeath += HandleNpcDeath;
                 }
             }
         }
@@ -57,13 +58,19 @@ namespace Paramita.GameLogic.Levels
             set
             {
                 _player = value;
-                _player.OnMoveAttempt += HandleActorMove;
-                _player.OnStatusMsgSent += HandleStatusMessage;
-                _player.OnLevelChange += HandleLevelChange;
+                if (_player != null)
+                {
+                    SubscribeToPlayerEvents(_player);
+                }
             }
         }
 
-        public event EventHandler<LevelChangeEventArgs> OnLevelChange;
+        private void SubscribeToPlayerEvents(Player player)
+        {
+            _player.OnMoveAttempt += HandleActorMove;
+            _player.OnLevelChange += HandleLevelChange;
+        }
+
         public event EventHandler<MoveEventArgs> OnActorWasMoved;
         public event EventHandler<StatusMessageEventArgs> OnStatusMessageSent;
 
@@ -102,35 +109,75 @@ namespace Paramita.GameLogic.Levels
             return typeArray;
         }
 
+        private void HandleNpcDeath(object sender, MoveEventArgs eventArgs)
+        {
+            INpc npc = sender as INpc;
+            Npcs.Remove(npc);
+
+            Actor actor = npc as Actor;
+            actor.OnMoveAttempt -= HandleActorMove;
+            actor.OnStatusMsgSent -= HandleStatusMessage;
+            actor.OnActorDeath -= HandleNpcDeath;
+        }
+
+
         private void HandleActorMove(object sender, MoveEventArgs eventArgs)
         {
             Actor actor = sender as Actor;
             Compass direction = eventArgs.Direction;
-            //sprite.Facing = direction;
             Tile newTile = TileMap.GetTile(actor.CurrentTile.TilePoint + Direction.GetPoint(direction));
+            Point origin = actor.CurrentTile.TilePoint;
+            // GetTile() returns null if the destination tile is outside the bounds of the TileMap
+            if (newTile == null)
+                return;
 
+            if (actor is Player)
+                HandlePlayerMove(actor as Player, origin, newTile);
+            else
+                HandleNpcMove(actor, origin, newTile);
+        }
 
-            if(actor is Player && IsNpcOnTile(newTile))
+        
+        private void HandlePlayerMove(Player player, Point origin, Tile destination)
+        {
+            if (IsNpcOnTile(destination))
             {
-                actor.Attack(GetNpcOnTile(newTile));
+                player.Attack(GetNpcOnTile(destination));
                 _isPlayersTurn = false;
             }
-            else if(actor is INpc && IsPlayerOnTile(newTile))
+            else if(destination.IsWalkable)
             {
-                actor.Attack(_player);
-            }
-            else if(newTile != null && newTile.IsWalkable)
-            {
-                actor.CurrentTile = newTile;
-                OnActorWasMoved?.Invoke(actor, new MoveEventArgs(direction, actor.CurrentTile.TilePoint));
-                _isPlayersTurn = actor is Player ? false : _isPlayersTurn;
+                player.CurrentTile = destination;
+                OnActorWasMoved?.Invoke(player, new MoveEventArgs(Compass.None, origin, destination.TilePoint));
+                _isPlayersTurn = false;
             }
         }
 
+        private void HandleNpcMove(Actor npc, Point origin, Tile destination)
+        {
+            if(IsPlayerOnTile(destination))
+            {
+                npc.Attack(_player);
+            }
+            else if(destination.IsWalkable && !IsNpcOnTile(destination))
+            {
+                npc.CurrentTile = destination;
+                OnActorWasMoved?.Invoke(npc, new MoveEventArgs(Compass.None, origin, destination.TilePoint));
+            }
+        }
+
+
         private void HandleLevelChange(object sender, LevelChangeEventArgs eventArgs)
         {
+            UnsubscribeFromPlayerEvents(_player);
             _player = null;
-            OnLevelChange?.Invoke(this, eventArgs);
+        }
+
+        private void UnsubscribeFromPlayerEvents(Player player)
+        {
+            _player.OnMoveAttempt -= HandleActorMove;
+            _player.OnStatusMsgSent -= HandleStatusMessage;
+            _player.OnLevelChange -= HandleLevelChange;
         }
 
         private void HandleStatusMessage(object sender, StatusMessageEventArgs eventArgs)
