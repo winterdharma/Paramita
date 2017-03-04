@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using Paramita.GameLogic.Items;
 using Paramita.GameLogic.Mechanics;
-using Microsoft.Xna.Framework;
 
 namespace Paramita.GameLogic
 {
@@ -64,6 +63,8 @@ namespace Paramita.GameLogic
         public static event EventHandler<ItemEventArgs> OnItemDroppedUINotification;
         public static event EventHandler<StatusMessageEventArgs> OnStatusMsgUINotification;
         public static event EventHandler<NewLevelEventArgs> OnLevelChangeUINotification;
+        public static event EventHandler<MoveEventArgs> OnActorRemovedUINotification;
+        //public static event EventHandler<MoveEventArgs> OnPlayerDeathUINotification;
 
         public Dungeon()
         {
@@ -150,6 +151,7 @@ namespace Paramita.GameLogic
             _player.OnInventoryChange += HandleInventoryChange;
             _player.OnStatusMsgSent += HandleStatusMessage;
             _player.OnLevelChange += HandleLevelChange;
+            //_player.OnActorDeath += HandlePlayerDeath;
             SubscribeToNpcEvents(_currentLevel.Npcs);
             
         }
@@ -159,6 +161,7 @@ namespace Paramita.GameLogic
             foreach (Actor npc in _currentLevel.Npcs)
             {
                 npc.OnStatusMsgSent += HandleStatusMessage;
+                npc.OnActorDeath += HandleDeadActor;
             }
         }
 
@@ -180,6 +183,11 @@ namespace Paramita.GameLogic
         private static void HandleActorMovement(object sender, MoveEventArgs eventArgs)
         {
             OnActorMoveUINotification?.Invoke(null, eventArgs);
+        }
+
+        private static void HandleDeadActor(object sender, MoveEventArgs eventArgs)
+        {
+            OnActorRemovedUINotification?.Invoke(null, eventArgs);
         }
 
         private static void HandleInventoryChange(object sender, InventoryChangeEventArgs eventArgs)

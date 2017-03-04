@@ -148,25 +148,33 @@ namespace Paramita.UI.Scenes.Game
             Dungeon.OnItemDroppedUINotification += HandleItemAddedToMap;
             Dungeon.OnItemPickedUpUINotification += HandleItemRemovedFromMap;
             Dungeon.OnLevelChangeUINotification += HandleLevelChange;
+            Dungeon.OnActorRemovedUINotification += HandleActorWasRemoved;
         }
 
         private void HandleOnActorWasMoved(object sender, MoveEventArgs eventArgs)
         {
-            Point oldTile = eventArgs.TilePoint - Direction.GetPoint(eventArgs.Direction);
-            var sprite = _actorArray[oldTile.X, oldTile.Y];
+            var origin = eventArgs.Origin;
+            var destination = eventArgs.Destination;
+            var sprite = _actorArray[origin.X, origin.Y];
 
             if (sprite.Position == _playerPosition)
             {
                 sprite.Position = 
-                    new Vector2(eventArgs.TilePoint.X * TILE_SIZE, eventArgs.TilePoint.Y * TILE_SIZE);
+                    new Vector2(destination.X * TILE_SIZE, destination.Y * TILE_SIZE);
                 _playerPosition = sprite.Position;
             }
             else
                 sprite.Position = 
-                    new Vector2(eventArgs.TilePoint.X * TILE_SIZE, eventArgs.TilePoint.Y * TILE_SIZE);
+                    new Vector2(destination.X * TILE_SIZE, destination.Y * TILE_SIZE);
 
-            _actorArray[eventArgs.TilePoint.X, eventArgs.TilePoint.Y] = sprite;
-            _actorArray[oldTile.X, oldTile.Y] = null;
+            _actorArray[destination.X, destination.Y] = sprite;
+            _actorArray[origin.X, origin.Y] = null;
+        }
+
+        private void HandleActorWasRemoved(object sender, MoveEventArgs eventArgs)
+        {
+            var origin = eventArgs.Origin;
+            _actorArray[origin.X, origin.Y] = null;
         }
 
         private void HandleItemAddedToMap(object sender, ItemEventArgs e)

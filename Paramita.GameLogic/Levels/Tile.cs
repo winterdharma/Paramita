@@ -156,7 +156,7 @@ namespace Paramita.GameLogic.Levels
         public bool AdjacentTo(Tile other, out Compass direction)
         {
             direction = Compass.None;
-            Point difference = TilePoint - other.TilePoint;
+            Point difference = other.TilePoint - TilePoint;
 
             if( ((difference.X == 1 || difference.X == -1) && difference.Y == 0)
                 || ((difference.Y == 1 || difference.Y == -1) && difference.X == 0))

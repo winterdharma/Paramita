@@ -51,14 +51,25 @@ namespace Paramita.GameLogic.Levels
         private static List<INpc> CreateNpcs(LevelData data, Level level)
         {
             var npcs = new List<INpc>();
+            var placedTiles = new bool[level.TileMap.TilesWide, level.TileMap.TilesHigh];
 
             if (data.GiantRats > 0)
             {
                 for(int i = 0; i < data.GiantRats; i++)
                 {
                     var rat = ActorCreator.CreateGiantRat();
-                    rat.CurrentTile = level.GetEmptyWalkableTile();
+
+                    // fetches walkable tiles and checks to see if a rat is already there
+                    var tile = level.GetEmptyWalkableTile();
+                    while(placedTiles[tile.TilePoint.X, tile.TilePoint.Y])
+                    {
+                        tile = level.GetEmptyWalkableTile();
+                    }
+
+                    // places the rat on the level and notes where it was put
+                    rat.CurrentTile = tile;
                     npcs.Add((INpc)rat);
+                    placedTiles[tile.TilePoint.X, tile.TilePoint.Y] = true;
                 }
             }
 

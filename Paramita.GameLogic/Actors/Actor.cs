@@ -27,12 +27,14 @@ namespace Paramita.GameLogic.Actors
     public class MoveEventArgs : EventArgs
     {
         public Compass Direction { get; }
-        public Point TilePoint { get; }
+        public Point Origin { get; }
+        public Point Destination { get; }
          
-        public MoveEventArgs(Compass direction, Point tilePoint)
+        public MoveEventArgs(Compass direction, Point tileOrigin, Point tileDest)
         {
             Direction = direction;
-            TilePoint = tilePoint;
+            Origin = tileOrigin;
+            Destination = tileDest;
         }
     }
 
@@ -153,6 +155,7 @@ namespace Paramita.GameLogic.Actors
 
         public event EventHandler<MoveEventArgs> OnMoveAttempt;
         public event EventHandler<StatusMessageEventArgs> OnStatusMsgSent;
+        public event EventHandler<MoveEventArgs> OnActorDeath;
 
         public Actor(BeingType beingType)
         {
@@ -249,7 +252,7 @@ namespace Paramita.GameLogic.Actors
             Facing = direction;
             Tile currentTile = CurrentTile;
             // check to see if the bool check for tile change works as expected
-            OnMoveAttempt?.Invoke(this, new MoveEventArgs(direction, Point.Zero));
+            OnMoveAttempt?.Invoke(this, new MoveEventArgs(direction, Point.Zero, Point.Zero));
 
             Tile newTile = CurrentTile;
             if (newTile == currentTile)
@@ -268,8 +271,10 @@ namespace Paramita.GameLogic.Actors
             {
                 attack = new Attack(this, attacks[x], defender);
                 OnStatusMsgSent?.Invoke(this, new StatusMessageEventArgs(attack.AttackReport));
-                if ( IsDead || defender.IsDead)
+                if (IsDead || defender.IsDead)
+                {
                     break;
+                }
             }
         }
 
@@ -348,14 +353,17 @@ namespace Paramita.GameLogic.Actors
             if(fatigue > 0)
                 fatigue--;
             CheckForDeath();
-            //sprite.Update(gameTime);
         }
 
 
         private void CheckForDeath()
         {
             if (hitPoints < 1)
+            {
                 isDead = true;
+                OnActorDeath?.Invoke(this, new MoveEventArgs(Compass.None, CurrentTile.TilePoint, Point.Zero));
+            }
+                
         }
 
 

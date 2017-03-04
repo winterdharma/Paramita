@@ -40,6 +40,7 @@ namespace Paramita.GameLogic.Levels
                 {
                     npc.OnMoveAttempt += HandleActorMove;
                     npc.OnStatusMsgSent += HandleStatusMessage;
+                    npc.OnActorDeath += HandleNpcDeath;
                 }
             }
         }
@@ -108,33 +109,63 @@ namespace Paramita.GameLogic.Levels
             return typeArray;
         }
 
+        private void HandleNpcDeath(object sender, MoveEventArgs eventArgs)
+        {
+            INpc npc = sender as INpc;
+            Npcs.Remove(npc);
+
+            Actor actor = npc as Actor;
+            actor.OnMoveAttempt -= HandleActorMove;
+            actor.OnStatusMsgSent -= HandleStatusMessage;
+            actor.OnActorDeath -= HandleNpcDeath;
+        }
+
+
         private void HandleActorMove(object sender, MoveEventArgs eventArgs)
         {
             Actor actor = sender as Actor;
             Compass direction = eventArgs.Direction;
-            
             Tile newTile = TileMap.GetTile(actor.CurrentTile.TilePoint + Direction.GetPoint(direction));
-
-            // GetTile() return null if the destination tile is outside the bounds of the TileMap
+            Point origin = actor.CurrentTile.TilePoint;
+            // GetTile() returns null if the destination tile is outside the bounds of the TileMap
             if (newTile == null)
                 return;
 
-            if(actor is Player && IsNpcOnTile(newTile))
+            if (actor is Player)
+                HandlePlayerMove(actor as Player, origin, newTile);
+            else
+                HandleNpcMove(actor, origin, newTile);
+        }
+
+        
+        private void HandlePlayerMove(Player player, Point origin, Tile destination)
+        {
+            if (IsNpcOnTile(destination))
             {
-                actor.Attack(GetNpcOnTile(newTile));
+                player.Attack(GetNpcOnTile(destination));
                 _isPlayersTurn = false;
             }
-            else if(actor is INpc && IsPlayerOnTile(newTile))
+            else if(destination.IsWalkable)
             {
-                actor.Attack(_player);
-            }
-            else if(newTile.IsWalkable)
-            {
-                actor.CurrentTile = newTile;
-                OnActorWasMoved?.Invoke(actor, new MoveEventArgs(direction, actor.CurrentTile.TilePoint));
-                _isPlayersTurn = actor is Player ? false : _isPlayersTurn;
+                player.CurrentTile = destination;
+                OnActorWasMoved?.Invoke(player, new MoveEventArgs(Compass.None, origin, destination.TilePoint));
+                _isPlayersTurn = false;
             }
         }
+
+        private void HandleNpcMove(Actor npc, Point origin, Tile destination)
+        {
+            if(IsPlayerOnTile(destination))
+            {
+                npc.Attack(_player);
+            }
+            else if(destination.IsWalkable && !IsNpcOnTile(destination))
+            {
+                npc.CurrentTile = destination;
+                OnActorWasMoved?.Invoke(npc, new MoveEventArgs(Compass.None, origin, destination.TilePoint));
+            }
+        }
+
 
         private void HandleLevelChange(object sender, LevelChangeEventArgs eventArgs)
         {
