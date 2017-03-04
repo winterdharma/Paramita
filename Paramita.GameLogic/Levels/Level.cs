@@ -67,11 +67,9 @@ namespace Paramita.GameLogic.Levels
         private void SubscribeToPlayerEvents(Player player)
         {
             _player.OnMoveAttempt += HandleActorMove;
-            _player.OnStatusMsgSent += HandleStatusMessage;
             _player.OnLevelChange += HandleLevelChange;
         }
 
-        public event EventHandler<LevelChangeEventArgs> OnLevelChange;
         public event EventHandler<MoveEventArgs> OnActorWasMoved;
         public event EventHandler<StatusMessageEventArgs> OnStatusMessageSent;
 
@@ -114,9 +112,12 @@ namespace Paramita.GameLogic.Levels
         {
             Actor actor = sender as Actor;
             Compass direction = eventArgs.Direction;
-            //sprite.Facing = direction;
+            
             Tile newTile = TileMap.GetTile(actor.CurrentTile.TilePoint + Direction.GetPoint(direction));
 
+            // GetTile() return null if the destination tile is outside the bounds of the TileMap
+            if (newTile == null)
+                return;
 
             if(actor is Player && IsNpcOnTile(newTile))
             {
@@ -127,7 +128,7 @@ namespace Paramita.GameLogic.Levels
             {
                 actor.Attack(_player);
             }
-            else if(newTile != null && newTile.IsWalkable)
+            else if(newTile.IsWalkable)
             {
                 actor.CurrentTile = newTile;
                 OnActorWasMoved?.Invoke(actor, new MoveEventArgs(direction, actor.CurrentTile.TilePoint));
@@ -139,7 +140,6 @@ namespace Paramita.GameLogic.Levels
         {
             UnsubscribeFromPlayerEvents(_player);
             _player = null;
-            OnLevelChange?.Invoke(this, eventArgs);
         }
 
         private void UnsubscribeFromPlayerEvents(Player player)

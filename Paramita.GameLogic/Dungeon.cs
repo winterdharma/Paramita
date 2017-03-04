@@ -135,33 +135,47 @@ namespace Paramita.GameLogic
         private void SubscribeToEvents()
         {
             SubscribeToLevelEvents();
-            _player.OnInventoryChange += HandleInventoryChange;
+            SubscribeToActorEvents();
         }
 
         private static void SubscribeToLevelEvents()
         {
-            _currentLevel.OnLevelChange += HandleLevelChange;
             _currentLevel.OnActorWasMoved += HandleActorMovement;
             _currentLevel.TileMap.OnItemAdded += HandleItemAddedToTileMap;
             _currentLevel.TileMap.OnItemRemoved += HandleItemRemovedFromTileMap;
-            _currentLevel.OnStatusMessageSent += HandleStatusMessage;
+        }
+
+        private void SubscribeToActorEvents()
+        {
+            _player.OnInventoryChange += HandleInventoryChange;
+            _player.OnStatusMsgSent += HandleStatusMessage;
+            _player.OnLevelChange += HandleLevelChange;
+            SubscribeToNpcEvents(_currentLevel.Npcs);
+            
+        }
+
+        private static void SubscribeToNpcEvents(List<INpc> npcs)
+        {
+            foreach (Actor npc in _currentLevel.Npcs)
+            {
+                npc.OnStatusMsgSent += HandleStatusMessage;
+            }
         }
 
         private static void UnsubscribeFromLevelEvents()
         {
-            _currentLevel.OnLevelChange -= HandleLevelChange;
             _currentLevel.OnActorWasMoved -= HandleActorMovement;
             _currentLevel.TileMap.OnItemAdded -= HandleItemAddedToTileMap;
             _currentLevel.TileMap.OnItemRemoved -= HandleItemRemovedFromTileMap;
-            _currentLevel.OnStatusMessageSent -= HandleStatusMessage;
         }
 
+
+        #region Event Handlers
         private static void HandleLevelChange(object sender, LevelChangeEventArgs eventArgs)
         {
             int levelChange = eventArgs.LevelChange;
             MoveOneLevel(levelChange);
         }
-
 
         private static void HandleActorMovement(object sender, MoveEventArgs eventArgs)
         {
@@ -187,6 +201,8 @@ namespace Paramita.GameLogic
         {
             OnStatusMsgUINotification?.Invoke(null, eventArgs);
         }
+        #endregion
+
 
         public void Update()
         {
@@ -195,7 +211,9 @@ namespace Paramita.GameLogic
 
         public static void CreateNextLevel(int levelNumber)
         {
-            _levels[levelNumber] = LevelFactory.CreateLevel(levelNumber);
+            var level = LevelFactory.CreateLevel(levelNumber);
+            _levels[levelNumber] = level;
+            SubscribeToNpcEvents(level.Npcs);
         }
 
 
