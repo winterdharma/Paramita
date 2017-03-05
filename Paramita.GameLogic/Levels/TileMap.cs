@@ -60,7 +60,7 @@ namespace Paramita.GameLogic.Levels
             {
                 for(int j = 0; j < _tiles.GetLength(1); j++)
                 {
-                    typeArray[i, j] = _tiles[i, j].TypeOfTile;
+                    typeArray[i, j] = _tiles[i, j].TileType;
                 }
             }
             return typeArray;
@@ -141,7 +141,7 @@ namespace Paramita.GameLogic.Levels
             {
                 for(int y = 0; y < TilesHigh; y++)
                 {
-                    if (_tiles[x, y].TypeOfTile == type)
+                    if (_tiles[x, y].TileType == type)
                         return _tiles[x, y];
                 }
             }

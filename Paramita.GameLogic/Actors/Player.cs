@@ -140,7 +140,7 @@ namespace Paramita.GameLogic.Actors
             if (CurrentTile.InspectItems().Length > 0)
                 TryToPickUpItem();
             // check for events based on moving to TileTypes like StairsUp & StairsDown
-            CheckForTileTypeEvent(CurrentTile.TypeOfTile);
+            CheckForTileTypeEvent(CurrentTile.TileType);
         }
 
 

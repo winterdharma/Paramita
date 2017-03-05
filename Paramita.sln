@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paramita", "Paramita\Parami
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paramita.GameLogic", "Paramita.GameLogic\Paramita.GameLogic.csproj", "{02D54C08-97DF-44D3-AD44-D3845898E635}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameLogicTests", "GameLogicTests\GameLogicTests.csproj", "{179F1594-8AE0-4601-BA29-5D721E68B7CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,14 @@ Global
 		{02D54C08-97DF-44D3-AD44-D3845898E635}.Release|Any CPU.Build.0 = Release|Any CPU
 		{02D54C08-97DF-44D3-AD44-D3845898E635}.Release|x86.ActiveCfg = Release|Any CPU
 		{02D54C08-97DF-44D3-AD44-D3845898E635}.Release|x86.Build.0 = Release|Any CPU
+		{179F1594-8AE0-4601-BA29-5D721E68B7CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{179F1594-8AE0-4601-BA29-5D721E68B7CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{179F1594-8AE0-4601-BA29-5D721E68B7CE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{179F1594-8AE0-4601-BA29-5D721E68B7CE}.Debug|x86.Build.0 = Debug|Any CPU
+		{179F1594-8AE0-4601-BA29-5D721E68B7CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{179F1594-8AE0-4601-BA29-5D721E68B7CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{179F1594-8AE0-4601-BA29-5D721E68B7CE}.Release|x86.ActiveCfg = Release|Any CPU
+		{179F1594-8AE0-4601-BA29-5D721E68B7CE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
