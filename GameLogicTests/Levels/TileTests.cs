@@ -279,5 +279,132 @@ namespace GameLogicTests.Levels
             Assert.AreEqual(expected, actual, "The Item[] returned was not expected.");
         }
         #endregion
+
+
+        #region IEquatable Methods
+        [TestMethod]
+        public void Equals_Test_Identity()
+        {
+            var otherTile = tile;
+            var actual = tile.Equals(otherTile);
+            var expected = true;
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(NullReferenceException))]
+        public void Equals_Test_Null()
+        {
+            Tile otherTile = null;
+            var actual = tile.Equals(otherTile);
+        }
+
+        [TestMethod]
+        public void Equals_Test_NotSameType()
+        {
+            var otherTilePoint = new Point(0, 1);
+            var actual = tile.Equals(otherTilePoint);
+            var expected = false;
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void Equals_Test_EqualValue()
+        {
+            var otherTile = new Tile(10, 10, TileType.Floor);
+            var actual = tile.Equals(otherTile);
+            var expected = true;
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void Equals_Test_UnequalValues()
+        {
+            var otherTile = new Tile(5, 5, TileType.Wall);
+            var actual = tile.Equals(otherTile);
+            var expected = false;
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EqualEqualOp_Test_Equal()
+        {
+            var otherTile = new Tile(10, 10, TileType.Floor);
+            var actual = tile == otherTile;
+            var expected = true;
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void EqualEqualOp_Test_Unequal()
+        {
+            var otherTile = new Tile(5, 5, TileType.Wall);
+
+            var actual = tile == otherTile;
+            var expected = false;
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void NotEqualOp_Test_Unequal()
+        {
+            var otherTile = new Tile(5, 5, TileType.Wall);
+
+            var actual = tile != otherTile;
+            var expected = true;
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void NotEqualOp_Test_Equal()
+        {
+            var otherTile = new Tile(10, 10, TileType.Floor);
+
+            var actual = tile != otherTile;
+            var expected = false;
+
+            Assert.AreEqual(expected, actual);
+        }
+        #endregion
+
+
+        #region IComparable
+        [TestMethod]
+        public void CompareTo_Test_LessThan()
+        {
+            var otherTile = new Tile(11, 10, TileType.Floor);
+            var actual = tile.CompareTo(otherTile);
+            var expected = -1;
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void CompareTo_Test_Equal()
+        {
+            var otherTile = new Tile(10, 10, TileType.Floor);
+            var actual = tile.CompareTo(otherTile);
+            var expected = 0;
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void CompareTo_Test_GreaterThan()
+        {
+            var otherTile = new Tile(9, 10, TileType.Floor);
+            var actual = tile.CompareTo(otherTile);
+            var expected = 1;
+
+            Assert.AreEqual(expected, actual);
+        }
+        #endregion
     }
 }

@@ -49,7 +49,6 @@ namespace Paramita.GameLogic.Levels
         #endregion
 
 
-
         public Tile(int x, int y, TileType type, bool isInLos = false, bool isExplored = false)
         {
             TilePoint = new Point(x, y);
@@ -185,24 +184,15 @@ namespace Paramita.GameLogic.Levels
         #region IEquatable Implementation
         public bool Equals(Tile other)
         {
-            if (ReferenceEquals(null, other))
-            {
-                return false;
-            }
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
-            return TilePoint == other.TilePoint && IsTransparent == other.IsTransparent && IsWalkable == other.IsWalkable && IsInLineOfSight == other.IsInLineOfSight && IsExplored == other.IsExplored;
+            return TilePoint == other.TilePoint 
+                && IsTransparent == other.IsTransparent 
+                && IsWalkable == other.IsWalkable 
+                && TileType == other.TileType;
         }
 
         
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
             if (ReferenceEquals(this, obj))
             {
                 return true;
@@ -244,6 +234,7 @@ namespace Paramita.GameLogic.Levels
 
 
         #region IComparable Implementation
+        // this sorts tiles by their coordinates, such that (0,0) is first
         public int CompareTo(Tile other)
         {
             if(TilePoint.X < other.TilePoint.X
