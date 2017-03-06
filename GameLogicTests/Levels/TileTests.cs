@@ -16,6 +16,7 @@ namespace GameLogicTests.Levels
         private string tileType = "TileType property ";
         private string isWalkable = "IsWalkable flag ";
         private string isTransparent = "IsTransparatent flag ";
+        Compass direction = Compass.None;
         Meat item = ItemCreator.CreateMeat();
         Tile tile = new Tile(10, 10, TileType.Floor);
 
@@ -135,12 +136,10 @@ namespace GameLogicTests.Levels
         [TestMethod]
         public void AdjacentTo_Test_AdjacentTile_NorthShouldPass()
         {
-            var tile = new Tile(10, 10, TileType.Floor);
             var tileToNorth = new Tile(10,9, TileType.Floor);
             var expectedDirection = Compass.North;
             var expectedBool = true;
 
-            var direction = Compass.None;
             var isAdjacent = tile.AdjacentTo(tileToNorth, out direction);
 
             Assert.AreEqual(expectedDirection, direction, "Direction output not correct.");
@@ -150,12 +149,10 @@ namespace GameLogicTests.Levels
         [TestMethod]
         public void AdjacentTo_Test_AdjacentTile_SouthShouldPass()
         {
-            var tile = new Tile(10, 10, TileType.Floor);
             var tileToSouth = new Tile(10, 11, TileType.Floor);
             var expectedDirection = Compass.South;
             var expectedBool = true;
 
-            var direction = Compass.None;
             var isAdjacent = tile.AdjacentTo(tileToSouth, out direction);
 
             Assert.AreEqual(expectedDirection, direction, "Direction output not correct.");
@@ -165,12 +162,10 @@ namespace GameLogicTests.Levels
         [TestMethod]
         public void AdjacentTo_Test_AdjacentTile_EastShouldPass()
         {
-            var tile = new Tile(10, 10, TileType.Floor);
             var tileToEast = new Tile(11, 10, TileType.Floor);
             var expectedDirection = Compass.East;
             var expectedBool = true;
 
-            var direction = Compass.None;
             var isAdjacent = tile.AdjacentTo(tileToEast, out direction);
 
             Assert.AreEqual(expectedDirection, direction, "Direction output not correct.");
@@ -180,12 +175,10 @@ namespace GameLogicTests.Levels
         [TestMethod]
         public void AdjacentTo_Test_AdjacentTile_WestShouldPass()
         {
-            var tile = new Tile(10, 10, TileType.Floor);
             var tileToWest = new Tile(9, 10, TileType.Floor);
             var expectedDirection = Compass.West;
             var expectedBool = true;
 
-            var direction = Compass.None;
             var isAdjacent = tile.AdjacentTo(tileToWest, out direction);
 
             Assert.AreEqual(expectedDirection, direction, "Direction output not correct.");
@@ -195,15 +188,13 @@ namespace GameLogicTests.Levels
         [TestMethod]
         public void AdjacentTo_Test_NotAdjacentTile_ShouldFail()
         {
-            var tile = new Tile(10, 10, TileType.Floor);
             var tileNotAdj = new Tile(11, 11, TileType.Floor);
-            var expectedDirection = Compass.None;
             var expectedBool = false;
 
-            var direction = Compass.None;
+            var actualDirection = Compass.None;
             var isAdjacent = tile.AdjacentTo(tileNotAdj, out direction);
 
-            Assert.AreEqual(expectedDirection, direction, "Direction output not correct.");
+            Assert.AreEqual(direction, actualDirection, "Direction output not correct.");
             Assert.AreEqual(expectedBool, isAdjacent, "Did not return false.");
         }
         #endregion

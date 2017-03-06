@@ -7,23 +7,20 @@ namespace Paramita.GameLogic.Levels
 {
     public class TileMap
     {
-        [ContentSerializer(CollectionItemName = "Tiles")]
+        #region Fields
         private Tile[,] _tiles;
-
         private int _tilesWide;
         private int _tilesHigh;
+        private string _mapName;
+        private const string _unsupportedTileType = "A TileType was supplied that is not supported for this search.";
+        #endregion
 
-        private const string unsupportedTileType = "A TileType was supplied that is not supported for this search.";
 
-        [ContentSerializer]
-        public string MapName { get; private set; }
-
-        // Number of tiles wide and high
-        public int TilesWide { get { return _tilesWide; } }
-        public int TilesHigh { get { return _tilesHigh; } }
-
+        #region Events
         public event EventHandler<ItemEventArgs> OnItemAdded;
         public event EventHandler<ItemEventArgs> OnItemRemoved;
+        #endregion
+
 
         public TileMap(Tile[,] tiles, string name)
         {
@@ -34,6 +31,24 @@ namespace Paramita.GameLogic.Levels
             SubscribeToTileEvents();
         }
 
+        #region Properties
+        public int TilesWide
+        {
+            get { return _tilesWide; }
+        }
+
+        public int TilesHigh
+        {
+            get { return _tilesHigh; }
+        }
+
+        public string MapName
+        {
+            get { return _mapName; }
+            private set { _mapName = value; }
+        }
+        #endregion
+
         private void SubscribeToTileEvents()
         {
             foreach(var tile in _tiles)
@@ -43,6 +58,8 @@ namespace Paramita.GameLogic.Levels
             }
         }
 
+
+        #region Event Handlers
         private void HandleItemAddedEvent(object sender, ItemEventArgs e)
         {
             OnItemAdded?.Invoke(this, e);
@@ -52,7 +69,10 @@ namespace Paramita.GameLogic.Levels
         {
             OnItemRemoved?.Invoke(this, e);
         }
+        #endregion
 
+
+        #region TileType and ItemType Layer API
         public TileType[,] ConvertMapToTileTypes()
         {
             var typeArray = new TileType[_tilesHigh, _tilesWide];
@@ -87,37 +107,43 @@ namespace Paramita.GameLogic.Levels
             }
             return typeArray;
         }
+        #endregion
 
-        // Sets a specific Tile in tiles[,] to a new Tile
-        public void SetTile(Point coord, Tile newTile)
+
+        #region Tile Getter and Setter API
+        public void SetTile(Tile newTile)
         {
-            _tiles[coord.X, coord.Y] = newTile;
+            if(newTile == null)
+                throw new NullReferenceException();
+
+            _tiles[newTile.TilePoint.X, newTile.TilePoint.Y] = newTile;
         }
 
 
-
-        // Returns the Tile in tiles[,] corresponding to the coord parameter
-        // or null if coord is outside the bounds of tiles[,]
-        public Tile GetTile(Point coord)
+        // Returns null if coord is outside the bounds of tiles[,]
+        public Tile GetTile(Point point)
         {
-            // return null, if coord is outside the TileMap's bounds
-            if (coord.X < 0 || coord.X > TilesWide - 1
-                || coord.Y < 0 || coord.Y > TilesHigh - 1)
-            {
-                return null;
-            }
-
-            return _tiles[coord.X, coord.Y];
+            PointOutsideOfTileMapCheck(point);
+            return _tiles[point.X, point.Y];
         }
-
+        #endregion
 
 
         // return the value of IsWalkable property on Tile at (x,y) on the map
-        public bool IsTileWalkable(int x, int y)
+        public bool IsTileWalkable(Point point)
         {
-            return _tiles[x, y].IsWalkable;
+            PointOutsideOfTileMapCheck(point);
+            return _tiles[point.X, point.Y].IsWalkable;
         }
         
+        private void PointOutsideOfTileMapCheck(Point point)
+        {
+            if (point.X < 0 || point.X > TilesWide - 1
+                || point.Y < 0 || point.Y > TilesHigh - 1)
+            {
+                throw new ArgumentOutOfRangeException("Point is outside of TileMap bounds.");
+            }
+        }
 
         public Tile FindTileType(TileType type)
         {
@@ -128,11 +154,9 @@ namespace Paramita.GameLogic.Levels
                 case TileType.StairsDown:
                     return FindTileByType(TileType.StairsDown);
                 default:
-                    throw new NotImplementedException("TileMap.FindTileType(): Finding " + type + " not implemented.");
+                    throw new NotImplementedException("Finding TileType." + type + " not implemented.");
             }
         }
-
-
 
         // conducts a linear search of @tiles and returns the first match encountered
         private Tile FindTileByType(TileType type)
@@ -145,7 +169,7 @@ namespace Paramita.GameLogic.Levels
                         return _tiles[x, y];
                 }
             }
-            return null;
+            throw new NullReferenceException("No matching tile found.");
         }
     }
 }

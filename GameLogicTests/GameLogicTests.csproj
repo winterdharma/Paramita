@@ -52,6 +52,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Levels\LevelTests.cs" />
+    <Compile Include="Levels\TileMapTests.cs" />
     <Compile Include="Levels\TileTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
