@@ -60,10 +60,10 @@ namespace Paramita.GameLogic.Levels
                     var rat = ActorCreator.CreateGiantRat();
 
                     // fetches walkable tiles and checks to see if a rat is already there
-                    var tile = level.GetEmptyWalkableTile();
+                    var tile = level.GetRandomWalkableTile();
                     while(placedTiles[tile.TilePoint.X, tile.TilePoint.Y])
                     {
-                        tile = level.GetEmptyWalkableTile();
+                        tile = level.GetRandomWalkableTile();
                     }
 
                     // places the rat on the level and notes where it was put

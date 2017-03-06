@@ -111,11 +111,11 @@ namespace Paramita.GameLogic.Levels
         {
             int roomCenterX = rooms[0].Center.X;
             int roomCenterY = rooms[0].Center.Y;
-            tiles[roomCenterX, roomCenterY].SetTileType(TileType.StairsUp);
+            tiles[roomCenterX, roomCenterY] = new Tile(roomCenterX, roomCenterY, TileType.StairsUp);
 
             roomCenterX = rooms[rooms.Count - 1].Center.X;
             roomCenterY = rooms[rooms.Count - 1].Center.Y;
-            tiles[roomCenterX, roomCenterY].SetTileType(TileType.StairsDown);
+            tiles[roomCenterX, roomCenterY] = new Tile(roomCenterX, roomCenterY, TileType.StairsDown);
 
         }
 

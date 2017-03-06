@@ -12,12 +12,34 @@ namespace Paramita.GameLogic.Levels
      */
     public class Level
     {
-        private TileMap tileMap;
+        #region Fields
+        private TileMap _tileMap;
         private List<INpc> _npcs;
-        private List<Item> items;
         private Player _player;
         private bool _isPlayersTurn = true;
+        #endregion
 
+
+        #region Events
+        // these events are for the Dungeon class to pass onto the UI
+        public event EventHandler<MoveEventArgs> OnActorWasMoved;
+        public event EventHandler<StatusMessageEventArgs> OnStatusMessageSent;
+        #endregion
+
+
+        #region Constructors
+        public Level() { }
+
+        public Level(TileMap map, List<INpc> npcs, Player player = null)
+        {
+            _tileMap = map;
+            _npcs = npcs;
+            _player = player;
+        }
+        #endregion
+
+
+        #region Properties
         public bool IsPlayersTurn
         {
             get { return _isPlayersTurn; }
@@ -26,8 +48,8 @@ namespace Paramita.GameLogic.Levels
 
         public TileMap TileMap
         {
-            get { return tileMap; }
-            set { tileMap = value; }
+            get { return _tileMap; }
+            set { _tileMap = value; }
         }
 
         public List<INpc> Npcs
@@ -36,21 +58,9 @@ namespace Paramita.GameLogic.Levels
             set
             {
                 _npcs = value;
-                foreach (Actor npc in _npcs)
-                {
-                    npc.OnMoveAttempt += HandleActorMove;
-                    npc.OnStatusMsgSent += HandleStatusMessage;
-                    npc.OnActorDeath += HandleNpcDeath;
-                }
+                SubscribeToNpcEvents();
             }
         }
-
-        public List<Item> Items
-        {
-            get { return items; }
-            set { items = value; }
-        }
-
 
         public Player Player
         {
@@ -60,38 +70,26 @@ namespace Paramita.GameLogic.Levels
                 _player = value;
                 if (_player != null)
                 {
-                    SubscribeToPlayerEvents(_player);
+                    SubscribeToPlayerEvents();
                 }
             }
         }
-
-        private void SubscribeToPlayerEvents(Player player)
-        {
-            _player.OnMoveAttempt += HandleActorMove;
-            _player.OnLevelChange += HandleLevelChange;
-        }
-
-        public event EventHandler<MoveEventArgs> OnActorWasMoved;
-        public event EventHandler<StatusMessageEventArgs> OnStatusMessageSent;
-
-        public Level()
-        {
-
-        }
-
-        public Level(TileMap map, List<Item> items, List<INpc> npcs, Player player = null)
-        {
-            tileMap = map;
-            this.items = items;
-            _npcs = npcs;
-            _player = player;
-        }
-
+        #endregion
 
 
         // The bool is an IsPlayer flag used by UI
         public Tuple<BeingType, Compass, bool>[,] ConvertMapToBeingTypes()
         {
+            // this is to defeat any future attempt to pass nulls through
+            if (_player == null)
+            {
+                throw new NullReferenceException("_player is null.");
+            }
+            if (_npcs == null)
+            {
+                throw new NullReferenceException("_npcs is null.");
+            }
+
             var typeArray = new Tuple<BeingType, Compass, bool>[TileMap.TilesWide, TileMap.TilesHigh];
 
             var playerTile = _player.CurrentTile.TilePoint;
@@ -109,15 +107,13 @@ namespace Paramita.GameLogic.Levels
             return typeArray;
         }
 
+
+        #region Event Handlers
         private void HandleNpcDeath(object sender, MoveEventArgs eventArgs)
         {
             INpc npc = sender as INpc;
             Npcs.Remove(npc);
-
-            Actor actor = npc as Actor;
-            actor.OnMoveAttempt -= HandleActorMove;
-            actor.OnStatusMsgSent -= HandleStatusMessage;
-            actor.OnActorDeath -= HandleNpcDeath;
+            UnsubscribeFromOneNpcsEvents(npc as Actor);           
         }
 
 
@@ -127,9 +123,6 @@ namespace Paramita.GameLogic.Levels
             Compass direction = eventArgs.Direction;
             Tile newTile = TileMap.GetTile(actor.CurrentTile.TilePoint + Direction.GetPoint(direction));
             Point origin = actor.CurrentTile.TilePoint;
-            // GetTile() returns null if the destination tile is outside the bounds of the TileMap
-            if (newTile == null)
-                return;
 
             if (actor is Player)
                 HandlePlayerMove(actor as Player, origin, newTile);
@@ -169,58 +162,87 @@ namespace Paramita.GameLogic.Levels
 
         private void HandleLevelChange(object sender, LevelChangeEventArgs eventArgs)
         {
-            UnsubscribeFromPlayerEvents(_player);
+            UnsubscribeFromPlayerEvents();
             _player = null;
-        }
-
-        private void UnsubscribeFromPlayerEvents(Player player)
-        {
-            _player.OnMoveAttempt -= HandleActorMove;
-            _player.OnStatusMsgSent -= HandleStatusMessage;
-            _player.OnLevelChange -= HandleLevelChange;
         }
 
         private void HandleStatusMessage(object sender, StatusMessageEventArgs eventArgs)
         {
             OnStatusMessageSent?.Invoke(this, eventArgs);
         }
+        #endregion
 
+
+        #region Event Subscriptions
+        private void SubscribeToPlayerEvents()
+        {
+            _player.OnMoveAttempt += HandleActorMove;
+            _player.OnLevelChange += HandleLevelChange;
+        }
+
+        private void UnsubscribeFromPlayerEvents()
+        {
+            _player.OnMoveAttempt -= HandleActorMove;
+            _player.OnLevelChange -= HandleLevelChange;
+        }
+
+        private void SubscribeToNpcEvents()
+        {
+            foreach (Actor npc in _npcs)
+            {
+                npc.OnMoveAttempt += HandleActorMove;
+                npc.OnActorDeath += HandleNpcDeath;
+            }
+        }
+
+        private void UnsubscribeFromOneNpcsEvents(Actor actor)
+        {
+            actor.OnMoveAttempt -= HandleActorMove;
+            actor.OnActorDeath -= HandleNpcDeath;
+        }
+        #endregion
+
+
+        #region Tile Getters and Setters
         public Tile GetStairsUpTile()
         {
-            return tileMap.FindTileType(TileType.StairsUp);
+            return _tileMap.FindTileType(TileType.StairsUp);
         }
 
         public Tile GetStairsDownTile()
         {
-            return tileMap.FindTileType(TileType.StairsDown);
+            return _tileMap.FindTileType(TileType.StairsDown);
         }
 
-
+        // ?? why is this in this class? Why not LevelFactory?
         public void PlaceItemsOnTileMap(List<Item> items)
         {
             for(int i = 0; i < items.Count; i++)
             {
-                var tile = GetEmptyWalkableTile();
+                var tile = GetRandomWalkableTile();
                 tile.AddItem(items[i]);
             }
         }
 
-        // returns a suitable starting tile for the player or enemy
-        // Does not check for empty state yet
-        public Tile GetEmptyWalkableTile()
+        public Tile GetRandomWalkableTile()
         {
+            int x, y;
             while (true)
             {
-                int x = Dungeon._random.Next(tileMap.TilesWide - 1);
-                int y = Dungeon._random.Next(tileMap.TilesHigh - 1);
-                if (tileMap.IsTileWalkable(x, y))
+                x = Dungeon._random.Next(_tileMap.TilesWide - 1);
+                y = Dungeon._random.Next(_tileMap.TilesHigh - 1);
+                var point = new Point(x, y);
+                
+                if (_tileMap.IsTileWalkable(point))
                 {
-                    return tileMap.GetTile(new Point(x, y));
+                    return _tileMap.GetTile(point);
                 }
             }
         }
+        #endregion
 
 
+        #region Actors on Tiles API
         // Iterates over the @npcs list of active NPCs to find if one of them is
         // currently on @tile
         public bool IsNpcOnTile(Tile tile)
@@ -257,6 +279,8 @@ namespace Paramita.GameLogic.Levels
                 return true;
             return false;
         }
+        #endregion
+
 
         public void Update()
         {
