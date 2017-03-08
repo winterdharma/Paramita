@@ -7,7 +7,7 @@ using Paramita.GameLogic.Mechanics;
 
 namespace Paramita.GameLogic
 {
-
+    #region Custom EventArg Classes
     public class InventoryChangeEventArgs : EventArgs
     {
         public Tuple<Dictionary<string, ItemType>, int> Inventory { get; }
@@ -37,10 +37,12 @@ namespace Paramita.GameLogic
             Layers = layers;
         }
     }
+    #endregion
+
 
     public class Dungeon
     {
-        internal static Random _random;
+        internal static Random _random = new Random();
         private static Dictionary<int, Level> _levels;
         private static Player _player;
 
@@ -68,7 +70,6 @@ namespace Paramita.GameLogic
 
         public Dungeon()
         {
-            _random = new Random();
             _player = new Player("Wesley");
             _levels = new Dictionary<int, Level>();
             _currentLevelNumber = 1;
@@ -156,7 +157,7 @@ namespace Paramita.GameLogic
             
         }
 
-        private static void SubscribeToNpcEvents(List<INpc> npcs)
+        private static void SubscribeToNpcEvents(List<Actor> npcs)
         {
             foreach (Actor npc in _currentLevel.Npcs)
             {
