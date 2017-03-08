@@ -30,12 +30,12 @@ namespace Paramita.UI.Scenes.Game
 
 
 
-        public TileMapPanel(TileType[,] tileLayer, ItemType[,] itemLayer, 
-            Tuple<BeingType, Compass, bool>[,] actorLayer)
+        public TileMapPanel(Tuple<TileType[,], ItemType[,], 
+            Tuple<BeingType, Compass, bool>[,]> tileMapLayers)
         {
             _viewport = GameController.ScreenRectangle;
             _drawFrame = new Rectangle(0, 0, TILE_SIZE, TILE_SIZE);
-            InitializeLevelMap(tileLayer, itemLayer, actorLayer);
+            InitializeLevelMap(tileMapLayers.Item1, tileMapLayers.Item2, tileMapLayers.Item3);
             SubscribeToDungeonNotifications();
         }
 
