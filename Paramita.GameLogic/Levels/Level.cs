@@ -53,6 +53,21 @@ namespace Paramita.GameLogic.Levels
             set { _tileMap = value; }
         }
 
+        public ItemType[,] ItemTypeLayer
+        {
+            get { return _tileMap.ConvertMapToItemTypes(); }
+        }
+
+        public TileType[,] TileTypeLayer
+        {
+            get { return _tileMap.ConvertMapToTileTypes(); }
+        }
+
+        public Tuple<BeingType, Compass, bool>[,] BeingTypeLayer
+        {
+            get { return ConvertMapToBeingTypes(); }
+        }
+
         public List<Actor> Npcs
         {
             get { return _npcs; }
@@ -79,7 +94,7 @@ namespace Paramita.GameLogic.Levels
 
 
         // The bool is an IsPlayer flag used by UI
-        public Tuple<BeingType, Compass, bool>[,] ConvertMapToBeingTypes()
+        private Tuple<BeingType, Compass, bool>[,] ConvertMapToBeingTypes()
         {
             // this is to defeat any future attempt to pass nulls through
             if (_player == null)

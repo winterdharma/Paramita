@@ -2,6 +2,9 @@
 using Microsoft.Xna.Framework;
 using Paramita.GameLogic.Actors;
 using Paramita.GameLogic.Actors.Animals;
+using Paramita.GameLogic.Items;
+using Paramita.GameLogic.Items.Armors;
+using Paramita.GameLogic.Items.Weapons;
 using Paramita.GameLogic.Levels;
 using Paramita.GameLogic.Mechanics;
 using System;
@@ -32,6 +35,20 @@ namespace GameLogicTests.Levels
             }
         };
 
+        TileType[,] expectedTileTypeArray = new TileType[3, 3]
+        {
+            { TileType.Wall, TileType.Wall, TileType.StairsUp },
+            { TileType.StairsDown, TileType.Wall, TileType.Wall },
+            { TileType.Floor, TileType.Floor, TileType.Floor }
+        };
+
+        ItemType[,] expectedItemTypeArray = new ItemType[3, 3]
+        {
+            { ItemType.None, ItemType.None, ItemType.None },
+            { ItemType.None, ItemType.None, ItemType.None },
+            { ItemType.ShortSword, ItemType.None, ItemType.None }
+        };
+
         Tuple<BeingType, Compass, bool>[,] expectedBeingTypeLayer =
             new Tuple<BeingType, Compass, bool>[3, 3] {
                 { null, null, null },
@@ -41,9 +58,19 @@ namespace GameLogicTests.Levels
                   new Tuple<BeingType, Compass, bool>(BeingType.HumanPlayer, Compass.East, true) }
             };
 
+        ShortSword sword = ItemCreator.CreateShortSword();
+        Buckler buckler = ItemCreator.CreateBuckler();
+
         Player player = new Player("Chuck");
         List<Actor> npcs = new List<Actor>() { new GiantRat() };
 
+        public List<Item> CreateItems()
+        {
+            var items = new List<Item>();
+            items.Add(sword);
+            items.Add(buckler);
+            return items;
+        }
         private TileMap CreateTestMap()
         {
             return new TileMap(tiles, "3x3_testmap");
@@ -62,12 +89,39 @@ namespace GameLogicTests.Levels
         #endregion
 
 
-        #region ConvertMapToBeingTypes()
+        #region TileMap Data Layer Properties
+        #region Level.TileTypeLayer
+        [TestMethod]
+        public void TileTypeLayer_Property_ArraysShouldMatch()
+        {
+            var level = CreateTestLevel();
+            var actual = level.TileTypeLayer;//tileMap.ConvertMapToTileTypes();
+
+            Assert.IsNotNull(actual);
+            CollectionAssert.AllItemsAreNotNull(actual);
+            CollectionAssert.AllItemsAreInstancesOfType(actual, typeof(TileType));
+            CollectionAssert.AreEqual(expectedTileTypeArray, actual);
+        }
+        #endregion
+
+        #region Level.ItemTypeLayer
+        [TestMethod]
+        public void ConvertMapToItemTypes_Test_Result_ShouldPass()
+        {
+            var level = CreateTestLevel();
+            level.TileMap.GetTile(new Point(2, 0)).AddItem(sword);
+            var actual = level.ItemTypeLayer;
+
+            CollectionAssert.AreEqual(expectedItemTypeArray, actual);
+        }
+        #endregion
+
+        #region Level.BeingTypeLayer
         [TestMethod]
         public void ConvertMapToBeingTypes_Test()
         {
             var level = CreateTestLevel();
-            var actual = level.ConvertMapToBeingTypes();
+            var actual = level.BeingTypeLayer;
 
             CollectionAssert.AreEqual(expectedBeingTypeLayer, actual);
         }
@@ -78,7 +132,7 @@ namespace GameLogicTests.Levels
         {
             var level = CreateTestLevel();
             level.Player = null;
-            var actual = level.ConvertMapToBeingTypes();
+            var actual = level.BeingTypeLayer;
         }
 
         [TestMethod]
@@ -87,8 +141,9 @@ namespace GameLogicTests.Levels
         {
             var level = CreateTestLevel();
             level.Npcs = null;
-            var actual = level.ConvertMapToBeingTypes();
+            var actual = level.BeingTypeLayer;
         }
+        #endregion
         #endregion
 
 

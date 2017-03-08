@@ -27,10 +27,7 @@ namespace Paramita.UI.Scenes
 
             _dungeon = new Dungeon();
 
-            _tileMapPanel = new TileMapPanel(
-                Dungeon.GetCurrentLevelTiles(), 
-                Dungeon.GetCurrentLevelItems(), 
-                Dungeon.GetCurrentLevelActors());
+            _tileMapPanel = new TileMapPanel(Dungeon.GetCurrentLevelLayers());
             _statusPanel = new StatusPanel(GameController.ArialBold, 10, new Point(0,720));
             _inventoryPanel = new InventoryPanel();
         }

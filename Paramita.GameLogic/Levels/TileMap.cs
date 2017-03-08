@@ -65,7 +65,7 @@ namespace Paramita.GameLogic.Levels
 
 
         #region TileType and ItemType Layer API
-        public TileType[,] ConvertMapToTileTypes()
+        internal TileType[,] ConvertMapToTileTypes()
         {
             var typeArray = new TileType[_tilesHigh, _tilesWide];
 
@@ -81,7 +81,7 @@ namespace Paramita.GameLogic.Levels
         }
 
 
-        public ItemType[,] ConvertMapToItemTypes()
+        internal ItemType[,] ConvertMapToItemTypes()
         {
             var typeArray = new ItemType[_tilesHigh, _tilesWide];
 
