@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Paramita.GameLogic.Items;
+using System.Collections.Generic;
 
 namespace Paramita.GameLogic.Levels
 {
@@ -49,15 +50,6 @@ namespace Paramita.GameLogic.Levels
         }
         #endregion
 
-        private void SubscribeToTileEvents()
-        {
-            foreach(var tile in _tiles)
-            {
-                tile.OnItemAddedToTile += HandleItemAddedEvent;
-                tile.OnItemRemovedFromTile += HandleItemRemovedEvent;
-            }
-        }
-
 
         #region Event Handlers
         private void HandleItemAddedEvent(object sender, ItemEventArgs e)
@@ -73,38 +65,35 @@ namespace Paramita.GameLogic.Levels
 
 
         #region TileType and ItemType Layer API
-        public TileType[,] ConvertMapToTileTypes()
+        internal TileType[,] ConvertMapToTileTypes()
         {
             var typeArray = new TileType[_tilesHigh, _tilesWide];
-            for(int i = 0; i < _tiles.GetLength(0); i++)
+
+            for (int i = 0; i < _tiles.GetLength(0); i++)
             {
                 for(int j = 0; j < _tiles.GetLength(1); j++)
                 {
                     typeArray[i, j] = _tiles[i, j].TileType;
                 }
             }
+
             return typeArray;
         }
 
 
-        public ItemType[,] ConvertMapToItemTypes()
+        internal ItemType[,] ConvertMapToItemTypes()
         {
             var typeArray = new ItemType[_tilesHigh, _tilesWide];
+
             for (int i = 0; i < _tiles.GetLength(0); i++)
             {
                 for (int j = 0; j < _tiles.GetLength(1); j++)
                 {
                     var items = _tiles[i, j].InspectItems();
-                    if(items.Length > 0)
-                    {
-                        typeArray[i, j] = items[0].ItemType;
-                    }
-                    else
-                    {
-                        typeArray[i, j] = ItemType.None;
-                    }
+                    typeArray[i, j] = ConvertItemsToItemType(items);
                 }
             }
+
             return typeArray;
         }
         #endregion
@@ -119,30 +108,36 @@ namespace Paramita.GameLogic.Levels
             _tiles[newTile.TilePoint.X, newTile.TilePoint.Y] = newTile;
         }
 
-
-        // Returns null if coord is outside the bounds of tiles[,]
         public Tile GetTile(Point point)
         {
             PointOutsideOfTileMapCheck(point);
             return _tiles[point.X, point.Y];
         }
+
+        public Tile GetRandomWalkableTile()
+        {
+            var walkableTiles = GetWalkableTiles();
+
+            int i = Dungeon._random.Next(walkableTiles.Count - 1);
+                
+            return walkableTiles[i];
+        }
+
+        public void PlaceItemsOnRandomTiles(List<Item> items)
+        {
+            foreach(var item in items)
+            {
+                var tile = GetRandomWalkableTile();
+                tile.AddItem(item);
+            }
+        }
         #endregion
 
 
-        // return the value of IsWalkable property on Tile at (x,y) on the map
         public bool IsTileWalkable(Point point)
         {
-            PointOutsideOfTileMapCheck(point);
+            PointOutsideOfTileMapCheck(point); // throws exception if out of bounds
             return _tiles[point.X, point.Y].IsWalkable;
-        }
-        
-        private void PointOutsideOfTileMapCheck(Point point)
-        {
-            if (point.X < 0 || point.X > TilesWide - 1
-                || point.Y < 0 || point.Y > TilesHigh - 1)
-            {
-                throw new ArgumentOutOfRangeException("Point is outside of TileMap bounds.");
-            }
         }
 
         public Tile FindTileType(TileType type)
@@ -155,6 +150,37 @@ namespace Paramita.GameLogic.Levels
                     return FindTileByType(TileType.StairsDown);
                 default:
                     throw new NotImplementedException("Finding TileType." + type + " not implemented.");
+            }
+        }
+
+
+        #region Helper Methods
+        private ItemType ConvertItemsToItemType(Item[] items)
+        {
+            if (items.Length == 0)
+                return ItemType.None;
+            else
+                return items[0].ItemType;
+        }
+
+        private List<Tile> GetWalkableTiles()
+        {
+            var queryResults = from Tile tile in _tiles
+                               where tile.IsWalkable == true
+                               select tile;
+
+            if (queryResults.Count() == 0)
+                throw new NullReferenceException("No walkable tiles found.");
+
+            return queryResults.ToList();
+        }
+
+        private void SubscribeToTileEvents()
+        {
+            foreach (var tile in _tiles)
+            {
+                tile.OnItemAddedToTile += HandleItemAddedEvent;
+                tile.OnItemRemovedFromTile += HandleItemRemovedEvent;
             }
         }
 
@@ -171,5 +197,15 @@ namespace Paramita.GameLogic.Levels
             }
             throw new NullReferenceException("No matching tile found.");
         }
+
+        private void PointOutsideOfTileMapCheck(Point point)
+        {
+            if (point.X < 0 || point.X > TilesWide - 1
+                || point.Y < 0 || point.Y > TilesHigh - 1)
+            {
+                throw new ArgumentOutOfRangeException("Point is outside of TileMap bounds.");
+            }
+        }
+        #endregion
     }
 }
