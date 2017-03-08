@@ -43,7 +43,7 @@ namespace Paramita.GameLogic.Levels
         #endregion
 
 
-        #region EventHandlers
+        #region Events
         public event EventHandler<ItemEventArgs> OnItemAddedToTile;
         public event EventHandler<ItemEventArgs> OnItemRemovedFromTile;
         #endregion
@@ -107,48 +107,22 @@ namespace Paramita.GameLogic.Levels
         #endregion
 
 
-        private void SetFlagsForNewTileType()
-        {
-            switch (_tileType)
-            {
-                case TileType.StairsUp:
-                case TileType.StairsDown:
-                case TileType.Floor:
-                    IsTransparent = true;
-                    IsWalkable = true;
-                    break;
-                case TileType.Door:
-                case TileType.Wall:
-                    IsTransparent = false;
-                    IsWalkable = false;
-                    break;
-                default:
-                    string message = "Tried to set flags for unimplemented " + _tileType + ".";
-                    throw new NotImplementedException(message);
-            }
-        }
-
-
         public bool AdjacentTo(Tile other, out Compass direction)
         {
             direction = Compass.None;
             Point difference = other.TilePoint - TilePoint;
 
-            if (((difference.X == 1 || difference.X == -1) && difference.Y == 0)
-                || ((difference.Y == 1 || difference.Y == -1) && difference.X == 0))
-            {
-                if (difference == Direction.GetPoint(Compass.North))
-                    direction = Compass.North;
-                else if (difference == Direction.GetPoint(Compass.South))
-                    direction = Compass.South;
-                else if (difference == Direction.GetPoint(Compass.East))
-                    direction = Compass.East;
-                else if (difference == Direction.GetPoint(Compass.West))
-                    direction = Compass.West;
+            if (difference == Direction.GetPoint(Compass.North))
+                direction = Compass.North;
+            else if (difference == Direction.GetPoint(Compass.South))
+                direction = Compass.South;
+            else if (difference == Direction.GetPoint(Compass.East))
+                direction = Compass.East;
+            else if (difference == Direction.GetPoint(Compass.West))
+                direction = Compass.West;
 
-                return true;
-            }
-            return false;
+            var isAdjacent = direction != Compass.None ? true : false;
+            return isAdjacent;
         }
 
 
@@ -280,6 +254,30 @@ namespace Paramita.GameLogic.Levels
             {
                 if (IsTransparent) { return "o"; }
                 else { return "#"; }
+            }
+        }
+        #endregion
+
+
+        #region Helper Methods
+        private void SetFlagsForNewTileType()
+        {
+            switch (_tileType)
+            {
+                case TileType.StairsUp:
+                case TileType.StairsDown:
+                case TileType.Floor:
+                    IsTransparent = true;
+                    IsWalkable = true;
+                    break;
+                case TileType.Door:
+                case TileType.Wall:
+                    IsTransparent = false;
+                    IsWalkable = false;
+                    break;
+                default:
+                    string message = "Tried to set flags for unimplemented " + _tileType + ".";
+                    throw new NotImplementedException(message);
             }
         }
         #endregion

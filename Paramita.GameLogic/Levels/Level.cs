@@ -4,6 +4,7 @@ using Paramita.GameLogic.Actors;
 using System;
 using System.Collections.Generic;
 using Paramita.GameLogic.Mechanics;
+using System.Linq;
 
 namespace Paramita.GameLogic.Levels
 {
@@ -14,7 +15,7 @@ namespace Paramita.GameLogic.Levels
     {
         #region Fields
         private TileMap _tileMap;
-        private List<INpc> _npcs;
+        private List<Actor> _npcs;
         private Player _player;
         private bool _isPlayersTurn = true;
         #endregion
@@ -30,11 +31,11 @@ namespace Paramita.GameLogic.Levels
         #region Constructors
         public Level() { }
 
-        public Level(TileMap map, List<INpc> npcs, Player player = null)
+        public Level(TileMap map, List<Actor> npcs, Player player = null)
         {
-            _tileMap = map;
-            _npcs = npcs;
-            _player = player;
+            TileMap = map;
+            Npcs = npcs;
+            Player = player;
         }
         #endregion
 
@@ -52,7 +53,7 @@ namespace Paramita.GameLogic.Levels
             set { _tileMap = value; }
         }
 
-        public List<INpc> Npcs
+        public List<Actor> Npcs
         {
             get { return _npcs; }
             set
@@ -111,9 +112,9 @@ namespace Paramita.GameLogic.Levels
         #region Event Handlers
         private void HandleNpcDeath(object sender, MoveEventArgs eventArgs)
         {
-            INpc npc = sender as INpc;
+            Actor npc = sender as Actor;
             Npcs.Remove(npc);
-            UnsubscribeFromOneNpcsEvents(npc as Actor);           
+            UnsubscribeFromOneNpcsEvents(npc);           
         }
 
 
@@ -133,16 +134,17 @@ namespace Paramita.GameLogic.Levels
         
         private void HandlePlayerMove(Player player, Point origin, Tile destination)
         {
-            if (IsNpcOnTile(destination))
+            Actor defender;
+            if (GetNpcOnTile(destination, out defender))
             {
-                player.Attack(GetNpcOnTile(destination));
-                _isPlayersTurn = false;
+                player.Attack(defender);
+                TogglePlayersTurn();
             }
             else if(destination.IsWalkable)
             {
                 player.CurrentTile = destination;
                 OnActorWasMoved?.Invoke(player, new MoveEventArgs(Compass.None, origin, destination.TilePoint));
-                _isPlayersTurn = false;
+                TogglePlayersTurn();
             }
         }
 
@@ -203,7 +205,10 @@ namespace Paramita.GameLogic.Levels
         #endregion
 
 
-        #region Tile Getters and Setters
+        #region Tile Getters
+        // these are called by Dungeon when placing player on Level.
+        // Will be changed in future reviews to delegate placement details
+        // to Level class.
         public Tile GetStairsUpTile()
         {
             return _tileMap.FindTileType(TileType.StairsUp);
@@ -214,103 +219,78 @@ namespace Paramita.GameLogic.Levels
             return _tileMap.FindTileType(TileType.StairsDown);
         }
 
-        // ?? why is this in this class? Why not LevelFactory?
-        public void PlaceItemsOnTileMap(List<Item> items)
-        {
-            for(int i = 0; i < items.Count; i++)
-            {
-                var tile = GetRandomWalkableTile();
-                tile.AddItem(items[i]);
-            }
-        }
-
+        // this is called by LevelFactory when placing npcs.
+        // in future code review, LevelFactory will delegate placement
+        // to Level class.
         public Tile GetRandomWalkableTile()
         {
-            int x, y;
-            while (true)
-            {
-                x = Dungeon._random.Next(_tileMap.TilesWide - 1);
-                y = Dungeon._random.Next(_tileMap.TilesHigh - 1);
-                var point = new Point(x, y);
-                
-                if (_tileMap.IsTileWalkable(point))
-                {
-                    return _tileMap.GetTile(point);
-                }
-            }
-        }
-        #endregion
-
-
-        #region Actors on Tiles API
-        // Iterates over the @npcs list of active NPCs to find if one of them is
-        // currently on @tile
-        public bool IsNpcOnTile(Tile tile)
-        {
-            for (int i = 0; i < _npcs.Count; i++)
-            {
-                var npc = (Actor)_npcs[i];
-                if (npc.CurrentTile == tile)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        // Finds the NPC that is located on @tile. If none is there, null is returned
-        // (this method should be called after IsNpcOnTile check)
-        public Actor GetNpcOnTile(Tile tile)
-        {
-            for (int i = 0; i < _npcs.Count; i++)
-            {
-                var npc = (Actor)_npcs[i];
-                if (npc.CurrentTile == tile)
-                {
-                    return npc;
-                }
-            }
-            return null;
-        }
-
-        public bool IsPlayerOnTile(Tile tile)
-        {
-            if (_player.CurrentTile == tile)
-                return true;
-            return false;
+            return _tileMap.GetRandomWalkableTile();
         }
         #endregion
 
 
         public void Update()
         {
-            // remove dead npcs before updating them
-            for (int i = 0; i < _npcs.Count; i++)
-            {
-                var npc = (Actor)_npcs[i];
-                if (npc.IsDead)
-                {
-                    _npcs.Remove(_npcs[i]);
-                }
-            }
+            _npcs.RemoveAll(NpcIsDead);
 
-            // check for player's input until he moves
+            
             if (_isPlayersTurn)
             {
                 _player.Update();
             }
-            // give the npcs a turn after the player moves
             else
             {
-                for (int i = 0; i < _npcs.Count; i++)
-                {
-                    var npc = (Actor)_npcs[i];
-                    npc.TimesAttacked = 0;
-                    _npcs[i].Update(_player);
-                }
-                _isPlayersTurn = true;
-                _player.TimesAttacked = 0;
+                UpdateNpcs();
+                ResetActorsTimesAttacked();
+                TogglePlayersTurn();
             }
         }
+
+        #region Helper Methods
+        private bool IsNpcOnTile(Tile tile)
+        {
+            return _npcs.Exists(npc => npc.CurrentTile == tile);
+        }
+
+        private bool GetNpcOnTile(Tile tile, out Actor actor)
+        {
+            var isNpcOnTile = IsNpcOnTile(tile);
+            actor = isNpcOnTile ? _npcs.Find(n => n.CurrentTile == tile) : null;
+            return isNpcOnTile;
+        }
+
+        private bool IsPlayerOnTile(Tile tile)
+        {
+            return _player.CurrentTile == tile;
+        }
+
+        private void TogglePlayersTurn()
+        {
+            _isPlayersTurn = !_isPlayersTurn;
+        }
+
+        private bool NpcIsDead(Actor actor)
+        {
+            return actor.IsDead;
+        }
+
+        private void UpdateNpcs()
+        {
+            foreach(INpc npc in _npcs)
+            {
+                npc.Update(_player);
+            }
+        }
+
+        private void ResetActorsTimesAttacked()
+        {
+            _player.TimesAttacked = 0;
+
+            foreach(var npc in _npcs)
+            {
+                npc.TimesAttacked = 0;
+            }
+        }
+        #endregion
     }
 }

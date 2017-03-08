@@ -126,6 +126,7 @@ namespace GameLogicTests.Levels
         #endregion
 
 
+        #region IsTileWalkable()
         [TestMethod]
         public void IsTileWalkable_Test_TrueFalseCases()
         {
@@ -148,7 +149,10 @@ namespace GameLogicTests.Levels
             var pointOutsideTileMap = new Point(3, 3);
             tileMap.IsTileWalkable(pointOutsideTileMap);
         }
+        #endregion
 
+
+        #region FindTileType()
         [TestMethod]
         public void FindTileType_Test_FindsImplementedTypes()
         {
@@ -213,5 +217,6 @@ namespace GameLogicTests.Levels
                 StringAssert.Contains(e.Message, "TileType.Wall");
             }
         }
+        #endregion
     }
 }

@@ -120,7 +120,7 @@ namespace Paramita.GameLogic.Actors
         }
 
         // This method handles player input actions (currently only movement)
-        internal void HandleInput(Compass direction)
+        public void HandleInput(Compass direction)
         {
             if (MoveTo(direction))
             {

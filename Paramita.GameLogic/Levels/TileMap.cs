@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Paramita.GameLogic.Items;
+using System.Collections.Generic;
 
 namespace Paramita.GameLogic.Levels
 {
@@ -125,6 +126,44 @@ namespace Paramita.GameLogic.Levels
         {
             PointOutsideOfTileMapCheck(point);
             return _tiles[point.X, point.Y];
+        }
+
+        public Tile GetRandomWalkableTile()
+        {
+            var walkableTiles = GetWalkableTiles();
+
+            int i = Dungeon._random.Next(walkableTiles.Count - 1);
+                
+            return walkableTiles[i];
+        }
+
+        private List<Tile> GetWalkableTiles()
+        {
+            var walkableTiles = new List<Tile>();
+
+            for(int i = 0; i < _tilesWide; i++)
+            {
+                for (int j = 0; j < _tilesHigh; j++)
+                {
+                    var tile = GetTile(new Point(i, j));
+                    if (tile.IsWalkable)
+                        walkableTiles.Add(tile);
+                }
+            }
+            if (walkableTiles.Count == 0)
+                throw new NullReferenceException("No walkable tiles found.");
+
+            return walkableTiles;
+
+        }
+
+        public void PlaceItemsOnRandomTiles(List<Item> items)
+        {
+            for (int i = 0; i < items.Count; i++)
+            {
+                var tile = GetRandomWalkableTile();
+                tile.AddItem(items[i]);
+            }
         }
         #endregion
 
