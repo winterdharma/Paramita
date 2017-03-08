@@ -109,17 +109,14 @@ namespace Paramita.GameLogic.Levels
 
         public bool AdjacentTo(Tile other, out Compass direction)
         {
-            direction = Compass.None;
             Point difference = other.TilePoint - TilePoint;
+            List<Point> compassNESW = Direction.CardinalPoints;
 
-            if (difference == Direction.GetPoint(Compass.North))
-                direction = Compass.North;
-            else if (difference == Direction.GetPoint(Compass.South))
-                direction = Compass.South;
-            else if (difference == Direction.GetPoint(Compass.East))
-                direction = Compass.East;
-            else if (difference == Direction.GetPoint(Compass.West))
-                direction = Compass.West;
+            // if @difference is not found in @compassNESW, 
+            // then Point(0,0) is returned by List.Find(), 
+            // which is equal to Compass.None
+
+            direction = Direction.GetDirection(compassNESW.Find(p => p == difference));
 
             var isAdjacent = direction != Compass.None ? true : false;
             return isAdjacent;
@@ -171,7 +168,7 @@ namespace Paramita.GameLogic.Levels
             {
                 return true;
             }
-            if (obj.GetType() != this.GetType())
+            if (obj.GetType() != GetType())
             {
                 return false;
             }
