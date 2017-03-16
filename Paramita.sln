@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paramita.GameLogic", "Param
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameLogicTests", "GameLogicTests\GameLogicTests.csproj", "{179F1594-8AE0-4601-BA29-5D721E68B7CE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paramita.GameLogic.UnitTests", "Paramita.GameLogic.UnitTests\Paramita.GameLogic.UnitTests.csproj", "{B10EF5FF-AEA3-4912-9DFF-B6E93BCA5AEA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,14 @@ Global
 		{179F1594-8AE0-4601-BA29-5D721E68B7CE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{179F1594-8AE0-4601-BA29-5D721E68B7CE}.Release|x86.ActiveCfg = Release|Any CPU
 		{179F1594-8AE0-4601-BA29-5D721E68B7CE}.Release|x86.Build.0 = Release|Any CPU
+		{B10EF5FF-AEA3-4912-9DFF-B6E93BCA5AEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B10EF5FF-AEA3-4912-9DFF-B6E93BCA5AEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B10EF5FF-AEA3-4912-9DFF-B6E93BCA5AEA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B10EF5FF-AEA3-4912-9DFF-B6E93BCA5AEA}.Debug|x86.Build.0 = Debug|Any CPU
+		{B10EF5FF-AEA3-4912-9DFF-B6E93BCA5AEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B10EF5FF-AEA3-4912-9DFF-B6E93BCA5AEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B10EF5FF-AEA3-4912-9DFF-B6E93BCA5AEA}.Release|x86.ActiveCfg = Release|Any CPU
+		{B10EF5FF-AEA3-4912-9DFF-B6E93BCA5AEA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

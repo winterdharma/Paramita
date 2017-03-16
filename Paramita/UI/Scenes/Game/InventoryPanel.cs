@@ -295,20 +295,6 @@ namespace Paramita.UI.Scenes.Game
                     _spriteElements.Add(item);
                 }
             }
-
-
-
-            //for (int i = 1; i < _inventorySlots.Count; i++)
-            //{
-            //    slot = _inventorySlots[i];
-            //    var spriteElement = new SpriteElement();
-            //    spriteElement.Label = slot;
-            //    spriteElement.Texture = GetSpriteElementTexture(slot, _inventory[slot]);
-            //    spriteElement.Position = GetSpriteElementPosition(i-1);
-            //    spriteElement.Color = GetSpriteElementColor(i);
-            //    spriteElement.Rectangle = new Rectangle((int)spriteElement.Position.X, (int)spriteElement.Position.Y, 32, 32);
-            //    _spriteElements.Add(spriteElement);
-            //}
         }
 
         private string ConvertItemTypeToString(ItemType type)
