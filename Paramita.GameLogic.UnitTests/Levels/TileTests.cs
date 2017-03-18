@@ -97,6 +97,8 @@ namespace Paramita.GameLogic.UnitTests.Levels
         }
         #endregion
 
+
+        #region IContainer Methods
         #region AddItem() Tests
         [Test]
         public void AddItem_AddingNullItem_ThrowsNullReferenceException()
@@ -180,6 +182,8 @@ namespace Paramita.GameLogic.UnitTests.Levels
         }
 
         #endregion
+        #endregion
+
 
         #region IEquatable Methods
         [Test]
@@ -257,6 +261,7 @@ namespace Paramita.GameLogic.UnitTests.Levels
         }
         #endregion
 
+
         #region IComparable
         [Test]
         public void CompareTo_ListOfTiles_SortsByYThenX()
@@ -281,6 +286,7 @@ namespace Paramita.GameLogic.UnitTests.Levels
         }
 
         #endregion
+
 
         #region Helper Methods
         #region Tile Factory

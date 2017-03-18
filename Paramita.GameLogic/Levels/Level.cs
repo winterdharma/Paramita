@@ -74,7 +74,8 @@ namespace Paramita.GameLogic.Levels
             set
             {
                 _npcs = value;
-                SubscribeToNpcEvents();
+                if(_npcs != null)
+                    SubscribeToNpcEvents();
             }
         }
 
@@ -85,9 +86,7 @@ namespace Paramita.GameLogic.Levels
             {
                 _player = value;
                 if (_player != null)
-                {
                     SubscribeToPlayerEvents();
-                }
             }
         }
         #endregion

@@ -88,65 +88,6 @@ namespace GameLogicTests.Levels
         }
         #endregion
 
-
-        #region TileMap Data Layer Properties
-        #region Level.TileTypeLayer
-        [TestMethod]
-        public void TileTypeLayer_Property_ArraysShouldMatch()
-        {
-            var level = CreateTestLevel();
-            var actual = level.TileTypeLayer;//tileMap.ConvertMapToTileTypes();
-
-            Assert.IsNotNull(actual);
-            CollectionAssert.AllItemsAreNotNull(actual);
-            CollectionAssert.AllItemsAreInstancesOfType(actual, typeof(TileType));
-            CollectionAssert.AreEqual(expectedTileTypeArray, actual);
-        }
-        #endregion
-
-        #region Level.ItemTypeLayer
-        [TestMethod]
-        public void ConvertMapToItemTypes_Test_Result_ShouldPass()
-        {
-            var level = CreateTestLevel();
-            level.TileMap.GetTile(new Point(2, 0)).AddItem(sword);
-            var actual = level.ItemTypeLayer;
-
-            CollectionAssert.AreEqual(expectedItemTypeArray, actual);
-        }
-        #endregion
-
-        #region Level.BeingTypeLayer
-        [TestMethod]
-        public void ConvertMapToBeingTypes_Test()
-        {
-            var level = CreateTestLevel();
-            var actual = level.BeingTypeLayer;
-
-            CollectionAssert.AreEqual(expectedBeingTypeLayer, actual);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(NullReferenceException))]
-        public void ConvertMapToBeingTypes_ThrowsExceptionWhenPlayerNull()
-        {
-            var level = CreateTestLevel();
-            level.Player = null;
-            var actual = level.BeingTypeLayer;
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(NullReferenceException))]
-        public void ConvertMapToBeingTypes_ThrowsExceptionWhenNpcsNull()
-        {
-            var level = CreateTestLevel();
-            level.Npcs = null;
-            var actual = level.BeingTypeLayer;
-        }
-        #endregion
-        #endregion
-
-
         #region Tile Getters and Setters
         #region GetStairsUpTile()
         [TestMethod]
