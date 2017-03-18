@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Paramita.GameLogic.Items;
 using Paramita.GameLogic.Mechanics;
+using Paramita.GameLogic.Utility;
 
 namespace Paramita.GameLogic.Levels
 {
@@ -127,6 +128,8 @@ namespace Paramita.GameLogic.Levels
         // Tiles will start with no limitations as containers
         public bool AddItem(Item item)
         {
+            Utilities.ThrowExceptionIfNull(item);
+
             _items.Add(item);
             OnItemAddedToTile?.Invoke(this, new ItemEventArgs(TilePoint, item.ItemType));
             return true;
@@ -134,6 +137,8 @@ namespace Paramita.GameLogic.Levels
 
         public void RemoveItem(Item item)
         {
+            Utilities.ThrowExceptionIfNull(item);
+
             var wasRemoved = _items.Remove(item);
             if (wasRemoved)
             {
@@ -208,16 +213,14 @@ namespace Paramita.GameLogic.Levels
         // this sorts tiles by their coordinates, such that (0,0) is first
         public int CompareTo(Tile other)
         {
-            if(TilePoint.X < other.TilePoint.X
-                && TilePoint.Y <= other.TilePoint.Y)
-            {
-                return -1;
-            }
-            if(TilePoint == other.TilePoint)
-            {
-                return 0;
-            }
-            return 1;
+            int i = TilePoint.Y.CompareTo(other.TilePoint.Y);
+            if (i != 0)
+                return i;
+
+            i = TilePoint.X.CompareTo(other.TilePoint.X);
+            if (i != 0)
+                return i;
+            return 0;
         }
         #endregion
 
@@ -226,19 +229,11 @@ namespace Paramita.GameLogic.Levels
         // this method redirects the standard ToString() call so a bool can be applied
         public override string ToString()
         {
-            return ToString(false);
+            string str = TilePoint.ToString();
+            return str;
         }
 
-        /// <summary>
-        /// Provides a simple visual representation of the Cell using the following symbols:
-        /// - `%`: `Cell` is not in field-of-view
-        /// - `.`: `Cell` is transparent, walkable, and in field-of-view
-        /// - `s`: `Cell` is walkable and in field-of-view (but not transparent)
-        /// - `o`: `Cell` is transparent and in field-of-view (but not walkable)
-        /// - `#`: `Cell` is in field-of-view (but not transparent or walkable)
-        /// </summary>
-        /// <param name="useFov">True if field-of-view calculations will be used when creating the string represenation of the Cell. False otherwise</param>
-        /// <returns>A string representation of the Cell using special symbols to denote Cell properties</returns>
+        
         public string ToString(bool useFov)
         {
             if (useFov && !IsInLineOfSight) { return "%"; }
