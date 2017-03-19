@@ -75,7 +75,7 @@ namespace Paramita.GameLogic
             _currentLevelNumber = 1;
             _currentLevel = LevelFactory.CreateLevel(_currentLevelNumber);
             _currentLevel.Player = _player;
-            _player.CurrentTile = _currentLevel.GetStairsUpTile();
+            _player.CurrentTile = _currentLevel.EntryFromAbove;
             _levels[_currentLevelNumber] = _currentLevel;
             SubscribeToEvents();
         }
@@ -193,11 +193,11 @@ namespace Paramita.GameLogic
             _currentLevel.Player = _player;
             if (upOrDown == -1)
             {
-                _player.CurrentTile = _currentLevel.GetStairsDownTile();
+                _player.CurrentTile = _currentLevel.EntryFromBelow;
             }
             else if (upOrDown == 1)
             {
-                _player.CurrentTile = _currentLevel.GetStairsUpTile();
+                _player.CurrentTile = _currentLevel.EntryFromAbove;
             }
         }
         #endregion

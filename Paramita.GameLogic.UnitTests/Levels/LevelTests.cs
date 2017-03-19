@@ -65,7 +65,8 @@ namespace Paramita.GameLogic.UnitTests.Levels
                 { null, null, null },
                 { null, null, null },
                 { new Tuple<BeingType, Compass, bool>(BeingType.GiantRat, Compass.East, false),
-                  null, new Tuple<BeingType, Compass, bool>(BeingType.HumanPlayer, Compass.East, true) }
+                  new Tuple<BeingType, Compass, bool>(BeingType.GiantRat, Compass.East, false),
+                  new Tuple<BeingType, Compass, bool>(BeingType.HumanPlayer, Compass.East, true) }
             };
             var actual = level.BeingTypeLayer;
 
@@ -92,6 +93,99 @@ namespace Paramita.GameLogic.UnitTests.Levels
         }
         #endregion
 
+        #region Entry Tile Property Tests
+        [Test]
+        public void GetEntryFromAbove_ReturnsStairsUpTile()
+        {
+            var level = MakeLevel();
+            var expected = TileType.StairsUp;
+
+            var actual = level.EntryFromAbove.TileType;
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void GetEntryFromBelow_ReturnsStairsDownTile()
+        {
+            var level = MakeLevel();
+            var expected = TileType.StairsDown;
+
+            var actual = level.EntryFromBelow.TileType;
+
+            Assert.AreEqual(expected, actual);
+        }
+        #endregion
+
+
+        #region Update Method Tests
+        [Test]
+        public void Update_WhenUpdatingNpcs_RemovesDeadNpcs()
+        {
+            var level = MakeLevel();
+            var expected = level.Npcs;
+            expected.RemoveAt(0);
+
+            // enough damage to set Actor.IsDead to true
+            level.Npcs[0].TakeDamage(10);
+            level.Update();
+
+            var actual = level.Npcs;
+
+            CollectionAssert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        [Ignore("Not yet implemented")]
+        public void Update_UpdatesPlayerWhenPlayersTurnTrue()
+        {
+            // not implemented
+        }
+
+        [Test]
+        [Ignore("Not yet implemented")]
+        public void Update_UpdatesNpcsWhenPlayersTurnFalse()
+        {
+            // not implemented
+        }
+
+        [TestCase(true, 1)]
+        [TestCase(false, 0)]
+        public void Update_ResetsTimesAttackedWhenPlayersTurnFalse(
+            bool testCase, int expected)
+        {
+            var level = MakeLevel();
+            level.Player.TimesAttacked = 1;
+            level.Npcs[0].TimesAttacked = 1;
+
+            level.IsPlayersTurn = testCase;
+
+            level.Update();
+
+            var actualPlayer = level.Player.TimesAttacked;
+            var actualNpc = level.Npcs[0].TimesAttacked;
+
+            Assert.AreEqual(expected, actualPlayer);
+            Assert.AreEqual(expected, actualNpc);
+        }
+
+        // This test assures that game waits for player to take his turn before
+        // updating opponents.
+        [TestCase(true, true)]
+        [TestCase(false, true)]
+        public void Update_IsPlayersTurn_ChangesOnlyWhenStartsFalse(
+            bool testCase, bool expected)
+        {
+            var level = MakeLevel();
+            level.IsPlayersTurn = testCase;
+
+            level.Update();
+
+            var actual = level.IsPlayersTurn;
+
+            Assert.AreEqual(expected, actual);
+        }
+        #endregion
 
         #region Helpers
         public List<Item> MakeItems()
@@ -134,8 +228,13 @@ namespace Paramita.GameLogic.UnitTests.Levels
             level.Player = new Player("Test_player");
             level.Player.CurrentTile =
                 level.TileMap.GetTile(new Point(2, 2));
-            level.Npcs = new List<Actor>() { ActorCreator.CreateGiantRat() };
+            level.Npcs = new List<Actor>()
+            {
+                ActorCreator.CreateGiantRat(),
+                ActorCreator.CreateGiantRat()
+            };
             level.Npcs[0].CurrentTile = level.TileMap.GetTile(new Point(2, 0));
+            level.Npcs[1].CurrentTile = level.TileMap.GetTile(new Point(2, 1));
             return level;
         }
         #endregion

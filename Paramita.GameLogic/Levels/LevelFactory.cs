@@ -9,7 +9,7 @@ namespace Paramita.GameLogic.Levels
     {
         private const string LEVEL_01 = "Paramita.GameLogic.Data.Levels.Level01.txt";
 
-        
+
         public static Level CreateLevel(int levelNumber)
         {
             var levelData = GetLevelData(levelNumber);
@@ -18,7 +18,7 @@ namespace Paramita.GameLogic.Levels
             var items = CreateItems(levelData);
             newLevel.TileMap.PlaceItemsOnRandomTiles(items);
             
-            newLevel.Npcs = CreateNpcs(levelData, newLevel);
+            newLevel.Npcs = CreateNpcs(levelData);
             return newLevel;
         }
 
@@ -48,31 +48,17 @@ namespace Paramita.GameLogic.Levels
         }
 
 
-        private static List<Actor> CreateNpcs(LevelData data, Level level)
+        private static List<Actor> CreateNpcs(LevelData data)
         {
             var npcs = new List<Actor>();
-            var placedTiles = new bool[level.TileMap.TilesWide, level.TileMap.TilesHigh];
 
             if (data.GiantRats > 0)
             {
                 for(int i = 0; i < data.GiantRats; i++)
                 {
-                    var rat = ActorCreator.CreateGiantRat();
-
-                    // fetches walkable tiles and checks to see if a rat is already there
-                    var tile = level.GetRandomWalkableTile();
-                    while(placedTiles[tile.TilePoint.X, tile.TilePoint.Y])
-                    {
-                        tile = level.GetRandomWalkableTile();
-                    }
-
-                    // places the rat on the level and notes where it was put
-                    rat.CurrentTile = tile;
-                    npcs.Add((Actor)rat);
-                    placedTiles[tile.TilePoint.X, tile.TilePoint.Y] = true;
+                    npcs.Add(ActorCreator.CreateGiantRat());
                 }
             }
-
             return npcs;
         }
 

@@ -50,7 +50,12 @@ namespace Paramita.GameLogic.Levels
         public TileMap TileMap
         {
             get { return _tileMap; }
-            set { _tileMap = value; }
+            set
+            {
+                _tileMap = value;
+                if(_tileMap != null)
+                    SetEntryTiles();
+            }
         }
 
         public ItemType[,] ItemTypeLayer
@@ -75,7 +80,10 @@ namespace Paramita.GameLogic.Levels
             {
                 _npcs = value;
                 if(_npcs != null)
+                {
+                    PlaceNpcsOnTileMap();
                     SubscribeToNpcEvents();
+                }
             }
         }
 
@@ -89,6 +97,9 @@ namespace Paramita.GameLogic.Levels
                     SubscribeToPlayerEvents();
             }
         }
+
+        public Tile EntryFromAbove { get; private set; }
+        public Tile EntryFromBelow { get; private set; }
         #endregion
 
 
@@ -219,30 +230,6 @@ namespace Paramita.GameLogic.Levels
         #endregion
 
 
-        #region Tile Getters
-        // these are called by Dungeon when placing player on Level.
-        // Will be changed in future reviews to delegate placement details
-        // to Level class.
-        public Tile GetStairsUpTile()
-        {
-            return _tileMap.FindTileType(TileType.StairsUp);
-        }
-
-        public Tile GetStairsDownTile()
-        {
-            return _tileMap.FindTileType(TileType.StairsDown);
-        }
-
-        // this is called by LevelFactory when placing npcs.
-        // in future code review, LevelFactory will delegate placement
-        // to Level class.
-        public Tile GetRandomWalkableTile()
-        {
-            return _tileMap.GetRandomWalkableTile();
-        }
-        #endregion
-
-
         public void Update()
         {
             _npcs.RemoveAll(NpcIsDead);
@@ -259,6 +246,7 @@ namespace Paramita.GameLogic.Levels
                 TogglePlayersTurn();
             }
         }
+
 
         #region Helper Methods
         private bool IsNpcOnTile(Tile tile)
@@ -303,6 +291,31 @@ namespace Paramita.GameLogic.Levels
             foreach(var npc in _npcs)
             {
                 npc.TimesAttacked = 0;
+            }
+        }
+
+        private void SetEntryTiles()
+        {
+            EntryFromAbove = _tileMap.FindTileType(TileType.StairsUp);
+            EntryFromBelow = _tileMap.FindTileType(TileType.StairsDown);
+        }
+
+        private void PlaceNpcsOnTileMap()
+        {
+            var placedTiles = new bool[TileMap.TilesWide, TileMap.TilesHigh];
+
+            foreach (var npc in _npcs)
+            {
+                // fetches walkable tiles and checks to see if a rat is already there
+                var tile = _tileMap.GetRandomWalkableTile();
+                while (placedTiles[tile.TilePoint.X, tile.TilePoint.Y])
+                {
+                    tile = _tileMap.GetRandomWalkableTile();
+                }
+
+                // places the rat on the level and notes where it was put
+                npc.CurrentTile = tile;
+                placedTiles[tile.TilePoint.X, tile.TilePoint.Y] = true;
             }
         }
         #endregion
