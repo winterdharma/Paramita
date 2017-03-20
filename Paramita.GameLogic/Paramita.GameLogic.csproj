@@ -89,9 +89,7 @@
     <Folder Include="Items\Armors\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\Levels\Level01.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Data\Levels\Level01.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

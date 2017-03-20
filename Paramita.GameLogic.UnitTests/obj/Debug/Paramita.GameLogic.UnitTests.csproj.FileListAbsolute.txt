@@ -1,10 +1,9 @@
-C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\Data\Levels\Level01.txt
 C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\Paramita.GameLogic.UnitTests.dll
 C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\Paramita.GameLogic.UnitTests.pdb
 C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\MonoGame.Framework.dll
 C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\nunit.framework.dll
 C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\Paramita.GameLogic.dll
-C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\MonoGame.Framework.dll
 C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\SharpDX.XAudio2.dll
 C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\SharpDX.dll
 C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\SharpDX.DXGI.dll
@@ -13,8 +12,8 @@ C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\SharpDX
 C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\SharpDX.XInput.dll
 C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\SharpDX.MediaFoundation.dll
 C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\Paramita.GameLogic.pdb
-C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\nunit.framework.xml
 C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\MonoGame.Framework.xml
+C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\nunit.framework.xml
 C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\SharpDX.XAudio2.xml
 C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\SharpDX.xml
 C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\SharpDX.DXGI.xml

@@ -142,11 +142,6 @@ namespace Paramita.GameLogic.Levels
         #endregion
 
 
-        public bool IsTileWalkable(Point point)
-        {
-            return _tiles[point.X, point.Y].IsWalkable;
-        }
-
         public Tile FindTileType(TileType type)
         {
             switch(type)

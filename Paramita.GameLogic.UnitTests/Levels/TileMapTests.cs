@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using NUnit.Framework;
+using Paramita.GameLogic.Items;
 using Paramita.GameLogic.Levels;
 using System;
 using System.Collections.Generic;
@@ -45,11 +46,105 @@ namespace Paramita.GameLogic.UnitTests.Levels
         }
         #endregion
 
+        #region GetRandomWalkableTile Tests
+        [Test]
+        public void GetRandomWalkableTile_ReturnsWalkableTiles()
+        {
+            var tileMap = MakeTileMap();
+            var actual = new List<bool>();
+
+            for(int i = 0; i < 100; i++)
+            {
+                actual.Add(tileMap.GetRandomWalkableTile().IsWalkable);
+            }
+
+            CollectionAssert.DoesNotContain(actual, false);
+        }
+        #endregion
+
+        #region PlaceItemsOnRandomTiles Tests
+        [Test]
+        public void PlaceItemsOnRandomTiles_AllItemsPlaced()
+        {
+            var tileMap = MakeTileMap();
+            var expected = MakeItems();
+
+            tileMap.PlaceItemsOnRandomTiles(expected);
+            var actual = new List<Item>(GetItemsOnMap(tileMap));
+
+            CollectionAssert.AreEquivalent(expected, actual);
+        }
+
+        [Test]
+        public void PlaceItemsOnRandomTiles_PlacedOnWalkableTiles()
+        {
+            var tileMap = MakeTileMap();
+            var items = MakeItems();
+
+            tileMap.PlaceItemsOnRandomTiles(items);
+
+            var tiles = GetTilesWithItems(tileMap);
+            
+            var actual = new List<bool>();
+            foreach (var tile in tiles)
+            {
+                actual.Add(tile.IsWalkable);
+            }
+
+            CollectionAssert.DoesNotContain(actual, false);
+        }
+        #endregion
+
+        #region FindTileType Tests
+        [TestCase(0, 2, TileType.StairsUp)]
+        [TestCase(1, 0, TileType.StairsDown)]
+        public void FindTileType_GivenValidTileType_FindsTileOfThatType(int x, int y, TileType type)
+        {
+            var tileMap = MakeTileMap();
+            var expected = new Tile(x, y, type);
+
+            var actual = tileMap.FindTileType(type);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void FindTileType_WhenNoTileMatches_ThrowsException()
+        {
+            var tileMap = MakeTileMap();
+            tileMap.SetTile(new Tile(0, 2, TileType.Floor));
+
+            Assert.Catch<NullReferenceException>(() => tileMap.FindTileType(TileType.StairsUp));
+        }
+
+        [TestCase(TileType.Floor)]
+        [TestCase(TileType.Door)]
+        [TestCase(TileType.None)]
+        [TestCase(TileType.Wall)]
+        public void FindTileType_ThrowsExceptionUnimplementedTypes(TileType type)
+        {
+            var tileMap = MakeTileMap();
+            NotImplementedException e = null;
+
+            e = Assert.Catch<NotImplementedException>(() => tileMap.FindTileType(type));
+            StringAssert.Contains(type.ToString(), e.Message);
+        }
+        #endregion
 
         #region Helper Methods
         private Tile MakeTile(int x, int y)
         {
             return new Tile(x, y, TileType.Floor);
+        }
+
+        private List<Item> MakeItems()
+        {
+            return new List<Item>()
+            {
+                ItemCreator.CreateShortSword(),
+                ItemCreator.CreateBuckler(),
+                ItemCreator.CreateMeat()
+            };
         }
 
         private TileMap MakeTileMap()
@@ -73,6 +168,36 @@ namespace Paramita.GameLogic.UnitTests.Levels
                 }
             };
             return new TileMap(tiles, "3by3_testmap");
+        }
+
+        private List<Item> GetItemsOnMap(TileMap map)
+        {
+            var items = new List<Item>();
+            for (int x = 0; x < map.TilesWide; x++)
+            {
+                for (int y = 0; y < map.TilesHigh; y++)
+                {
+                    items.AddRange(map.GetTile(new Point(x, y)).InspectItems());
+                }
+            }
+            return items;
+        }
+
+        private List<Tile> GetTilesWithItems(TileMap map)
+        {
+            var tiles = new List<Tile>();
+            for (int x = 0; x < map.TilesWide; x++)
+            {
+                for (int y = 0; y < map.TilesHigh; y++)
+                {
+                    var point = new Point(x, y);
+                    if (map.GetTile(point).InspectItems().Length > 0)
+                    {
+                        tiles.Add(map.GetTile(point));
+                    }
+                }
+            }
+            return tiles;
         }
         #endregion
     }
