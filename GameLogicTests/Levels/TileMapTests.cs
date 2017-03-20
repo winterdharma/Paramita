@@ -51,16 +51,7 @@ namespace GameLogicTests.Levels
 
 
         #region Tile Getter and Setter API
-        [TestMethod]
-        public void GetTile_Test_ShouldGetCorrectTileAtPoint()
-        {
-            var tileMap = CreateTestMap();
-            var point = new Point(2, 2);
-            var expected = new Tile(2, 2, TileType.Floor);
-            var actual = tileMap.GetTile(point);
 
-            Assert.AreEqual(expected, actual);
-        }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]

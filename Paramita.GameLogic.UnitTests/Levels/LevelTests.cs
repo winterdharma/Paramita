@@ -93,6 +93,7 @@ namespace Paramita.GameLogic.UnitTests.Levels
         }
         #endregion
 
+
         #region Entry Tile Property Tests
         [Test]
         public void GetEntryFromAbove_ReturnsStairsUpTile()
@@ -117,6 +118,22 @@ namespace Paramita.GameLogic.UnitTests.Levels
         }
         #endregion
 
+        #region Npcs Property Tests
+        [Test]
+        public void SetNpcs_NonNullNpcs_PlacesNpcsOnWalkableTile()
+        {
+            var level = MakeLevel();
+            var npcs = new List<Actor>()
+            {
+                ActorCreator.CreateGiantRat()
+            };
+
+            level.Npcs = npcs;
+
+            Assert.IsNotNull(level.Npcs[0].CurrentTile);
+            Assert.True(level.Npcs[0].CurrentTile.IsWalkable);
+        }
+        #endregion
 
         #region Update Method Tests
         [Test]

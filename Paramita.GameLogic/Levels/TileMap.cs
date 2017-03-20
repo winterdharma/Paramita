@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Paramita.GameLogic.Items;
 using System.Collections.Generic;
+using Paramita.GameLogic.Utility;
 
 namespace Paramita.GameLogic.Levels
 {
@@ -33,6 +34,12 @@ namespace Paramita.GameLogic.Levels
         }
 
         #region Properties
+        public Tile[,] Tiles
+        {
+            get { return _tiles; }
+            private set { _tiles = value; }
+        }
+
         public int TilesWide
         {
             get { return _tilesWide; }
@@ -100,17 +107,18 @@ namespace Paramita.GameLogic.Levels
 
 
         #region Tile Getter and Setter API
+        // This setter ensures that the TilePoints and index positions in _tiles
+        // always correspond. The property has a private set() to prevent incongruity.
+        // Using the TilePoint for array indices also serves as a null check.
         public void SetTile(Tile newTile)
         {
-            if(newTile == null)
-                throw new NullReferenceException();
-
-            _tiles[newTile.TilePoint.X, newTile.TilePoint.Y] = newTile;
+            Tiles[newTile.TilePoint.X, newTile.TilePoint.Y] = newTile;
         }
 
+        // This getter is for convenience to retrieve tiles using a point rather
+        // than a pair of ints.
         public Tile GetTile(Point point)
         {
-            PointOutsideOfTileMapCheck(point);
             return _tiles[point.X, point.Y];
         }
 
@@ -136,7 +144,6 @@ namespace Paramita.GameLogic.Levels
 
         public bool IsTileWalkable(Point point)
         {
-            PointOutsideOfTileMapCheck(point); // throws exception if out of bounds
             return _tiles[point.X, point.Y].IsWalkable;
         }
 
@@ -196,15 +203,6 @@ namespace Paramita.GameLogic.Levels
                 }
             }
             throw new NullReferenceException("No matching tile found.");
-        }
-
-        private void PointOutsideOfTileMapCheck(Point point)
-        {
-            if (point.X < 0 || point.X > TilesWide - 1
-                || point.Y < 0 || point.Y > TilesHigh - 1)
-            {
-                throw new ArgumentOutOfRangeException("Point is outside of TileMap bounds.");
-            }
         }
         #endregion
     }
