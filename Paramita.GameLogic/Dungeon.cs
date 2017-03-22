@@ -73,8 +73,7 @@ namespace Paramita.GameLogic
             _player = new Player("Wesley");
             _levels = new Dictionary<int, Level>();
             _currentLevelNumber = 1;
-            _currentLevel = LevelFactory.CreateLevel(_currentLevelNumber);
-            _currentLevel.Player = _player;
+            _currentLevel = LevelFactory.CreateLevel(_currentLevelNumber, _player);
             _player.CurrentTile = _currentLevel.EntryFromAbove;
             _levels[_currentLevelNumber] = _currentLevel;
             SubscribeToEvents();

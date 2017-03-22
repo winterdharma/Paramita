@@ -1,37 +1,30 @@
-﻿using System;
+﻿using Paramita.GameLogic.Actors;
+using Paramita.GameLogic.Items;
+using System;
+using System.Collections.Generic;
 
-namespace Paramita.GameLogic.Data
+namespace Paramita.GameLogic.Data.Levels
 {
     public class LevelData : DataFile
     {
         private string levelPath;
-        private int levelWidth;
-        private int levelHeight;
-        private int maxRooms;
-        private int maxRoomSize;
-        private int minRoomSize;
-        private int giantRats;
-        private int shortSwords;
-        private int bucklers;
-        private int meat;
         private string unknownProperty;
 
-        public int LevelWidth { get { return levelWidth; } }
-        public int LevelHeight { get { return levelHeight; } }
-        public int MaxRooms { get { return maxRooms; } }
-        public int MaxRoomSize { get { return maxRoomSize; } }
-        public int MinRoomSize { get { return minRoomSize; } }
+        public TileMapData TileMap { get; set; }
+        public List<Tuple<BeingType, int>> Actors { get; set; }
+        public List<Tuple<ItemType, int>> Items { get; set; }
 
-        public int GiantRats { get { return giantRats; } }
-
-        public int ShortSwords { get { return shortSwords; } }
-        public int Bucklers { get { return bucklers; } }
-        public int Meat { get { return meat; } }
+        public LevelData() { } 
 
         public LevelData(string levelTxtFile) : base(levelTxtFile)
         {
             levelPath = levelTxtFile;
             unknownProperty = "Unimplemented property encountered while processing " + levelPath + "!";
+
+            TileMap = new TileMapData();
+            Actors = new List<Tuple<BeingType, int>>();
+            Items = new List<Tuple<ItemType, int>>();
+
             ParseLevelFile();
         }
 
@@ -59,31 +52,31 @@ namespace Paramita.GameLogic.Data
             switch (property)
             {
                 case "LevelWidth":
-                    levelWidth = int.Parse(value);
+                    TileMap.LevelWidth = int.Parse(value);
                     break;
                 case "LevelHeight":
-                    levelHeight = int.Parse(value);
+                    TileMap.LevelHeight = int.Parse(value);
                     break;
                 case "MaxRooms":
-                    maxRooms = int.Parse(value);
+                    TileMap.MaxRooms = int.Parse(value);
                     break;
                 case "MaxRoomSize":
-                    maxRoomSize = int.Parse(value);
+                    TileMap.MaxRoomSize = int.Parse(value);
                     break;
                 case "MinRoomSize":
-                    minRoomSize = int.Parse(value);
+                    TileMap.MinRoomSize = int.Parse(value);
                     break;
                 case "GiantRat":
-                    giantRats = int.Parse(value);
+                    Actors.Add(new Tuple<BeingType, int>(BeingType.GiantRat, int.Parse(value)));
                     break;
                 case "ShortSword":
-                    shortSwords = int.Parse(value);
+                    Items.Add(new Tuple<ItemType, int>(ItemType.ShortSword, int.Parse(value)));
                     break;
                 case "Buckler":
-                    bucklers = int.Parse(value);
+                    Items.Add(new Tuple<ItemType, int>(ItemType.Shield, int.Parse(value)));
                     break;
                 case "Meat":
-                    meat = int.Parse(value);
+                    Items.Add(new Tuple<ItemType, int>(ItemType.Meat, int.Parse(value)));
                     break;
                 default:
                     Console.WriteLine(unknownProperty + " (" + property + ")");

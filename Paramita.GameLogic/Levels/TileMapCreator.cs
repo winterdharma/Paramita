@@ -1,35 +1,38 @@
 ﻿using Microsoft.Xna.Framework;
+using Paramita.GameLogic.Data.Levels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Paramita.GameLogic.Levels
 {
-    public class TileMapCreator
+    public interface ITileMapCreator
     {
-        private Random random;
-        private int rows;
-        private int cols;
-        private int maxRooms;
-        private int maxRoomSize;
-        private int minRoomSize;
+        Tile[,] CreateMap(TileMapData data);
+    }
 
-        public TileMapCreator(int cols, int rows, int maxRooms, 
-            int maxSize, int minSize, Random random)
-        {
-            this.cols = cols;
-            this.rows = rows;
-            this.maxRooms = maxRooms;
-            maxRoomSize = maxSize;
-            minRoomSize = minSize;
-            this.random = random;
-        }
+    public class TileMapCreator : ITileMapCreator
+    {
+        #region Fields
+        private Random random = Dungeon._random;
+        #endregion
 
-        public Tile[,] CreateMap()
+
+        #region Constructors
+        public TileMapCreator() { }
+        #endregion
+
+
+        public Tile[,] CreateMap(TileMapData data)
         {
+            int cols = data.LevelWidth;
+            int rows = data.LevelHeight;
+            int maxRoomSize = data.MaxRoomSize;
+            int minRoomSize = data.MinRoomSize;
+
             Tile[,] tiles = new Tile[cols, rows];
             var rooms = new List<Rectangle>();
-            for (int x = 0; x < maxRooms; x++)
+            for (int x = 0; x < data.MaxRooms; x++)
             {
                 int roomWidth = random.Next(minRoomSize, maxRoomSize);
                 int roomHeight = random.Next(minRoomSize, maxRoomSize);
@@ -69,14 +72,12 @@ namespace Paramita.GameLogic.Levels
             }
 
             AddStairsTiles(rooms, tiles);
-
-
             AddWallTiles(tiles);
 
             return tiles;
         }
 
-
+        #region Helper Methods
         // This method creates Tiles for a room and inserts them into the Tile[,] array
         private void MakeRoom(Tile[,] tiles, Rectangle room)
         {
@@ -88,7 +89,6 @@ namespace Paramita.GameLogic.Levels
                 }
             }
         }
-
 
         private void MakeHorizontalTunnel(Tile[,] tiles, int xStart, int xEnd, int yPosition)
         {
@@ -106,7 +106,6 @@ namespace Paramita.GameLogic.Levels
             }
         }
 
-
         private void AddStairsTiles(List<Rectangle> rooms, Tile[,] tiles)
         {
             int roomCenterX = rooms[0].Center.X;
@@ -122,9 +121,9 @@ namespace Paramita.GameLogic.Levels
         // This method finds tiles that weren't rooms or tunnels and sets them to walls
         private void AddWallTiles(Tile[,] tiles)
         {
-            for(int x = 0; x < cols; x++)
+            for(int x = 0; x < tiles.GetLength(0); x++)
             {
-                for(int y = 0; y < rows; y++)
+                for(int y = 0; y < tiles.GetLength(1); y++)
                 {
                     if(tiles[x,y] == null)
                     {
@@ -133,5 +132,6 @@ namespace Paramita.GameLogic.Levels
                 } 
             }
         }
+        #endregion
     }
 }

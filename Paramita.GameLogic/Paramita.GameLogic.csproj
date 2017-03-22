@@ -53,6 +53,8 @@
     <Compile Include="Actors\ActorCreator.cs" />
     <Compile Include="Data\DataFile.cs" />
     <Compile Include="Data\Levels\LevelData.cs" />
+    <Compile Include="Data\Levels\LevelDataCreator.cs" />
+    <Compile Include="Data\Levels\TileMapData.cs" />
     <Compile Include="Dungeon.cs" />
     <Compile Include="Items\Armor.cs" />
     <Compile Include="Items\Consumable.cs" />

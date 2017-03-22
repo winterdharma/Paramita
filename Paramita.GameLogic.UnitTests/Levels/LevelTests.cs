@@ -258,19 +258,20 @@ namespace Paramita.GameLogic.UnitTests.Levels
 
         public Level MakeLevel()
         {
-            var level = new Level();
-            level.TileMap = MakeTileMap();
-            level.Player = new Player("Test_player");
-            level.Player.CurrentTile =
-                level.TileMap.GetTile(new Point(2, 2));
-            level.Npcs = new List<INpc>()
+            var tileMap = MakeTileMap();
+
+            var npcs = new List<INpc>()
             {
                 ActorCreator.CreateGiantRat(),
                 ActorCreator.CreateGiantRat()
             };
-            level.Npcs[0].CurrentTile = level.TileMap.GetTile(new Point(2, 0));
-            level.Npcs[1].CurrentTile = level.TileMap.GetTile(new Point(2, 1));
-            return level;
+            npcs[0].CurrentTile = tileMap.GetTile(new Point(2, 0));
+            npcs[1].CurrentTile = tileMap.GetTile(new Point(2, 1));
+
+            var player = new Player("Test_player");
+            player.CurrentTile = tileMap.GetTile(new Point(2, 2));
+            
+            return new Level(MakeTileMap(), npcs, null, player);
         }
         #endregion
     }

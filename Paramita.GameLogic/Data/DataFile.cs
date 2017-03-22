@@ -10,9 +10,10 @@ namespace Paramita.GameLogic.Data
 
 
 
-        public DataFile(string resourcePath)
+        public DataFile(string resourcePath = "")
         {
-            txtFileLines = LoadLinesFrom(resourcePath);
+            if(resourcePath != "")
+                txtFileLines = LoadLinesFrom(resourcePath);
         }
 
 

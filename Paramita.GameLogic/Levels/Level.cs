@@ -30,11 +30,11 @@ namespace Paramita.GameLogic.Levels
 
 
         #region Constructors
-        public Level() { }
-
-        public Level(TileMap map, List<INpc> npcs, Player player = null)
+        public Level(TileMap map, List<INpc> npcs, List<Item> items = null, Player player = null)
         {
             TileMap = map;
+            if(items != null)
+                TileMap.PlaceItemsOnRandomTiles(items);
             Npcs = npcs;
             Player = player as IPlayer;
         }
