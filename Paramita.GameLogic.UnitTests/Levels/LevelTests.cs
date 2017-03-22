@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using NSubstitute;
 using NUnit.Framework;
 using Paramita.GameLogic.Actors;
 using Paramita.GameLogic.Items;
@@ -123,7 +124,7 @@ namespace Paramita.GameLogic.UnitTests.Levels
         public void SetNpcs_NonNullNpcs_PlacesNpcsOnWalkableTile()
         {
             var level = MakeLevel();
-            var npcs = new List<Actor>()
+            var npcs = new List<INpc>()
             {
                 ActorCreator.CreateGiantRat()
             };
@@ -153,17 +154,34 @@ namespace Paramita.GameLogic.UnitTests.Levels
         }
 
         [Test]
-        [Ignore("Not yet implemented")]
-        public void Update_UpdatesPlayerWhenPlayersTurnTrue()
+        public void Update_WhenIsPlayersTurnTrue_UpdatesPlayer()
         {
-            // not implemented
+            var level = MakeLevel();
+            level.Player = Substitute.For<IPlayer>();
+            level.IsPlayersTurn = true;
+
+            level.Update();
+
+            level.Player.Received().Update();
         }
 
         [Test]
-        [Ignore("Not yet implemented")]
-        public void Update_UpdatesNpcsWhenPlayersTurnFalse()
+        public void Update_WhenPlayersTurnFalse_UpdatesNpcs()
         {
-            // not implemented
+            var level = MakeLevel();
+            level.Npcs = new List<INpc>()
+            {
+                Substitute.For<INpc>(),
+                Substitute.For<INpc>()
+            };
+            level.IsPlayersTurn = false;
+
+            level.Update();
+
+            foreach(INpc npc in level.Npcs)
+            {
+                npc.Received().Update(level.Player as Player);
+            }
         }
 
         [TestCase(true, 1)]
@@ -245,7 +263,7 @@ namespace Paramita.GameLogic.UnitTests.Levels
             level.Player = new Player("Test_player");
             level.Player.CurrentTile =
                 level.TileMap.GetTile(new Point(2, 2));
-            level.Npcs = new List<Actor>()
+            level.Npcs = new List<INpc>()
             {
                 ActorCreator.CreateGiantRat(),
                 ActorCreator.CreateGiantRat()

@@ -42,6 +42,7 @@ namespace Paramita.GameLogic.Actors
 
     public abstract class Actor
     {
+        #region Fields
         protected string name;
 
         protected Tile _currentTile;
@@ -70,9 +71,24 @@ namespace Paramita.GameLogic.Actors
 
         // status related flags
         protected bool isDead = false;
+        #endregion
 
-        
-        // public accessors
+
+        #region Events
+        public event EventHandler<MoveEventArgs> OnMoveAttempt;
+        public event EventHandler<StatusMessageEventArgs> OnStatusMsgSent;
+        public event EventHandler<MoveEventArgs> OnActorDeath;
+        #endregion
+
+
+        public Actor(BeingType beingType)
+        {
+            BeingType = beingType;
+            Facing = Compass.East;
+        }
+
+
+        #region Properties
         public BeingType BeingType { get; protected set; }
 
         public Tile CurrentTile
@@ -81,9 +97,9 @@ namespace Paramita.GameLogic.Actors
             set
             {
                 _currentTile = value;
-            } 
+            }
         }
-        
+
         public Compass Facing { get; private set; }
 
         public List<Weapon> Attacks { get { return attacks; } }
@@ -96,7 +112,7 @@ namespace Paramita.GameLogic.Actors
             get
             {
                 int protection = 0;
-                for(int x = 0; x<shields.Count; x++)
+                for (int x = 0; x < shields.Count; x++)
                 {
                     protection += shields[x].Protection;
                 }
@@ -111,7 +127,7 @@ namespace Paramita.GameLogic.Actors
             get
             {
                 int weaponsMods = 0;
-                for(int x = 0; x < attacks.Count; x++)
+                for (int x = 0; x < attacks.Count; x++)
                 {
                     weaponsMods += attacks[x].DefenseModifier;
                 }
@@ -123,7 +139,7 @@ namespace Paramita.GameLogic.Actors
             get
             {
                 int shieldParry = 0;
-                for(int x = 0; x < shields.Count; x++)
+                for (int x = 0; x < shields.Count; x++)
                 {
                     shieldParry += shields[x].Parry;
                 }
@@ -152,23 +168,49 @@ namespace Paramita.GameLogic.Actors
         public bool IsDead { get { return isDead; } }
 
         public Item[] EquipmentSlots { get { return equipedItems; } }
-
-        public event EventHandler<MoveEventArgs> OnMoveAttempt;
-        public event EventHandler<StatusMessageEventArgs> OnStatusMsgSent;
-        public event EventHandler<MoveEventArgs> OnActorDeath;
-
-        public Actor(BeingType beingType)
-        {
-            BeingType = beingType;
-            Facing = Compass.East;
-        }
+        #endregion
 
 
-
+        #region Abstract Methods
         // helper methods for child class constructors
         protected abstract void InitializeAttributes();
         protected abstract void InitializeItemLists();
         public abstract List<int> GetLocationForEquipType(EquipType type);
+        // This method is the verbose report on a sentient being
+        public abstract string GetDescription();
+        #endregion
+
+
+        #region Protected Methods
+        protected virtual bool MoveTo(Compass direction)
+        {
+            if (direction == Compass.None)
+                return false;
+
+            Facing = direction;
+            Tile currentTile = CurrentTile;
+            // check to see if the bool check for tile change works as expected
+            OnMoveAttempt?.Invoke(this, new MoveEventArgs(direction, Point.Zero, Point.Zero));
+
+            Tile newTile = CurrentTile;
+            if (newTile == currentTile)
+                return false;
+            else
+                return true;
+        }
+
+        protected int GetTotalEncumbrance()
+        {
+            int total = encumbrance;
+
+            for (int i = 0; i < equipedItems.Length; i++)
+            {
+                total += GetItemEncumbrance(equipedItems[i]);
+            }
+
+            return total;
+        }
+        #endregion
 
 
         public bool TryToEquipItem(Item item)
@@ -229,7 +271,6 @@ namespace Paramita.GameLogic.Actors
         }
 
 
-
         public void UpdateShields()
         {
             shields.Clear();
@@ -241,24 +282,6 @@ namespace Paramita.GameLogic.Actors
                     shields.Add(equipedItems[x] as Shield);
                 }
             }
-        }
-
-
-        protected virtual bool MoveTo(Compass direction)
-        {
-            if(direction == Compass.None)
-                return false;
-
-            Facing = direction;
-            Tile currentTile = CurrentTile;
-            // check to see if the bool check for tile change works as expected
-            OnMoveAttempt?.Invoke(this, new MoveEventArgs(direction, Point.Zero, Point.Zero));
-
-            Tile newTile = CurrentTile;
-            if (newTile == currentTile)
-                return false;
-            else
-                return true;
         }
 
 
@@ -320,18 +343,31 @@ namespace Paramita.GameLogic.Actors
         }
 
 
-        protected int GetTotalEncumbrance()
+        public virtual void Update()
         {
-            int total = encumbrance;
-
-            for (int i = 0; i < equipedItems.Length; i++)
-            {
-                total += GetItemEncumbrance(equipedItems[i]);
-            }
-
-            return total;
+            if(fatigue > 0)
+                fatigue--;
+            CheckForDeath();
         }
 
+
+        // the default string equivalent for this being
+        public override string ToString()
+        {
+            return name;
+        }
+
+
+        #region Helper Methods
+        private void CheckForDeath()
+        {
+            if (hitPoints < 1)
+            {
+                isDead = true;
+                OnActorDeath?.Invoke(this, new MoveEventArgs(Compass.None, CurrentTile.TilePoint, Point.Zero));
+            }
+                
+        }
 
         private int GetItemEncumbrance(Item item)
         {
@@ -347,34 +383,6 @@ namespace Paramita.GameLogic.Actors
             }
             return 0;
         }
-
-        public virtual void Update()
-        {
-            if(fatigue > 0)
-                fatigue--;
-            CheckForDeath();
-        }
-
-
-        private void CheckForDeath()
-        {
-            if (hitPoints < 1)
-            {
-                isDead = true;
-                OnActorDeath?.Invoke(this, new MoveEventArgs(Compass.None, CurrentTile.TilePoint, Point.Zero));
-            }
-                
-        }
-
-
-        // the default string equivalent for this being
-        public override string ToString()
-        {
-            return name;
-        }
-
-
-        // This method is the verbose report on a sentient being
-        public abstract string GetDescription();
+        #endregion
     }
 }

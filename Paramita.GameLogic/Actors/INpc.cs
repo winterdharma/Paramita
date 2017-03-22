@@ -1,4 +1,8 @@
-﻿namespace Paramita.GameLogic.Actors
+﻿using Paramita.GameLogic.Levels;
+using Paramita.GameLogic.Mechanics;
+using System;
+
+namespace Paramita.GameLogic.Actors
 {
 
     // This interface defines the methods required for a SentientBeing instance
@@ -8,11 +12,18 @@
     //     * and a way of storing and deciding its intent towards the player.
     public interface INpc
     {
-        /*
-         * This method will be called by any relevant Update() method to cause
-         * the SentientBeing instance to update itself (move, attack, etc).
-         */
+        Tile CurrentTile { get; set; }
+        bool IsDead { get; }
+        Compass Facing { get; }
+        BeingType BeingType { get; }
+        int TimesAttacked { get; set; }
+
+        event EventHandler<MoveEventArgs> OnMoveAttempt;
+        event EventHandler<MoveEventArgs> OnActorDeath;
+        event EventHandler<StatusMessageEventArgs> OnStatusMsgSent;
+
         void PerformAI(Player player);
         void Update(Player player);
+        void TakeDamage(int damage);
     }
 }

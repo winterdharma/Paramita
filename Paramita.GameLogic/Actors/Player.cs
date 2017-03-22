@@ -19,7 +19,7 @@ namespace Paramita.GameLogic.Actors
     }
 
 
-    public class Player : Humanoid, IContainer
+    public class Player : Humanoid, IContainer, IPlayer
     {
         private int gold;
         private int sustanence;

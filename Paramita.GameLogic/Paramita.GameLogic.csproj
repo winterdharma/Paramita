@@ -46,6 +46,7 @@
     <Compile Include="Actors\Animals\GiantRat.cs" />
     <Compile Include="Actors\Humanoids\Humanoid.cs" />
     <Compile Include="Actors\INpc.cs" />
+    <Compile Include="Actors\IPlayer.cs" />
     <Compile Include="Actors\PathToPlayer.cs" />
     <Compile Include="Actors\Player.cs" />
     <Compile Include="Actors\Actor.cs" />

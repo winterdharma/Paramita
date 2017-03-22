@@ -138,9 +138,9 @@ namespace Paramita.GameLogic
             SubscribeToNpcEvents(_currentLevel.Npcs);
         }
 
-        private static void SubscribeToNpcEvents(List<Actor> npcs)
+        private static void SubscribeToNpcEvents(List<INpc> npcs)
         {
-            foreach (Actor npc in _currentLevel.Npcs)
+            foreach (INpc npc in npcs)
             {
                 npc.OnStatusMsgSent += HandleStatusMessage;
                 npc.OnActorDeath += HandleDeadActor;

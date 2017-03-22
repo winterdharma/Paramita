@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using Paramita.GameLogic.Mechanics;
 using System.Linq;
+using Paramita.GameLogic.Utility;
 
 namespace Paramita.GameLogic.Levels
 {
@@ -15,8 +16,8 @@ namespace Paramita.GameLogic.Levels
     {
         #region Fields
         private TileMap _tileMap;
-        private List<Actor> _npcs;
-        private Player _player;
+        private List<INpc> _npcs;
+        private IPlayer _player;
         private bool _isPlayersTurn = true;
         #endregion
 
@@ -31,11 +32,11 @@ namespace Paramita.GameLogic.Levels
         #region Constructors
         public Level() { }
 
-        public Level(TileMap map, List<Actor> npcs, Player player = null)
+        public Level(TileMap map, List<INpc> npcs, Player player = null)
         {
             TileMap = map;
             Npcs = npcs;
-            Player = player;
+            Player = player as IPlayer;
         }
         #endregion
 
@@ -73,7 +74,7 @@ namespace Paramita.GameLogic.Levels
             get { return ConvertMapToBeingTypes(); }
         }
 
-        public List<Actor> Npcs
+        public List<INpc> Npcs
         {
             get { return _npcs; }
             set
@@ -87,7 +88,7 @@ namespace Paramita.GameLogic.Levels
             }
         }
 
-        public Player Player
+        public IPlayer Player
         {
             get { return _player; }
             set
@@ -107,24 +108,18 @@ namespace Paramita.GameLogic.Levels
         private Tuple<BeingType, Compass, bool>[,] ConvertMapToBeingTypes()
         {
             // this is to defeat any future attempt to pass nulls through
-            if (_player == null)
-            {
-                throw new NullReferenceException("_player is null.");
-            }
-            if (_npcs == null)
-            {
-                throw new NullReferenceException("_npcs is null.");
-            }
+            Utilities.ThrowExceptionIfNull(_player);
+            Utilities.ThrowExceptionIfNull(_npcs);
 
             var typeArray = new Tuple<BeingType, Compass, bool>[TileMap.TilesWide, TileMap.TilesHigh];
-
             var playerTile = _player.CurrentTile.TilePoint;
+
             typeArray[playerTile.X, playerTile.Y] = 
                 new Tuple<BeingType, Compass, bool>(_player.BeingType, _player.Facing, true);
 
             for (int i = 0; i < _npcs.Count; i++)
             {
-                var npc = (Actor)_npcs[i];
+                var npc = _npcs[i];
                 var npcTile = npc.CurrentTile.TilePoint;
                 typeArray[npcTile.X, npcTile.Y] = 
                     new Tuple<BeingType, Compass, bool>(npc.BeingType, npc.Facing, false);
@@ -137,7 +132,7 @@ namespace Paramita.GameLogic.Levels
         #region Event Handlers
         private void HandleNpcDeath(object sender, MoveEventArgs eventArgs)
         {
-            Actor npc = sender as Actor;
+            var npc = sender as INpc;
             Npcs.Remove(npc);
             UnsubscribeFromOneNpcsEvents(npc);           
         }
@@ -159,10 +154,10 @@ namespace Paramita.GameLogic.Levels
         
         private void HandlePlayerMove(Player player, Point origin, Tile destination)
         {
-            Actor defender;
+            INpc defender;
             if (GetNpcOnTile(destination, out defender))
             {
-                player.Attack(defender);
+                player.Attack(defender as Actor);
                 TogglePlayersTurn();
             }
             else if(destination.IsWalkable)
@@ -177,7 +172,7 @@ namespace Paramita.GameLogic.Levels
         {
             if(IsPlayerOnTile(destination))
             {
-                npc.Attack(_player);
+                npc.Attack(_player as Actor);
             }
             else if(destination.IsWalkable && !IsNpcOnTile(destination))
             {
@@ -215,17 +210,17 @@ namespace Paramita.GameLogic.Levels
 
         private void SubscribeToNpcEvents()
         {
-            foreach (Actor npc in _npcs)
+            foreach (INpc npc in _npcs)
             {
                 npc.OnMoveAttempt += HandleActorMove;
                 npc.OnActorDeath += HandleNpcDeath;
             }
         }
 
-        private void UnsubscribeFromOneNpcsEvents(Actor actor)
+        private void UnsubscribeFromOneNpcsEvents(INpc npc)
         {
-            actor.OnMoveAttempt -= HandleActorMove;
-            actor.OnActorDeath -= HandleNpcDeath;
+            npc.OnMoveAttempt -= HandleActorMove;
+            npc.OnActorDeath -= HandleNpcDeath;
         }
         #endregion
 
@@ -254,10 +249,10 @@ namespace Paramita.GameLogic.Levels
             return _npcs.Exists(npc => npc.CurrentTile == tile);
         }
 
-        private bool GetNpcOnTile(Tile tile, out Actor actor)
+        private bool GetNpcOnTile(Tile tile, out INpc npc)
         {
             var isNpcOnTile = IsNpcOnTile(tile);
-            actor = isNpcOnTile ? _npcs.Find(n => n.CurrentTile == tile) : null;
+            npc = isNpcOnTile ? _npcs.Find(n => n.CurrentTile == tile) : null;
             return isNpcOnTile;
         }
 
@@ -271,16 +266,16 @@ namespace Paramita.GameLogic.Levels
             _isPlayersTurn = !_isPlayersTurn;
         }
 
-        private bool NpcIsDead(Actor actor)
+        private bool NpcIsDead(INpc npc)
         {
-            return actor.IsDead;
+            return npc.IsDead;
         }
 
         private void UpdateNpcs()
         {
             foreach(INpc npc in _npcs)
             {
-                npc.Update(_player);
+                npc.Update(_player as Player);
             }
         }
 

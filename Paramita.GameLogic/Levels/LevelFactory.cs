@@ -48,9 +48,9 @@ namespace Paramita.GameLogic.Levels
         }
 
 
-        private static List<Actor> CreateNpcs(LevelData data)
+        private static List<INpc> CreateNpcs(LevelData data)
         {
-            var npcs = new List<Actor>();
+            var npcs = new List<INpc>();
 
             if (data.GiantRats > 0)
             {

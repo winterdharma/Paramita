@@ -1,6 +1,5 @@
 C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\Paramita.GameLogic.UnitTests.dll
 C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\Paramita.GameLogic.UnitTests.pdb
-C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
 C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\MonoGame.Framework.dll
 C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\nunit.framework.dll
 C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\Paramita.GameLogic.dll
@@ -24,3 +23,5 @@ C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\SharpDX
 C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\obj\Debug\Paramita.GameLogic.UnitTests.csprojResolveAssemblyReference.cache
 C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\obj\Debug\Paramita.GameLogic.UnitTests.dll
 C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\obj\Debug\Paramita.GameLogic.UnitTests.pdb
+C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\NSubstitute.dll
+C:\Users\Charlie\Desktop\Paramita\Paramita.GameLogic.UnitTests\bin\Debug\NSubstitute.xml
