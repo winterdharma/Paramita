@@ -33,15 +33,19 @@ namespace Paramita.GameLogic.Items
 
         public EquipType EquipType { get; protected set; }
         public ItemType ItemType { get; protected set; }
+        public string Name { get; protected set; }
 
 
-        public Item(ItemType itemType)
+        public Item(ItemType itemType, string name)
         {
             id = counter;
             counter++;
             ItemType = itemType;
+            this.name = name;
         }
 
+
+        #region IEquatable Methods
         /*
          * IEquatable<Item> methods.
          * 
@@ -68,8 +72,9 @@ namespace Paramita.GameLogic.Items
 
         public bool Equals(Item other)
         {
-            if(other == null) return false;
-            return (id.Equals(other.id));
+            if (this.GetType() == other.GetType())
+                return true;
+            return false;
         }
 
         public static bool operator ==(Item left, Item right)
@@ -80,6 +85,12 @@ namespace Paramita.GameLogic.Items
         public static bool operator !=(Item left, Item right)
         {
             return !Equals(left, right);
+        }
+        #endregion
+
+        public override string ToString()
+        {
+            return id + " : " + name;
         }
 
         public abstract string GetDescription();

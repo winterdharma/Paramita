@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using System.Collections.Generic;
 using NUnit.Framework;
 using Paramita.GameLogic.Data.Levels;
@@ -14,7 +13,81 @@ namespace Paramita.GameLogic.UnitTests.Levels
     {
 
         #region CreateLevel Tests
+        [Test]
+        public void CreateLevel_GivenTileMapData_CreatesEquivalentMap()
+        {
+            var fakeLevelDataCreator = new FakeLevelDataCreator();
+            LevelFactory.dataCreator = fakeLevelDataCreator;
+            
+            var fakeTileMapCreator = new FakeTileMapCreator();
+            LevelFactory.mapCreator = fakeTileMapCreator;
 
+            Tile[,] tiles = new Tile[3, 3]
+            {
+                {
+                    new Tile(0,0, TileType.Wall),
+                    new Tile(0,1, TileType.Wall),
+                    new Tile(0,2, TileType.StairsUp)
+                },
+                {
+                    new Tile(1,0, TileType.StairsDown),
+                    new Tile(1,1, TileType.Wall),
+                    new Tile(1,2, TileType.Wall)
+                },
+                {
+                    new Tile(2,0, TileType.Floor),
+                    new Tile(2,1, TileType.Floor),
+                    new Tile(2,2, TileType.Floor)
+                }
+            };
+            var expected = new TileMap(tiles, "level 1");
+
+            var level = LevelFactory.CreateLevel(1);
+            var actual = level.TileMap;
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void CreateLevel_GivenActorsData_CreatesActors()
+        {
+            var fakeLevelDataCreator = new FakeLevelDataCreator();
+            LevelFactory.dataCreator = fakeLevelDataCreator;
+
+            var fakeTileMapCreator = new FakeTileMapCreator();
+            LevelFactory.mapCreator = fakeTileMapCreator;
+
+            var expected = new List<INpc>()
+            {
+                ActorCreator.CreateGiantRat(),
+                ActorCreator.CreateGiantRat()
+            };
+
+            var actual = LevelFactory.CreateLevel(1).Npcs;
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void CreateLevel_GivenItemsData_CreatesItems()
+        {
+            var fakeLevelDataCreator = new FakeLevelDataCreator();
+            LevelFactory.dataCreator = fakeLevelDataCreator;
+
+            var fakeTileMapCreator = new FakeTileMapCreator();
+            LevelFactory.mapCreator = fakeTileMapCreator;
+
+            var expected = new List<Item>()
+            {
+                ItemCreator.CreateItem(ItemType.Meat),
+                ItemCreator.CreateItem(ItemType.ShortSword)
+            };
+
+            var level = LevelFactory.CreateLevel(1);
+            var actual = TileMapTests.GetItemsOnMap(level.TileMap);
+
+            CollectionAssert.AreEquivalent(expected, actual);
+        }
         #endregion
 
 
@@ -23,7 +96,7 @@ namespace Paramita.GameLogic.UnitTests.Levels
         #endregion
     }
 
-    internal class FakeLevelDataCreator
+    internal class FakeLevelDataCreator : ILevelDataCreator
     {
         public LevelData CreateLevelData(int levelNumber)
         {
@@ -59,23 +132,23 @@ namespace Paramita.GameLogic.UnitTests.Levels
         public Tile[,] CreateMap(TileMapData data)
         {
             Tile[,] tiles = new Tile[3, 3]
-        {
             {
-                new Tile(0,0, TileType.Wall),
-                new Tile(0,1, TileType.Wall),
-                new Tile(0,2, TileType.StairsUp)
-            },
-            {
-                new Tile(1,0, TileType.StairsDown),
-                new Tile(1,1, TileType.Wall),
-                new Tile(1,2, TileType.Wall)
-            },
-            {
-                new Tile(2,0, TileType.Floor),
-                new Tile(2,1, TileType.Floor),
-                new Tile(2,2, TileType.Floor)
-            }
-        };
+                {
+                    new Tile(0,0, TileType.Wall),
+                    new Tile(0,1, TileType.Wall),
+                    new Tile(0,2, TileType.StairsUp)
+                },
+                {
+                    new Tile(1,0, TileType.StairsDown),
+                    new Tile(1,1, TileType.Wall),
+                    new Tile(1,2, TileType.Wall)
+                },
+                {
+                    new Tile(2,0, TileType.Floor),
+                    new Tile(2,1, TileType.Floor),
+                    new Tile(2,2, TileType.Floor)
+                }
+            };
 
             return tiles;
         }

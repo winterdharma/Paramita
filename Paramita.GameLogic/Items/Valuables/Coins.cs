@@ -17,7 +17,7 @@
 
 
 
-        public Coins(int number) : base(ItemType.Coins)
+        public Coins(int number) : base(ItemType.Coins, "gold_coin")
         {
             name = "Gold Coin";
             this.number = number;
@@ -40,14 +40,12 @@
             }
         }
 
-
-
         public override string ToString()
         {
             if(number == 1)
-                return number + " " + name;
+                return number + " " + base.ToString();
 
-            return number + " " + name + "s";
+            return number + " " + base.ToString() + "s";
         }
 
         public override string GetDescription()

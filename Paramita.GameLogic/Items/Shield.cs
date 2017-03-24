@@ -13,18 +13,12 @@
         public int Protection { get { return protection; } }
 
 
-        public Shield(int prot, int defMod, int parry, int enc, ItemType type) : base(type)
+        public Shield(int prot, int defMod, int parry, int enc, ItemType type, string name) : base(type, name)
         {
             encumbrance = enc;
             this.parry = parry;
             defenseModifier = defMod;
             protection = prot;
-        }
-
-
-        public override string ToString()
-        {
-            return name;
         }
 
         public override string GetDescription()

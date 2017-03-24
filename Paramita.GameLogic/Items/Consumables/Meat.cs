@@ -2,7 +2,6 @@
 {
     public class Meat : Consumable
     {
-        private const string NAME = "meat";
         private const string DESCRIPTION = "A chunk of tasty salted meat.";
         private const int SUSTENANCE = 480;
 
@@ -11,15 +10,8 @@
             get { return SUSTENANCE; }
         }
 
-        public Meat() : base(ItemType.Meat)
+        public Meat() : base(ItemType.Meat, "Meat")
         {
-        }
-
-
-
-        public override string ToString()
-        {
-            return NAME;
         }
 
         public override string GetDescription()

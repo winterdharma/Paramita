@@ -2,9 +2,8 @@
 {
     public class Fist : NaturalWeapon
     {
-        public Fist() : base(-2, -1, -1, 0, ItemType.Fist)
+        public Fist() : base(-2, -1, -1, 0, ItemType.Fist, "fist")
         {
-            name = "Fist";
             EquipType = EquipType.Hand;
         }
     }

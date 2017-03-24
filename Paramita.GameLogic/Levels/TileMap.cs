@@ -7,7 +7,7 @@ using Paramita.GameLogic.Utility;
 
 namespace Paramita.GameLogic.Levels
 {
-    public class TileMap
+    public class TileMap : IEquatable<TileMap>
     {
         #region Fields
         private Tile[,] _tiles;
@@ -141,7 +141,6 @@ namespace Paramita.GameLogic.Levels
         }
         #endregion
 
-
         public Tile FindTileType(TileType type)
         {
             switch(type)
@@ -155,6 +154,46 @@ namespace Paramita.GameLogic.Levels
             }
         }
 
+        #region IEquatable
+        public bool Equals(TileMap other)
+        {
+            if (TilesAreEqual(_tiles, other.Tiles) && _mapName.Equals(other.MapName))
+                return true;
+            return false;
+
+        }
+
+        private bool TilesAreEqual(Tile[,] these, Tile[,] those)
+        {
+            if (!ArraySizeIsEqual(these, those))
+                return false;
+
+            if (!ArrayTilesAreEqual(these, those))
+                return false;
+
+            return true;
+        }
+
+        private bool ArraySizeIsEqual(Tile[,] first, Tile[,] second)
+        {
+            if (first.GetLength(0) != second.GetLength(0) || first.GetLength(1) != second.GetLength(1))
+                return false;
+            return true;
+        }
+        
+        private bool ArrayTilesAreEqual(Tile[,] first, Tile[,] second)
+        {
+            for (int i = 0; i < first.GetLength(0); i++)
+            {
+                for (int j = 0; j < second.GetLength(1); j++)
+                {
+                    if (first[i, j] != second[i, j])
+                        return false;
+                }
+            }
+            return true;
+        }
+        #endregion
 
         #region Helper Methods
         private ItemType ConvertItemsToItemType(Item[] items)

@@ -170,7 +170,7 @@ namespace Paramita.GameLogic.UnitTests.Levels
             return new TileMap(tiles, "3by3_testmap");
         }
 
-        private List<Item> GetItemsOnMap(TileMap map)
+        internal static List<Item> GetItemsOnMap(TileMap map)
         {
             var items = new List<Item>();
             for (int x = 0; x < map.TilesWide; x++)

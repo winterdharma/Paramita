@@ -20,20 +20,12 @@
         public int Length { get { return length; } }
 
 
-        public Weapon(int damage, int attack, int defense, int length, ItemType type) : base(type)
+        public Weapon(int damage, int attack, int defense, int length, ItemType type, string name) : base(type, name)
         {
             this.damage = damage;
             attackModifier = attack;
             defenseModifier = defense;
             this.length = length;
-        }
-
-
-
-        // This override may belong in Weapon class (just need to pass @name to it?)
-        public override string ToString()
-        {
-            return name;
         }
 
         public override string GetDescription()

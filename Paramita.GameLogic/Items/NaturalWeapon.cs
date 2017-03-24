@@ -19,8 +19,8 @@
      */
     public class NaturalWeapon : Weapon
     {
-        public NaturalWeapon(int damage, int attack, int defense, int length, ItemType type) 
-            : base(damage, attack, defense, length, type)
+        public NaturalWeapon(int damage, int attack, int defense, int length, ItemType type, string name) 
+            : base(damage, attack, defense, length, type, name)
         {
         }
     }

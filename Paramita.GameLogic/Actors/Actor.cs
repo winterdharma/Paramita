@@ -40,7 +40,7 @@ namespace Paramita.GameLogic.Actors
 
 
 
-    public abstract class Actor
+    public abstract class Actor : IEquatable<Actor>
     {
         #region Fields
         protected string name;
@@ -178,6 +178,12 @@ namespace Paramita.GameLogic.Actors
         public abstract List<int> GetLocationForEquipType(EquipType type);
         // This method is the verbose report on a sentient being
         public abstract string GetDescription();
+        public bool Equals(Actor other)
+        {
+            if (this.GetType() == other.GetType())
+                return true;
+            return false;
+        }
         #endregion
 
 
