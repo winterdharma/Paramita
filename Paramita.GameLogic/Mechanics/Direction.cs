@@ -80,30 +80,30 @@ namespace Paramita.GameLogic.Mechanics
         }
         #endregion
 
-        public static Point GetPoint(Compass c)
+        public static Point GetPoint(Compass direction)
         {
-            return _direction[(int)c];
+            return _direction[(int)direction];
         }
 
-        public static Compass GetDirection(Point p)
+        public static Compass GetDirection(Point point)
         {
             var direction = Compass.None;
 
-            if (p == North)
+            if (point == North)
                 direction = Compass.North;
-            else if (p == South)
+            else if (point == South)
                 direction = Compass.South;
-            else if (p == East)
+            else if (point == East)
                 direction = Compass.East;
-            else if (p == West)
+            else if (point == West)
                 direction = Compass.West;
-            else if (p == Northeast)
+            else if (point == Northeast)
                 direction = Compass.Northeast;
-            else if (p == Northwest)
+            else if (point == Northwest)
                 direction = Compass.Northwest;
-            else if (p == Southeast)
+            else if (point == Southeast)
                 direction = Compass.Southeast;
-            else if (p == Southwest)
+            else if (point == Southwest)
                 direction = Compass.Southwest;
 
             return direction;
