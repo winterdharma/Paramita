@@ -46,8 +46,8 @@ namespace Paramita.GameLogic.Mechanics
         {
             defenderProtection = CalculateDefenderProtection();
 
-            attackScore = attacker.Strength + attackWeapon.Damage + dice2d6.OpenEndedDiceRoll();
-            defenseScore = defenderProtection + dice2d6.OpenEndedDiceRoll();
+            attackScore = attacker.Strength + attackWeapon.Damage + dice2d6.OpenEndedRoll();
+            defenseScore = defenderProtection + dice2d6.OpenEndedRoll();
         }
 
 
@@ -81,7 +81,7 @@ namespace Paramita.GameLogic.Mechanics
         {
             int fatiguePenalty = defender.FatigueCriticalPenalty;
             int threshold = 3;
-            int criticalCheckRoll = dice2d6.OpenEndedDiceRoll() - fatiguePenalty;
+            int criticalCheckRoll = dice2d6.OpenEndedRoll() - fatiguePenalty;
             if (criticalCheckRoll < threshold)
             {
                 //GameScene.PostNewStatus("A critical hit was scored! (" + (criticalCheckRoll - fatiguePenalty)

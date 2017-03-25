@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Paramita.GameLogic.Items;
 using Paramita.GameLogic.Mechanics;
+using Paramita.GameLogic.Utility;
 
 namespace Paramita.GameLogic
 {
@@ -39,10 +40,15 @@ namespace Paramita.GameLogic
     }
     #endregion
 
+    public interface IRandom
+    {
+        int Next(int maxValue);
+        int Next(int minValue, int maxValue);
+    }
 
     public class Dungeon
     {
-        internal static Random _random = new Random();
+        internal static IRandom _random = new RandomNum();
         private static Dictionary<int, Level> _levels;
         private static Player _player;
 

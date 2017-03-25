@@ -15,7 +15,7 @@ namespace Paramita.GameLogic.Levels
     public class TileMapCreator : ITileMapCreator
     {
         #region Fields
-        private Random random = Dungeon._random;
+        private IRandom random = Dungeon._random;
         #endregion
 
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Paramita.GameLogic.Mechanics
 {
@@ -26,79 +27,84 @@ namespace Paramita.GameLogic.Mechanics
     */
     public class Dice
     {
-        private Random random;
-        private bool openEndedRoll;
-        private Die dieSize;
-        private int numberOfDice;
-        private int rollModifier;
-        private int diceLeftToRoll;
+        #region Fields
+        private IRandom _random = Dungeon._random;
+        private Die _dieSize;
+        private int _numberOfDice;
+        private int _rollModifier;
+        private List<string> _report = new List<string>();
+        #endregion
 
-
-
-
-        public Dice(int numberOfDice, Die die = Die.d6, int modifier = 0)
+        public Dice(int dice, Die die = Die.d6, int modifier = 0)
         {
-            dieSize = die;
-            this.numberOfDice = numberOfDice;
-            rollModifier = modifier;
-            random = new Random();
+            _dieSize = die;
+            _numberOfDice = dice;
+            _rollModifier = modifier;
+        }
+
+        #region Property
+        // Added to enable stubbing of RandomNum in unit tests
+        public IRandom Random
+        {
+            set { _random = value; }
+        }
+
+        public List<string> Report
+        {
+            get { return _report; }
+            private set { _report = value; }
+        }
+        #endregion
+
+        public int OpenEndedRoll()
+        {
+            return RollDice(true);
+        }
+
+        public int ClosedEndedRoll()
+        {
+            return RollDice(false);
         }
 
 
-
-
-        public int OpenEndedDiceRoll()
+        #region Helper Methods
+        private int RollDice(bool isOpenEnded)
         {
-            openEndedRoll = true;
-            return RollDice();
-        }
-
-
-
-        public int ClosedEndedDiceRoll()
-        {
-            openEndedRoll = false;
-            return RollDice();
-        }
-
-
-
-        private int RollDice()
-        {
-            diceLeftToRoll = numberOfDice;
+            int diceLeftToRoll = _numberOfDice;
             int totalRolled = 0;
             int roll;
 
             while (diceLeftToRoll > 0)
             {
+                diceLeftToRoll--;
                 roll = RollDie();
-                if (openEndedRoll)
-                    CheckForBonusRoll(roll);
+                if (isOpenEnded && CheckForBonusRoll(roll))
+                {
+                    diceLeftToRoll++;
+                }
                 totalRolled += roll;
             }
 
+            Report.Add("Total: " + totalRolled);
             return totalRolled;
         }
 
-
-
         private int RollDie()
         {
-            diceLeftToRoll--;
-            int roll = random.Next(1, (int)dieSize + 1) + rollModifier;
-            Console.WriteLine("Rolled " + roll);
+            int roll = _random.Next(1, (int)_dieSize + 1) + _rollModifier;
+            Report.Add("Roll " + _dieSize + ": " + roll);
             return roll;
         }
 
-
-
-        private void CheckForBonusRoll(int roll)
+        private bool CheckForBonusRoll(int roll)
         {
-            if (roll == (int)dieSize)
+            if (roll == (int)_dieSize)
             {
-                Console.WriteLine("Bonus roll!");
-                diceLeftToRoll++;
+                Report.Add("Bonus Roll!");
+                return true;
             }
+            return false;
         }
+        #endregion
     }
 }

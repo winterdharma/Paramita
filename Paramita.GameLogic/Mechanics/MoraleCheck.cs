@@ -67,8 +67,8 @@ namespace Paramita.GameLogic.Mechanics
 
         private bool ResolveMoraleCheck()
         {
-            int checkerRoll = dice2d6.OpenEndedDiceRoll();
-            int checkAgainstRoll = dice2d6.OpenEndedDiceRoll();
+            int checkerRoll = dice2d6.OpenEndedRoll();
+            int checkAgainstRoll = dice2d6.OpenEndedRoll();
 
             int checkerTotal = checkerRoll + checkerMorale + sizeDifference;
             int checkAgainstTotal = checkAgainstRoll + threshold + modifier;

@@ -63,6 +63,7 @@
     <Compile Include="Levels\TileMapCreatorTests.cs" />
     <Compile Include="Levels\TileMapTests.cs" />
     <Compile Include="Levels\TileTests.cs" />
+    <Compile Include="Mechanics\DiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

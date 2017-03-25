@@ -84,12 +84,12 @@ namespace Paramita.GameLogic.Mechanics
 
         private int CalcAttackScore()
         {
-            return dice2d6.OpenEndedDiceRoll() + attackSkill - attackerFatigue;
+            return dice2d6.OpenEndedRoll() + attackSkill - attackerFatigue;
         }
 
         private int CalcDefendScore()
         {
-            return dice2d6.OpenEndedDiceRoll() + defenseSkill - defenderFatigue 
+            return dice2d6.OpenEndedRoll() + defenseSkill - defenderFatigue 
                 - defenderMultAttackedPenalty;
         }
 
