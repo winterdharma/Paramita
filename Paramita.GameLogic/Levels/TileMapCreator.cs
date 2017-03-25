@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Paramita.GameLogic.Data.Levels;
+using Paramita.GameLogic.Mechanics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,19 +26,67 @@ namespace Paramita.GameLogic.Levels
 
         public Tile[,] CreateMap(TileMapData data)
         {
+            ValidateTileMapData(data);
+
             int cols = data.LevelWidth;
             int rows = data.LevelHeight;
-            int maxRoomSize = data.MaxRoomSize;
-            int minRoomSize = data.MinRoomSize;
 
-            Tile[,] tiles = new Tile[cols, rows];
+            var tiles = new Tile[cols, rows];
+            var rooms = CreateRoomRectangles(data);
+            
+            foreach(Rectangle room in rooms)
+            {
+                MakeRoom(tiles, room);
+            }
+
+            CreateConnectingTunnels(rooms, tiles);
+            
+            AddStairsTiles(rooms, tiles);
+            AddWallTiles(tiles);
+
+            return tiles;
+        }
+
+        #region Helper Methods
+        private void ValidateTileMapData(TileMapData data)
+        {
+            ThrowExceptionIfMaxRoomsInvalid(data.MaxRooms);
+            ThrowExceptionIfMinSizeLargerThanMaxSize(data.MinRoomSize, data.MaxRoomSize);
+            ThrowExceptionIfMapDimensionsTooSmall(data.LevelWidth, data.LevelHeight);
+        }
+
+        private void ThrowExceptionIfMaxRoomsInvalid(int maxRooms)
+        {
+            if (maxRooms < 1)
+                throw new ArgumentOutOfRangeException("MaxRooms was less than 1.");
+        }
+        
+        private void ThrowExceptionIfMinSizeLargerThanMaxSize(int minSize, int maxSize)
+        {
+            if (minSize > maxSize)
+                throw new ArgumentOutOfRangeException("MinRoomSize was greater than MaxRoomSize");
+        }
+
+        private void ThrowExceptionIfMapDimensionsTooSmall(int width, int height)
+        {
+            if(width < 10 || height < 10)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private List<Rectangle> CreateRoomRectangles(TileMapData data)
+        {
+            int minSize = data.MinRoomSize;
+            int maxSize = data.MaxRoomSize;
+
             var rooms = new List<Rectangle>();
             for (int x = 0; x < data.MaxRooms; x++)
             {
-                int roomWidth = random.Next(minRoomSize, maxRoomSize);
-                int roomHeight = random.Next(minRoomSize, maxRoomSize);
-                int roomXPosition = random.Next(0, cols - roomWidth - 1);
-                int roomYPosition = random.Next(0, rows - roomHeight - 1);
+                int roomWidth = random.Next(minSize, maxSize);
+                int roomHeight = random.Next(minSize, maxSize);
+                int roomXPosition = random.Next(0, data.LevelWidth - roomWidth - 1);
+                int roomYPosition = random.Next(0, data.LevelHeight - roomHeight - 1);
 
                 var newRoom = new Rectangle(
                     roomXPosition, roomYPosition, roomWidth, roomHeight);
@@ -46,12 +95,12 @@ namespace Paramita.GameLogic.Levels
                 if (newRoomIntersects == false) { rooms.Add(newRoom); }
             }
 
-            foreach(Rectangle room in rooms)
-            {
-                MakeRoom(tiles, room);
-            }
+            return rooms;
+        }
 
-            for(int x = 1; x < rooms.Count; x++)
+        private void CreateConnectingTunnels(List<Rectangle> rooms, Tile[,] tiles)
+        {
+            for (int x = 1; x < rooms.Count; x++)
             {
                 var previousRoomCenterX = rooms[x - 1].Center.X;
                 var previousRoomCenterY = rooms[x - 1].Center.Y;
@@ -68,16 +117,10 @@ namespace Paramita.GameLogic.Levels
                     MakeVerticalTunnel(tiles, previousRoomCenterY, currentRoomCenterY, previousRoomCenterX);
                     MakeHorizontalTunnel(tiles, previousRoomCenterX, currentRoomCenterX, currentRoomCenterY);
                 }
-                
+
             }
-
-            AddStairsTiles(rooms, tiles);
-            AddWallTiles(tiles);
-
-            return tiles;
         }
 
-        #region Helper Methods
         // This method creates Tiles for a room and inserts them into the Tile[,] array
         private void MakeRoom(Tile[,] tiles, Rectangle room)
         {
@@ -131,6 +174,30 @@ namespace Paramita.GameLogic.Levels
                     } 
                 } 
             }
+        }
+
+        // not implemented yet. Requires addition of a black tile to GameLogic to represent
+        // tiles left empty because cannot be seen by player through walls.
+        private bool AdjacentToWalkableTile(int x, int y,Tile[,] tiles)
+        {
+            var standPoint = new Point(x, y);
+            foreach(var compassPoint in Direction.EightCompassPoints)
+            {
+                var checkPoint = standPoint + compassPoint;
+
+                if(checkPoint.X < 0 || checkPoint.X >= tiles.GetLength(0)
+                    || checkPoint.Y < 0 || checkPoint.Y >= tiles.GetLength(1))
+                {
+                    continue;
+                }
+
+                if(tiles[checkPoint.X, checkPoint.Y] != null 
+                    && tiles[checkPoint.X, checkPoint.Y].IsWalkable)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
         #endregion
     }

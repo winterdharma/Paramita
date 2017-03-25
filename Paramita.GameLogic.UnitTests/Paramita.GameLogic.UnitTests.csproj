@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="Levels\LevelFactoryTests.cs" />
     <Compile Include="Levels\LevelTests.cs" />
+    <Compile Include="Levels\TileMapCreatorTests.cs" />
     <Compile Include="Levels\TileMapTests.cs" />
     <Compile Include="Levels\TileTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

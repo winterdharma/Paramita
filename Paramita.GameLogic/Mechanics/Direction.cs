@@ -31,9 +31,17 @@ namespace Paramita.GameLogic.Mechanics
 
         private static List<Point> _cardinalPoints = new List<Point>()
             { North, East, South, West };
+
+        private static List<Point> _eightDirections = new List<Point>()
+        { North, Northeast, East, Southeast, South, Southwest, West, Northwest };
         #endregion
 
         #region Directions
+        public static List<Point> EightCompassPoints
+        {
+            get { return _eightDirections; }
+        }
+
         public static List<Point> CardinalPoints
         {
             get { return _cardinalPoints; }
