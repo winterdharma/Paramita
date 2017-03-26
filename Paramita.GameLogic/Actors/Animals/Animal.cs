@@ -35,8 +35,8 @@ namespace Paramita.GameLogic.Actors
 
         protected override void InitializeItemLists()
         {
-            equipedItems = new Item[5];
-            unequipedItems = new Item[1];
+            _equippedItems = new Item[5];
+            _unequippedItems = new Item[1];
         }
 
 

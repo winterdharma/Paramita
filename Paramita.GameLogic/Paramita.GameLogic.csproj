@@ -83,7 +83,6 @@
     <Compile Include="Actions\Combat\RepelMeleeAttack.cs" />
     <Compile Include="Mechanics\Dice.cs" />
     <Compile Include="Mechanics\Direction.cs" />
-    <Compile Include="Actions\EquipItem.cs" />
     <Compile Include="Actions\MoraleCheck.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\RandomNum.cs" />

@@ -18,17 +18,17 @@ namespace Paramita.GameLogic.Actors.Animals
         protected override void InitializeAttributes()
         {
             name = "Giant Rat";
-            hitPoints = 5;
-            protection = 2;
-            magicResistance = 5;
-            strength = 3;
-            attackSkill = 8;
-            defenseSkill = 10;
-            precision = 5;
-            morale = 6;
-            encumbrance = 1;
-            fatigue = 0;
-            size = 1;
+            _hitPoints = 5;
+            _protection = 2;
+            _magicResistance = 5;
+            _strength = 3;
+            _attackSkill = 8;
+            _defenseSkill = 10;
+            _precision = 5;
+            _morale = 6;
+            _encumbrance = 1;
+            _fatigue = 0;
+            _size = 1;
         }
 
 
@@ -36,16 +36,13 @@ namespace Paramita.GameLogic.Actors.Animals
         {
             base.InitializeItemLists();
 
-            naturalWeapons = new List<Weapon>();
-            naturalWeapons.Add(ItemCreator.CreateBite());
+            _naturalWeapons = new List<Weapon>();
+            _naturalWeapons.Add(ItemCreator.CreateBite());
 
-            TryToEquipItem(naturalWeapons[0]);
+            _attacks = new List<Weapon>();
+            Attacks.AddRange(_naturalWeapons);
 
-            attacks = new List<Weapon>();
-            UpdateAttacks();
-
-            shields = new List<Shield>();
-
+            _shields = new List<Shield>();
         }
 
         public void Update(Player player)

@@ -81,7 +81,13 @@ namespace Paramita.GameLogic.Actions
 
         private bool CheckForRepelAttempt()
         {
-            if (repelWeapon.Length > attackWeapon.Length)
+            int length;
+            if (repelWeapon == null)
+                length = 0;
+            else
+                length = repelWeapon.Length;
+
+            if (length > attackWeapon.Length)
                 return true;
             return false;
         }

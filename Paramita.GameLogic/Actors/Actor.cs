@@ -48,30 +48,30 @@ namespace Paramita.GameLogic.Actors
 
         protected Tile _currentTile;
 
-        protected Item[] unequipedItems;
-        protected Item[] equipedItems;
+        protected Item[] _unequippedItems;
+        protected Item[] _equippedItems;
 
-        protected List<Weapon> naturalWeapons;
-        protected List<Weapon> attacks;
-        protected List<Shield> shields;
+        protected List<Weapon> _naturalWeapons;
+        protected List<Weapon> _attacks;
+        protected List<Shield> _shields;
 
-        protected int hitPoints;
-        protected int protection;
-        protected int shieldProtection;
-        protected int magicResistance;
-        protected int strength;
-        protected int morale;
-        protected int attackSkill;
-        protected int defenseSkill;
-        protected int parry;
-        protected int precision;
-        protected int encumbrance;
-        protected int fatigue;
-        protected int size;
-        protected int timesAttacked;
+        protected int _hitPoints;
+        protected int _protection;
+        protected int _shieldProtection;
+        protected int _magicResistance;
+        protected int _strength;
+        protected int _morale;
+        protected int _attackSkill;
+        protected int _defenseSkill;
+        protected int _parry;
+        protected int _precision;
+        protected int _encumbrance;
+        protected int _fatigue;
+        protected int _size;
+        protected int _timesAttacked;
 
         // status related flags
-        protected bool isDead = false;
+        protected bool _isDead = false;
         #endregion
 
 
@@ -103,72 +103,98 @@ namespace Paramita.GameLogic.Actors
 
         public Compass Facing { get; private set; }
 
-        public List<Weapon> Attacks { get { return attacks; } }
-        public List<Shield> Shields { get { return shields; } }
-        public int HitPoints { get { return hitPoints; } }
-        public int Protection { get { return protection; } }
+        public List<Weapon> Attacks { get { return _attacks; } }
+
+        public List<Shield> Shields { get { return _shields; } }
+
+        public int HitPoints { get { return _hitPoints; } }
+
+        public int Protection { get { return _protection; } }
 
         public int ShieldProtection
         {
             get
             {
                 int protection = 0;
-                for (int x = 0; x < shields.Count; x++)
+                for (int x = 0; x < _shields.Count; x++)
                 {
-                    protection += shields[x].Protection;
+                    protection += _shields[x].Protection;
                 }
                 return protection;
             }
         }
-        public int Strength { get { return strength; } }
-        public int Morale { get { return morale; } }
-        public int AttackSkill { get { return attackSkill; } }
+
+        public int Strength { get { return _strength; } }
+
+        public int Morale { get { return _morale; } }
+
+        public int AttackSkill { get { return _attackSkill; } }
+
         public int DefenseSkill
         {
             get
             {
                 int weaponsMods = 0;
-                for (int x = 0; x < attacks.Count; x++)
+                for (int x = 0; x < _attacks.Count; x++)
                 {
-                    weaponsMods += attacks[x].DefenseModifier;
+                    weaponsMods += _attacks[x].DefenseModifier;
                 }
-                return defenseSkill + weaponsMods;
+                return _defenseSkill + weaponsMods;
             }
         }
+
         public int Parry
         {
             get
             {
                 int shieldParry = 0;
-                for (int x = 0; x < shields.Count; x++)
+                for (int x = 0; x < _shields.Count; x++)
                 {
-                    shieldParry += shields[x].Parry;
+                    shieldParry += _shields[x].Parry;
                 }
                 return shieldParry;
             }
         }
-        public int Fatigue { get { return fatigue; } }
+
+        public int Fatigue { get { return _fatigue; } }
+
         public int FatigueAttPenalty
         {
-            get { return fatigue / 20; }
+            get { return _fatigue / 20; }
         }
+
         public int FatigueDefPenalty
         {
-            get { return fatigue / 10; }
+            get { return _fatigue / 10; }
         }
+
         public int FatigueCriticalPenalty
         {
-            get { return fatigue / 15; }
+            get { return _fatigue / 15; }
         }
-        public int Size { get { return size; } }
+
+        public int Size { get { return _size; } }
+
         public int TimesAttacked
         {
-            get { return timesAttacked; }
-            set { timesAttacked = value; }
+            get { return _timesAttacked; }
+            set { _timesAttacked = value; }
         }
-        public bool IsDead { get { return isDead; } }
 
-        public Item[] EquipmentSlots { get { return equipedItems; } }
+        public bool IsDead { get { return _isDead; } }
+
+        public Item[] EquipmentSlots
+        {
+            get { return _equippedItems; }
+            protected set
+            {
+                _equippedItems = value;
+                UpdateAttacks();
+                UpdateShields();
+            }
+        }
+
+        public Item[] StorageSlots { get { return _unequippedItems; } }
         #endregion
 
 
@@ -180,6 +206,200 @@ namespace Paramita.GameLogic.Actors
         // This method is the verbose report on a sentient being
         public abstract string GetDescription();
         #endregion
+
+
+        #region Item Related API
+        public bool AcquireItem(Item item)
+        {
+            if (!AddItemToEquipment(item))
+                return AddItemToStorage(item);
+            else
+                return true;
+        }
+
+        public bool DiscardItem(Item item)
+        {
+            if (!RemoveItemFromEquipment(item))
+                return RemoveItemFromStorage(item);
+            else
+                return true;
+        }
+
+        public bool EquipItem(Item item)
+        {
+            if (RemoveItemFromStorage(item))
+                return AddItemToEquipment(item);
+            else
+                return false;
+        }
+
+        public bool UnequipItem(Item item)
+        {
+            if (RemoveItemFromEquipment(item))
+                return AddItemToStorage(item);
+            else
+                return false;
+        }
+
+        public void UseItem(Item item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ConsumeItem(Item item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsNaturalWeaponEquipedAt(int location)
+        {
+            if ((_equippedItems[location] is NaturalWeapon) == true)
+                return true;
+            return false;
+        }
+
+        
+        public bool IsWeaponEquippedAt(int location)
+        {
+            if (_equippedItems[location] is Weapon)
+                return true;
+            return false;
+        }
+
+        public bool IsEquipmentSlotEmpty(int location)
+        {
+            if (EquipmentSlots[location] == null)
+                return true;
+            return false;
+        }
+        #endregion
+
+
+        #region Combat Related API
+        // Checks the being's equip items for Weapons or NaturalWeapons
+        public void UpdateAttacks()
+        {
+            // reset the attacks list
+            _attacks.Clear();
+
+            // check for bonus attack NaturalWeapons
+            for (int x = 0; x < _naturalWeapons.Count; x++)
+            {
+                if (_naturalWeapons[x].EquipType == EquipType.None)
+                {
+                    _attacks.Add(_naturalWeapons[x]);
+                }
+            }
+
+            for (int x = 0; x < _equippedItems.Length; x++)
+            {
+                if (_equippedItems[x] is Weapon)
+                {
+                    _attacks.Add(_equippedItems[x] as Weapon);
+                }
+            }
+
+            _attacks = _attacks.OrderBy(w => w.Length).ToList();
+            Console.WriteLine(_attacks.ToString());
+        }
+
+
+        public void UpdateShields()
+        {
+            _shields.Clear();
+
+            for (int x = 0; x < _equippedItems.Length; x++)
+            {
+                if (_equippedItems[x] is Shield)
+                {
+                    _shields.Add(_equippedItems[x] as Shield);
+                }
+            }
+        }
+
+
+        // conduct all of a being's attacks for the turn
+        public void Attack(Actor defender)
+        {
+            Attack attack;
+            //GameScene.PostNewStatus(this + " attacked " + defender + ".");
+            for(int x = 0; x < _attacks.Count; x++)
+            {
+                attack = new Attack(this, _attacks[x], defender);
+                OnStatusMsgSent?.Invoke(this, new StatusMessageEventArgs(attack.AttackReport));
+                if (IsDead || defender.IsDead)
+                {
+                    break;
+                }
+            }
+        }
+
+
+        // used to check for a RepelMeeleeAttack attempt
+        public Weapon GetLongestWeapon()
+        {
+            if (Attacks.Count == 0)
+                return null;
+
+            Weapon longestWeapon = _attacks[0];
+
+            if (Attacks.Count > 1)
+            {
+                for (int x = 1; x < Attacks.Count; x++)
+                {
+                    if (Attacks[x].Length > longestWeapon.Length)
+                        longestWeapon = Attacks[x];
+                }
+            }
+            return longestWeapon;
+        }
+
+
+        public void TakeDamage(int damage)
+        {
+            if(damage > 0)
+            {
+                _hitPoints -= damage;
+                CheckForDeath();
+            }
+        }
+
+
+        public void IncrementTimesAttacked()
+        {
+            _timesAttacked++;
+        }
+
+
+        public void AddEncumbranceToFatigue()
+        {
+            int totalEncumbrance = GetTotalEncumbrance();
+
+            _fatigue += totalEncumbrance;
+        }
+        #endregion
+
+
+        public bool Equals(Actor other)
+        {
+            if (this.GetType() == other.GetType())
+                return true;
+            return false;
+        }
+
+        public virtual void Update()
+        {
+            if(_fatigue > 0)
+                _fatigue--;
+            CheckForDeath();
+        }
+
+
+        // the default string equivalent for this being
+        public override string ToString()
+        {
+            return name;
+        }
 
 
         #region Protected Methods
@@ -202,11 +422,11 @@ namespace Paramita.GameLogic.Actors
 
         protected int GetTotalEncumbrance()
         {
-            int total = encumbrance;
+            int total = _encumbrance;
 
-            for (int i = 0; i < equipedItems.Length; i++)
+            for (int i = 0; i < _equippedItems.Length; i++)
             {
-                total += GetItemEncumbrance(equipedItems[i]);
+                total += GetItemEncumbrance(_equippedItems[i]);
             }
 
             return total;
@@ -214,163 +434,12 @@ namespace Paramita.GameLogic.Actors
         #endregion
 
 
-        public bool TryToEquipItem(Item item)
-        {
-            return new EquipItem(this, item).IsEquipped;
-        }
-        
-
-        public bool IsNaturalWeaponEquipedAt(int location)
-        {
-            if ((equipedItems[location] is NaturalWeapon) == true)
-                return true;
-            return false;
-        }
-
-        
-        public bool IsWeaponEquippedAt(int location)
-        {
-            if (equipedItems[location] is Weapon)
-                return true;
-            return false;
-        }
-
-
-        public bool IsEquipmentSlotEmpty(int location)
-        {
-            if (EquipmentSlots[location] == null)
-                return true;
-            return false;
-        }
-
-
-        // Checks the being's equip items for Weapons or NaturalWeapons
-        public void UpdateAttacks()
-        {
-            // reset the attacks list
-            attacks.Clear();
-
-            // check for bonus attack NaturalWeapons
-            for (int x = 0; x < naturalWeapons.Count; x++)
-            {
-                if (naturalWeapons[x].EquipType == EquipType.None)
-                {
-                    attacks.Add(naturalWeapons[x]);
-                }
-            }
-
-            for (int x = 0; x < equipedItems.Length; x++)
-            {
-                if (equipedItems[x] is Weapon)
-                {
-                    attacks.Add(equipedItems[x] as Weapon);
-                }
-            }
-
-            attacks = attacks.OrderBy(w => w.Length).ToList();
-            Console.WriteLine(attacks.ToString());
-        }
-
-
-        public void UpdateShields()
-        {
-            shields.Clear();
-
-            for (int x = 0; x < equipedItems.Length; x++)
-            {
-                if (equipedItems[x] is Shield)
-                {
-                    shields.Add(equipedItems[x] as Shield);
-                }
-            }
-        }
-
-
-        // conduct all of a being's attacks for the turn
-        public void Attack(Actor defender)
-        {
-            Attack attack;
-            //GameScene.PostNewStatus(this + " attacked " + defender + ".");
-            for(int x = 0; x < attacks.Count; x++)
-            {
-                attack = new Attack(this, attacks[x], defender);
-                OnStatusMsgSent?.Invoke(this, new StatusMessageEventArgs(attack.AttackReport));
-                if (IsDead || defender.IsDead)
-                {
-                    break;
-                }
-            }
-        }
-
-
-        // used to check for a RepelMeeleeAttack attempt
-        public Weapon GetLongestWeapon()
-        {
-            Weapon longestWeapon = attacks[0];
-
-            if (attacks.Count > 1)
-            {
-                for (int x = 1; x < attacks.Count; x++)
-                {
-                    if (attacks[x].Length > longestWeapon.Length)
-                        longestWeapon = attacks[x];
-                }
-            }
-            return longestWeapon;
-        }
-
-
-        public void TakeDamage(int damage)
-        {
-            if(damage > 0)
-            {
-                hitPoints -= damage;
-                CheckForDeath();
-            }
-        }
-
-
-        public void IncrementTimesAttacked()
-        {
-            timesAttacked++;
-        }
-
-
-        public void AddEncumbranceToFatigue()
-        {
-            int totalEncumbrance = GetTotalEncumbrance();
-
-            fatigue += totalEncumbrance;
-        }
-
-        public bool Equals(Actor other)
-        {
-            if (this.GetType() == other.GetType())
-                return true;
-            return false;
-        }
-
-        public virtual void Update()
-        {
-            if(fatigue > 0)
-                fatigue--;
-            CheckForDeath();
-        }
-
-
-        // the default string equivalent for this being
-        public override string ToString()
-        {
-            return name;
-        }
-
-
         #region Helper Methods
         private void CheckForDeath()
         {
-            if (hitPoints < 1)
+            if (_hitPoints < 1)
             {
-                isDead = true;
+                _isDead = true;
                 OnActorDeath?.Invoke(this, new MoveEventArgs(Compass.None, CurrentTile.TilePoint, Point.Zero));
             }
                 
@@ -389,6 +458,108 @@ namespace Paramita.GameLogic.Actors
                 return itemAsShield.Encumbrance;
             }
             return 0;
+        }
+
+        private bool AddItemToStorage(Item item)
+        {
+            var emptyAt = new List<int>();
+            if (FindEmptySlots(StorageSlots, out emptyAt))
+            {
+                StorageSlots[emptyAt[0]] = item;
+                return true;
+            }
+            else
+                return false;
+        }
+
+        private bool RemoveItemFromStorage(Item item)
+        {
+            int foundAt;
+            if (FindItemInSlots(StorageSlots, item, out foundAt))
+            {
+                StorageSlots[foundAt] = null;
+                return true;
+            }
+            else
+                return false;
+        }
+
+        private bool AddItemToEquipment(Item item)
+        {
+            if (item.EquipType == EquipType.None)
+                return false;
+
+            var validAt = GetLocationForEquipType(item.EquipType);
+
+            foreach(var index in validAt)
+            {
+                if((item is Weapon || item is Shield) && !(item is NaturalWeapon) 
+                    && EquipmentSlots[index] is NaturalWeapon)
+                {
+                    _equippedItems[index] = item;
+                    EquipmentSlots = _equippedItems;
+                    return true;
+                }
+
+
+                if(EquipmentSlots[index] == null)
+                {
+                    _equippedItems[index] = item;
+                    EquipmentSlots = _equippedItems;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool RemoveItemFromEquipment(Item item)
+        {
+
+            int foundAt;
+            if(FindItemInSlots(EquipmentSlots, item, out foundAt))
+            {
+                _equippedItems[foundAt] = null;
+                EquipmentSlots = _equippedItems;
+
+                if(_naturalWeapons.Count > 0)
+                {
+                    foreach(var weapon in _naturalWeapons)
+                    {
+                        if (AddItemToEquipment(weapon))
+                            break;
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+
+        private bool FindEmptySlots(Item[] slots, out List<int> emptyAt)
+        {
+            emptyAt = new List<int>();
+            for (int i = 0; i < slots.Length; i++)
+            {
+                if(slots[i] == null)
+                {
+                    emptyAt.Add(i);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool FindItemInSlots(Item[] slots, Item item, out int foundAt)
+        {
+            for(int i = 0; i < slots.Length; i++)
+            {
+                if(slots[i] == item)
+                {
+                    foundAt = i;
+                    return true;
+                }
+            }
+            foundAt = 1000;
+            return false;
         }
         #endregion
     }

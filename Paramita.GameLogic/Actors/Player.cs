@@ -21,23 +21,26 @@ namespace Paramita.GameLogic.Actors
 
     public class Player : Humanoid, IContainer, IPlayer
     {
-        private int gold;
-        private int sustanence;
+        #region Fields
+        private int _gold;
+        private int _sustanence;
+        #endregion
 
-        public Item[] UnequipedItems { get { return unequipedItems; } }
-        public Item[] EquipedItems { get { return equipedItems; } }
 
+        #region Properties
         public int Gold
         {
-            get { return gold; }
-            private set { gold = value; }
+            get { return _gold; }
+            private set { _gold = value; }
         }
 
         public int Sustanence
         {
-            get { return sustanence; }
-            private set { sustanence = value; }
+            get { return _sustanence; }
+            private set { _sustanence = value; }
         }
+        #endregion
+
 
         public event EventHandler<LevelChangeEventArgs> OnLevelChange;
         public event EventHandler<InventoryChangeEventArgs> OnInventoryChange;
@@ -50,41 +53,39 @@ namespace Paramita.GameLogic.Actors
             InitializeItemLists();
         }
 
-
+        #region Protected Methods
         protected override void InitializeAttributes()
         {
             Gold = 0;
-            sustanence = 240;
-            hitPoints = 10;
-            protection = 0;
-            magicResistance = 10;
-            strength = 10;
-            attackSkill = 10;
-            defenseSkill = 10;
-            precision = 10;
-            morale = 10;
-            encumbrance = 0;
-            fatigue = 0;
-            size = 2;
+            _sustanence = 240;
+            _hitPoints = 10;
+            _protection = 0;
+            _magicResistance = 10;
+            _strength = 10;
+            _attackSkill = 10;
+            _defenseSkill = 10;
+            _precision = 10;
+            _morale = 10;
+            _encumbrance = 0;
+            _fatigue = 0;
+            _size = 2;
         }
-
-
 
         protected override void InitializeItemLists()
         {
             base.InitializeItemLists();
 
-            naturalWeapons = new List<Weapon>();
-            naturalWeapons.Add(ItemCreator.CreateFist());
+            _shields = new List<Shield>();
+            _attacks = new List<Weapon>();
 
-            TryToEquipItem(naturalWeapons[0]);
+            _naturalWeapons = new List<Weapon>();
+            _naturalWeapons.Add(ItemCreator.CreateFist());
+            _naturalWeapons.Add(ItemCreator.CreateFist());
 
-            attacks = new List<Weapon>();
-            UpdateAttacks();
-
-            shields = new List<Shield>();
+            AddItem(_naturalWeapons[0]);
+            AddItem(_naturalWeapons[1]);
         }
-
+        #endregion
 
 
         // Will be used when saved games are implemented
@@ -101,7 +102,7 @@ namespace Paramita.GameLogic.Actors
             playerInventory["body"] = BodyItem != null ? BodyItem.ItemType : ItemType.None;
             playerInventory["feet"] = FeetItem != null ? FeetItem.ItemType : ItemType.None;
 
-            Item[] playerOtherItems = UnequipedItems;
+            Item[] playerOtherItems = StorageSlots;
             string label; int num = 0;
             foreach (var item in playerOtherItems)
             {
@@ -112,7 +113,6 @@ namespace Paramita.GameLogic.Actors
 
             return new Tuple<Dictionary<string, ItemType>, int>(playerInventory, Gold);
         }
-
 
         public override void Update()
         {
@@ -128,94 +128,6 @@ namespace Paramita.GameLogic.Actors
                 ExpendSustanence();
             }
         }
-
-
-        /*  
-         *  This method is called immediately when CurrentTile is changed in Update() to check for
-         *  any events that are triggered by the new tile, such as picking up items, changing levels, etc.
-         */
-        private void CheckForNewTileEvents()
-        {
-            // check for items in the new tile and pick the first item present
-            if (CurrentTile.InspectItems().Length > 0)
-                TryToPickUpItem();
-            // check for events based on moving to TileTypes like StairsUp & StairsDown
-            CheckForTileTypeEvent(CurrentTile.TileType);
-        }
-
-
-
-        // checks to see if there is an item to pick up and does so if one is there.
-        // used when player moves to a new tile.
-        private void TryToPickUpItem()
-        {
-            Item[] items = CurrentTile.InspectItems();
-
-            if (AddItem(items[0]) == true)
-            {
-                CurrentTile.RemoveItem(items[0]);
-                OnInventoryChange?.Invoke(this, new InventoryChangeEventArgs(Dungeon.GetPlayerInventory() ));
-
-                if (items[0] is Coins)
-                {
-                    //GameScene.PostNewStatus("You picked up " + items[0].ToString() + ".");
-                    //GameScene.PostNewStatus("You now have " + Gold + " gold.");
-                }
-                else { }
-                    //GameScene.PostNewStatus("You picked up a " + items[0].ToString() + ".");
-            }
-        }
-
-
-
-        // Checks the TileType of Player.CurrentTile for any events that when moving to them
-        private void CheckForTileTypeEvent(TileType tileType)
-        {
-            int change = 0;
-            switch(tileType)
-            {
-                case TileType.StairsUp:
-                    if (Dungeon.CurrentLevelNumber > 1)
-                        change = -1;
-                    break;
-                case TileType.StairsDown:
-                    change = 1;
-                    break;
-            }
-            if(change != 0)
-            {
-                OnLevelChange?.Invoke(this, new LevelChangeEventArgs(change));
-            }
-        }
-
-
-        // decrement's the player's sustanence value and writes messages to
-        // GameScene.StatusMessages
-        private void ExpendSustanence()
-        {
-            Sustanence = Sustanence - 1;
-            string message = "";
-
-            if (Sustanence == 0)
-            {
-                message = "You died of starvation (0).";
-            }
-            else if (Sustanence == 30)
-            {
-                message = "You are starving and need to find food soon (30).";
-            }
-            else if(Sustanence == 120)
-            {
-                message = "You are getting hungry (120).";
-            }
-            
-            if(message != "")
-            {
-                //GameScene.PostNewStatus(message);
-            }
-        }
-
-
 
         // Drops item onto the tile the player is located in.
         // The item to drop is indicated by @itemToDrop, which should be a valid
@@ -258,24 +170,24 @@ namespace Paramita.GameLogic.Actors
                         item = FeetItem;
                     break;
                 case "other1":
-                    if (itemType.Equals(UnequipedItems[0].ItemType))
-                        item = UnequipedItems[0];
+                    if (itemType.Equals(StorageSlots[0].ItemType))
+                        item = StorageSlots[0];
                     break;
                 case "other2":
-                    if (itemType.Equals(UnequipedItems[1].ItemType))
-                        item = UnequipedItems[1];
+                    if (itemType.Equals(StorageSlots[1].ItemType))
+                        item = StorageSlots[1];
                     break;
                 case "other3":
-                    if (itemType.Equals(UnequipedItems[2].ItemType))
-                        item = UnequipedItems[2];
+                    if (itemType.Equals(StorageSlots[2].ItemType))
+                        item = StorageSlots[2];
                     break;
                 case "other4":
-                    if (itemType.Equals(UnequipedItems[3].ItemType))
-                        item = UnequipedItems[3];
+                    if (itemType.Equals(StorageSlots[3].ItemType))
+                        item = StorageSlots[3];
                     break;
                 case "other5":
-                    if (itemType.Equals(UnequipedItems[4].ItemType))
-                        item = UnequipedItems[4];
+                    if (itemType.Equals(StorageSlots[4].ItemType))
+                        item = StorageSlots[4];
                     break;
             }
 
@@ -284,7 +196,7 @@ namespace Paramita.GameLogic.Actors
                 DropItem(item);
             }
             else
-                throw new Exception("Player.DropItem(string,string) found no item to drop.");
+                throw new Exception("Found no matching item to drop.");
         }
 
         public override bool AddItem(Item item)
@@ -295,6 +207,65 @@ namespace Paramita.GameLogic.Actors
             return base.AddItem(item);
         }
 
+        public override string GetDescription()
+        {
+            throw new NotImplementedException("Player.GetDescription() is not implemented yet.");
+        }
+
+        #region Helper Methods
+        /*  
+         *  This method is called immediately when CurrentTile is changed in Update() to check for
+         *  any events that are triggered by the new tile, such as picking up items, changing levels, etc.
+         */
+        private void CheckForNewTileEvents()
+        {
+            // check for items in the new tile and pick the first item present
+            if (CurrentTile.InspectItems().Length > 0)
+                TryToPickUpItem();
+            // check for events based on moving to TileTypes like StairsUp & StairsDown
+            CheckForTileTypeEvent(CurrentTile.TileType);
+        }
+
+        // Checks the TileType of Player.CurrentTile for any events that when moving to them
+        private void CheckForTileTypeEvent(TileType tileType)
+        {
+            int change = 0;
+            switch (tileType)
+            {
+                case TileType.StairsUp:
+                    if (Dungeon.CurrentLevelNumber > 1)
+                        change = -1;
+                    break;
+                case TileType.StairsDown:
+                    change = 1;
+                    break;
+            }
+            if (change != 0)
+            {
+                OnLevelChange?.Invoke(this, new LevelChangeEventArgs(change));
+            }
+        }
+
+        // checks to see if there is an item to pick up and does so if one is there.
+        // used when player moves to a new tile.
+        private void TryToPickUpItem()
+        {
+            Item[] items = CurrentTile.InspectItems();
+
+            if (AddItem(items[0]) == true)
+            {
+                CurrentTile.RemoveItem(items[0]);
+                OnInventoryChange?.Invoke(this, new InventoryChangeEventArgs(Dungeon.GetPlayerInventory()));
+
+                if (items[0] is Coins)
+                {
+                    //GameScene.PostNewStatus("You picked up " + items[0].ToString() + ".");
+                    //GameScene.PostNewStatus("You now have " + Gold + " gold.");
+                }
+                else { }
+                //GameScene.PostNewStatus("You picked up a " + items[0].ToString() + ".");
+            }
+        }
 
         private bool AddCoins(Item item)
         {
@@ -307,9 +278,31 @@ namespace Paramita.GameLogic.Actors
             return false;
         }
 
-        public override string GetDescription()
+        // decrement's the player's sustanence value and writes messages to
+        // GameScene.StatusMessages
+        private void ExpendSustanence()
         {
-            throw new NotImplementedException("Player.GetDescription() is not implemented yet.");
+            Sustanence = Sustanence - 1;
+            string message = "";
+
+            if (Sustanence == 0)
+            {
+                message = "You died of starvation (0).";
+            }
+            else if (Sustanence == 30)
+            {
+                message = "You are starving and need to find food soon (30).";
+            }
+            else if (Sustanence == 120)
+            {
+                message = "You are getting hungry (120).";
+            }
+
+            if (message != "")
+            {
+                //GameScene.PostNewStatus(message);
+            }
         }
+        #endregion
     }
 }

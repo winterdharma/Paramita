@@ -24,52 +24,43 @@ namespace Paramita.GameLogic.Actors
      */
     public abstract class Humanoid : Actor
     {
+        #region Fields
         // @equipedItems index values
         protected int leftHand = 0;
         protected int rightHand = 1;
         protected int head = 2;
         protected int body = 3;
         protected int feet = 4;
+        #endregion
 
+
+        #region Properties
         public Item LeftHandItem
         {
-            get { return equipedItems[leftHand]; }
+            get { return _equippedItems[leftHand]; }
         }
         public Item RightHandItem
         {
-            get { return equipedItems[rightHand]; }
+            get { return _equippedItems[rightHand]; }
         }
         public Item HeadItem
         {
-            get { return equipedItems[head]; }
+            get { return _equippedItems[head]; }
         }
         public Item BodyItem
         {
-            get { return equipedItems[body]; }
+            get { return _equippedItems[body]; }
         }
         public Item FeetItem
         {
-            get { return equipedItems[feet]; }
+            get { return _equippedItems[feet]; }
         }
-
+        #endregion
 
 
         public Humanoid(BeingType type) : base(type)
         {
 
-        }
-
-
-        protected override void InitializeAttributes()
-        {
-            // implemented in child classes
-        }
-
-
-        protected override void InitializeItemLists()
-        {
-            equipedItems = new Item[5];
-            unequipedItems = new Item[5];
         }
 
 
@@ -91,88 +82,51 @@ namespace Paramita.GameLogic.Actors
             return locations;
         }
 
-
-
         public void RemoveItem(Item item)
         {
-
-            for (int i = 0; i < unequipedItems.Length; i++)
-            {
-                if (unequipedItems[i] != null && unequipedItems[i].Equals(item))
-                {
-                    unequipedItems[i] = null;
-                    return;
-                }
-            }
-
-            for (int i = 0; i < equipedItems.Length; i++)
-            {
-                if (equipedItems[i] != null && equipedItems[i].Equals(item))
-                {
-                    equipedItems[i] = null;
-                    TryToReplaceWithNaturalWeapon(item.EquipType, i);
-                }
-            }
-
+            DiscardItem(item);
         }
-
-
-        private void TryToReplaceWithNaturalWeapon(EquipType type, int location)
-        {
-            var locations = GetLocationForEquipType(type);
-
-            for(int i = 0; i < locations.Count; i++)
-            {
-                if (IsWeaponEquippedAt(locations[i]))
-                    return;
-            }
-
-            for(int i = 0; i < naturalWeapons.Count; i++)
-            {
-                if(naturalWeapons[i].EquipType == type)
-                {
-                    equipedItems[location] = naturalWeapons[i];
-                }
-            }
-        }
-        
 
         public virtual bool AddItem(Item item)
         {
-            bool equiped = TryToEquipItem(item);
-
-            if (equiped == false)
-            {
-                for (int x = 0; x < unequipedItems.Length; x++)
-                {
-                    if (unequipedItems[x] == null)
-                    {
-                        unequipedItems[x] = item;
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            return true;
+            return AcquireItem(item);
         }
-
 
         public Item[] InspectItems()
         {
             Item[] items = new Item[10];
 
-            for (int x = 0; x < equipedItems.Length; x++)
+            for (int x = 0; x < _equippedItems.Length; x++)
             {
-                items[x] = equipedItems[x];
+                items[x] = _equippedItems[x];
             }
 
-            for (int x = 0; x < unequipedItems.Length; x++)
+            for (int x = 0; x < _unequippedItems.Length; x++)
             {
-                items[x + 5] = unequipedItems[x];
+                items[x + 5] = _unequippedItems[x];
             }
 
             return items;
         }
+
+
+        #region Protected Methods
+        protected override void InitializeAttributes()
+        {
+            // implemented in child classes
+        }
+
+
+        protected override void InitializeItemLists()
+        {
+            _equippedItems = new Item[5];
+            _unequippedItems = new Item[5];
+        }
+        #endregion
+
+
+        #region Helper Methods
+        
+        #endregion
     }
 }
