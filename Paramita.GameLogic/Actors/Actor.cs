@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using Paramita.GameLogic.Levels;
 using Paramita.GameLogic.Mechanics;
+using Paramita.GameLogic.Actions;
 
 namespace Paramita.GameLogic.Actors
 {
@@ -178,12 +179,6 @@ namespace Paramita.GameLogic.Actors
         public abstract List<int> GetLocationForEquipType(EquipType type);
         // This method is the verbose report on a sentient being
         public abstract string GetDescription();
-        public bool Equals(Actor other)
-        {
-            if (this.GetType() == other.GetType())
-                return true;
-            return false;
-        }
         #endregion
 
 
@@ -348,6 +343,12 @@ namespace Paramita.GameLogic.Actors
             fatigue += totalEncumbrance;
         }
 
+        public bool Equals(Actor other)
+        {
+            if (this.GetType() == other.GetType())
+                return true;
+            return false;
+        }
 
         public virtual void Update()
         {

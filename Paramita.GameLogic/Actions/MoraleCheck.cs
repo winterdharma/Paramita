@@ -1,6 +1,7 @@
 ﻿using Paramita.GameLogic.Actors;
+using Paramita.GameLogic.Mechanics;
 
-namespace Paramita.GameLogic.Mechanics
+namespace Paramita.GameLogic.Actions
 {
     /*
      * A morale check is a way to check if a being will decide not to proceed with

@@ -2,8 +2,9 @@
 using Paramita.GameLogic.Items;
 using Paramita.GameLogic.Actors;
 using System.Collections.Generic;
+using Paramita.GameLogic.Mechanics;
 
-namespace Paramita.GameLogic.Mechanics
+namespace Paramita.GameLogic.Actions
 {
    /*
     *  Resolve Attack Functions

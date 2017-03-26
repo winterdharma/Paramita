@@ -1,8 +1,9 @@
 ﻿using System;
 using Paramita.GameLogic.Actors;
 using Paramita.GameLogic.Items;
+using Paramita.GameLogic.Mechanics;
 
-namespace Paramita.GameLogic.Mechanics
+namespace Paramita.GameLogic.Actions
 {
     /*
         * This class conducts a DamageRoll after a successful AttackRoll hit

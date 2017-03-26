@@ -1,7 +1,8 @@
 ﻿using Paramita.GameLogic.Items;
 using Paramita.GameLogic.Actors;
+using Paramita.GameLogic.Mechanics;
 
-namespace Paramita.GameLogic.Mechanics
+namespace Paramita.GameLogic.Actions
 {
     /*
     *  An attack roll consists of a competitive roll of 2d6 (open-ended) between the attacker

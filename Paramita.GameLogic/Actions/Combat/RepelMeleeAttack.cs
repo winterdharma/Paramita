@@ -2,7 +2,7 @@
 using Paramita.GameLogic.Actors;
 using System.Collections.Generic;
 
-namespace Paramita.GameLogic.Mechanics
+namespace Paramita.GameLogic.Actions
 {
     /*
     *  Repel Meelee Attack
