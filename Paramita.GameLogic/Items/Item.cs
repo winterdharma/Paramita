@@ -21,7 +21,8 @@ namespace Paramita.GameLogic.Items
         Hand,
         Head,
         Body,
-        Feet
+        Feet,
+        Tail
     }
 
 

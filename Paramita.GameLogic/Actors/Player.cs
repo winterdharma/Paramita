@@ -43,7 +43,6 @@ namespace Paramita.GameLogic.Actors
 
 
         public event EventHandler<LevelChangeEventArgs> OnLevelChange;
-        public event EventHandler<InventoryChangeEventArgs> OnInventoryChange;
 
         public Player(string name) : base(BeingType.HumanPlayer)
         {
@@ -51,6 +50,7 @@ namespace Paramita.GameLogic.Actors
 
             InitializeAttributes();
             InitializeItemLists();
+            base.SubscribeToEvents();
         }
 
         #region Protected Methods
@@ -71,19 +71,11 @@ namespace Paramita.GameLogic.Actors
             _size = 2;
         }
 
-        protected override void InitializeItemLists()
+        private void InitializeItemLists()
         {
-            base.InitializeItemLists();
-
-            _shields = new List<Shield>();
-            _attacks = new List<Weapon>();
-
-            _naturalWeapons = new List<Weapon>();
-            _naturalWeapons.Add(ItemCreator.CreateFist());
-            _naturalWeapons.Add(ItemCreator.CreateFist());
-
-            AddItem(_naturalWeapons[0]);
-            AddItem(_naturalWeapons[1]);
+            Inventory.NaturalWeapons.Add(ItemCreator.CreateFist());
+            Inventory.NaturalWeapons.Add(ItemCreator.CreateFist());
+            Inventory.Weapons.AddRange(Inventory.NaturalWeapons);
         }
         #endregion
 
@@ -92,26 +84,11 @@ namespace Paramita.GameLogic.Actors
         public void SavePlayer() { }
 
 
-        public Tuple<Dictionary<string, ItemType>, int> GetInventory()
+        public void GetInventory()
         {
-            var playerInventory = new Dictionary<string, ItemType>();
-
-            playerInventory["left_hand"] = LeftHandItem != null ? LeftHandItem.ItemType : ItemType.None;
-            playerInventory["right_hand"] = RightHandItem != null ? RightHandItem.ItemType : ItemType.None;
-            playerInventory["head"] = HeadItem != null ? HeadItem.ItemType : ItemType.None;
-            playerInventory["body"] = BodyItem != null ? BodyItem.ItemType : ItemType.None;
-            playerInventory["feet"] = FeetItem != null ? FeetItem.ItemType : ItemType.None;
-
-            Item[] playerOtherItems = StorageSlots;
-            string label; int num = 0;
-            foreach (var item in playerOtherItems)
-            {
-                num++;
-                label = "other" + num;
-                playerInventory[label] = item != null ? item.ItemType : ItemType.None;
-            }
-
-            return new Tuple<Dictionary<string, ItemType>, int>(playerInventory, Gold);
+            //Tuple<Dictionary<string, ItemType>, int>
+            Inventory.RaiseChangeEvent();
+            //return Inventory.GetInventoryData();
         }
 
         public override void Update()
@@ -129,16 +106,11 @@ namespace Paramita.GameLogic.Actors
             }
         }
 
-        // Drops item onto the tile the player is located in.
-        // The item to drop is indicated by @itemToDrop, which should be a valid
-        // index value for the player's inventory list
         public void DropItem(Item itemToDrop)
         {
-            if (itemToDrop != null && !(itemToDrop is NaturalWeapon))
+            if (!(itemToDrop is NaturalWeapon))
             {
-                RemoveItem(itemToDrop);
-                OnInventoryChange?.Invoke(this, new InventoryChangeEventArgs(Dungeon.GetPlayerInventory()));
-                CurrentTile.AddItem(itemToDrop);
+                Discard(itemToDrop);
                 //GameScene.PostNewStatus("You dropped a " + itemToDrop.ToString() + ".");
             }
         }
@@ -170,24 +142,24 @@ namespace Paramita.GameLogic.Actors
                         item = FeetItem;
                     break;
                 case "other1":
-                    if (itemType.Equals(StorageSlots[0].ItemType))
-                        item = StorageSlots[0];
+                    if (itemType.Equals(Inventory.Storage[0].ItemType))
+                        item = Inventory.Storage[0];
                     break;
                 case "other2":
-                    if (itemType.Equals(StorageSlots[1].ItemType))
-                        item = StorageSlots[1];
+                    if (itemType.Equals(Inventory.Storage[1].ItemType))
+                        item = Inventory.Storage[1];
                     break;
                 case "other3":
-                    if (itemType.Equals(StorageSlots[2].ItemType))
-                        item = StorageSlots[2];
+                    if (itemType.Equals(Inventory.Storage[2].ItemType))
+                        item = Inventory.Storage[2];
                     break;
                 case "other4":
-                    if (itemType.Equals(StorageSlots[3].ItemType))
-                        item = StorageSlots[3];
+                    if (itemType.Equals(Inventory.Storage[3].ItemType))
+                        item = Inventory.Storage[3];
                     break;
                 case "other5":
-                    if (itemType.Equals(StorageSlots[4].ItemType))
-                        item = StorageSlots[4];
+                    if (itemType.Equals(Inventory.Storage[4].ItemType))
+                        item = Inventory.Storage[4];
                     break;
             }
 
@@ -204,7 +176,7 @@ namespace Paramita.GameLogic.Actors
             if (AddCoins(item))
                 return true;
 
-            return base.AddItem(item);
+            return Acquire(item);
         }
 
         public override string GetDescription()
@@ -255,7 +227,6 @@ namespace Paramita.GameLogic.Actors
             if (AddItem(items[0]) == true)
             {
                 CurrentTile.RemoveItem(items[0]);
-                OnInventoryChange?.Invoke(this, new InventoryChangeEventArgs(Dungeon.GetPlayerInventory()));
 
                 if (items[0] is Coins)
                 {

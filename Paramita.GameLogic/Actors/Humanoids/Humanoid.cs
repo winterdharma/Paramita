@@ -1,5 +1,6 @@
 ﻿using Paramita.GameLogic.Items;
 using System.Collections.Generic;
+using System;
 
 namespace Paramita.GameLogic.Actors
 {
@@ -26,6 +27,8 @@ namespace Paramita.GameLogic.Actors
     {
         #region Fields
         // @equipedItems index values
+        private string[] _equipSlotLabels = new string[] { "left_hand", "right_hand", "head", "body", "feet" };
+        private EquipType[] _equipTypes = new EquipType[5] { EquipType.Hand, EquipType.Hand, EquipType.Head, EquipType.Body, EquipType.Feet };
         protected int leftHand = 0;
         protected int rightHand = 1;
         protected int head = 2;
@@ -37,73 +40,54 @@ namespace Paramita.GameLogic.Actors
         #region Properties
         public Item LeftHandItem
         {
-            get { return _equippedItems[leftHand]; }
+            get { return Inventory.Equipment[leftHand]; }
         }
         public Item RightHandItem
         {
-            get { return _equippedItems[rightHand]; }
+            get { return Inventory.Equipment[rightHand]; }
         }
         public Item HeadItem
         {
-            get { return _equippedItems[head]; }
+            get { return Inventory.Equipment[head]; }
         }
         public Item BodyItem
         {
-            get { return _equippedItems[body]; }
+            get { return Inventory.Equipment[body]; }
         }
         public Item FeetItem
         {
-            get { return _equippedItems[feet]; }
+            get { return Inventory.Equipment[feet]; }
         }
         #endregion
 
 
         public Humanoid(BeingType type) : base(type)
         {
-
-        }
-
-
-        public override List<int> GetLocationForEquipType(EquipType type)
-        {
-            List<int> locations = new List<int>();
-            if (type == EquipType.Hand)
-            {
-                locations.Add(leftHand);
-                locations.Add(rightHand);
-            }
-            else if (type == EquipType.Body)
-                locations.Add(body);
-            else if (type == EquipType.Feet)
-                locations.Add(feet);
-            else if (type == EquipType.Head)
-                locations.Add(head);
-
-            return locations;
+            InitializeInventory();
         }
 
         public void RemoveItem(Item item)
         {
-            DiscardItem(item);
+            Discard(item);
         }
 
         public virtual bool AddItem(Item item)
         {
-            return AcquireItem(item);
+            return Acquire(item);
         }
 
         public Item[] InspectItems()
         {
             Item[] items = new Item[10];
 
-            for (int x = 0; x < _equippedItems.Length; x++)
+            for (int x = 0; x < Inventory.Equipment.Length; x++)
             {
-                items[x] = _equippedItems[x];
+                items[x] = Inventory.Equipment[x];
             }
 
-            for (int x = 0; x < _unequippedItems.Length; x++)
+            for (int x = 0; x < Inventory.Storage.Length; x++)
             {
-                items[x + 5] = _unequippedItems[x];
+                items[x + 5] = Inventory.Storage[x];
             }
 
             return items;
@@ -117,11 +101,19 @@ namespace Paramita.GameLogic.Actors
         }
 
 
-        protected override void InitializeItemLists()
+        protected override void InitializeInventory()
         {
-            _equippedItems = new Item[5];
-            _unequippedItems = new Item[5];
+            Inventory.Labels = _equipSlotLabels;
+            Inventory.EquipTypes = _equipTypes;
+            Inventory.Equipment = new Item[5];
+            Inventory.Storage = new Item[5];
         }
+
+        //protected override void InitializeItemLists()
+        //{
+        //    _equippedItems = new Item[5];
+        //    _unequippedItems = new Item[5];
+        //}
         #endregion
 
 

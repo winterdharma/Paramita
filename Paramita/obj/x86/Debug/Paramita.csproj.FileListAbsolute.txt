@@ -31,6 +31,7 @@ C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Paramita.exe.co
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Paramita.exe
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Paramita.pdb
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\MonoGame.Framework.dll
+C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\NSubstitute.dll
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Paramita.GameLogic.dll
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\RogueSharp.dll
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\SharpDX.MediaFoundation.dll
@@ -44,6 +45,7 @@ C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\SharpDX.RawInpu
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\SharpDX.Direct3D9.dll
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\Paramita.GameLogic.pdb
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\MonoGame.Framework.xml
+C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\NSubstitute.xml
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\RogueSharp.xml
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\SharpDX.MediaFoundation.xml
 C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\SharpDX.xml
@@ -57,5 +59,3 @@ C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\SharpDX.Direct3
 C:\Users\Charlie\Desktop\Paramita\Paramita\obj\x86\Debug\Paramita.csprojResolveAssemblyReference.cache
 C:\Users\Charlie\Desktop\Paramita\Paramita\obj\x86\Debug\Paramita.exe
 C:\Users\Charlie\Desktop\Paramita\Paramita\obj\x86\Debug\Paramita.pdb
-C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\NSubstitute.dll
-C:\Users\Charlie\Desktop\Paramita\Paramita\bin\Windows\x86\Debug\NSubstitute.xml

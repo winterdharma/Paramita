@@ -46,6 +46,7 @@
     <Compile Include="Actors\Animals\GiantRat.cs" />
     <Compile Include="Actors\Humanoids\Humanoid.cs" />
     <Compile Include="Actors\INpc.cs" />
+    <Compile Include="Actors\Inventory.cs" />
     <Compile Include="Actors\IPlayer.cs" />
     <Compile Include="Actors\PathToPlayer.cs" />
     <Compile Include="Actors\Player.cs" />
@@ -83,7 +84,7 @@
     <Compile Include="Actions\Combat\RepelMeleeAttack.cs" />
     <Compile Include="Mechanics\Dice.cs" />
     <Compile Include="Mechanics\Direction.cs" />
-    <Compile Include="Actions\MoraleCheck.cs" />
+    <Compile Include="Actions\CheckMorale.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\RandomNum.cs" />
     <Compile Include="Utility\Utilities.cs" />

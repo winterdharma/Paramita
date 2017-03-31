@@ -112,7 +112,7 @@ namespace Paramita.GameLogic.Actions
         private bool RepelAttackMoraleCheck(AttackRoll attackRoll)
         {
             int checkModifier = attackRoll.Result / 2;
-            var moraleCheck = new MoraleCheck(attackRoll.Attacker, MoraleCheckType.RepelAttack, 
+            var moraleCheck = new CheckMorale(attackRoll.Attacker, MoraleCheckType.RepelAttack, 
                 attackRoll.Defender, checkModifier);
 
             if (moraleCheck.IsSuccessful)

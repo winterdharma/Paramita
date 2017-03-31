@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.GameLogic;
+using Paramita.GameLogic.Actors;
 using Paramita.GameLogic.Items;
 using Paramita.UI.Input;
 using System;
@@ -101,7 +102,7 @@ namespace Paramita.UI.Scenes.Game
         {
             InitializePanel();
             SubscribeToInputEvents();
-            GetPlayerData();
+            Dungeon.GetPlayerInventory();
         }
 
 
@@ -246,13 +247,6 @@ namespace Paramita.UI.Scenes.Game
             Dungeon.OnInventoryChangeUINotification += HandleInventoryChange;
         }
 
-
-        private void GetPlayerData()
-        {
-            var playerData = Dungeon.GetPlayerInventory();
-            UpdateInventoryData(playerData);
-        }
-
         private void UpdateInventoryData(Tuple<Dictionary<string, ItemType>, int> inventoryData)
         {
             Inventory = inventoryData.Item1;
@@ -265,7 +259,6 @@ namespace Paramita.UI.Scenes.Game
         private void CreateSpriteElements()
         {
             _spriteElements = new List<SpriteElement>();
-            string slot;
 
             for (int i = 1; i < _inventorySlots.Count; i++)
             {

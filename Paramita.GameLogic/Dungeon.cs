@@ -9,15 +9,6 @@ using Paramita.GameLogic.Utility;
 namespace Paramita.GameLogic
 {
     #region Custom EventArg Classes
-    public class InventoryChangeEventArgs : EventArgs
-    {
-        public Tuple<Dictionary<string, ItemType>, int> Inventory { get; }
-        public InventoryChangeEventArgs(Tuple<Dictionary<string, ItemType>, int> inventory)
-        {
-            Inventory = inventory;
-        }
-    }
-
     public class StatusMessageEventArgs : EventArgs
     {
         public List<string> Message { get; }
@@ -111,9 +102,9 @@ namespace Paramita.GameLogic
 
         #endregion
         
-        public static Tuple<Dictionary<string, ItemType>, int> GetPlayerInventory()
+        public static void GetPlayerInventory()
         {
-            return _player.GetInventory();
+            _player.GetInventory();
         }
 
 

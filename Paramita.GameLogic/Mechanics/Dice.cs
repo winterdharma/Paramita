@@ -70,6 +70,7 @@ namespace Paramita.GameLogic.Mechanics
         #region Helper Methods
         private int RollDice(bool isOpenEnded)
         {
+            _report.Clear();
             int diceLeftToRoll = _numberOfDice;
             int totalRolled = 0;
             int roll;

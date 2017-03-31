@@ -1,5 +1,6 @@
 ﻿using Paramita.GameLogic.Items;
 using System.Collections.Generic;
+using System;
 
 namespace Paramita.GameLogic.Actors
 {
@@ -16,6 +17,8 @@ namespace Paramita.GameLogic.Actors
     public class Animal : Actor
     {
         // equiped items
+        private string[] _equipSlotLabels = new string[] { "head", "front_legs", "rear_legs", "body", "tail" };
+        private EquipType[] _equipTypes = new EquipType[5] { EquipType.Head, EquipType.Feet, EquipType.Feet, EquipType.Body, EquipType.Tail };
         protected int head = 0;
         protected int frontFeet = 1;
         protected int rearFeet = 2;
@@ -24,6 +27,7 @@ namespace Paramita.GameLogic.Actors
 
         public Animal(BeingType type) : base(type)
         {
+            InitializeInventory();
         }
 
 
@@ -32,28 +36,12 @@ namespace Paramita.GameLogic.Actors
             // implemented in child classes
         }
 
-
-        protected override void InitializeItemLists()
+        protected override void InitializeInventory()
         {
-            _equippedItems = new Item[5];
-            _unequippedItems = new Item[1];
-        }
-
-
-        public override List<int> GetLocationForEquipType(EquipType type)
-        {
-            List<int> locations = new List<int>();
-            if (type == EquipType.Body)
-                locations.Add(body);
-            else if (type == EquipType.Feet)
-            {
-                locations.Add(frontFeet);
-                locations.Add(rearFeet);
-            }
-            else if (type == EquipType.Head)
-                locations.Add(head);
-
-            return locations;
+            Inventory.Equipment = new Item[5];
+            Inventory.Storage = new Item[1];
+            Inventory.Labels = _equipSlotLabels;
+            Inventory.EquipTypes = _equipTypes;
         }
 
 

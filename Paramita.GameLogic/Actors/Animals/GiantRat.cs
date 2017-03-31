@@ -32,17 +32,10 @@ namespace Paramita.GameLogic.Actors.Animals
         }
 
 
-        protected override void InitializeItemLists()
+        private void InitializeItemLists()
         {
-            base.InitializeItemLists();
-
-            _naturalWeapons = new List<Weapon>();
-            _naturalWeapons.Add(ItemCreator.CreateBite());
-
-            _attacks = new List<Weapon>();
-            Attacks.AddRange(_naturalWeapons);
-
-            _shields = new List<Shield>();
+            Inventory.NaturalWeapons.Add(ItemCreator.CreateBite());
+            Inventory.Weapons.AddRange(Inventory.NaturalWeapons);
         }
 
         public void Update(Player player)

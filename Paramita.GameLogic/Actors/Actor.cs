@@ -48,12 +48,7 @@ namespace Paramita.GameLogic.Actors
 
         protected Tile _currentTile;
 
-        protected Item[] _unequippedItems;
-        protected Item[] _equippedItems;
-
-        protected List<Weapon> _naturalWeapons;
-        protected List<Weapon> _attacks;
-        protected List<Shield> _shields;
+        private Inventory _inventory;
 
         protected int _hitPoints;
         protected int _protection;
@@ -76,6 +71,7 @@ namespace Paramita.GameLogic.Actors
 
 
         #region Events
+        public event EventHandler<InventoryChangeEventArgs> OnInventoryChange;
         public event EventHandler<MoveEventArgs> OnMoveAttempt;
         public event EventHandler<StatusMessageEventArgs> OnStatusMsgSent;
         public event EventHandler<MoveEventArgs> OnActorDeath;
@@ -86,6 +82,7 @@ namespace Paramita.GameLogic.Actors
         {
             BeingType = beingType;
             Facing = Compass.East;
+            Inventory = new Inventory();
         }
 
 
@@ -103,9 +100,15 @@ namespace Paramita.GameLogic.Actors
 
         public Compass Facing { get; private set; }
 
-        public List<Weapon> Attacks { get { return _attacks; } }
+        public Inventory Inventory
+        {
+            get { return _inventory; }
+            protected set { _inventory = value; }
+        }
 
-        public List<Shield> Shields { get { return _shields; } }
+        public List<Weapon> Attacks { get { return Inventory.Weapons; } }
+
+        public List<Shield> Shields { get { return Inventory.Shields; } }
 
         public int HitPoints { get { return _hitPoints; } }
 
@@ -116,9 +119,9 @@ namespace Paramita.GameLogic.Actors
             get
             {
                 int protection = 0;
-                for (int x = 0; x < _shields.Count; x++)
+                for (int x = 0; x < Inventory.Shields.Count; x++)
                 {
-                    protection += _shields[x].Protection;
+                    protection += Inventory.Shields[x].Protection;
                 }
                 return protection;
             }
@@ -135,9 +138,9 @@ namespace Paramita.GameLogic.Actors
             get
             {
                 int weaponsMods = 0;
-                for (int x = 0; x < _attacks.Count; x++)
+                for (int x = 0; x < Inventory.Weapons.Count; x++)
                 {
-                    weaponsMods += _attacks[x].DefenseModifier;
+                    weaponsMods += Inventory.Weapons[x].DefenseModifier;
                 }
                 return _defenseSkill + weaponsMods;
             }
@@ -148,9 +151,9 @@ namespace Paramita.GameLogic.Actors
             get
             {
                 int shieldParry = 0;
-                for (int x = 0; x < _shields.Count; x++)
+                for (int x = 0; x < Inventory.Shields.Count; x++)
                 {
-                    shieldParry += _shields[x].Parry;
+                    shieldParry += Inventory.Shields[x].Parry;
                 }
                 return shieldParry;
             }
@@ -182,150 +185,27 @@ namespace Paramita.GameLogic.Actors
         }
 
         public bool IsDead { get { return _isDead; } }
-
-        public Item[] EquipmentSlots
-        {
-            get { return _equippedItems; }
-            protected set
-            {
-                _equippedItems = value;
-                UpdateAttacks();
-                UpdateShields();
-            }
-        }
-
-        public Item[] StorageSlots { get { return _unequippedItems; } }
         #endregion
 
 
         #region Abstract Methods
         // helper methods for child class constructors
         protected abstract void InitializeAttributes();
-        protected abstract void InitializeItemLists();
-        public abstract List<int> GetLocationForEquipType(EquipType type);
+        protected abstract void InitializeInventory();
         // This method is the verbose report on a sentient being
         public abstract string GetDescription();
         #endregion
 
 
-        #region Item Related API
-        public bool AcquireItem(Item item)
-        {
-            if (!AddItemToEquipment(item))
-                return AddItemToStorage(item);
-            else
-                return true;
-        }
-
-        public bool DiscardItem(Item item)
-        {
-            if (!RemoveItemFromEquipment(item))
-                return RemoveItemFromStorage(item);
-            else
-                return true;
-        }
-
-        public bool EquipItem(Item item)
-        {
-            if (RemoveItemFromStorage(item))
-                return AddItemToEquipment(item);
-            else
-                return false;
-        }
-
-        public bool UnequipItem(Item item)
-        {
-            if (RemoveItemFromEquipment(item))
-                return AddItemToStorage(item);
-            else
-                return false;
-        }
-
-        public void UseItem(Item item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ConsumeItem(Item item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsNaturalWeaponEquipedAt(int location)
-        {
-            if ((_equippedItems[location] is NaturalWeapon) == true)
-                return true;
-            return false;
-        }
-
-        
-        public bool IsWeaponEquippedAt(int location)
-        {
-            if (_equippedItems[location] is Weapon)
-                return true;
-            return false;
-        }
-
-        public bool IsEquipmentSlotEmpty(int location)
-        {
-            if (EquipmentSlots[location] == null)
-                return true;
-            return false;
-        }
-        #endregion
-
-
         #region Combat Related API
-        // Checks the being's equip items for Weapons or NaturalWeapons
-        public void UpdateAttacks()
-        {
-            // reset the attacks list
-            _attacks.Clear();
-
-            // check for bonus attack NaturalWeapons
-            for (int x = 0; x < _naturalWeapons.Count; x++)
-            {
-                if (_naturalWeapons[x].EquipType == EquipType.None)
-                {
-                    _attacks.Add(_naturalWeapons[x]);
-                }
-            }
-
-            for (int x = 0; x < _equippedItems.Length; x++)
-            {
-                if (_equippedItems[x] is Weapon)
-                {
-                    _attacks.Add(_equippedItems[x] as Weapon);
-                }
-            }
-
-            _attacks = _attacks.OrderBy(w => w.Length).ToList();
-            Console.WriteLine(_attacks.ToString());
-        }
-
-
-        public void UpdateShields()
-        {
-            _shields.Clear();
-
-            for (int x = 0; x < _equippedItems.Length; x++)
-            {
-                if (_equippedItems[x] is Shield)
-                {
-                    _shields.Add(_equippedItems[x] as Shield);
-                }
-            }
-        }
-
-
         // conduct all of a being's attacks for the turn
         public void Attack(Actor defender)
         {
             Attack attack;
             //GameScene.PostNewStatus(this + " attacked " + defender + ".");
-            for(int x = 0; x < _attacks.Count; x++)
+            for(int x = 0; x < Inventory.Weapons.Count; x++)
             {
-                attack = new Attack(this, _attacks[x], defender);
+                attack = new Attack(this, Inventory.Weapons[x], defender);
                 OnStatusMsgSent?.Invoke(this, new StatusMessageEventArgs(attack.AttackReport));
                 if (IsDead || defender.IsDead)
                 {
@@ -341,7 +221,7 @@ namespace Paramita.GameLogic.Actors
             if (Attacks.Count == 0)
                 return null;
 
-            Weapon longestWeapon = _attacks[0];
+            Weapon longestWeapon = Inventory.Weapons[0];
 
             if (Attacks.Count > 1)
             {
@@ -376,6 +256,28 @@ namespace Paramita.GameLogic.Actors
             int totalEncumbrance = GetTotalEncumbrance();
 
             _fatigue += totalEncumbrance;
+        }
+        #endregion
+
+        
+        #region Inventory Related API
+        public bool Acquire(Item item)
+        {
+            if (!Inventory.AddItemToEquipment(item))
+                return Inventory.AddItemToStorage(item);
+            else
+                return true;
+        }
+
+        public bool Discard(Item item)
+        {
+            if (Remove(item))
+            {
+                CurrentTile.AddItem(item);
+                return true;
+            }
+            else
+                return false;
         }
         #endregion
 
@@ -424,9 +326,9 @@ namespace Paramita.GameLogic.Actors
         {
             int total = _encumbrance;
 
-            for (int i = 0; i < _equippedItems.Length; i++)
+            for (int i = 0; i < Inventory.Equipment.Length; i++)
             {
-                total += GetItemEncumbrance(_equippedItems[i]);
+                total += GetItemEncumbrance(Inventory.Equipment[i]);
             }
 
             return total;
@@ -435,6 +337,16 @@ namespace Paramita.GameLogic.Actors
 
 
         #region Helper Methods
+        protected void SubscribeToEvents()
+        {
+            Inventory.OnInventoryChange += HandleInventoryChange;
+        }
+
+        private void HandleInventoryChange(object sender, InventoryChangeEventArgs eventArgs)
+        {
+            OnInventoryChange?.Invoke(this, eventArgs);
+        }
+
         private void CheckForDeath()
         {
             if (_hitPoints < 1)
@@ -459,107 +371,13 @@ namespace Paramita.GameLogic.Actors
             }
             return 0;
         }
-
-        private bool AddItemToStorage(Item item)
+        
+        private bool Remove(Item item)
         {
-            var emptyAt = new List<int>();
-            if (FindEmptySlots(StorageSlots, out emptyAt))
-            {
-                StorageSlots[emptyAt[0]] = item;
-                return true;
-            }
+            if (!Inventory.RemoveItemFromEquipment(item))
+                return Inventory.RemoveItemFromStorage(item);
             else
-                return false;
-        }
-
-        private bool RemoveItemFromStorage(Item item)
-        {
-            int foundAt;
-            if (FindItemInSlots(StorageSlots, item, out foundAt))
-            {
-                StorageSlots[foundAt] = null;
                 return true;
-            }
-            else
-                return false;
-        }
-
-        private bool AddItemToEquipment(Item item)
-        {
-            if (item.EquipType == EquipType.None)
-                return false;
-
-            var validAt = GetLocationForEquipType(item.EquipType);
-
-            foreach(var index in validAt)
-            {
-                if((item is Weapon || item is Shield) && !(item is NaturalWeapon) 
-                    && EquipmentSlots[index] is NaturalWeapon)
-                {
-                    _equippedItems[index] = item;
-                    EquipmentSlots = _equippedItems;
-                    return true;
-                }
-
-
-                if(EquipmentSlots[index] == null)
-                {
-                    _equippedItems[index] = item;
-                    EquipmentSlots = _equippedItems;
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private bool RemoveItemFromEquipment(Item item)
-        {
-
-            int foundAt;
-            if(FindItemInSlots(EquipmentSlots, item, out foundAt))
-            {
-                _equippedItems[foundAt] = null;
-                EquipmentSlots = _equippedItems;
-
-                if(_naturalWeapons.Count > 0)
-                {
-                    foreach(var weapon in _naturalWeapons)
-                    {
-                        if (AddItemToEquipment(weapon))
-                            break;
-                    }
-                }
-                return true;
-            }
-            return false;
-        }
-
-        private bool FindEmptySlots(Item[] slots, out List<int> emptyAt)
-        {
-            emptyAt = new List<int>();
-            for (int i = 0; i < slots.Length; i++)
-            {
-                if(slots[i] == null)
-                {
-                    emptyAt.Add(i);
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private bool FindItemInSlots(Item[] slots, Item item, out int foundAt)
-        {
-            for(int i = 0; i < slots.Length; i++)
-            {
-                if(slots[i] == item)
-                {
-                    foundAt = i;
-                    return true;
-                }
-            }
-            foundAt = 1000;
-            return false;
         }
         #endregion
     }
