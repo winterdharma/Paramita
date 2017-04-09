@@ -65,11 +65,14 @@ namespace Paramita.GameLogic.Actors.Combat
         public bool Execute(Combatant defender, Attack attack, Combatant attacker)
         {
             Report.Clear();
+
+            defender.AddAttackEncumbranceToFatigue();
+            attacker.AddDefenseEncumbranceToFatigue();
+
             var repelWeapon = defender.GetLongestWeapon();
 
             var attackRoll = new AttackRoll(defender, repelWeapon, attacker);
-            Report.AddRange(
-                new string[] { attackRoll.AttackerReport, attackRoll.DefenderReport });
+            Report.AddRange(attackRoll.AttackRollReport);
 
             return ResolveRepelAttackResult(attackRoll);
         }

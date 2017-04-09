@@ -212,17 +212,20 @@ namespace Paramita.GameLogic.Actors
 
         private int GetItemEncumbrance(Item item)
         {
+            int encumbrance = 0;
             if (item is Armor)
             {
-                var itemAsArmor = item as Armor;
-                return itemAsArmor.Encumbrance;
+                encumbrance = (item as Armor).Encumbrance;
             }
             else if (item is Shield)
             {
-                var itemAsShield = item as Shield;
-                return itemAsShield.Encumbrance;
+                encumbrance = (item as Shield).Encumbrance;
             }
-            return 0;
+            else if (item is Weapon)
+            {
+                encumbrance = (item as Weapon).Encumbrance;
+            }
+            return encumbrance;
         }
         
         private bool Remove(Item item)

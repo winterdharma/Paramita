@@ -187,6 +187,19 @@ namespace Paramita.GameLogic.Actors
             get { return _timesAttacked; }
             set { _timesAttacked = value; }
         }
+
+        public int TimesAttackedPenalty
+        {
+            get
+            {
+                if (_timesAttacked < 2)
+                    return 0;
+                else
+                    return (_timesAttacked - 1) * 2;
+            }
+        }
+        
+        
         #endregion
 
 
@@ -272,6 +285,10 @@ namespace Paramita.GameLogic.Actors
         {
             if (_attacks.Count > 1)
                 return _attacks.OrderBy(attack => attack.Weapon.Length).Last().Weapon;
+            else if(_attacks.Count == 1)
+            {
+                return _attacks[0].Weapon;
+            }
             else
                 return null;
         }
@@ -292,9 +309,14 @@ namespace Paramita.GameLogic.Actors
             _timesAttacked++;
         }
 
-        public void AddEncumbranceToFatigue()
+        public void AddAttackEncumbranceToFatigue()
         {
-            _fatigue += _totalEncumbrance;
+            _fatigue += _totalEncumbrance + 1;
+        }
+
+        public void AddDefenseEncumbranceToFatigue()
+        {
+            _fatigue += (_totalEncumbrance / 2) + 1;
         }
 
         public override string ToString()

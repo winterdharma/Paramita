@@ -17,12 +17,12 @@ namespace Paramita.GameLogic.Actors.Combat
         {
             Report.Clear();
             defender.IncrementTimesAttacked();
-            attacker.AddEncumbranceToFatigue();
+            attacker.AddAttackEncumbranceToFatigue();
+            defender.AddDefenseEncumbranceToFatigue();
 
             var attackRoll = new AttackRoll(attacker, attack.Weapon, defender);
 
-            Report.AddRange(
-                new List<string>() { attackRoll.AttackerReport, attackRoll.DefenderReport });
+            Report.AddRange(attackRoll.AttackRollReport);
 
             ResolveAttackResult(attackRoll);
         }
@@ -33,6 +33,7 @@ namespace Paramita.GameLogic.Actors.Combat
             if (attackRoll.Result > 0)
             {
                 var damageRoll = new DamageRoll(attackRoll);
+                Report.AddRange(damageRoll.DamageRollReport);
                 attackRoll.Defender.TakeDamage(damageRoll.Damage);
 
                 string damage = damageRoll.Damage < 1 ? "no" : damageRoll.Damage.ToString();

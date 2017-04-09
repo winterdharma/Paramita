@@ -31,7 +31,7 @@ namespace Paramita.GameLogic.Mechanics
                 );
             _defendScore = OpenEndedRoll(
                 new List<int>() { defender.TotalDefense },
-                new List<int>() { defender.FatigueDefPenalty, (defender.TimesAttacked - 1) * 2 }
+                new List<int>() { defender.FatigueDefPenalty, defender.TimesAttackedPenalty }
                 );
 
             _attackRollReport = CreateReport();
@@ -55,15 +55,8 @@ namespace Paramita.GameLogic.Mechanics
             get { return _attackScore - _defendScore; }
         }
         public List<string> AttackRollReport { get { return _attackRollReport; } }
-        public string AttackerReport
-        {
-            get { return _attackRollReport[0]; }
-        }
-        public string DefenderReport
-        {
-            get { return _attackRollReport[1]; }
-        }
         #endregion
+
 
         #region Helper Methods
         private List<string> CreateReport()
@@ -72,7 +65,8 @@ namespace Paramita.GameLogic.Mechanics
             report.Add(_attacker + " rolled " + _attackScore + "(attSkill: " + _attacker.AttackSkill
                 + ", fatigue: " + _attacker.FatigueAttPenalty + ")");
             report.Add(_defender + " rolled " + _defendScore + "(defSkill: " + _defender.TotalDefense
-                + ", fatigue: " + _defender.FatigueDefPenalty + ", multAtt: " + ((_defender.TimesAttacked - 1) * 2) + ")");
+                + ", fatigue: " + _defender.FatigueDefPenalty + ", multAtt: " 
+                + _defender.TimesAttackedPenalty + ")");
             return report;
         }
         #endregion

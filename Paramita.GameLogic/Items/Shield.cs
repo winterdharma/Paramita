@@ -2,29 +2,35 @@
 {
     public class Shield : Item
     {
-        protected int encumbrance;
-        protected int parry;
-        protected int defenseModifier;
-        protected int protection;
-
-        public int Encumbrance { get { return encumbrance; } }
-        public int Parry { get { return parry; } }
-        public int DefenseModifier { get { return defenseModifier; } }
-        public int Protection { get { return protection; } }
+        #region Fields
+        protected int _encumbrance;
+        protected int _parry;
+        protected int _defenseModifier;
+        protected int _protection;
+        #endregion
 
 
         public Shield(int prot, int defMod, int parry, int enc, ItemType type, string name) : base(type, name)
         {
-            encumbrance = enc;
-            this.parry = parry;
-            defenseModifier = defMod;
-            protection = prot;
+            _encumbrance = enc;
+            this._parry = parry;
+            _defenseModifier = defMod;
+            _protection = prot;
         }
+
+
+        #region Properties
+        public int Encumbrance { get { return _encumbrance; } }
+        public int Parry { get { return _parry; } }
+        public int DefenseModifier { get { return _defenseModifier; } }
+        public int Protection { get { return _protection; } }
+        #endregion
+
 
         public override string GetDescription()
         {
-            return name + "(Prot: " + protection + ", DefenseMod: " + defenseModifier 
-                + ", Parry: " + parry + ", Enc: " + encumbrance + ")";
+            return name + "(Prot: " + _protection + ", DefenseMod: " + _defenseModifier 
+                + ", Parry: " + _parry + ", Enc: " + _encumbrance + ")";
         }
     }
 }

@@ -5,7 +5,7 @@
         private const string DESCRIPTION = "A small shield for parrying attacks.";
 
 
-        public Buckler() : base(14, 0, 2, 0, ItemType.Shield, "buckler")
+        public Buckler() : base(14, 0, 2, 2, ItemType.Shield, "buckler")
         {
             EquipType = EquipType.Hand;
         }
