@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Paramita.GameLogic.Actions;
 using Paramita.GameLogic.Mechanics;
 
 namespace Paramita.GameLogic.Actors.Combat
@@ -93,7 +92,7 @@ namespace Paramita.GameLogic.Actors.Combat
         private bool RepelAttackMoraleCheck(AttackRoll attackRoll)
         {
             int checkModifier = attackRoll.Result / 2;
-            var moraleCheck = new CheckMorale(attackRoll.Attacker, MoraleCheckType.RepelAttack,
+            var moraleCheck = new MoraleCheck(attackRoll.Attacker, MoraleCheckType.RepelAttack,
                 attackRoll.Defender, checkModifier);
 
             if (moraleCheck.IsSuccessful)
