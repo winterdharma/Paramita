@@ -57,16 +57,12 @@ namespace Paramita.GameLogic.Mechanics
         }
         #endregion
 
-        public int OpenEndedRoll()
-        {
-            return RollDice(true);
-        }
-
+        
         public int OpenEndedRoll(List<int> additions = null, List<int> subtractions = null)
         {
             int modifiers = additions != null ? additions.Sum() : 0;
-            modifiers += subtractions != null ? subtractions.Sum() : 0;
-            return OpenEndedRoll() + modifiers;
+            modifiers -= subtractions != null ? subtractions.Sum() : 0;
+            return RollDice(true) + modifiers;
         }
 
         public int ClosedEndedRoll()

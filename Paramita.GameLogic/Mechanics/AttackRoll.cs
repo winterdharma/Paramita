@@ -46,7 +46,7 @@ namespace Paramita.GameLogic.Mechanics
         {
             get { return _attacker; }
         }
-        public Weapon AttackWeaon
+        public Weapon AttackWeapon
         {
             get { return _attackWeapon; }
         }
