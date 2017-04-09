@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Paramita.GameLogic.Mechanics
 {
@@ -32,7 +33,7 @@ namespace Paramita.GameLogic.Mechanics
         private Die _dieSize;
         private int _numberOfDice;
         private int _rollModifier;
-        private List<string> _report = new List<string>();
+        protected List<string> _report = new List<string>();
         #endregion
 
         public Dice(int dice, Die die = Die.d6, int modifier = 0)
@@ -59,6 +60,13 @@ namespace Paramita.GameLogic.Mechanics
         public int OpenEndedRoll()
         {
             return RollDice(true);
+        }
+
+        public int OpenEndedRoll(List<int> additions = null, List<int> subtractions = null)
+        {
+            int modifiers = additions != null ? additions.Sum() : 0;
+            modifiers += subtractions != null ? subtractions.Sum() : 0;
+            return OpenEndedRoll() + modifiers;
         }
 
         public int ClosedEndedRoll()

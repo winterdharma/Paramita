@@ -1,7 +1,6 @@
-﻿using Paramita.GameLogic.Items;
-using Paramita.GameLogic.Actors;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Paramita.GameLogic.Actions;
+using Paramita.GameLogic.Mechanics;
 
 namespace Paramita.GameLogic.Actors.Combat
 {

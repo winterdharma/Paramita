@@ -81,8 +81,8 @@
     <Compile Include="Levels\Tile.cs" />
     <Compile Include="Levels\TileMap.cs" />
     <Compile Include="Levels\TileMapCreator.cs" />
-    <Compile Include="Actions\Combat\AttackRoll.cs" />
     <Compile Include="Actions\Combat\DamageRoll.cs" />
+    <Compile Include="Mechanics\AttackRoll.cs" />
     <Compile Include="Mechanics\Dice.cs" />
     <Compile Include="Mechanics\Direction.cs" />
     <Compile Include="Actions\CheckMorale.cs" />
