@@ -33,7 +33,7 @@ namespace Paramita.GameLogic.Actions
         #endregion
 
         
-        public CheckMorale(Actor checker, MoraleCheckType type, Actor opponent = null, int modifier = 0, Dice customDice = null)
+        public CheckMorale(Combatant checker, MoraleCheckType type, Combatant opponent = null, int modifier = 0, Dice customDice = null)
         {
             // enables stubbing the RNG with contrived data for unit testing
             _dice2d6 = customDice ?? new Dice(2);
@@ -71,7 +71,7 @@ namespace Paramita.GameLogic.Actions
             }
         }
 
-        private int GetSizeDifference(Actor checker, Actor opponent)
+        private int GetSizeDifference(Combatant checker, Combatant opponent)
         {
             return opponent != null ? checker.Size - opponent.Size : 0;
         }

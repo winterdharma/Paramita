@@ -1,8 +1,9 @@
 ﻿using Paramita.GameLogic.Items;
 using Paramita.GameLogic.Actors;
 using System.Collections.Generic;
+using Paramita.GameLogic.Actions;
 
-namespace Paramita.GameLogic.Actions
+namespace Paramita.GameLogic.Actors.Combat
 {
     /*
     *  Repel Meelee Attack
@@ -22,85 +23,66 @@ namespace Paramita.GameLogic.Actions
     *  If the attacker happened to be killed by the repel attack damage, his attack
     *  is aborted.
     */
-    class RepelMeleeAttack
+    internal class RepelMeleeAttack
     {
-        private Actor attacker;
-        private Actor defender;
-        private Weapon attackWeapon;
-        private Weapon repelWeapon;
-
+        #region Fields
         private const int REPEL_ATTACK_DAMAGE = 1;
         private readonly string REPEL_DAMAGE_REPORT = " takes " + REPEL_ATTACK_DAMAGE + " pt of damage!";
         private const string ATTACKER_KILLED = " is killed!";
+        #endregion
 
-        private bool isSuccessful;
-        private int damage;
+        #region Properties
+        public int Damage { get; set; }
 
-        private List<string> _repelAttackLog = new List<string>();
+        public List<string> Report { get; set; }
+        #endregion
 
-        public bool IsSuccessful
+        public RepelMeleeAttack()
         {
-            get { return isSuccessful; }
-        }
-
-        public int Damage
-        {
-            get { return damage; }
-        }
-
-        public List<string> RepelAttackLog { get { return _repelAttackLog; } }
-
-
-        public RepelMeleeAttack(Attack attack)
-        {
-            attacker = attack.Attacker;
-            defender = attack.Defender;
-            attackWeapon = attack.Weapon;
-            repelWeapon = defender.GetLongestWeapon();
-
-            isSuccessful = ResolveRepelAttack();
+            Report = new List<string>();
         }
 
 
-
-        
-        private bool ResolveRepelAttack()
+        public bool Possible(Attack attack, Combatant defender)
         {
-            if(CheckForRepelAttempt())
-            {
-                var attackRoll = new AttackRoll(defender, repelWeapon, attacker);
+            Report.Clear();
+            var repelWeapon = defender.GetLongestWeapon();
+            var attackWeapon = attack.Weapon;
 
-                _repelAttackLog.AddRange( 
-                    new string[] { attackRoll.AttackerReport, attackRoll.DefenderReport } );
-
-                return ResolveRepelAttackResult(attackRoll);
-            }
-            return false;   
-        }
-
-
-        private bool CheckForRepelAttempt()
-        {
-            int length;
-            if (repelWeapon == null)
-                length = 0;
-            else
-                length = repelWeapon.Length;
+            int length = repelWeapon != null ? repelWeapon.Length : 0;
 
             if (length > attackWeapon.Length)
+            {
+                Report.Add(defender + " attempts to repel with " + repelWeapon.DisplayText());
                 return true;
-            return false;
+            }
+            else
+            {
+                Report.Add(defender + " isn't able to repel attack.");
+                return false;
+            }
         }
 
+
+        public bool Execute(Combatant defender, Attack attack, Combatant attacker)
+        {
+            Report.Clear();
+            var repelWeapon = defender.GetLongestWeapon();
+
+            var attackRoll = new AttackRoll(defender, repelWeapon, attacker);
+            Report.AddRange(
+                new string[] { attackRoll.AttackerReport, attackRoll.DefenderReport });
+
+            return ResolveRepelAttackResult(attackRoll);
+        }
 
         private bool ResolveRepelAttackResult(AttackRoll attackRoll)
         {
             bool attackRepelled = false;
             if (attackRoll.Result > 0)
                 attackRepelled = RepelAttackMoraleCheck(attackRoll);
-
-            if (CheckIfRepelAttackKilledAttacker())
-                attackRepelled = true;
+            else
+                Report.Add(attackRoll.Attacker.ToString() + "'s repel attack missed!");
 
             return attackRepelled;
         }
@@ -112,16 +94,20 @@ namespace Paramita.GameLogic.Actions
         private bool RepelAttackMoraleCheck(AttackRoll attackRoll)
         {
             int checkModifier = attackRoll.Result / 2;
-            var moraleCheck = new CheckMorale(attackRoll.Attacker, MoraleCheckType.RepelAttack, 
+            var moraleCheck = new CheckMorale(attackRoll.Attacker, MoraleCheckType.RepelAttack,
                 attackRoll.Defender, checkModifier);
 
             if (moraleCheck.IsSuccessful)
             {
                 RepelAttackDamageRoll(attackRoll);
+                Report.Add(attackRoll.Attacker + " didn't stop the attack, but hit " + attackRoll.Defender + " for " + Damage + " dmg.");
                 return false;
             }
             else
+            {
+                Report.Add(attackRoll.Attacker + " succeeded in repelling the attack.");
                 return true;
+            }
         }
 
 
@@ -130,21 +116,13 @@ namespace Paramita.GameLogic.Actions
             var damageRoll = new DamageRoll(attackRoll);
             if (damageRoll.Damage > 0)
             {
-                damage = REPEL_ATTACK_DAMAGE;
-                _repelAttackLog.Add(attacker + REPEL_DAMAGE_REPORT);
+                Damage = REPEL_ATTACK_DAMAGE;
+                Report.Add(attackRoll.Defender + REPEL_DAMAGE_REPORT);
             }
-        }
-
-
-        private bool CheckIfRepelAttackKilledAttacker()
-        {
-            if (attacker.IsDead)
+            else
             {
-                _repelAttackLog.Add(attacker + ATTACKER_KILLED);
-                //GameScene.PostNewStatus();
-                return true;
+                Damage = 0;
             }
-            return false;
         }
     }
 }

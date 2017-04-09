@@ -145,7 +145,7 @@ namespace Paramita.GameLogic.UnitTests.Levels
             expected.RemoveAt(0);
 
             // enough damage to set Actor.IsDead to true
-            level.Npcs[0].TakeDamage(10);
+            level.Npcs[0].IsDead = true;
             level.Update();
 
             var actual = level.Npcs;

@@ -2,10 +2,8 @@
 using Paramita.GameLogic.Items;
 using System.Collections.Generic;
 using System;
-using System.Linq;
 using Paramita.GameLogic.Levels;
 using Paramita.GameLogic.Mechanics;
-using Paramita.GameLogic.Actions;
 
 namespace Paramita.GameLogic.Actors
 {
@@ -16,7 +14,8 @@ namespace Paramita.GameLogic.Actors
      * that interacts with non-sentient stuff in the game.
      * Bacteria, trees, and rocks are not sentient beings.
      * 
-     * This is just a sketchy starting point of variables for all beings.
+     * The Inventory and Combatant classes contain Properties and methods related
+     * to possessing items and combat with other actors.
      */
 
     public enum BeingType
@@ -45,28 +44,6 @@ namespace Paramita.GameLogic.Actors
     {
         #region Fields
         protected string name;
-
-        protected Tile _currentTile;
-
-        private Inventory _inventory;
-
-        protected int _hitPoints;
-        protected int _protection;
-        protected int _shieldProtection;
-        protected int _magicResistance;
-        protected int _strength;
-        protected int _morale;
-        protected int _attackSkill;
-        protected int _defenseSkill;
-        protected int _parry;
-        protected int _precision;
-        protected int _encumbrance;
-        protected int _fatigue;
-        protected int _size;
-        protected int _timesAttacked;
-
-        // status related flags
-        protected bool _isDead = false;
         #endregion
 
 
@@ -78,119 +55,42 @@ namespace Paramita.GameLogic.Actors
         #endregion
 
 
-        public Actor(BeingType beingType)
+        public Actor(BeingType beingType, List<int> combatData)
         {
             BeingType = beingType;
             Facing = Compass.East;
             Inventory = new Inventory();
+            Combatant = new Combatant(combatData);
         }
 
 
         #region Properties
+        protected string Name
+        {
+            set { name = value; Combatant.Name = value; }
+        }
         public BeingType BeingType { get; protected set; }
 
-        public Tile CurrentTile
-        {
-            get { return _currentTile; }
-            set
-            {
-                _currentTile = value;
-            }
-        }
+        public Tile CurrentTile { get; set; }
 
         public Compass Facing { get; private set; }
 
-        public Inventory Inventory
-        {
-            get { return _inventory; }
-            protected set { _inventory = value; }
-        }
+        public Inventory Inventory { get; protected set; }
 
-        public List<Weapon> Attacks { get { return Inventory.Weapons; } }
-
-        public List<Shield> Shields { get { return Inventory.Shields; } }
-
-        public int HitPoints { get { return _hitPoints; } }
-
-        public int Protection { get { return _protection; } }
-
-        public int ShieldProtection
-        {
-            get
-            {
-                int protection = 0;
-                for (int x = 0; x < Inventory.Shields.Count; x++)
-                {
-                    protection += Inventory.Shields[x].Protection;
-                }
-                return protection;
-            }
-        }
-
-        public int Strength { get { return _strength; } }
-
-        public int Morale { get { return _morale; } }
-
-        public int AttackSkill { get { return _attackSkill; } }
-
-        public int DefenseSkill
-        {
-            get
-            {
-                int weaponsMods = 0;
-                for (int x = 0; x < Inventory.Weapons.Count; x++)
-                {
-                    weaponsMods += Inventory.Weapons[x].DefenseModifier;
-                }
-                return _defenseSkill + weaponsMods;
-            }
-        }
-
-        public int Parry
-        {
-            get
-            {
-                int shieldParry = 0;
-                for (int x = 0; x < Inventory.Shields.Count; x++)
-                {
-                    shieldParry += Inventory.Shields[x].Parry;
-                }
-                return shieldParry;
-            }
-        }
-
-        public int Fatigue { get { return _fatigue; } }
-
-        public int FatigueAttPenalty
-        {
-            get { return _fatigue / 20; }
-        }
-
-        public int FatigueDefPenalty
-        {
-            get { return _fatigue / 10; }
-        }
-
-        public int FatigueCriticalPenalty
-        {
-            get { return _fatigue / 15; }
-        }
-
-        public int Size { get { return _size; } }
+        public Combatant Combatant { get; protected set; }
 
         public int TimesAttacked
         {
-            get { return _timesAttacked; }
-            set { _timesAttacked = value; }
+            get { return Combatant.TimesAttacked; }
+            set { Combatant.TimesAttacked = value; }
         }
 
-        public bool IsDead { get { return _isDead; } }
+        public bool IsDead { get; set; }
         #endregion
 
 
         #region Abstract Methods
         // helper methods for child class constructors
-        protected abstract void InitializeAttributes();
         protected abstract void InitializeInventory();
         // This method is the verbose report on a sentient being
         public abstract string GetDescription();
@@ -198,68 +98,13 @@ namespace Paramita.GameLogic.Actors
 
 
         #region Combat Related API
-        // conduct all of a being's attacks for the turn
-        public void Attack(Actor defender)
+        public void Attack(Combatant defender)
         {
-            Attack attack;
-            //GameScene.PostNewStatus(this + " attacked " + defender + ".");
-            for(int x = 0; x < Inventory.Weapons.Count; x++)
-            {
-                attack = new Attack(this, Inventory.Weapons[x], defender);
-                OnStatusMsgSent?.Invoke(this, new StatusMessageEventArgs(attack.AttackReport));
-                if (IsDead || defender.IsDead)
-                {
-                    break;
-                }
-            }
-        }
-
-
-        // used to check for a RepelMeeleeAttack attempt
-        public Weapon GetLongestWeapon()
-        {
-            if (Attacks.Count == 0)
-                return null;
-
-            Weapon longestWeapon = Inventory.Weapons[0];
-
-            if (Attacks.Count > 1)
-            {
-                for (int x = 1; x < Attacks.Count; x++)
-                {
-                    if (Attacks[x].Length > longestWeapon.Length)
-                        longestWeapon = Attacks[x];
-                }
-            }
-            return longestWeapon;
-        }
-
-
-        public void TakeDamage(int damage)
-        {
-            if(damage > 0)
-            {
-                _hitPoints -= damage;
-                CheckForDeath();
-            }
-        }
-
-
-        public void IncrementTimesAttacked()
-        {
-            _timesAttacked++;
-        }
-
-
-        public void AddEncumbranceToFatigue()
-        {
-            int totalEncumbrance = GetTotalEncumbrance();
-
-            _fatigue += totalEncumbrance;
+            Combatant.Attack(defender);
         }
         #endregion
 
-        
+
         #region Inventory Related API
         public bool Acquire(Item item)
         {
@@ -291,13 +136,10 @@ namespace Paramita.GameLogic.Actors
 
         public virtual void Update()
         {
-            if(_fatigue > 0)
-                _fatigue--;
-            CheckForDeath();
+            if(Combatant.Fatigue > 0)
+                Combatant.Fatigue--;
         }
 
-
-        // the default string equivalent for this being
         public override string ToString()
         {
             return name;
@@ -324,11 +166,11 @@ namespace Paramita.GameLogic.Actors
 
         protected int GetTotalEncumbrance()
         {
-            int total = _encumbrance;
+            int total = Combatant.Encumbrance;
 
-            for (int i = 0; i < Inventory.Equipment.Length; i++)
+            foreach(var item in Inventory.Equipment)
             {
-                total += GetItemEncumbrance(Inventory.Equipment[i]);
+                total += GetItemEncumbrance(item);
             }
 
             return total;
@@ -340,21 +182,32 @@ namespace Paramita.GameLogic.Actors
         protected void SubscribeToEvents()
         {
             Inventory.OnInventoryChange += HandleInventoryChange;
+            Inventory.OnWeaponsChange += HandleWeaponsChange;
+            Combatant.OnAttackResolved += HandleAttackResolution;
+            Combatant.OnCombatantKilled += HandleActorDead;
         }
 
         private void HandleInventoryChange(object sender, InventoryChangeEventArgs eventArgs)
         {
             OnInventoryChange?.Invoke(this, eventArgs);
+            Combatant.Shields = Inventory.Shields;
+            Combatant.TotalEncumbrance = GetTotalEncumbrance();
         }
 
-        private void CheckForDeath()
+        private void HandleWeaponsChange(object sender, EventArgs e)
         {
-            if (_hitPoints < 1)
-            {
-                _isDead = true;
-                OnActorDeath?.Invoke(this, new MoveEventArgs(Compass.None, CurrentTile.TilePoint, Point.Zero));
-            }
-                
+            Combatant.UpdateAttacks(Inventory.Weapons);
+        }
+
+        private void HandleAttackResolution(object sender, AttackEventArgs eventArgs)
+        {
+            OnStatusMsgSent(this, new StatusMessageEventArgs(eventArgs.Report));
+        }
+
+        private void HandleActorDead(object sender, EventArgs eventArgs)
+        {
+            IsDead = true;
+            OnActorDeath?.Invoke(this, new MoveEventArgs(Compass.None, CurrentTile.TilePoint, Point.Zero));
         }
 
         private int GetItemEncumbrance(Item item)

@@ -13,7 +13,7 @@ namespace Paramita.GameLogic.Actors
     public interface INpc
     {
         Tile CurrentTile { get; set; }
-        bool IsDead { get; }
+        bool IsDead { get; set; }
         Compass Facing { get; }
         BeingType BeingType { get; }
         int TimesAttacked { get; set; }
@@ -24,6 +24,5 @@ namespace Paramita.GameLogic.Actors
 
         void PerformAI(Player player);
         void Update(Player player);
-        void TakeDamage(int damage);
     }
 }

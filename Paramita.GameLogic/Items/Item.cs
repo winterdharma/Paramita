@@ -94,6 +94,11 @@ namespace Paramita.GameLogic.Items
             return id + " : " + name;
         }
 
+        public string DisplayText()
+        {
+            return name;
+        }
+
         public abstract string GetDescription();
     }
 }

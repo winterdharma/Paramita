@@ -44,38 +44,22 @@ namespace Paramita.GameLogic.Actors
 
         public event EventHandler<LevelChangeEventArgs> OnLevelChange;
 
-        public Player(string name) : base(BeingType.HumanPlayer)
+        public Player(string name) 
+            : base(BeingType.HumanPlayer, new List<int>() { 10, 0, 10, 10, 10, 10, 10, 10, 0, 2 })
         {
-            this.name = name;
-
-            InitializeAttributes();
+            SubscribeToEvents();
+            Name = name;
+            Gold = 0;
+            _sustanence = 240; 
             InitializeItemLists();
-            base.SubscribeToEvents();
         }
 
         #region Protected Methods
-        protected override void InitializeAttributes()
-        {
-            Gold = 0;
-            _sustanence = 240;
-            _hitPoints = 10;
-            _protection = 0;
-            _magicResistance = 10;
-            _strength = 10;
-            _attackSkill = 10;
-            _defenseSkill = 10;
-            _precision = 10;
-            _morale = 10;
-            _encumbrance = 0;
-            _fatigue = 0;
-            _size = 2;
-        }
-
         private void InitializeItemLists()
         {
             Inventory.NaturalWeapons.Add(ItemCreator.CreateFist());
             Inventory.NaturalWeapons.Add(ItemCreator.CreateFist());
-            Inventory.Weapons.AddRange(Inventory.NaturalWeapons);
+            Inventory.AddToWeapons(Inventory.NaturalWeapons);
         }
         #endregion
 
@@ -86,9 +70,7 @@ namespace Paramita.GameLogic.Actors
 
         public void GetInventory()
         {
-            //Tuple<Dictionary<string, ItemType>, int>
             Inventory.RaiseChangeEvent();
-            //return Inventory.GetInventoryData();
         }
 
         public override void Update()

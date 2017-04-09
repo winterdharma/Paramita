@@ -9,33 +9,18 @@ namespace Paramita.GameLogic.Actors.Animals
     public class GiantRat : Animal, INpc
     {
         public GiantRat() 
-            : base(BeingType.GiantRat)
+            : base(BeingType.GiantRat, new List<int>() { 5, 2, 5, 3, 6, 8, 10, 5, 1, 1 } )
         {
-            InitializeAttributes();
+            SubscribeToEvents();
+            Name = "Giant Rat";
             InitializeItemLists();
         }
 
-        protected override void InitializeAttributes()
-        {
-            name = "Giant Rat";
-            _hitPoints = 5;
-            _protection = 2;
-            _magicResistance = 5;
-            _strength = 3;
-            _attackSkill = 8;
-            _defenseSkill = 10;
-            _precision = 5;
-            _morale = 6;
-            _encumbrance = 1;
-            _fatigue = 0;
-            _size = 1;
-        }
-
-
+        
         private void InitializeItemLists()
         {
             Inventory.NaturalWeapons.Add(ItemCreator.CreateBite());
-            Inventory.Weapons.AddRange(Inventory.NaturalWeapons);
+            Inventory.AddToWeapons(Inventory.NaturalWeapons);
         }
 
         public void Update(Player player)

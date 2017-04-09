@@ -12,8 +12,8 @@ namespace Paramita.GameLogic.Actions
     class DamageRoll
     {
         Dice dice2d6;
-        Actor attacker;
-        Actor defender;
+        Combatant attacker;
+        Combatant defender;
         int defenderProtection;
         Weapon attackWeapon;
         int attackRollResult;

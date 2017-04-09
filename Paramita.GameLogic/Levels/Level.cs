@@ -154,10 +154,11 @@ namespace Paramita.GameLogic.Levels
         
         private void HandlePlayerMove(Player player, Point origin, Tile destination)
         {
-            INpc defender;
-            if (GetNpcOnTile(destination, out defender))
+            INpc npc;
+            if (GetNpcOnTile(destination, out npc))
             {
-                player.Attack(defender as Actor);
+                var defender = npc as Actor;
+                player.Attack(defender.Combatant);
                 TogglePlayersTurn();
             }
             else if(destination.IsWalkable)
@@ -170,9 +171,10 @@ namespace Paramita.GameLogic.Levels
 
         private void HandleNpcMove(Actor npc, Point origin, Tile destination)
         {
+            var player = _player as Actor;
             if(IsPlayerOnTile(destination))
             {
-                npc.Attack(_player as Actor);
+                npc.Attack(player.Combatant);
             }
             else if(destination.IsWalkable && !IsNpcOnTile(destination))
             {

@@ -30,6 +30,7 @@ namespace Paramita.GameLogic.Actors
         #endregion
 
         public event EventHandler<InventoryChangeEventArgs> OnInventoryChange;
+        public event EventHandler OnWeaponsChange;
 
         #region Constructors
         public Inventory() { }
@@ -73,7 +74,11 @@ namespace Paramita.GameLogic.Actors
         public List<Weapon> Weapons
         {
             get { return _weapons; }
-            set { _weapons = value; }
+            set
+            {
+                _weapons = value;
+                OnWeaponsChange?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         public List<NaturalWeapon> NaturalWeapons
@@ -159,9 +164,15 @@ namespace Paramita.GameLogic.Actors
                 return false;
         }
 
+        public void AddToWeapons(List<NaturalWeapon> weaponList)
+        {
+            var weapons = Weapons;
+            weapons.AddRange(weaponList);
+            Weapons = weapons;
+        }
+
         public void RaiseChangeEvent()
         {
-            // inventory event args needs to be generic, not just for player
             OnInventoryChange?.Invoke(this, new InventoryChangeEventArgs(GetInventoryData()));
         }
 
@@ -221,7 +232,7 @@ namespace Paramita.GameLogic.Actors
                 }
             }
 
-            _weapons = _weapons.OrderBy(w => w.Length).ToList();
+            Weapons = _weapons.OrderBy(w => w.Length).ToList();
 
         }
 
@@ -300,7 +311,6 @@ namespace Paramita.GameLogic.Actors
             }
             return indices;
         }
-
         #endregion
     }
 }

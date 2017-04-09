@@ -61,7 +61,7 @@ namespace Paramita.GameLogic.Actors
         #endregion
 
 
-        public Humanoid(BeingType type) : base(type)
+        public Humanoid(BeingType type, List<int> combatData) : base(type, combatData)
         {
             InitializeInventory();
         }
@@ -95,12 +95,6 @@ namespace Paramita.GameLogic.Actors
 
 
         #region Protected Methods
-        protected override void InitializeAttributes()
-        {
-            // implemented in child classes
-        }
-
-
         protected override void InitializeInventory()
         {
             Inventory.Labels = _equipSlotLabels;
@@ -108,12 +102,6 @@ namespace Paramita.GameLogic.Actors
             Inventory.Equipment = new Item[5];
             Inventory.Storage = new Item[5];
         }
-
-        //protected override void InitializeItemLists()
-        //{
-        //    _equippedItems = new Item[5];
-        //    _unequippedItems = new Item[5];
-        //}
         #endregion
 
 

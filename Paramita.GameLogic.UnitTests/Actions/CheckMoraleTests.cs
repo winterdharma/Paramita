@@ -17,7 +17,7 @@ namespace Paramita.GameLogic.UnitTests.Actions
             var player = new Player("Test player");
             var rat = ActorCreator.CreateGiantRat();
             Assert.Catch<NotImplementedException>(() => 
-                new CheckMorale(player, MoraleCheckType.Test, rat));
+                new CheckMorale(player.Combatant, MoraleCheckType.Test, rat.Combatant));
         }
 
         [Test]
@@ -29,7 +29,7 @@ namespace Paramita.GameLogic.UnitTests.Actions
             var player = ActorCreator.CreateHumanPlayer();
             var rat = ActorCreator.CreateGiantRat();
 
-            var check = new CheckMorale(player, MoraleCheckType.RepelAttack, rat, 0, fakeDice);
+            var check = new CheckMorale(player.Combatant, MoraleCheckType.RepelAttack, rat.Combatant, 0, fakeDice);
             Assert.True(check.IsSuccessful);
         }
 
@@ -42,7 +42,7 @@ namespace Paramita.GameLogic.UnitTests.Actions
             var player = ActorCreator.CreateHumanPlayer();
             var rat = ActorCreator.CreateGiantRat();
 
-            var check = new CheckMorale(player, MoraleCheckType.RepelAttack, rat, 0, fakeDice);
+            var check = new CheckMorale(player.Combatant, MoraleCheckType.RepelAttack, rat.Combatant, 0, fakeDice);
             Assert.False(check.IsSuccessful);
         }
 
@@ -55,7 +55,7 @@ namespace Paramita.GameLogic.UnitTests.Actions
             var player = ActorCreator.CreateHumanPlayer();
             var rat = ActorCreator.CreateGiantRat();
 
-            var check = new CheckMorale(player, MoraleCheckType.RepelAttack, rat, 0, fakeDice);
+            var check = new CheckMorale(player.Combatant, MoraleCheckType.RepelAttack, rat.Combatant, 0, fakeDice);
 
             var expected = new List<string>()
             {

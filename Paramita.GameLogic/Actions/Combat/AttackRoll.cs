@@ -20,8 +20,8 @@ namespace Paramita.GameLogic.Actions
     {
         Dice dice2d6;
 
-        Actor attacker;
-        Actor defender;
+        Combatant attacker;
+        Combatant defender;
         Weapon attackWeapon;
 
         int attackSkill;
@@ -33,11 +33,11 @@ namespace Paramita.GameLogic.Actions
         int attackScore;
         int defendScore;
 
-        public Actor Defender
+        public Combatant Defender
         {
             get { return defender; }
         }
-        public Actor Attacker
+        public Combatant Attacker
         {
             get { return attacker; }
         }
@@ -60,7 +60,7 @@ namespace Paramita.GameLogic.Actions
         
 
 
-        public AttackRoll(Actor attacker, Weapon weapon, Actor defender)
+        public AttackRoll(Combatant attacker, Weapon weapon, Combatant defender)
         {
             this.attacker = attacker;
             this.defender = defender;
