@@ -92,13 +92,13 @@ namespace Paramita.UI
             }
         }
 
-        public static SpriteType GetSpriteType(BeingType type)
+        public static SpriteType GetSpriteType(ActorType type)
         {
             switch (type)
             {
-                case BeingType.GiantRat:
+                case ActorType.GiantRat:
                     return SpriteType.Actor_GiantRat;
-                case BeingType.HumanPlayer:
+                case ActorType.HumanPlayer:
                     return SpriteType.Actor_Player;
                 default:
                     throw new NotImplementedException("Sprite.GetSpriteType(): BeingType not implemented.");

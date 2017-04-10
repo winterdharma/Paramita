@@ -62,12 +62,12 @@ namespace Paramita.GameLogic.UnitTests.Levels
         public void GetBeingTypeLayer_ShouldReturnBeingTypeArray()
         {
             var level = MakeLevel();
-            var expected = new Tuple<BeingType, Compass, bool>[3, 3] {
+            var expected = new Tuple<ActorType, Compass, bool>[3, 3] {
                 { null, null, null },
                 { null, null, null },
-                { new Tuple<BeingType, Compass, bool>(BeingType.GiantRat, Compass.East, false),
-                  new Tuple<BeingType, Compass, bool>(BeingType.GiantRat, Compass.East, false),
-                  new Tuple<BeingType, Compass, bool>(BeingType.HumanPlayer, Compass.East, true) }
+                { new Tuple<ActorType, Compass, bool>(ActorType.GiantRat, Compass.East, false),
+                  new Tuple<ActorType, Compass, bool>(ActorType.GiantRat, Compass.East, false),
+                  new Tuple<ActorType, Compass, bool>(ActorType.HumanPlayer, Compass.East, true) }
             };
             var actual = level.BeingTypeLayer;
 
@@ -80,7 +80,7 @@ namespace Paramita.GameLogic.UnitTests.Levels
         {
             var level = MakeLevel();
             level.Player = null;
-            Tuple<BeingType, Compass, bool>[,] actual = null;
+            Tuple<ActorType, Compass, bool>[,] actual = null;
             Assert.Catch<NullReferenceException>(() => actual = level.BeingTypeLayer);
         }
 
@@ -89,7 +89,7 @@ namespace Paramita.GameLogic.UnitTests.Levels
         {
             var level = MakeLevel();
             level.Npcs = null;
-            Tuple<BeingType, Compass, bool>[,] actual = null;
+            Tuple<ActorType, Compass, bool>[,] actual = null;
             Assert.Catch<NullReferenceException>(() => actual = level.BeingTypeLayer);
         }
         #endregion

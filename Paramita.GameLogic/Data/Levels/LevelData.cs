@@ -11,7 +11,7 @@ namespace Paramita.GameLogic.Data.Levels
         private string unknownProperty;
 
         public TileMapData TileMap { get; set; }
-        public List<Tuple<BeingType, int>> Actors { get; set; }
+        public List<Tuple<ActorType, int>> Actors { get; set; }
         public List<Tuple<ItemType, int>> Items { get; set; }
 
         public LevelData() { } 
@@ -22,7 +22,7 @@ namespace Paramita.GameLogic.Data.Levels
             unknownProperty = "Unimplemented property encountered while processing " + levelPath + "!";
 
             TileMap = new TileMapData();
-            Actors = new List<Tuple<BeingType, int>>();
+            Actors = new List<Tuple<ActorType, int>>();
             Items = new List<Tuple<ItemType, int>>();
 
             ParseLevelFile();
@@ -67,7 +67,7 @@ namespace Paramita.GameLogic.Data.Levels
                     TileMap.MinRoomSize = int.Parse(value);
                     break;
                 case "GiantRat":
-                    Actors.Add(new Tuple<BeingType, int>(BeingType.GiantRat, int.Parse(value)));
+                    Actors.Add(new Tuple<ActorType, int>(ActorType.GiantRat, int.Parse(value)));
                     break;
                 case "ShortSword":
                     Items.Add(new Tuple<ItemType, int>(ItemType.ShortSword, int.Parse(value)));

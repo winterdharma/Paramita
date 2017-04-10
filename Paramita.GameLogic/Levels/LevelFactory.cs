@@ -32,7 +32,7 @@ namespace Paramita.GameLogic.Levels
             return new TileMap(mapCreator.CreateMap(data), "level 1");
         }
 
-        private static List<INpc> CreateNpcs(List<Tuple<BeingType, int>> actors)
+        private static List<INpc> CreateNpcs(List<Tuple<ActorType, int>> actors)
         {
             var npcs = new List<INpc>();
             

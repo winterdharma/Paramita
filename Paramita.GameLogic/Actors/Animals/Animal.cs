@@ -25,7 +25,7 @@ namespace Paramita.GameLogic.Actors
         protected int body = 3;
         protected int tail = 4;
 
-        public Animal(BeingType type, List<int> combatData) : base(type, combatData)
+        public Animal(ActorType type, List<int> combatData) : base(type, combatData)
         {
             InitializeInventory();
         }

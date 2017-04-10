@@ -74,7 +74,7 @@ namespace Paramita.GameLogic.Mechanics
         #region Helper Methods
         private int RollDice(bool isOpenEnded)
         {
-            _report.Clear();
+            _report.Add("New Dice Roll");
             int diceLeftToRoll = _numberOfDice;
             int totalRolled = 0;
             int roll;
@@ -90,7 +90,7 @@ namespace Paramita.GameLogic.Mechanics
                 totalRolled += roll;
             }
 
-            Report.Add("Total: " + totalRolled);
+            Report.AddRange( new string[] { "Total: " + totalRolled, " " });
             return totalRolled;
         }
 

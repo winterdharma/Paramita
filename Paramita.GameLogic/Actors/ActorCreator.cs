@@ -6,9 +6,9 @@ namespace Paramita.GameLogic.Actors
 
     public static class ActorCreator
     {
-        public static Actor CreateActor(BeingType type)
+        public static Actor CreateActor(ActorType type)
         {
-            if (type == BeingType.GiantRat)
+            if (type == ActorType.GiantRat)
                 return CreateGiantRat();
             else
                 return CreateHumanPlayer();

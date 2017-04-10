@@ -68,7 +68,7 @@ namespace Paramita.GameLogic.Levels
             get { return _tileMap.ConvertMapToTileTypes(); }
         }
 
-        public Tuple<BeingType, Compass, bool>[,] BeingTypeLayer
+        public Tuple<ActorType, Compass, bool>[,] BeingTypeLayer
         {
             get { return ConvertMapToBeingTypes(); }
         }
@@ -104,24 +104,24 @@ namespace Paramita.GameLogic.Levels
 
 
         // The bool is an IsPlayer flag used by UI
-        private Tuple<BeingType, Compass, bool>[,] ConvertMapToBeingTypes()
+        private Tuple<ActorType, Compass, bool>[,] ConvertMapToBeingTypes()
         {
             // this is to defeat any future attempt to pass nulls through
             Utilities.ThrowExceptionIfNull(_player);
             Utilities.ThrowExceptionIfNull(_npcs);
 
-            var typeArray = new Tuple<BeingType, Compass, bool>[TileMap.TilesWide, TileMap.TilesHigh];
+            var typeArray = new Tuple<ActorType, Compass, bool>[TileMap.TilesWide, TileMap.TilesHigh];
             var playerTile = _player.CurrentTile.TilePoint;
 
             typeArray[playerTile.X, playerTile.Y] = 
-                new Tuple<BeingType, Compass, bool>(_player.BeingType, _player.Facing, true);
+                new Tuple<ActorType, Compass, bool>(_player.BeingType, _player.Facing, true);
 
             for (int i = 0; i < _npcs.Count; i++)
             {
                 var npc = _npcs[i];
                 var npcTile = npc.CurrentTile.TilePoint;
                 typeArray[npcTile.X, npcTile.Y] = 
-                    new Tuple<BeingType, Compass, bool>(npc.BeingType, npc.Facing, false);
+                    new Tuple<ActorType, Compass, bool>(npc.BeingType, npc.Facing, false);
             }
 
             return typeArray;
@@ -132,10 +132,9 @@ namespace Paramita.GameLogic.Levels
         private void HandleNpcDeath(object sender, MoveEventArgs eventArgs)
         {
             var npc = sender as INpc;
-            Npcs.Remove(npc);
+            npc.IsDead = true;
             UnsubscribeFromOneNpcsEvents(npc);           
         }
-
 
         private void HandleActorMove(object sender, MoveEventArgs eventArgs)
         {
@@ -149,7 +148,6 @@ namespace Paramita.GameLogic.Levels
             else
                 HandleNpcMove(actor, origin, newTile);
         }
-
         
         private void HandlePlayerMove(Player player, Point origin, Tile destination)
         {
@@ -181,7 +179,6 @@ namespace Paramita.GameLogic.Levels
                 OnActorWasMoved?.Invoke(npc, new MoveEventArgs(Compass.None, origin, destination.TilePoint));
             }
         }
-
 
         private void HandleLevelChange(object sender, LevelChangeEventArgs eventArgs)
         {
@@ -300,16 +297,20 @@ namespace Paramita.GameLogic.Levels
         {
             var placedTiles = new bool[TileMap.TilesWide, TileMap.TilesHigh];
 
+            // remove the entry tiles from possible placement tiles
+            placedTiles[EntryFromAbove.TilePoint.X, EntryFromAbove.TilePoint.Y] = true;
+            placedTiles[EntryFromBelow.TilePoint.X, EntryFromBelow.TilePoint.Y] = true;
+
             foreach (var npc in _npcs)
             {
-                // fetches walkable tiles and checks to see if a rat is already there
+                // fetches walkable tiles and checks if its available for npc to be placed
                 var tile = _tileMap.GetRandomWalkableTile();
                 while (placedTiles[tile.TilePoint.X, tile.TilePoint.Y])
                 {
                     tile = _tileMap.GetRandomWalkableTile();
                 }
 
-                // places the rat on the level and notes where it was put
+                // places the rat on the level and notes where it is
                 npc.CurrentTile = tile;
                 placedTiles[tile.TilePoint.X, tile.TilePoint.Y] = true;
             }

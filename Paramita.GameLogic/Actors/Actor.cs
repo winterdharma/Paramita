@@ -18,7 +18,7 @@ namespace Paramita.GameLogic.Actors
      * to possessing items and combat with other actors.
      */
 
-    public enum BeingType
+    public enum ActorType
     {
         GiantRat,
         HumanPlayer
@@ -55,7 +55,7 @@ namespace Paramita.GameLogic.Actors
         #endregion
 
 
-        public Actor(BeingType beingType, List<int> combatData)
+        public Actor(ActorType beingType, List<int> combatData)
         {
             BeingType = beingType;
             Facing = Compass.East;
@@ -69,7 +69,7 @@ namespace Paramita.GameLogic.Actors
         {
             set { name = value; Combatant.Name = value; }
         }
-        public BeingType BeingType { get; protected set; }
+        public ActorType BeingType { get; protected set; }
 
         public Tile CurrentTile { get; set; }
 

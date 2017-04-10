@@ -21,9 +21,9 @@ namespace Paramita.GameLogic
     public class NewLevelEventArgs : EventArgs
     {
         public int LevelNumber { get; }
-        public Tuple<TileType[,], ItemType[,], Tuple<BeingType, Compass, bool>[,]> Layers { get; }
+        public Tuple<TileType[,], ItemType[,], Tuple<ActorType, Compass, bool>[,]> Layers { get; }
         public NewLevelEventArgs(int levelNumber, 
-            Tuple<TileType[,], ItemType[,], Tuple<BeingType, Compass, bool>[,]> layers)
+            Tuple<TileType[,], ItemType[,], Tuple<ActorType, Compass, bool>[,]> layers)
         {
             LevelNumber = levelNumber;
             Layers = layers;
@@ -79,9 +79,9 @@ namespace Paramita.GameLogic
         #region Public API Methods
         
         #region UI TileMap Initialization
-        public static Tuple<TileType[,], ItemType[,], Tuple<BeingType, Compass, bool>[,]> GetCurrentLevelLayers()
+        public static Tuple<TileType[,], ItemType[,], Tuple<ActorType, Compass, bool>[,]> GetCurrentLevelLayers()
         { 
-            return new Tuple<TileType[,], ItemType[,], Tuple<BeingType, Compass, bool>[,]>(
+            return new Tuple<TileType[,], ItemType[,], Tuple<ActorType, Compass, bool>[,]>(
                     _currentLevel.TileTypeLayer, 
                     _currentLevel.ItemTypeLayer, 
                     _currentLevel.BeingTypeLayer

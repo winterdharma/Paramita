@@ -74,51 +74,59 @@ namespace Paramita.GameLogic.Actors.Combat
             var attackRoll = new AttackRoll(defender, repelWeapon, attacker);
             Report.AddRange(attackRoll.AttackRollReport);
 
-            return ResolveRepelAttackResult(attackRoll);
+            return ResolveRepelAttackResult(attackRoll.Result, attack.Weapon.Damage, attacker, 
+                defender);
         }
 
-        private bool ResolveRepelAttackResult(AttackRoll attackRoll)
+        private bool ResolveRepelAttackResult(int attackResult, int weaponDmg, Combatant attacker, 
+            Combatant defender)
         {
             bool attackRepelled = false;
-            if (attackRoll.Result > 0)
-                attackRepelled = RepelAttackMoraleCheck(attackRoll);
+            if (attackResult > 0)
+            {
+                attackRepelled = RepelAttackMoraleCheck(attackResult, weaponDmg, attacker, defender);
+            }
+                
             else
-                Report.Add(attackRoll.Attacker.ToString() + "'s repel attack missed!");
+                Report.Add(defender + "'s repel attack missed!");
 
             return attackRepelled;
         }
 
-
         // If the attacker passes his morale check, he continues his attack
         // and is hit by the repel weapon used to try to stop him.
         // If attacker fails the morale check, he was stymied and aborts.
-        private bool RepelAttackMoraleCheck(AttackRoll attackRoll)
+        private bool RepelAttackMoraleCheck(int attackResult, int weaponDmg, Combatant attacker,
+            Combatant defender)
         {
-            int checkModifier = attackRoll.Result / 2;
-            var moraleCheck = new MoraleCheck(attackRoll.Attacker, MoraleCheckType.RepelAttack,
-                attackRoll.Defender, checkModifier);
+            int checkModifier = attackResult / 2;
+            var moraleCheck = new MoraleCheck(attacker, MoraleCheckType.RepelAttack, defender, 
+                checkModifier);
 
             if (moraleCheck.IsSuccessful)
             {
-                RepelAttackDamageRoll(attackRoll);
-                Report.Add(attackRoll.Attacker + " didn't stop the attack, but hit " + attackRoll.Defender + " for " + Damage + " dmg.");
+                RepelAttackDamageRoll(attackResult, weaponDmg, attacker, defender);
+                Report.Add(defender + " didn't stop the attack, but hit " + attacker + " for " 
+                    + Damage + " dmg.");
                 return false;
             }
             else
             {
-                Report.Add(attackRoll.Attacker + " succeeded in repelling the attack.");
+                Report.Add(defender + " succeeded in repelling the attack.");
                 return true;
             }
         }
 
-
-        private void RepelAttackDamageRoll(AttackRoll attackRoll)
+        private void RepelAttackDamageRoll(int attackResult, int weaponDmg, Combatant attacker,
+            Combatant defender)
         {
-            var damageRoll = new DamageRoll(attackRoll);
+            var damageRoll = new DamageRoll(attackResult, weaponDmg, attacker, defender);
+            Report.AddRange(damageRoll.DamageRollReport);
+
             if (damageRoll.Damage > 0)
             {
                 Damage = REPEL_ATTACK_DAMAGE;
-                Report.Add(attackRoll.Defender + REPEL_DAMAGE_REPORT);
+                Report.Add(defender + REPEL_DAMAGE_REPORT);
             }
             else
             {

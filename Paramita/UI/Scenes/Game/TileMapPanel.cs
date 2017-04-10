@@ -31,7 +31,7 @@ namespace Paramita.UI.Scenes.Game
 
 
         public TileMapPanel(Tuple<TileType[,], ItemType[,], 
-            Tuple<BeingType, Compass, bool>[,]> tileMapLayers)
+            Tuple<ActorType, Compass, bool>[,]> tileMapLayers)
         {
             _viewport = GameController.ScreenRectangle;
             _drawFrame = new Rectangle(0, 0, TILE_SIZE, TILE_SIZE);
@@ -41,7 +41,7 @@ namespace Paramita.UI.Scenes.Game
 
 
         private void InitializeLevelMap(TileType[,] tileLayer, ItemType[,] itemLayer, 
-            Tuple<BeingType, Compass, bool>[,] actorLayer)
+            Tuple<ActorType, Compass, bool>[,] actorLayer)
         {
             _mapSizeInPixels =
                 new Point(tileLayer.GetLength(0) * TILE_SIZE, tileLayer.GetLength(1) * TILE_SIZE);
@@ -99,11 +99,11 @@ namespace Paramita.UI.Scenes.Game
         }
 
 
-        private BeingSprite[,] CreateActorSprites(Tuple<BeingType, Compass, bool>[,] typeArray)
+        private BeingSprite[,] CreateActorSprites(Tuple<ActorType, Compass, bool>[,] typeArray)
         {
             var spriteArray = new BeingSprite[typeArray.GetLength(0), typeArray.GetLength(1)];
 
-            BeingType type; Compass facing;
+            ActorType type; Compass facing;
 
             for (int i = 0; i < typeArray.GetLength(0); i++)
             {
@@ -123,7 +123,7 @@ namespace Paramita.UI.Scenes.Game
             return spriteArray;
         }
 
-        private Vector2 GetPlayerPosition(Tuple<BeingType, Compass, bool>[,] array)
+        private Vector2 GetPlayerPosition(Tuple<ActorType, Compass, bool>[,] array)
         {
             var position = Vector2.Zero;
 

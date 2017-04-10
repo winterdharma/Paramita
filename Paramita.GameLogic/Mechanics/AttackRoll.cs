@@ -38,18 +38,6 @@ namespace Paramita.GameLogic.Mechanics
         }
 
         #region Properties
-        public Combatant Defender
-        {
-            get { return _defender; }
-        }
-        public Combatant Attacker
-        {
-            get { return _attacker; }
-        }
-        public Weapon AttackWeapon
-        {
-            get { return _attackWeapon; }
-        }
         public int Result
         {
             get { return _attackScore - _defendScore; }

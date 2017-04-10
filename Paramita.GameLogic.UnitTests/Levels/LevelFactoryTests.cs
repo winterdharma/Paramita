@@ -109,11 +109,11 @@ namespace Paramita.GameLogic.UnitTests.Levels
             return levelData;
         }
 
-        private List<Tuple<BeingType, int>> CreateActors()
+        private List<Tuple<ActorType, int>> CreateActors()
         {
-            return new List<Tuple<BeingType, int>>()
+            return new List<Tuple<ActorType, int>>()
             {
-                new Tuple<BeingType, int>(BeingType.GiantRat, 2)
+                new Tuple<ActorType, int>(ActorType.GiantRat, 2)
             };
         }
 

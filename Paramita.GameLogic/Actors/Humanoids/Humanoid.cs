@@ -61,7 +61,7 @@ namespace Paramita.GameLogic.Actors
         #endregion
 
 
-        public Humanoid(BeingType type, List<int> combatData) : base(type, combatData)
+        public Humanoid(ActorType type, List<int> combatData) : base(type, combatData)
         {
             InitializeInventory();
         }

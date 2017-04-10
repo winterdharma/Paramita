@@ -24,27 +24,27 @@ namespace Paramita.GameLogic.Actors.Combat
 
             Report.AddRange(attackRoll.AttackRollReport);
 
-            ResolveAttackResult(attackRoll);
+            ResolveAttackResult(attackRoll.Result, attack.Weapon.Damage, attacker, defender);
         }
 
-
-        private void ResolveAttackResult(AttackRoll attackRoll)
+        private void ResolveAttackResult(int attackResult, int weaponDmg, Combatant attacker, 
+            Combatant defender)
         {
-            if (attackRoll.Result > 0)
+            if (attackResult > 0)
             {
-                var damageRoll = new DamageRoll(attackRoll);
+                var damageRoll = new DamageRoll(attackResult, weaponDmg, attacker, defender);
                 Report.AddRange(damageRoll.DamageRollReport);
-                attackRoll.Defender.TakeDamage(damageRoll.Damage);
+                defender.TakeDamage(damageRoll.Damage);
 
                 string damage = damageRoll.Damage < 1 ? "no" : damageRoll.Damage.ToString();
-                Report.Add(attackRoll.Attacker + " hit " + attackRoll.Defender + " doing " + damage + " damage!");
+                Report.Add(attacker + " hit " + defender + " doing " + damage + " damage!");
 
-                if (attackRoll.Defender.HitPoints < 1)
-                    Report.Add(attackRoll.Defender + " was killed!");
+                if (defender.HitPoints < 1)
+                    Report.Add(defender + " was killed!");
             }
             else
             {
-                Report.Add(attackRoll.Attacker + " missed!");
+                Report.Add(attacker + " missed!");
             }
         }
     }

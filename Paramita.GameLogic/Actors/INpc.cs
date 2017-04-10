@@ -15,7 +15,7 @@ namespace Paramita.GameLogic.Actors
         Tile CurrentTile { get; set; }
         bool IsDead { get; set; }
         Compass Facing { get; }
-        BeingType BeingType { get; }
+        ActorType BeingType { get; }
         int TimesAttacked { get; set; }
 
         event EventHandler<MoveEventArgs> OnMoveAttempt;

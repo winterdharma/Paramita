@@ -9,7 +9,7 @@ namespace Paramita.GameLogic.Actors.Animals
     public class GiantRat : Animal, INpc
     {
         public GiantRat() 
-            : base(BeingType.GiantRat, new List<int>() { 5, 2, 5, 3, 6, 8, 10, 5, 1, 1 } )
+            : base(ActorType.GiantRat, new List<int>() { 5, 2, 5, 3, 6, 8, 10, 5, 1, 1 } )
         {
             SubscribeToEvents();
             Name = "Giant Rat";

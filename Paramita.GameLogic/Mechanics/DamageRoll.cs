@@ -17,12 +17,12 @@ namespace Paramita.GameLogic.Mechanics
         #endregion
 
 
-        public DamageRoll(AttackRoll attackRoll) : base(2)
+        public DamageRoll(int attackResult, int weaponDmg, Combatant attacker, Combatant defender) 
+            : base(2)
         {
-            int defProtection = GetEffectiveProtection(attackRoll);
+            int defProtection = GetEffectiveProtection(attackResult, attacker, defender);
 
-            _attackScore = OpenEndedRoll(new List<int>()
-                { attackRoll.Attacker.Strength, attackRoll.AttackWeapon.Damage });
+            _attackScore = OpenEndedRoll(new List<int>() { attacker.Strength, weaponDmg });
             _defenseScore = OpenEndedRoll(new List<int>() { defProtection });
         }
 
@@ -45,13 +45,11 @@ namespace Paramita.GameLogic.Mechanics
 
 
         #region Helper Methods
-        private int GetEffectiveProtection(AttackRoll attackroll)
+        private int GetEffectiveProtection(int attackResult, Combatant attacker, Combatant defender)
         {
-            var defender = attackroll.Defender;
-            var attacker = attackroll.Attacker;
             int protection = defender.Protection;
 
-            if (ShieldWasHit(attackroll.Result, defender.Parry))
+            if (ShieldWasHit(attackResult, defender.Parry))
             {
                 _damageRollReport.Add(defender + "'s shield was hit.");
                 protection += defender.ShieldProtection;

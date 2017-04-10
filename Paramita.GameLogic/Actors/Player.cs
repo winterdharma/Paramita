@@ -45,7 +45,7 @@ namespace Paramita.GameLogic.Actors
         public event EventHandler<LevelChangeEventArgs> OnLevelChange;
 
         public Player(string name) 
-            : base(BeingType.HumanPlayer, new List<int>() { 10, 0, 10, 10, 10, 10, 10, 10, 0, 2 })
+            : base(ActorType.HumanPlayer, new List<int>() { 10, 0, 10, 10, 10, 10, 10, 10, 0, 2 })
         {
             SubscribeToEvents();
             Name = name;
