@@ -19,8 +19,11 @@ namespace Paramita.GameLogic.Mechanics
 
 
         public MoraleCheck(Combatant checker, MoraleCheckType type, Combatant opponent = null, 
-            int modifier = 0) : base(2)
+            int modifier = 0, IRandom stubbedRandom = null) : base(2)
         {
+            if (stubbedRandom != null)
+                Random = stubbedRandom;
+
             _isSuccessful = ResolveMoraleCheck(checker, opponent, GetTargetValue(type), modifier);
         }
 
@@ -59,9 +62,9 @@ namespace Paramita.GameLogic.Mechanics
             int checkAgainstTotal = OpenEndedRoll(new List<int>() { target, modifier });
 
             _moraleCheckReport.Add("Checker's total was " + checkerTotal
-                + "(Morale: " + morale + ", SizeDiff: " + sizeDifference);
+                + " (Morale: " + morale + ", SizeDiff: " + sizeDifference + ")");
             _moraleCheckReport.Add("Target total was " + checkAgainstTotal
-                + "(Target: " + target + ", Modifier: " + modifier);
+                + " (Target: " + target + ", Modifier: " + modifier + ")");
 
             if (checkerTotal > checkAgainstTotal)
             {

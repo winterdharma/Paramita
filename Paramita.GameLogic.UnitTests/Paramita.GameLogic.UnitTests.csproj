@@ -58,7 +58,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="Actions\CheckMoraleTests.cs" />
+    <Compile Include="Mechanics\MoraleCheckTests.cs" />
     <Compile Include="Levels\LevelFactoryTests.cs" />
     <Compile Include="Levels\LevelTests.cs" />
     <Compile Include="Levels\TileMapCreatorTests.cs" />
