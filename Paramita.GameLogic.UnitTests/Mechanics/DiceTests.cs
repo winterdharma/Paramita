@@ -58,6 +58,7 @@ namespace Paramita.GameLogic.UnitTests.Mechanics
             var fakeRandom = new FakeRandomNum(testData);
             var expected = new List<string>()
             {
+                "New Dice Roll",
                 "Roll d6: 6",
                 "Bonus Roll!",
                 "Roll d6: 6",
@@ -69,7 +70,8 @@ namespace Paramita.GameLogic.UnitTests.Mechanics
                 "Roll d6: 2",
                 "Roll d6: 4",
                 "Roll d6: 2",
-                "Total: 33"
+                "Total: 33",
+                " "
             };
 
             var dice5d6 = new Dice(5);
@@ -117,18 +119,56 @@ namespace Paramita.GameLogic.UnitTests.Mechanics
             var fakeRandom = new FakeRandomNum(testData);
             var expected = new List<string>()
             {
+                "New Dice Roll",
                 "Roll d6: 6",
                 "Roll d6: 6",
                 "Roll d6: 6",
                 "Roll d6: 4",
                 "Roll d6: 3",
-                "Total: 25"
+                "Total: 25",
+                " "
             };
 
             var dice5d6 = new Dice(5);
             dice5d6.Random = fakeRandom;
             dice5d6.ClosedEndedRoll();
             var actual = dice5d6.Report;
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void ClosedEndedRoll_GivenMultipleRolls_RecordsRollLogForAllRolls()
+        {
+            var testData = new List<int>() { 6, 6, 6, 4, 3, 2 };
+            var fakeRandom = new FakeRandomNum(testData);
+            var expected = new List<string>()
+            {
+                "New Dice Roll",
+                "Roll d6: 6",
+                "Roll d6: 6",
+                "Total: 12",
+                " ",
+                "New Dice Roll",
+                "Roll d6: 6",
+                "Roll d6: 4",
+                "Total: 10",
+                " ",
+                "New Dice Roll",
+                "Roll d6: 3",
+                "Roll d6: 2",
+                "Total: 5",
+                " "
+            };
+
+            var dice2d6 = new Dice(2);
+            dice2d6.Random = fakeRandom;
+
+            dice2d6.ClosedEndedRoll();
+            dice2d6.ClosedEndedRoll();
+            dice2d6.ClosedEndedRoll();
+
+            var actual = dice2d6.Report;
 
             Assert.AreEqual(expected, actual);
         }

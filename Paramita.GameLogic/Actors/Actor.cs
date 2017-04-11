@@ -201,7 +201,7 @@ namespace Paramita.GameLogic.Actors
 
         private void HandleAttackResolution(object sender, AttackEventArgs eventArgs)
         {
-            OnStatusMsgSent(this, new StatusMessageEventArgs(eventArgs.Report));
+            OnStatusMsgSent?.Invoke(this, new StatusMessageEventArgs(eventArgs.Report));
         }
 
         private void HandleActorDead(object sender, EventArgs eventArgs)
