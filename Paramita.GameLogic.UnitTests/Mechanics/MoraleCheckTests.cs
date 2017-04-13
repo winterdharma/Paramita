@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using static Paramita.GameLogic.UnitTests.Mechanics.DiceTests;
 using Paramita.GameLogic.Actors;
+using System.Linq;
 
 namespace Paramita.GameLogic.UnitTests.Mechanics
 {
@@ -20,58 +21,120 @@ namespace Paramita.GameLogic.UnitTests.Mechanics
         }
 
         [Test]
-        public void MoraleCheck_RepelAttackCheckTotalBeatsTarget_IsSuccessfulSetToTrue()
+        public void CheckMorale_RepelAttackCheckTotalBeatsTarget_IsSuccessfulSetToTrue()
+        {
+            var check = MakePassingCheck();
+            Assert.True(check.IsSuccessful);
+        }
+
+        [Test]
+        public void MoraleCheck_RepelAttackCheckTotalLessThanTarget_IsSuccessfulSetToFalse()
+        {
+            var check = MakeFailingCheck();
+            Assert.False(check.IsSuccessful);
+        }
+
+
+        #region Reporting Tests
+        [Test]
+        public void MoraleCheck_WhenCheckPassed_ReportsTheCheckPassed()
+        {
+            var expected = "passed";
+            var check = MakePassingCheck();
+            var actual = check.MoraleCheckReport.Last();
+            StringAssert.Contains(expected, actual);
+        }
+
+        [Test]
+        public void MoraleCheck_WhenCheckFailed_ReportsTheCheckFailed()
+        {
+            var expected = "failed";
+            var check = MakeFailingCheck();
+            var actual = check.MoraleCheckReport.Last();
+            StringAssert.Contains(expected, actual);
+        }
+
+        [Test]
+        public void MoraleCheck_WhenChecked_ReportsCheckersTotalScore()
+        {
+            var check = MakePassingCheck();
+            var expected = "Checker total: 27";
+            var actual = check.MoraleCheckReport.First();
+
+            StringAssert.Contains(expected, actual);
+        }
+
+        [Test]
+        public void MoraleCheck_WhenChecked_ReportsCheckersMorale()
+        {
+            var check = MakePassingCheck();
+            var expected = "Morale: 10";
+            var actual = check.MoraleCheckReport.First();
+
+            StringAssert.Contains(expected, actual);
+        }
+
+        [Test]
+        public void MoraleCheck_WhenChecked_ReportsCheckersSizeDifference()
+        {
+            var check = MakePassingCheck();
+            var expected = "Size difference: 1";
+            var actual = check.MoraleCheckReport.First();
+
+            StringAssert.Contains(expected, actual);
+        }
+
+        [Test]
+        public void MoraleCheck_WhenChecked_ReportsTotalTargetScore()
+        {
+            var check = MakePassingCheck();
+            var expected = "Target total: 20";
+            var actual = check.MoraleCheckReport[1];
+
+            StringAssert.Contains(expected, actual);
+        }
+
+        [Test]
+        public void MoraleCheck_WhenChecked_ReportsTargetValue()
+        {
+            var check = MakePassingCheck();
+            var expected = "Target: 10";
+            var actual = check.MoraleCheckReport[1];
+
+            StringAssert.Contains(expected, actual);
+        }
+
+        [Test]
+        public void MoraleCheck_WhenChecked_ReportsModifierValue()
+        {
+            var check = MakePassingCheck();
+            var expected = "Modifier: 0";
+            var actual = check.MoraleCheckReport[1];
+
+            StringAssert.Contains(expected, actual);
+        }
+        #endregion
+
+
+        #region Helper Methods
+        private MoraleCheck MakePassingCheck()
         {
             var fakeRNG = new FakeRandomNum(new List<int>() { 6, 5, 5, 5, 5 });
 
             var player = ActorCreator.CreateHumanPlayer();
             var rat = ActorCreator.CreateGiantRat();
 
-            var check = new MoraleCheck(player.Combatant, MoraleCheckType.RepelAttack, rat.Combatant, 0, fakeRNG);
-            Assert.True(check.IsSuccessful);
+            return new MoraleCheck(player.Combatant, MoraleCheckType.RepelAttack, rat.Combatant, 0, fakeRNG);
         }
 
-        [Test]
-        public void CheckMorale_RepelAttackCheckTotalLessThanTarget_IsSuccessfulSetToFalse()
+        private MoraleCheck MakeFailingCheck()
         {
-            var fakeRNG = new FakeRandomNum(new List<int>() { 1, 1, 5, 5 });
+            var fakeRNG = new FakeRandomNum(new List<int>() { 4, 5, 5, 5 });
 
             var player = ActorCreator.CreateHumanPlayer();
             var rat = ActorCreator.CreateGiantRat();
 
-            var check = new MoraleCheck(player.Combatant, MoraleCheckType.RepelAttack, rat.Combatant, 0, fakeRNG);
-            Assert.False(check.IsSuccessful);
-        }
-
-        [Test]
-        public void CheckMorale_GivenValidInputs_CreatesLogOfCheckVariables()
-        {
-            var fakeRNG = new FakeRandomNum(new List<int>() { 6, 5, 3, 5, 2 });
-
-            var player = ActorCreator.CreateHumanPlayer();
-            var rat = ActorCreator.CreateGiantRat();
-
-            var check = new MoraleCheck(player.Combatant, MoraleCheckType.RepelAttack, rat.Combatant, 0, fakeRNG);
-
-            var expected = new List<string>()
-            {
-                "Checker's total was 25 (Morale: 10, SizeDiff: 1)",
-                "Target total was 17 (Target: 10, Modifier: 0)",
-                "Checker passed the morale check!"
-            };
-
-            var actual = check.MoraleCheckReport;
-
-            CollectionAssert.AreEqual(expected, actual);
-        }
-
-        #region Helper Methods
-        private Dice MakeDiceWithFakeRandom(List<int> data)
-        {
-            var fakeRandom = new FakeRandomNum(data);
-            var dice = new Dice(2);
-            dice.Random = fakeRandom;
-            return dice;
+            return new MoraleCheck(player.Combatant, MoraleCheckType.RepelAttack, rat.Combatant, 0, fakeRNG);
         }
         #endregion
     }

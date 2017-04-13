@@ -15,6 +15,7 @@ namespace Paramita.GameLogic.Mechanics
         #region Fields
         private bool _isSuccessful;
         private List<string> _moraleCheckReport = new List<string>();
+        private MoraleCheckType _checkType;
         #endregion
 
 
@@ -24,7 +25,8 @@ namespace Paramita.GameLogic.Mechanics
             if (stubbedRandom != null)
                 Random = stubbedRandom;
 
-            _isSuccessful = ResolveMoraleCheck(checker, opponent, GetTargetValue(type), modifier);
+            _checkType = type;
+            _isSuccessful = ResolveMoraleCheck(checker, opponent, modifier);
         }
 
 
@@ -53,34 +55,36 @@ namespace Paramita.GameLogic.Mechanics
             }
         }
 
-        private bool ResolveMoraleCheck(Combatant checker, Combatant opponent, int target, int modifier)
+        private bool ResolveMoraleCheck(Combatant checker, Combatant opponent, int modifier)
         {
+            int target = GetTargetValue(_checkType);
             int sizeDifference = GetSizeDifference(checker, opponent);
             int morale = checker.Morale;
 
-            int checkerTotal = OpenEndedRoll(new List<int>() { morale, sizeDifference });
-            int checkAgainstTotal = OpenEndedRoll(new List<int>() { target, modifier });
+            int checkerTotal = OpenEndedRoll(morale, sizeDifference);
+            int checkAgainstTotal = OpenEndedRoll(target, modifier);
 
-            _moraleCheckReport.Add("Checker's total was " + checkerTotal
-                + " (Morale: " + morale + ", SizeDiff: " + sizeDifference + ")");
-            _moraleCheckReport.Add("Target total was " + checkAgainstTotal
+            _moraleCheckReport.Add("Checker total: " + checkerTotal
+                + " (Morale: " + morale + ", Size difference: " + sizeDifference + ")");
+            _moraleCheckReport.Add("Target total: " + checkAgainstTotal
                 + " (Target: " + target + ", Modifier: " + modifier + ")");
 
-            if (checkerTotal > checkAgainstTotal)
-            {
-                _moraleCheckReport.Add("Checker passed the morale check!");
-                return true;
-            }
-            else
-            {
-                _moraleCheckReport.Add("Checker failed the morale check!");
-                return false;
-            }
+            var result = GetResults(checkerTotal - checkAgainstTotal);
+            _moraleCheckReport.Add(result.Item2);
+            return result.Item1;
         }
 
         private int GetSizeDifference(Combatant checker, Combatant opponent)
         {
             return opponent != null ? checker.Size - opponent.Size : 0;
+        }
+
+        private Tuple<bool, string> GetResults(int difference)
+        {
+            if (difference > 0)
+                return new Tuple<bool, string>(true, "Checker passed the morale check!");
+            else
+                return new Tuple<bool, string>(false, "Checker failed the morale check!");
         }
         #endregion
     }

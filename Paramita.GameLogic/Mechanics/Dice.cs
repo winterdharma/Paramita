@@ -57,7 +57,14 @@ namespace Paramita.GameLogic.Mechanics
         }
         #endregion
 
-        
+        public int OpenEndedRoll(params int[] mods)
+        {
+            int modifier = 0;
+            if (mods.Length > 0)
+                modifier = mods.Sum();
+            return RollDice(true) + modifier;
+        }
+
         public int OpenEndedRoll(List<int> additions = null, List<int> subtractions = null)
         {
             int modifiers = additions != null ? additions.Sum() : 0;
