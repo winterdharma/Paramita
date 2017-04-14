@@ -19,20 +19,20 @@ namespace Paramita.GameLogic.Mechanics
         List<string> _attackRollReport = new List<string>();
         #endregion
 
-        public AttackRoll(Combatant attacker, Weapon weapon, Combatant defender) : base(2)
+        public AttackRoll(Combatant attacker, Weapon weapon, Combatant defender, 
+            IRandom stubbedRandom = null) : base(2)
         {
+            if (stubbedRandom != null)
+                Random = stubbedRandom;
+
             _attacker = attacker;
             _attackWeapon = weapon;
             _defender = defender;
 
-            _attackScore = OpenEndedRoll( 
-                new List<int>() { attacker.AttackSkill, weapon.AttackModifier },
-                new List<int>() { attacker.FatigueAttPenalty }
-                );
-            _defendScore = OpenEndedRoll(
-                new List<int>() { defender.TotalDefense },
-                new List<int>() { defender.FatigueDefPenalty, defender.TimesAttackedPenalty }
-                );
+            _attackScore = OpenEndedRoll(attacker.AttackSkill, weapon.AttackModifier, 
+                -attacker.FatigueAttPenalty);
+            _defendScore = OpenEndedRoll(defender.TotalDefense, -defender.FatigueDefPenalty, 
+                -defender.TimesAttackedPenalty);
 
             _attackRollReport = CreateReport();
         }
@@ -50,10 +50,10 @@ namespace Paramita.GameLogic.Mechanics
         private List<string> CreateReport()
         {
             var report = new List<string>();
-            report.Add(_attacker + " rolled " + _attackScore + "(attSkill: " + _attacker.AttackSkill
-                + ", fatigue: " + _attacker.FatigueAttPenalty + ")");
-            report.Add(_defender + " rolled " + _defendScore + "(defSkill: " + _defender.TotalDefense
-                + ", fatigue: " + _defender.FatigueDefPenalty + ", multAtt: " 
+            report.Add(_attacker + "'s attack score was " + _attackScore + "(Attack skill: " + _attacker.AttackSkill
+                + "Weapon modifier: " + _attackWeapon.AttackModifier + ", Fatigue penalty: " + _attacker.FatigueAttPenalty + ")");
+            report.Add(_defender + "'s defense score was " + _defendScore + "(Total defense: " + _defender.TotalDefense
+                + ", Fatigue penalty: " + _defender.FatigueDefPenalty + ", Times attacked penalty: " 
                 + _defender.TimesAttackedPenalty + ")");
             return report;
         }
