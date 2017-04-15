@@ -17,13 +17,13 @@ namespace Paramita.GameLogic.Mechanics
         #endregion
 
 
-        public DamageRoll(int attackResult, int weaponDmg, Combatant attacker, Combatant defender) 
-            : base(2)
+        public DamageRoll(int attackResult, int weaponDmg, Combatant attacker, Combatant defender, 
+            IRandom stubbedRandom = null) : base(2)
         {
-            int defProtection = GetEffectiveProtection(attackResult, attacker, defender);
+            if (stubbedRandom != null)
+                Random = stubbedRandom;
 
-            _attackScore = OpenEndedRoll(new List<int>() { attacker.Strength, weaponDmg });
-            _defenseScore = OpenEndedRoll(new List<int>() { defProtection });
+            ResolveDamageRoll(attackResult, attacker, weaponDmg, defender);
         }
 
 
@@ -45,6 +45,22 @@ namespace Paramita.GameLogic.Mechanics
 
 
         #region Helper Methods
+        private void ResolveDamageRoll(int attackResult, Combatant attacker, int weaponDmg, 
+            Combatant defender)
+        {
+            int defProtection = GetEffectiveProtection(attackResult, attacker, defender);
+            int strength = attacker.Strength;
+
+            _attackScore = OpenEndedRoll(strength, weaponDmg);
+            _defenseScore = OpenEndedRoll(defProtection);
+
+            _damageRollReport.Add("Attacker damage score was " + _attackScore + " (Strength: " 
+                + strength + ", Weapon damage: " + weaponDmg + ")");
+            _damageRollReport.Add("Defender protection score was " + _defenseScore + " (Protection: " 
+                + defProtection + ")");
+        }
+
+
         private int GetEffectiveProtection(int attackResult, Combatant attacker, Combatant defender)
         {
             int protection = defender.Protection;
@@ -77,7 +93,7 @@ namespace Paramita.GameLogic.Mechanics
         private bool WasCriticalHit(int defFatiguePenalty)
         {
             int threshold = 3;
-            int criticalCheckRoll = OpenEndedRoll(null, new List<int>() { defFatiguePenalty });
+            int criticalCheckRoll = OpenEndedRoll(-defFatiguePenalty);
 
             if (criticalCheckRoll < threshold)
             {

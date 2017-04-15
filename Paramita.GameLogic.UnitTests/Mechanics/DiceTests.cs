@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using Paramita.GameLogic.Mechanics;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Paramita.GameLogic.UnitTests.Mechanics
 {
@@ -177,6 +178,11 @@ namespace Paramita.GameLogic.UnitTests.Mechanics
         internal class FakeRandomNum : IRandom
         {
             List<int> _numbers;
+
+            public FakeRandomNum(params int[] fakedNumbers)
+            {
+                _numbers = fakedNumbers.ToList();
+            }
 
             public FakeRandomNum(List<int> fakedNumbers)
             {
