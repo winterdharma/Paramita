@@ -59,6 +59,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Items\ItemTests.cs" />
+    <Compile Include="Items\ShieldTests.cs" />
     <Compile Include="Items\WeaponTests.cs" />
     <Compile Include="Mechanics\AttackRollTests.cs" />
     <Compile Include="Mechanics\DamageRollTests.cs" />

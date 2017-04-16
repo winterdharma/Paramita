@@ -29,8 +29,8 @@
 
         public override string GetDescription()
         {
-            return _name + "(Prot: " + _protection + ", DefenseMod: " + _defenseModifier 
-                + ", Parry: " + _parry + ", Enc: " + _encumbrance + ")";
+            return _name + " (Protection: " + _protection + ", Defense Modifier: " + _defenseModifier 
+                + ", Parry: " + _parry + ", Encumbrance: " + _encumbrance + ")";
         }
     }
 }

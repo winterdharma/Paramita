@@ -79,12 +79,12 @@ namespace Paramita.GameLogic.Items
 
         public static bool operator ==(Item left, Item right)
         {
-            return left.Id == right.Id;
+            return ReferenceEquals(left, right);
         }
 
         public static bool operator !=(Item left, Item right)
         {
-            return left.Id != right.Id;
+            return !(left == right);
         }
         #endregion
 
