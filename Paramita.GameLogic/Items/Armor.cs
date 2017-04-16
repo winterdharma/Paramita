@@ -8,13 +8,32 @@
      */
     public abstract class Armor : Item
     {
+        #region Fields
+        private int _encumbrance;
+        private int _protection;
+        private int _defenseModifier;
+        #endregion
 
-        private int encumbrance;
-
-        public int Encumbrance { get { return encumbrance; } }
-
-        public Armor(ItemType type, string name) : base(type, name)
+       
+        public Armor(int prot, int defMod, int enc, ItemType type, string name) : base(type, name)
         {
+            _encumbrance = enc;
+            _protection = prot;
+            _defenseModifier = defMod;
+        }
+
+
+        #region Properties
+        public int Encumbrance { get { return _encumbrance; } }
+        public int DefenseModifier { get { return _defenseModifier; } }
+        public int Protection { get { return _protection; } }
+        #endregion
+
+
+        public override string GetDescription()
+        {
+            return _name + " (Protection: " + _protection + ", Defense modifier: " 
+                + _defenseModifier + ", Encumbrance: " + _encumbrance + ")";
         }
     }
 }

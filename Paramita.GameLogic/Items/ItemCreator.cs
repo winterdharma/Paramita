@@ -1,16 +1,11 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Paramita.GameLogic.Items.Armors;
+﻿using Paramita.GameLogic.Items.Armors;
 using Paramita.GameLogic.Items.Consumables;
 using Paramita.GameLogic.Items.Valuables;
 using Paramita.GameLogic.Items.Weapons;
 using System;
-using System.Collections.Generic;
 
 namespace Paramita.GameLogic.Items
 {
-    
-
-
     public static class ItemCreator
     {
         public static Item CreateItem(ItemType type, int coins = 0)
@@ -23,6 +18,8 @@ namespace Paramita.GameLogic.Items
                     return CreateBuckler();
                 case ItemType.ShortSword:
                     return CreateShortSword();
+                case ItemType.ScaleMailCuirass:
+                    return CreateScaleMailCuirass();
                 case ItemType.Coins:
                     return CreateCoins(coins);
                 case ItemType.Bite:
@@ -34,13 +31,16 @@ namespace Paramita.GameLogic.Items
             }
         }
 
-        // This item has no visible sprite
+        public static ScaleMailCuirass CreateScaleMailCuirass()
+        {
+            return new ScaleMailCuirass();
+        }
+
         public static Fist CreateFist()
         {
             return new Fist();
         }
 
-        // This item has no visible sprite
         public static Bite CreateBite()
         {
             return new Bite();
@@ -51,21 +51,15 @@ namespace Paramita.GameLogic.Items
             return new ShortSword();
         }
 
-
-
         public static Coins CreateCoins(int number)
         {
             return new Coins(number);
         }
 
-
-
         public static Meat CreateMeat()
         {
             return new Meat();
         }
-
-
 
         public static Buckler CreateBuckler()
         {

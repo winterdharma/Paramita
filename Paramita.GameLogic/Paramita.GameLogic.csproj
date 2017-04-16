@@ -62,6 +62,7 @@
     <Compile Include="Data\Levels\TileMapData.cs" />
     <Compile Include="Dungeon.cs" />
     <Compile Include="Items\Armor.cs" />
+    <Compile Include="Items\Armors\ScaleMailCuirass.cs" />
     <Compile Include="Items\Consumable.cs" />
     <Compile Include="Items\Consumables\Meat.cs" />
     <Compile Include="Items\IContainer.cs" />
@@ -90,9 +91,7 @@
     <Compile Include="Utility\RandomNum.cs" />
     <Compile Include="Utility\Utilities.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Items\Armors\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Data\Levels\Level01.txt" />
   </ItemGroup>

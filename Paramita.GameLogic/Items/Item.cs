@@ -9,6 +9,7 @@ namespace Paramita.GameLogic.Items
         None = 0,
         ShortSword,
         Shield,
+        ScaleMailCuirass,
         Coins,
         Meat,
         Fist,

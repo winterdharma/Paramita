@@ -13,7 +13,7 @@
         public Shield(int prot, int defMod, int parry, int enc, ItemType type, string name) : base(type, name)
         {
             _encumbrance = enc;
-            this._parry = parry;
+            _parry = parry;
             _defenseModifier = defMod;
             _protection = prot;
         }
