@@ -19,7 +19,7 @@
 
         public Coins(int number) : base(ItemType.Coins, "gold_coin")
         {
-            name = "Gold Coin";
+            _name = "Gold Coin";
             this.number = number;
         }
 
@@ -50,7 +50,7 @@
 
         public override string GetDescription()
         {
-            return number + " " + name;
+            return number + " " + _name;
         }
     }
 }

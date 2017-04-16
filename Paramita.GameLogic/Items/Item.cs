@@ -28,36 +28,35 @@ namespace Paramita.GameLogic.Items
 
     public abstract class Item : IEquatable<Item>
     {
-        private static int counter;
-        private int id;
-        protected string name;
-
-        public EquipType EquipType { get; protected set; }
-        public ItemType ItemType { get; protected set; }
-        public string Name { get; protected set; }
+        #region Fields
+        private static int _counter;
+        private int _id;
+        protected string _name;
+        #endregion
 
 
         public Item(ItemType itemType, string name)
         {
-            id = counter;
-            counter++;
+            _id = _counter;
+            _counter++;
             ItemType = itemType;
-            this.name = name;
+            _name = name;
         }
 
 
-        #region IEquatable Methods
+        #region Properties
+        public int Id { get { return _id; } }
+        public EquipType EquipType { get; protected set; }
+        public ItemType ItemType { get; protected set; }
+        #endregion
+
+
         /*
-         * IEquatable<Item> methods.
-         * 
-         * Items are not equal unless they both have the same id,
-         * meaning that both are references to the same instance of
-         * an Item derived class.
-         * 
-         * This is setup with the List<Item>.Remove() method in mind,
-         * which matches the Item to remove with the Item in the collection
-         * with Equals().
+         * Item Equals, ==, and != methods function like string comparisons.
+         * == and != check for identity; Equals() checks for equivalency.
+         * Equivalency is currently defined as being of the same Type.
          */
+        #region IEquatable Methods
         public override bool Equals(object obj)
         {
             if (obj == null) return false;
@@ -66,37 +65,37 @@ namespace Paramita.GameLogic.Items
             else return Equals(objAsItem);
         }
 
-        public override int GetHashCode()
-        {
-            return id;
-        }
-
         public bool Equals(Item other)
         {
-            if (this.GetType() == other.GetType())
+            if (GetType() == other.GetType())
                 return true;
             return false;
         }
 
+        public override int GetHashCode()
+        {
+            return _id;
+        }
+
         public static bool operator ==(Item left, Item right)
         {
-            return Equals(left, right);
+            return left.Id == right.Id;
         }
 
         public static bool operator !=(Item left, Item right)
         {
-            return !Equals(left, right);
+            return left.Id != right.Id;
         }
         #endregion
 
         public override string ToString()
         {
-            return id + " : " + name;
+            return _id + " : " + _name;
         }
 
         public string DisplayText()
         {
-            return name;
+            return _name;
         }
 
         public abstract string GetDescription();

@@ -29,7 +29,7 @@
 
         public override string GetDescription()
         {
-            return name + "(Prot: " + _protection + ", DefenseMod: " + _defenseModifier 
+            return _name + "(Prot: " + _protection + ", DefenseMod: " + _defenseModifier 
                 + ", Parry: " + _parry + ", Enc: " + _encumbrance + ")";
         }
     }

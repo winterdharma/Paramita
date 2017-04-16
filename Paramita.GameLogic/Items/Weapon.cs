@@ -40,7 +40,7 @@
 
         public override string GetDescription()
         {
-            return name + " (Damage: " + _damage + " plus strength, Att:" + _attackModifier 
+            return _name + " (Damage: " + _damage + " plus strength, Att:" + _attackModifier 
                 + ", Def:" + _defenseModifier + ", Length:" + _length + ", Encumbrance: " 
                 + _encumbrance + ")";
         }

@@ -58,6 +58,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Items\ItemTests.cs" />
     <Compile Include="Mechanics\AttackRollTests.cs" />
     <Compile Include="Mechanics\DamageRollTests.cs" />
     <Compile Include="Mechanics\MoraleCheckTests.cs" />
