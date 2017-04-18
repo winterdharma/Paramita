@@ -15,11 +15,10 @@ namespace Paramita.GameLogic.Actors
         Tile CurrentTile { get; set; }
         bool IsDead { get; set; }
         Compass Facing { get; }
-        ActorType BeingType { get; }
+        ActorType ActorType { get; }
         int TimesAttacked { get; set; }
 
         event EventHandler<MoveEventArgs> OnMoveAttempt;
-        event EventHandler<MoveEventArgs> OnActorDeath;
         event EventHandler<StatusMessageEventArgs> OnStatusMsgSent;
 
         void PerformAI(Player player);

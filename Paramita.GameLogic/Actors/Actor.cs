@@ -51,13 +51,12 @@ namespace Paramita.GameLogic.Actors
         public event EventHandler<InventoryChangeEventArgs> OnInventoryChange;
         public event EventHandler<MoveEventArgs> OnMoveAttempt;
         public event EventHandler<StatusMessageEventArgs> OnStatusMsgSent;
-        public event EventHandler<MoveEventArgs> OnActorDeath;
         #endregion
 
 
-        public Actor(ActorType beingType, List<int> combatData)
+        public Actor(ActorType actorType, List<int> combatData)
         {
-            BeingType = beingType;
+            ActorType = actorType;
             Facing = Compass.East;
             Inventory = new Inventory();
             Combatant = new Combatant(combatData);
@@ -69,7 +68,7 @@ namespace Paramita.GameLogic.Actors
         {
             set { name = value; Combatant.Name = value; }
         }
-        public ActorType BeingType { get; protected set; }
+        public ActorType ActorType { get; protected set; }
 
         public Tile CurrentTile { get; set; }
 
@@ -207,7 +206,6 @@ namespace Paramita.GameLogic.Actors
         private void HandleActorDead(object sender, EventArgs eventArgs)
         {
             IsDead = true;
-            OnActorDeath?.Invoke(this, new MoveEventArgs(Compass.None, CurrentTile.TilePoint, Point.Zero));
         }
 
         private int GetItemEncumbrance(Item item)

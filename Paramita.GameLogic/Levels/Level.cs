@@ -25,6 +25,7 @@ namespace Paramita.GameLogic.Levels
         // these events are for the Dungeon class to pass onto the UI
         public event EventHandler<MoveEventArgs> OnActorWasMoved;
         public event EventHandler<StatusMessageEventArgs> OnStatusMessageSent;
+        public event EventHandler<MoveEventArgs> OnActorDeath;
         #endregion
 
 
@@ -114,14 +115,14 @@ namespace Paramita.GameLogic.Levels
             var playerTile = _player.CurrentTile.TilePoint;
 
             typeArray[playerTile.X, playerTile.Y] = 
-                new Tuple<ActorType, Compass, bool>(_player.BeingType, _player.Facing, true);
+                new Tuple<ActorType, Compass, bool>(_player.ActorType, _player.Facing, true);
 
             for (int i = 0; i < _npcs.Count; i++)
             {
                 var npc = _npcs[i];
                 var npcTile = npc.CurrentTile.TilePoint;
                 typeArray[npcTile.X, npcTile.Y] = 
-                    new Tuple<ActorType, Compass, bool>(npc.BeingType, npc.Facing, false);
+                    new Tuple<ActorType, Compass, bool>(npc.ActorType, npc.Facing, false);
             }
 
             return typeArray;
@@ -211,22 +212,19 @@ namespace Paramita.GameLogic.Levels
             foreach (INpc npc in _npcs)
             {
                 npc.OnMoveAttempt += HandleActorMove;
-                npc.OnActorDeath += HandleNpcDeath;
             }
         }
 
         private void UnsubscribeFromOneNpcsEvents(INpc npc)
         {
             npc.OnMoveAttempt -= HandleActorMove;
-            npc.OnActorDeath -= HandleNpcDeath;
         }
         #endregion
 
 
         public void Update()
         {
-            _npcs.RemoveAll(NpcIsDead);
-
+            RemoveDeadNPCs(_npcs);
             
             if (_isPlayersTurn)
             {
@@ -262,6 +260,18 @@ namespace Paramita.GameLogic.Levels
         private void TogglePlayersTurn()
         {
             _isPlayersTurn = !_isPlayersTurn;
+        }
+
+        private void RemoveDeadNPCs(List<INpc> npcs)
+        {
+            foreach(INpc npc in npcs)
+            {
+                if (NpcIsDead(npc))
+                {
+                    OnActorDeath?.Invoke(this, new MoveEventArgs(Compass.None, npc.CurrentTile.TilePoint, Point.Zero));
+                }
+            }
+            npcs.RemoveAll(NpcIsDead);
         }
 
         private bool NpcIsDead(INpc npc)
