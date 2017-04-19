@@ -59,7 +59,7 @@ namespace Paramita.GameLogic.Actors
             ActorType = actorType;
             Facing = Compass.East;
             Inventory = new Inventory();
-            Combatant = new Combatant(combatData);
+            Combatant = new Combatant(combatData, Inventory);
         }
 
 
@@ -162,18 +162,6 @@ namespace Paramita.GameLogic.Actors
             else
                 return true;
         }
-
-        protected int GetTotalEncumbrance()
-        {
-            int total = Combatant.Encumbrance;
-
-            foreach(var item in Inventory.Equipment)
-            {
-                total += GetItemEncumbrance(item);
-            }
-
-            return total;
-        }
         #endregion
 
 
@@ -181,7 +169,6 @@ namespace Paramita.GameLogic.Actors
         protected void SubscribeToEvents()
         {
             Inventory.OnInventoryChange += HandleInventoryChange;
-            Inventory.OnWeaponsChange += HandleWeaponsChange;
             Combatant.OnAttackResolved += HandleAttackResolution;
             Combatant.OnCombatantKilled += HandleActorDead;
         }
@@ -189,13 +176,6 @@ namespace Paramita.GameLogic.Actors
         private void HandleInventoryChange(object sender, InventoryChangeEventArgs eventArgs)
         {
             OnInventoryChange?.Invoke(this, eventArgs);
-            Combatant.Shields = Inventory.Shields;
-            Combatant.TotalEncumbrance = GetTotalEncumbrance();
-        }
-
-        private void HandleWeaponsChange(object sender, EventArgs e)
-        {
-            Combatant.UpdateAttacks(Inventory.Weapons);
         }
 
         private void HandleAttackResolution(object sender, AttackEventArgs eventArgs)
@@ -208,24 +188,6 @@ namespace Paramita.GameLogic.Actors
             IsDead = true;
         }
 
-        private int GetItemEncumbrance(Item item)
-        {
-            int encumbrance = 0;
-            if (item is Armor)
-            {
-                encumbrance = (item as Armor).Encumbrance;
-            }
-            else if (item is Shield)
-            {
-                encumbrance = (item as Shield).Encumbrance;
-            }
-            else if (item is Weapon)
-            {
-                encumbrance = (item as Weapon).Encumbrance;
-            }
-            return encumbrance;
-        }
-        
         private bool Remove(Item item)
         {
             if (!Inventory.RemoveItemFromEquipment(item))

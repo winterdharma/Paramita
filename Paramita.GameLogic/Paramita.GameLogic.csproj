@@ -88,6 +88,7 @@
     <Compile Include="Mechanics\Direction.cs" />
     <Compile Include="Mechanics\MoraleCheck.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\GenericEventArgsClasses.cs" />
     <Compile Include="Utility\RandomNum.cs" />
     <Compile Include="Utility\Utilities.cs" />
   </ItemGroup>

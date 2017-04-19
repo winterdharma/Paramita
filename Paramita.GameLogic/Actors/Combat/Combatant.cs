@@ -1,6 +1,7 @@
 ﻿using Paramita.GameLogic.Actors.Combat;
 using Paramita.GameLogic.Items;
 using Paramita.GameLogic.Mechanics;
+using Paramita.GameLogic.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,13 +51,14 @@ namespace Paramita.GameLogic.Actors
 
 
         #region Constructors
-        public Combatant(List<int> data) :
+        public Combatant(List<int> data, Inventory inventory) :
             this(data[0], data[1], data[2], data[3], data[4], data[5],
-                data[6], data[7], data[8], data[9], new List<Weapon>(), new List<Shield>())
+                data[6], data[7], data[8], data[9], new List<Weapon>(), new List<Shield>(), inventory)
         { }
 
         public Combatant(int hitpoints, int protection, int magicResistance, int strength, int morale,
-            int attackskill, int defenseskill, int precision, int encumbrance, int size, List<Weapon> weapons, List<Shield> shields)
+            int attackskill, int defenseskill, int precision, int encumbrance, int size, List<Weapon> weapons, 
+            List<Shield> shields, Inventory inventory)
         {
             _hitPoints = hitpoints;
             _protection = protection;
@@ -76,6 +78,8 @@ namespace Paramita.GameLogic.Actors
 
             _repelMeleeAttack = new RepelMeleeAttack();
             _meleeAttack = new MeleeAttack();
+
+            SubscribeToEvents(inventory);
         }
         #endregion
 
@@ -323,5 +327,29 @@ namespace Paramita.GameLogic.Actors
         {
             return _name;
         }
+
+        #region Helper Methods
+        private void SubscribeToEvents(Inventory inventory)
+        {
+            inventory.OnItemEncumbranceChange += HandleItemEncumbranceChange;
+            inventory.OnWeaponsChange += HandleWeaponsChange;
+            inventory.OnShieldsChange += HandleShieldsChange;
+        }
+
+        private void HandleItemEncumbranceChange(object sender, IntegerEventArgs e)
+        {
+            TotalEncumbrance = Encumbrance + e.Value;
+        }
+
+        private void HandleWeaponsChange(object sender, WeaponsEventArgs e)
+        {
+            UpdateAttacks(e.Weapons);
+        }
+
+        private void HandleShieldsChange(object sender, ShieldsEventArgs e)
+        {
+            Shields = e.Shields;
+        }
+        #endregion
     }
 }

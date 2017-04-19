@@ -1,4 +1,5 @@
 ﻿using Paramita.GameLogic.Items;
+using Paramita.GameLogic.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +11,30 @@ namespace Paramita.GameLogic.Actors
     public class InventoryChangeEventArgs : EventArgs
     {
         public Tuple<Dictionary<string, ItemType>, int> Inventory { get; }
+
         public InventoryChangeEventArgs(Tuple<Dictionary<string, ItemType>, int> inventory)
         {
             Inventory = inventory;
+        }
+    }
+
+    public class WeaponsEventArgs : EventArgs
+    {
+        public List<Weapon> Weapons { get; }
+
+        public WeaponsEventArgs(List<Weapon> weapons)
+        {
+            Weapons = weapons;
+        }
+    }
+
+    public class ShieldsEventArgs : EventArgs
+    {
+        public List<Shield> Shields { get; }
+
+        public ShieldsEventArgs(List<Shield> shields)
+        {
+            Shields = shields;
         }
     }
 
@@ -30,7 +52,9 @@ namespace Paramita.GameLogic.Actors
         #endregion
 
         public event EventHandler<InventoryChangeEventArgs> OnInventoryChange;
-        public event EventHandler OnWeaponsChange;
+        public event EventHandler<WeaponsEventArgs> OnWeaponsChange;
+        public event EventHandler<ShieldsEventArgs> OnShieldsChange;
+        public event EventHandler<IntegerEventArgs> OnItemEncumbranceChange;
 
         #region Constructors
         public Inventory() { }
@@ -77,7 +101,7 @@ namespace Paramita.GameLogic.Actors
             set
             {
                 _weapons = value;
-                OnWeaponsChange?.Invoke(this, EventArgs.Empty);
+                OnWeaponsChange?.Invoke(this, new WeaponsEventArgs(Weapons));
             }
         }
 
@@ -90,7 +114,11 @@ namespace Paramita.GameLogic.Actors
         public List<Shield> Shields
         {
             get { return _shields; }
-            set { _shields = value; }
+            set
+            {
+                _shields = value;
+                OnShieldsChange?.Invoke(this, new ShieldsEventArgs(Shields));
+            }
         }
         #endregion
 
@@ -174,6 +202,7 @@ namespace Paramita.GameLogic.Actors
         public void RaiseChangeEvent()
         {
             OnInventoryChange?.Invoke(this, new InventoryChangeEventArgs(GetInventoryData()));
+            OnItemEncumbranceChange?.Invoke(this, new IntegerEventArgs(GetSumOfItemEncumbrance()));
         }
 
         #region Helper Methods
@@ -238,15 +267,16 @@ namespace Paramita.GameLogic.Actors
 
         private void UpdateShields()
         {
-            _shields.Clear();
+            var shields = new List<Shield>();
 
             for (int x = 0; x < _equippedItems.Length; x++)
             {
                 if (_equippedItems[x] is Shield)
                 {
-                    _shields.Add(_equippedItems[x] as Shield);
+                    shields.Add(_equippedItems[x] as Shield);
                 }
             }
+            Shields = shields;
         }
 
         private bool GetEmptySlots(bool isStorage, out List<int> emptyAt)
@@ -310,6 +340,23 @@ namespace Paramita.GameLogic.Actors
                     indices.Add(i);
             }
             return indices;
+        }
+
+        private int GetSumOfItemEncumbrance()
+        {
+            int total = 0;
+            var allItems = new List<Item>();
+            allItems.AddRange(Equipment);
+            if(Storage != null)
+                allItems.AddRange(Storage);
+
+            foreach (var item in allItems)
+            {
+
+                total = item != null ? total + item.Encumbrance : total;
+            }
+
+            return total;
         }
         #endregion
     }

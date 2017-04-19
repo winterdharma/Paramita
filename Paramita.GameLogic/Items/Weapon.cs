@@ -21,20 +21,15 @@
             _attackModifier = attack;
             _defenseModifier = defense;
             _length = length;
-            _encumbrance = encumbrance;
+            Encumbrance = encumbrance;
         }
 
 
         #region Properties
         public int Damage { get { return _damage; } }
-
         public int AttackModifier { get { return _attackModifier; } }
-
         public int DefenseModifier { get { return _defenseModifier; } }
-
         public int Length { get { return _length; } }
-
-        public int Encumbrance { get { return _encumbrance; } }
         #endregion
 
 
