@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 using Paramita.GameLogic.Levels;
 using Paramita.GameLogic.Mechanics;
+using Paramita.GameLogic.Utility;
 
 namespace Paramita.GameLogic.Actors
 {
@@ -24,22 +25,6 @@ namespace Paramita.GameLogic.Actors
         HumanPlayer
     }
 
-    public class MoveEventArgs : EventArgs
-    {
-        public Compass Direction { get; }
-        public Point Origin { get; }
-        public Point Destination { get; }
-         
-        public MoveEventArgs(Compass direction, Point tileOrigin, Point tileDest)
-        {
-            Direction = direction;
-            Origin = tileOrigin;
-            Destination = tileDest;
-        }
-    }
-
-
-
     public abstract class Actor : IEquatable<Actor>
     {
         #region Fields
@@ -49,18 +34,17 @@ namespace Paramita.GameLogic.Actors
 
         #region Events
         public event EventHandler<InventoryChangeEventArgs> OnInventoryChange;
-        public event EventHandler<MoveEventArgs> OnMoveAttempt;
+        public event EventHandler<DirectionEventArgs> OnMoveAttempt;
         public event EventHandler<StatusMessageEventArgs> OnStatusMsgSent;
-        public event EventHandler<MoveEventArgs> OnActorDeath;
         #endregion
 
 
-        public Actor(ActorType beingType, List<int> combatData)
+        public Actor(ActorType actorType, List<int> combatData)
         {
-            BeingType = beingType;
+            ActorType = actorType;
             Facing = Compass.East;
             Inventory = new Inventory();
-            Combatant = new Combatant(combatData);
+            Combatant = new Combatant(combatData, Inventory);
         }
 
 
@@ -69,7 +53,7 @@ namespace Paramita.GameLogic.Actors
         {
             set { name = value; Combatant.Name = value; }
         }
-        public ActorType BeingType { get; protected set; }
+        public ActorType ActorType { get; protected set; }
 
         public Tile CurrentTile { get; set; }
 
@@ -154,26 +138,14 @@ namespace Paramita.GameLogic.Actors
 
             Facing = direction;
             Tile currentTile = CurrentTile;
-            // check to see if the bool check for tile change works as expected
-            OnMoveAttempt?.Invoke(this, new MoveEventArgs(direction, Point.Zero, Point.Zero));
+            
+            OnMoveAttempt?.Invoke(this, new DirectionEventArgs(direction));
 
             Tile newTile = CurrentTile;
             if (newTile == currentTile)
                 return false;
             else
                 return true;
-        }
-
-        protected int GetTotalEncumbrance()
-        {
-            int total = Combatant.Encumbrance;
-
-            foreach(var item in Inventory.Equipment)
-            {
-                total += GetItemEncumbrance(item);
-            }
-
-            return total;
         }
         #endregion
 
@@ -182,7 +154,6 @@ namespace Paramita.GameLogic.Actors
         protected void SubscribeToEvents()
         {
             Inventory.OnInventoryChange += HandleInventoryChange;
-            Inventory.OnWeaponsChange += HandleWeaponsChange;
             Combatant.OnAttackResolved += HandleAttackResolution;
             Combatant.OnCombatantKilled += HandleActorDead;
         }
@@ -190,13 +161,6 @@ namespace Paramita.GameLogic.Actors
         private void HandleInventoryChange(object sender, InventoryChangeEventArgs eventArgs)
         {
             OnInventoryChange?.Invoke(this, eventArgs);
-            Combatant.Shields = Inventory.Shields;
-            Combatant.TotalEncumbrance = GetTotalEncumbrance();
-        }
-
-        private void HandleWeaponsChange(object sender, EventArgs e)
-        {
-            Combatant.UpdateAttacks(Inventory.Weapons);
         }
 
         private void HandleAttackResolution(object sender, AttackEventArgs eventArgs)
@@ -207,27 +171,8 @@ namespace Paramita.GameLogic.Actors
         private void HandleActorDead(object sender, EventArgs eventArgs)
         {
             IsDead = true;
-            OnActorDeath?.Invoke(this, new MoveEventArgs(Compass.None, CurrentTile.TilePoint, Point.Zero));
         }
 
-        private int GetItemEncumbrance(Item item)
-        {
-            int encumbrance = 0;
-            if (item is Armor)
-            {
-                encumbrance = (item as Armor).Encumbrance;
-            }
-            else if (item is Shield)
-            {
-                encumbrance = (item as Shield).Encumbrance;
-            }
-            else if (item is Weapon)
-            {
-                encumbrance = (item as Weapon).Encumbrance;
-            }
-            return encumbrance;
-        }
-        
         private bool Remove(Item item)
         {
             if (!Inventory.RemoveItemFromEquipment(item))

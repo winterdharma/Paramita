@@ -49,6 +49,7 @@ namespace Paramita.GameLogic.Items
         public int Id { get { return _id; } }
         public EquipType EquipType { get; protected set; }
         public ItemType ItemType { get; protected set; }
+        public int Encumbrance { get; protected set; }
         #endregion
 
 

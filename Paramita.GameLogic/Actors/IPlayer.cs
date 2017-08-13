@@ -1,5 +1,6 @@
 ﻿using Paramita.GameLogic.Levels;
 using Paramita.GameLogic.Mechanics;
+using Paramita.GameLogic.Utility;
 using System;
 
 namespace Paramita.GameLogic.Actors
@@ -8,11 +9,10 @@ namespace Paramita.GameLogic.Actors
     {
         Tile CurrentTile { get; set; }
         Compass Facing { get; }
-        ActorType BeingType { get; }
+        ActorType ActorType { get; }
         int TimesAttacked { get; set; }
 
-        event EventHandler<MoveEventArgs> OnMoveAttempt;
-        event EventHandler<MoveEventArgs> OnActorDeath;
+        event EventHandler<DirectionEventArgs> OnMoveAttempt;
         event EventHandler<LevelChangeEventArgs> OnLevelChange;
 
         void Update();

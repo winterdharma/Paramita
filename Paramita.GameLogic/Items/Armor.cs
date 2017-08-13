@@ -17,14 +17,13 @@
        
         public Armor(int prot, int defMod, int enc, ItemType type, string name) : base(type, name)
         {
-            _encumbrance = enc;
+            Encumbrance = enc;
             _protection = prot;
             _defenseModifier = defMod;
         }
 
 
         #region Properties
-        public int Encumbrance { get { return _encumbrance; } }
         public int DefenseModifier { get { return _defenseModifier; } }
         public int Protection { get { return _protection; } }
         #endregion

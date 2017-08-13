@@ -121,6 +121,7 @@ namespace Paramita.GameLogic
         private static void SubscribeToLevelEvents()
         {
             _currentLevel.OnActorWasMoved += HandleActorMovement;
+            _currentLevel.OnActorDeath += HandleDeadActor;
             _currentLevel.TileMap.OnItemAdded += HandleItemAddedToTileMap;
             _currentLevel.TileMap.OnItemRemoved += HandleItemRemovedFromTileMap;
         }
@@ -130,7 +131,6 @@ namespace Paramita.GameLogic
             _player.OnInventoryChange += HandleInventoryChange;
             _player.OnStatusMsgSent += HandleStatusMessage;
             _player.OnLevelChange += HandleLevelChange;
-            //_player.OnActorDeath += HandlePlayerDeath;
             SubscribeToNpcEvents(_currentLevel.Npcs);
         }
 
@@ -139,13 +139,13 @@ namespace Paramita.GameLogic
             foreach (INpc npc in npcs)
             {
                 npc.OnStatusMsgSent += HandleStatusMessage;
-                npc.OnActorDeath += HandleDeadActor;
             }
         }
 
         private static void UnsubscribeFromLevelEvents()
         {
             _currentLevel.OnActorWasMoved -= HandleActorMovement;
+            _currentLevel.OnActorDeath -= HandleDeadActor;
             _currentLevel.TileMap.OnItemAdded -= HandleItemAddedToTileMap;
             _currentLevel.TileMap.OnItemRemoved -= HandleItemRemovedFromTileMap;
         }

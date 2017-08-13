@@ -12,7 +12,7 @@
 
         public Shield(int prot, int defMod, int parry, int enc, ItemType type, string name) : base(type, name)
         {
-            _encumbrance = enc;
+            Encumbrance = enc;
             _parry = parry;
             _defenseModifier = defMod;
             _protection = prot;
@@ -20,7 +20,6 @@
 
 
         #region Properties
-        public int Encumbrance { get { return _encumbrance; } }
         public int Parry { get { return _parry; } }
         public int DefenseModifier { get { return _defenseModifier; } }
         public int Protection { get { return _protection; } }
