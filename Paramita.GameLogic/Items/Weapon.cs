@@ -37,7 +37,7 @@
         {
             return _name + " (Damage: " + _damage + " plus strength, Att:" + _attackModifier 
                 + ", Def:" + _defenseModifier + ", Length:" + _length + ", Encumbrance: " 
-                + _encumbrance + ")";
+                + Encumbrance + ")";
         }
     }
 }
