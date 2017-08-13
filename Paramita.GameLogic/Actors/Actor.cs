@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 using Paramita.GameLogic.Levels;
 using Paramita.GameLogic.Mechanics;
+using Paramita.GameLogic.Utility;
 
 namespace Paramita.GameLogic.Actors
 {
@@ -24,22 +25,6 @@ namespace Paramita.GameLogic.Actors
         HumanPlayer
     }
 
-    public class MoveEventArgs : EventArgs
-    {
-        public Compass Direction { get; }
-        public Point Origin { get; }
-        public Point Destination { get; }
-         
-        public MoveEventArgs(Compass direction, Point tileOrigin, Point tileDest)
-        {
-            Direction = direction;
-            Origin = tileOrigin;
-            Destination = tileDest;
-        }
-    }
-
-
-
     public abstract class Actor : IEquatable<Actor>
     {
         #region Fields
@@ -49,7 +34,7 @@ namespace Paramita.GameLogic.Actors
 
         #region Events
         public event EventHandler<InventoryChangeEventArgs> OnInventoryChange;
-        public event EventHandler<MoveEventArgs> OnMoveAttempt;
+        public event EventHandler<DirectionEventArgs> OnMoveAttempt;
         public event EventHandler<StatusMessageEventArgs> OnStatusMsgSent;
         #endregion
 
@@ -153,8 +138,8 @@ namespace Paramita.GameLogic.Actors
 
             Facing = direction;
             Tile currentTile = CurrentTile;
-            // check to see if the bool check for tile change works as expected
-            OnMoveAttempt?.Invoke(this, new MoveEventArgs(direction, Point.Zero, Point.Zero));
+            
+            OnMoveAttempt?.Invoke(this, new DirectionEventArgs(direction));
 
             Tile newTile = CurrentTile;
             if (newTile == currentTile)

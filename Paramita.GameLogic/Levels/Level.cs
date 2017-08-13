@@ -137,20 +137,19 @@ namespace Paramita.GameLogic.Levels
             UnsubscribeFromOneNpcsEvents(npc);           
         }
 
-        private void HandleActorMove(object sender, MoveEventArgs eventArgs)
+        private void HandleActorMove(object sender, DirectionEventArgs eventArgs)
         {
             Actor actor = sender as Actor;
             Compass direction = eventArgs.Direction;
             Tile newTile = TileMap.GetTile(actor.CurrentTile.TilePoint + Direction.GetPoint(direction));
-            Point origin = actor.CurrentTile.TilePoint;
 
             if (actor is Player)
-                HandlePlayerMove(actor as Player, origin, newTile);
+                HandlePlayerMove(actor as Player, newTile);
             else
-                HandleNpcMove(actor, origin, newTile);
+                HandleNpcMove(actor, newTile);
         }
         
-        private void HandlePlayerMove(Player player, Point origin, Tile destination)
+        private void HandlePlayerMove(Player player, Tile destination)
         {
             INpc npc;
             if (GetNpcOnTile(destination, out npc))
@@ -161,13 +160,14 @@ namespace Paramita.GameLogic.Levels
             }
             else if(destination.IsWalkable)
             {
+                var origin = player.CurrentTile.TilePoint;
                 player.CurrentTile = destination;
-                OnActorWasMoved?.Invoke(player, new MoveEventArgs(Compass.None, origin, destination.TilePoint));
+                OnActorWasMoved?.Invoke(player, new MoveEventArgs(origin, destination.TilePoint));
                 TogglePlayersTurn();
             }
         }
 
-        private void HandleNpcMove(Actor npc, Point origin, Tile destination)
+        private void HandleNpcMove(Actor npc, Tile destination)
         {
             var player = _player as Actor;
             if(IsPlayerOnTile(destination))
@@ -176,8 +176,9 @@ namespace Paramita.GameLogic.Levels
             }
             else if(destination.IsWalkable && !IsNpcOnTile(destination))
             {
+                var origin = npc.CurrentTile.TilePoint;
                 npc.CurrentTile = destination;
-                OnActorWasMoved?.Invoke(npc, new MoveEventArgs(Compass.None, origin, destination.TilePoint));
+                OnActorWasMoved?.Invoke(npc, new MoveEventArgs(origin, destination.TilePoint));
             }
         }
 
@@ -268,7 +269,7 @@ namespace Paramita.GameLogic.Levels
             {
                 if (NpcIsDead(npc))
                 {
-                    OnActorDeath?.Invoke(this, new MoveEventArgs(Compass.None, npc.CurrentTile.TilePoint, Point.Zero));
+                    OnActorDeath?.Invoke(this, new MoveEventArgs(npc.CurrentTile.TilePoint, Point.Zero));
                 }
             }
             npcs.RemoveAll(NpcIsDead);

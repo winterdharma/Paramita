@@ -7,9 +7,6 @@ using Paramita.GameLogic.Levels;
 using Paramita.GameLogic.Mechanics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Paramita.GameLogic.UnitTests.Levels
 {
@@ -119,6 +116,7 @@ namespace Paramita.GameLogic.UnitTests.Levels
         }
         #endregion
 
+
         #region Npcs Property Tests
         [Test]
         public void SetNpcs_NonNullNpcs_PlacesNpcsOnWalkableTile()
@@ -135,6 +133,7 @@ namespace Paramita.GameLogic.UnitTests.Levels
             Assert.True(level.Npcs[0].CurrentTile.IsWalkable);
         }
         #endregion
+
 
         #region Update Method Tests
         [Test]
@@ -221,6 +220,7 @@ namespace Paramita.GameLogic.UnitTests.Levels
             Assert.AreEqual(expected, actual);
         }
         #endregion
+
 
         #region Helpers
         public List<Item> MakeItems()
