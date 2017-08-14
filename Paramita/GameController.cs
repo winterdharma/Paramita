@@ -60,7 +60,7 @@ namespace Paramita
             keyboard.KeyPressed += CheckForExit;
             
 
-            TitleScene = new TitleScene(this, keyboard, mouse);
+            TitleScene = new TitleScene(this);
             MenuScene = new MenuScene(this, keyboard, mouse);
             GameScene = new GameScene(this, keyboard, mouse);
             

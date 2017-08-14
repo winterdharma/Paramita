@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Input.InputListeners;
+using Paramita.UI.Input;
 using System;
 
 namespace Paramita.UI.Scenes
@@ -17,16 +18,14 @@ namespace Paramita.UI.Scenes
         private Color WHITE = new Color(1f, 1f, 1f);
         private Vector2 _messagePosition;
         private const string MESSAGE = "PRESS ANY KEY TO CONTINUE";
-        private KeyboardListener _keyboard;
-        private MouseListener _mouse;
+        private InputResponder _input;
 
-        public TitleScene(GameController game, KeyboardListener keyboard, MouseListener mouse)
+        public TitleScene(GameController game)
             : base(game)
         {
             _screenRectangle = GameController.ScreenRectangle;
             _elapsedTime = TimeSpan.Zero;
-            _keyboard = keyboard;
-            _mouse = mouse;
+            _input = game.InputResponder;
         }
 
 
@@ -36,7 +35,6 @@ namespace Paramita.UI.Scenes
          */
         public override void Initialize()
         {
-            //base.Initialize(); // calls LoadContent()
             LoadContent();
             _fontArialBold = GameController.ArialBold;
             SetMessagePosition();
@@ -49,9 +47,7 @@ namespace Paramita.UI.Scenes
                 _screenRectangle.Bottom - 50 - _fontArialBold.LineSpacing);
         }
 
-        /*
-         * Called once by base.Initialize()
-         */
+        
         protected override void LoadContent()
         {
             _background = _content.Load<Texture2D>("Images\\Scenes\\titlescreen");
@@ -92,15 +88,15 @@ namespace Paramita.UI.Scenes
         public override void Hide()
         {
             base.Hide();
-            _keyboard.KeyPressed -= HandleInput;
-            _mouse.MouseClicked -= HandleInput;
+            _input.KeyPressed -= HandleInput;
+            _input.MouseClick -= HandleInput;
         }
 
         public override void Show()
         {
             base.Show();
-            _keyboard.KeyPressed += HandleInput;
-            _mouse.MouseClicked += HandleInput;
+            _input.KeyPressed += HandleInput;
+            _input.MouseClick += HandleInput;
         }
     }
 }

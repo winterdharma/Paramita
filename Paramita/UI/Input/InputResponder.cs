@@ -22,6 +22,7 @@ namespace Paramita.UI.Input
 
 
         #region Events
+        public event EventHandler<EventArgs> KeyPressed;
         public event EventHandler<EventArgs> LeftKeyPressed;
         public event EventHandler<EventArgs> RightKeyPressed;
         public event EventHandler<EventArgs> UpKeyPressed;
@@ -41,6 +42,7 @@ namespace Paramita.UI.Input
         public event EventHandler<EventArgs> CKeyPressed;
         public event EventHandler<EventArgs> UKeyPressed;
         public event EventHandler<EventArgs> IKeyPressed;
+        public event EventHandler<EventArgs> MouseClick;
         public event EventHandler<EventArgs> LeftMouseClick;
         public event EventHandler<EventArgs> RightMouseClick;
         public event EventHandler<PointEventArgs> NewMousePosition;
@@ -69,12 +71,15 @@ namespace Paramita.UI.Input
 
         private void OnMouseClick(object sender, MouseEventArgs e)
         {
+            MouseClick?.Invoke(this, new EventArgs());
             if (e.Button == MouseButton.Left) LeftMouseClick?.Invoke(this, new EventArgs());
             else if (e.Button == MouseButton.Right) RightMouseClick?.Invoke(this, new EventArgs());
         }
 
         private void OnKeyPressed(object sender, KeyboardEventArgs e)
         {
+            KeyPressed?.Invoke(this, new EventArgs());
+
             switch (e.Key)
             {
                 case Keys.Left:
