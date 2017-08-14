@@ -18,14 +18,12 @@ namespace Paramita.UI.Scenes
         private Color WHITE = new Color(1f, 1f, 1f);
         private Vector2 _messagePosition;
         private const string MESSAGE = "PRESS ANY KEY TO CONTINUE";
-        private InputResponder _input;
 
         public TitleScene(GameController game)
             : base(game)
         {
             _screenRectangle = GameController.ScreenRectangle;
             _elapsedTime = TimeSpan.Zero;
-            _input = game.InputResponder;
         }
 
 

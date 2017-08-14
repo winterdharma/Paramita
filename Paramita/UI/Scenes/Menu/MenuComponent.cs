@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Input.InputListeners;
+using Paramita.GameLogic.Utility;
+using Paramita.UI.Input;
 using System;
 using System.Collections.Generic;
 
@@ -33,10 +35,8 @@ namespace Paramita.UI.Scenes
             get { return _mouseOver; }
         }
 
-
-
         public MenuComponent(SpriteFont spriteFont, Texture2D texture, string[] menuItems, Vector2 position,
-            KeyboardListener keyboard, MouseListener mouse)
+            InputResponder input)
         {
             _spriteFont = spriteFont;
             _texture = texture;
@@ -45,13 +45,48 @@ namespace Paramita.UI.Scenes
 
             InitializeMenuItemRectangles();
 
-            keyboard.KeyPressed += HandleInput;
-            mouse.MouseMoved += HandleMouseMove;
+            SubscribeToInputEvents(input);
 
             MeasureMenu();
         }
 
-        
+        #region Event Handling
+        private void SubscribeToInputEvents(InputResponder input)
+        {
+            input.UpKeyPressed += HandleUpInput;
+            input.DownKeyPressed += HandleDownInput;
+            input.NewMousePosition += HandleMouseMove;
+        }
+
+        private void HandleMouseMove(object sender, PointEventArgs e)
+        {
+            var mousePosition = e.Point;
+            _mouseOver = false;
+
+            for (int i = 0; i < _menuItems.Count; i++)
+            {
+                if (_menuItemRectangles[i].Contains(mousePosition))
+                {
+                    _selectedIndex = i;
+                    _mouseOver = true;
+                }
+            }
+        }
+
+        private void HandleUpInput(object sender, EventArgs e)
+        {
+            _selectedIndex--;
+            if (_selectedIndex < 0)
+                _selectedIndex = _menuItems.Count - 1;
+        }
+
+        private void HandleDownInput(object sender, EventArgs e)
+        {
+            _selectedIndex++;
+            if (_selectedIndex > _menuItems.Count - 1)
+                _selectedIndex = 0;
+        }
+        #endregion
 
         private void InitializeMenuItemRectangles()
         {
@@ -84,40 +119,7 @@ namespace Paramita.UI.Scenes
         }
 
 
-        private void HandleMouseMove(object sender, MouseEventArgs e)
-        {
-            var mousePosition = e.Position;
-            _mouseOver = false;
-
-            for (int i = 0; i < _menuItems.Count; i++)
-            {
-                if (_menuItemRectangles[i].Contains(mousePosition))
-                {
-                    _selectedIndex = i;
-                    _mouseOver = true;
-                }
-            }
-        }
-
-        private void HandleInput(object sender, KeyboardEventArgs e)
-        {
-            if (e.Key == Keys.Up) HandleUpInput(sender, e);
-            if (e.Key == Keys.Down) HandleDownInput(sender, e);
-        }
-
-        private void HandleUpInput(object sender, EventArgs e)
-        {
-            _selectedIndex--;
-            if (_selectedIndex < 0)
-                _selectedIndex = _menuItems.Count - 1;
-        }
-
-        private void HandleDownInput(object sender, EventArgs e)
-        {
-            _selectedIndex++;
-            if (_selectedIndex > _menuItems.Count - 1)
-                _selectedIndex = 0;
-        }
+        
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {

@@ -61,7 +61,7 @@ namespace Paramita
             
 
             TitleScene = new TitleScene(this);
-            MenuScene = new MenuScene(this, keyboard, mouse);
+            MenuScene = new MenuScene(this);
             GameScene = new GameScene(this, keyboard, mouse);
             
             SceneManager.ChangeScene(TitleScene);
