@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Paramita.UI.Input;
+using MonoGame.Extended.Input.InputListeners;
 using System;
 
 namespace Paramita.UI.Scenes
@@ -17,14 +17,16 @@ namespace Paramita.UI.Scenes
         private Color WHITE = new Color(1f, 1f, 1f);
         private Vector2 _messagePosition;
         private const string MESSAGE = "PRESS ANY KEY TO CONTINUE";
+        private KeyboardListener _keyboard;
+        private MouseListener _mouse;
 
-
-
-
-        public TitleScene(GameController game) : base(game)
+        public TitleScene(GameController game, KeyboardListener keyboard, MouseListener mouse)
+            : base(game)
         {
             _screenRectangle = GameController.ScreenRectangle;
             _elapsedTime = TimeSpan.Zero;
+            _keyboard = keyboard;
+            _mouse = mouse;
         }
 
 
@@ -90,15 +92,15 @@ namespace Paramita.UI.Scenes
         public override void Hide()
         {
             base.Hide();
-            InputListener.OnAnyKeyWasPressed -= HandleInput;
-            InputListener.OnLeftMouseButtonClicked -= HandleInput;
+            _keyboard.KeyPressed -= HandleInput;
+            _mouse.MouseClicked -= HandleInput;
         }
 
         public override void Show()
         {
             base.Show();
-            InputListener.OnAnyKeyWasPressed += HandleInput;
-            InputListener.OnLeftMouseButtonClicked += HandleInput;
+            _keyboard.KeyPressed += HandleInput;
+            _mouse.MouseClicked += HandleInput;
         }
     }
 }

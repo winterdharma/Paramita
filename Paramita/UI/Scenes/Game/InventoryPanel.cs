@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.Input.InputListeners;
 using Paramita.GameLogic;
 using Paramita.GameLogic.Actors;
 using Paramita.GameLogic.Items;
@@ -98,10 +100,10 @@ namespace Paramita.UI.Scenes.Game
 
 
 
-        public InventoryPanel()
+        public InventoryPanel(KeyboardListener keyboard, MouseListener mouse)
         {
             InitializePanel();
-            SubscribeToInputEvents();
+            SubscribeToInputEvents(keyboard, mouse);
             Dungeon.GetPlayerInventory();
         }
 
@@ -225,26 +227,77 @@ namespace Paramita.UI.Scenes.Game
 
         
 
-        private void SubscribeToInputEvents()
+        private void SubscribeToInputEvents(KeyboardListener keyboard, MouseListener mouse)
         {
-            InputListener.OnLeftMouseButtonClicked += HandleLeftMouseClickEvents;
-            InputListener.OnMousePositionChanged += HandleMouseOverEvents;
-            InputListener.OnD0KeyWasPressed += HandleSelect0Input;
-            InputListener.OnD1KeyWasPressed += HandleSelect1Input;
-            InputListener.OnD2KeyWasPressed += HandleSelect2Input;
-            InputListener.OnD3KeyWasPressed += HandleSelect3Input;
-            InputListener.OnD4KeyWasPressed += HandleSelect4Input;
-            InputListener.OnD5KeyWasPressed += HandleSelect5Input;
-            InputListener.OnD6KeyWasPressed += HandleSelect6Input;
-            InputListener.OnD7KeyWasPressed += HandleSelect7Input;
-            InputListener.OnD8KeyWasPressed += HandleSelect8Input;
-            InputListener.OnD9KeyWasPressed += HandleSelect9Input;
-            InputListener.OnDKeyWasPressed += HandleDropInput;
-            InputListener.OnEKeyWasPressed += HandleEquipInput;
-            InputListener.OnUKeyWasPressed += HandleUseInput;
-            InputListener.OnCKeyWasPressed += HandleCancelInput;
-            InputListener.OnIKeyWasPressed += HandleToggleInput;
+            keyboard.KeyPressed += OnKeyPressed;
+            mouse.MouseClicked += OnMouseClicked;
+            mouse.MouseMoved += OnMouseMoved;
             Dungeon.OnInventoryChangeUINotification += HandleInventoryChange;
+        }
+
+        private void OnMouseMoved(object sender, MonoGame.Extended.Input.InputListeners.MouseEventArgs e)
+        {
+            // update SpriteElement tints to indicate getting or losing focus
+            foreach (var sprite in _spriteElements)
+            {
+                if (sprite.Rectangle.Contains(e.Position))
+                {
+                    sprite.Color = Color.Red;
+                }
+                else
+                    sprite.Color = Color.White;
+            }
+        }
+
+        private void OnMouseClicked(object sender, MonoGame.Extended.Input.InputListeners.MouseEventArgs e)
+        {
+            if (e.Button != MouseButton.Left) return;
+
+            var toggleSize = _toggleText.Font.MeasureString(_toggleText.Text);
+            if (!_isOpen && _panelRectangle.Contains(e.Position))
+            {
+                TogglePanelOpenOrClosed();
+            }
+            else if (e.Position.X > _toggleText.Position.X && e.Position.Y < _toggleText.Position.Y + toggleSize.Y)
+            {
+                TogglePanelOpenOrClosed();
+            }
+            else
+            {
+                foreach (var sprite in _spriteElements)
+                {
+                    if (sprite.Rectangle.Contains(e.Position))
+                    {
+                        for (int i = 0; i < _inventorySlots.Count; i++)
+                        {
+                            if (sprite.Label.Equals(_inventorySlots[i]))
+                            {
+                                _itemSelected = i;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void OnKeyPressed(object sender, KeyboardEventArgs e)
+        {
+            if (e.Key == Keys.D0) HandleInput(InventoryActions.Select0);
+            if (e.Key == Keys.D1) HandleInput(InventoryActions.Select1);
+            if (e.Key == Keys.D2) HandleInput(InventoryActions.Select2);
+            if (e.Key == Keys.D3) HandleInput(InventoryActions.Select3);
+            if (e.Key == Keys.D4) HandleInput(InventoryActions.Select4);
+            if (e.Key == Keys.D5) HandleInput(InventoryActions.Select5);
+            if (e.Key == Keys.D6) HandleInput(InventoryActions.Select6);
+            if (e.Key == Keys.D7) HandleInput(InventoryActions.Select7);
+            if (e.Key == Keys.D8) HandleInput(InventoryActions.Select8);
+            if (e.Key == Keys.D9) HandleInput(InventoryActions.Select9);
+            if (e.Key == Keys.D) HandleInput(InventoryActions.Drop);
+            if (e.Key == Keys.E) HandleInput(InventoryActions.Equip);
+            if (e.Key == Keys.U) HandleInput(InventoryActions.Use);
+            if (e.Key == Keys.C) HandleInput(InventoryActions.Cancel);
+            if (e.Key == Keys.I) TogglePanelOpenOrClosed();
         }
 
         private void UpdateInventoryData(Tuple<Dictionary<string, ItemType>, int> inventoryData)
@@ -516,132 +569,6 @@ namespace Paramita.UI.Scenes.Game
             UpdateInventoryData(e.Inventory);
             
         }
-
-
-        #region Mouse Input Events
-        private void HandleMouseOverEvents(object sender, MouseEventArgs e)
-        {
-            // update SpriteElement tints to indicate getting or losing focus
-            foreach(var sprite in _spriteElements)
-            {
-                if(sprite.Rectangle.Contains(e.Position))
-                {
-                    sprite.Color = Color.Red;
-                }
-                else
-                    sprite.Color = Color.White;
-            }
-        }
-
-        private void HandleLeftMouseClickEvents(object sender, MouseEventArgs e)
-        {
-            var toggleSize = _toggleText.Font.MeasureString(_toggleText.Text);
-            if (!_isOpen && _panelRectangle.Contains(e.Position))
-            {
-                TogglePanelOpenOrClosed();
-            }
-            else if (e.Position.X > _toggleText.Position.X && e.Position.Y < _toggleText.Position.Y + toggleSize.Y)
-            {
-                TogglePanelOpenOrClosed();
-            }
-            else
-            {
-                foreach(var sprite in _spriteElements)
-                {
-                    if(sprite.Rectangle.Contains(e.Position))
-                    {
-                        for(int i = 0; i < _inventorySlots.Count; i++)
-                        {
-                            if(sprite.Label.Equals(_inventorySlots[i]))
-                            {
-                                _itemSelected = i;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        #endregion
-
-
-        #region Keyboard Input Events
-        private void HandleSelect0Input(object sender, EventArgs e)
-        {
-            HandleInput(InventoryActions.Select0);
-        }
-
-        private void HandleSelect1Input(object sender, EventArgs e)
-        {
-            HandleInput(InventoryActions.Select1);
-        }
-
-        private void HandleSelect2Input(object sender, EventArgs e)
-        {
-            HandleInput(InventoryActions.Select2);
-        }
-
-        private void HandleSelect3Input(object sender, EventArgs e)
-        {
-            HandleInput(InventoryActions.Select3);
-        }
-
-        private void HandleSelect4Input(object sender, EventArgs e)
-        {
-            HandleInput(InventoryActions.Select4);
-        }
-
-        private void HandleSelect5Input(object sender, EventArgs e)
-        {
-            HandleInput(InventoryActions.Select5);
-        }
-
-        private void HandleSelect6Input(object sender, EventArgs e)
-        {
-            HandleInput(InventoryActions.Select6);
-        }
-
-        private void HandleSelect7Input(object sender, EventArgs e)
-        {
-            HandleInput(InventoryActions.Select7);
-        }
-
-        private void HandleSelect8Input(object sender, EventArgs e)
-        {
-            HandleInput(InventoryActions.Select8);
-        }
-
-        private void HandleSelect9Input(object sender, EventArgs e)
-        {
-            HandleInput(InventoryActions.Select9);
-        }
-
-        private void HandleDropInput(object sender, EventArgs e)
-        {
-            HandleInput(InventoryActions.Drop);
-        }
-
-        private void HandleEquipInput(object sender, EventArgs e)
-        {
-            HandleInput(InventoryActions.Equip);
-        }
-
-        private void HandleUseInput(object sender, EventArgs e)
-        {
-            HandleInput(InventoryActions.Use);
-        }
-
-        private void HandleCancelInput(object sender, EventArgs e)
-        {
-            HandleInput(InventoryActions.Cancel);
-        }
-
-        private void HandleToggleInput(object sender, EventArgs e)
-        {
-            TogglePanelOpenOrClosed();
-            //HandleInput(InventoryActions.TogglePanel);
-        }
-        #endregion
         #endregion
 
 

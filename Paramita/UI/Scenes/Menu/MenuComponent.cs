@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Paramita.UI.Input;
+using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.Input.InputListeners;
 using System;
 using System.Collections.Generic;
 
@@ -34,7 +35,8 @@ namespace Paramita.UI.Scenes
 
 
 
-        public MenuComponent(SpriteFont spriteFont, Texture2D texture, string[] menuItems, Vector2 position)
+        public MenuComponent(SpriteFont spriteFont, Texture2D texture, string[] menuItems, Vector2 position,
+            KeyboardListener keyboard, MouseListener mouse)
         {
             _spriteFont = spriteFont;
             _texture = texture;
@@ -43,13 +45,13 @@ namespace Paramita.UI.Scenes
 
             InitializeMenuItemRectangles();
 
-            InputListener.OnUpKeyWasPressed += HandleUpInput;
-            InputListener.OnDownKeyWasPressed += HandleDownInput;
-            InputListener.OnMousePositionChanged += HandleMouseMove;
+            keyboard.KeyPressed += HandleInput;
+            mouse.MouseMoved += HandleMouseMove;
 
             MeasureMenu();
         }
 
+        
 
         private void InitializeMenuItemRectangles()
         {
@@ -95,6 +97,12 @@ namespace Paramita.UI.Scenes
                     _mouseOver = true;
                 }
             }
+        }
+
+        private void HandleInput(object sender, KeyboardEventArgs e)
+        {
+            if (e.Key == Keys.Up) HandleUpInput(sender, e);
+            if (e.Key == Keys.Down) HandleDownInput(sender, e);
         }
 
         private void HandleUpInput(object sender, EventArgs e)

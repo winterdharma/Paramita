@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Input.InputListeners;
 using Paramita.GameLogic;
 using Paramita.GameLogic.Items;
 using Paramita.UI.Input;
@@ -10,12 +11,20 @@ namespace Paramita.UI.Scenes
 
     public class GameScene : Scene
     {
+        private KeyboardListener _keyboard;
+        private MouseListener _mouse;
+        private InputResponder _inputResponder;
         private Dungeon _dungeon;
         private TileMapPanel _tileMapPanel;        
         private static StatusPanel _statusPanel;
         private InventoryPanel _inventoryPanel;
 
-        public GameScene(GameController game) : base(game) { }
+        public GameScene(GameController game, KeyboardListener keyboard, MouseListener mouse) 
+            : base(game)
+        {
+            _keyboard = keyboard;
+            _mouse = mouse;
+        }
 
 
 
@@ -23,13 +32,14 @@ namespace Paramita.UI.Scenes
         {
             base.Initialize(); // This calls LoadContent()
 
-            InputResponder.SubscribeToInputEvents();
+            _inputResponder = new InputResponder(_keyboard, _mouse);
+            _inputResponder.SubscribeToInputEvents();
 
             _dungeon = new Dungeon();
 
             _tileMapPanel = new TileMapPanel(Dungeon.GetCurrentLevelLayers());
             _statusPanel = new StatusPanel(GameController.ArialBold, 10, new Point(0,720));
-            _inventoryPanel = new InventoryPanel();
+            _inventoryPanel = new InventoryPanel(_keyboard, _mouse);
         }
 
 

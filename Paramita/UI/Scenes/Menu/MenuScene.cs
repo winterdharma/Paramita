@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Paramita.UI.Input;
+using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.Input.InputListeners;
 using System;
 
 namespace Paramita.UI.Scenes
@@ -13,10 +14,15 @@ namespace Paramita.UI.Scenes
         private SpriteFont _fontArialBold;
         private MenuComponent _menuButtons;
         private Texture2D _buttonTexture;
+        private KeyboardListener _keyboard;
+        private MouseListener _mouse;
 
-
-
-        public MenuScene(GameController game) : base(game) { }
+        public MenuScene(GameController game, KeyboardListener keyboard, MouseListener mouse) 
+            : base(game)
+        {
+            _keyboard = keyboard;
+            _mouse = mouse;
+        }
 
 
 
@@ -31,7 +37,8 @@ namespace Paramita.UI.Scenes
         {
             string[] menuItems = { "NEW GAME", "CONTINUE", "OPTIONS", "EXIT" };
             Vector2 position = new Vector2( (1200 - _buttonTexture.Width), 90);
-            _menuButtons = new MenuComponent(_fontArialBold, _buttonTexture, menuItems, position);
+            _menuButtons = new MenuComponent(_fontArialBold, _buttonTexture, menuItems, position, 
+                _keyboard, _mouse);
         }
 
 
@@ -43,15 +50,25 @@ namespace Paramita.UI.Scenes
         }
 
 
-        private void HandleMouseClick(object sender, EventArgs e)
+        private void HandleMouseClick(object sender, MouseEventArgs e)
         {
+            if (e.Button != MouseButton.Left) return;
+
             if (_menuButtons.MouseOver)
             {
-                HandleMenuItemSelected(sender, e);
+                SelectMenuItem();
             }
         }
 
-        private void HandleMenuItemSelected(object sender, EventArgs e)
+
+        private void HandleMenuItemSelected(object sender, KeyboardEventArgs e)
+        {
+            if (e.Key != Keys.Enter) return;
+
+            SelectMenuItem();
+        }
+
+        private void SelectMenuItem()
         {
             if (_menuButtons.SelectedIndex == 0)
             {
@@ -78,8 +95,8 @@ namespace Paramita.UI.Scenes
         public override void Hide()
         {
             base.Hide();
-            InputListener.OnLeftMouseButtonClicked -= HandleMouseClick;
-            InputListener.OnEnterKeyWasPressed -= HandleMenuItemSelected;
+            _mouse.MouseClicked -= HandleMouseClick;
+            _keyboard.KeyPressed -= HandleMenuItemSelected;
 
 
         }
@@ -87,8 +104,8 @@ namespace Paramita.UI.Scenes
         public override void Show()
         {
             base.Show();
-            InputListener.OnLeftMouseButtonClicked += HandleMouseClick;
-            InputListener.OnEnterKeyWasPressed += HandleMenuItemSelected;
+            _mouse.MouseClicked += HandleMouseClick;
+            _keyboard.KeyPressed += HandleMenuItemSelected;
         }
 
         public override void Draw(GameTime gameTime)

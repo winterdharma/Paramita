@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.Input;
+using MonoGame.Extended.Input.InputListeners;
 using Paramita.UI.Input;
 using Paramita.UI.Scenes;
 using System;
@@ -23,6 +25,7 @@ namespace Paramita
         public static Rectangle ScreenRectangle { get { return _screenRectangle; } }
 
         public SceneManager SceneManager { get; private set; }
+        public InputListenerComponent InputListener { get; private set; }
         public TitleScene TitleScene { get; private set; }
         public MenuScene MenuScene { get; private set; }
         public GameScene GameScene { get; private set; }
@@ -37,8 +40,6 @@ namespace Paramita
 
         public GameController()
         {
-            InputListener.OnEscapeKeyWasPressed += HandleExitInput;
-
             _graphics = new GraphicsDeviceManager(this);
             
             _screenRectangle = new Rectangle(0, 0, 1280, 720);
@@ -51,18 +52,24 @@ namespace Paramita
             Components.Add(SceneManager);
             IsMouseVisible = true;
 
-            TitleScene = new TitleScene(this);
-            MenuScene = new MenuScene(this);
-            GameScene = new GameScene(this);
+            var keyboard = new KeyboardListener();
+            var mouse = new MouseListener();
+            InputListener = new InputListenerComponent(this, keyboard, mouse);
+            Components.Add(InputListener);
+
+            keyboard.KeyPressed += CheckForExit;
+            
+
+            TitleScene = new TitleScene(this, keyboard, mouse);
+            MenuScene = new MenuScene(this, keyboard, mouse);
+            GameScene = new GameScene(this, keyboard, mouse);
             
             SceneManager.ChangeScene(TitleScene);
         }
 
-
-
-        private void HandleExitInput(object sender, EventArgs e)
+        private void CheckForExit(object sender, KeyboardEventArgs e)
         {
-            Exit();
+            if (e.Key == Keys.Escape) Exit();
         }
 
         /// <summary>
@@ -116,7 +123,7 @@ namespace Paramita
             _gameTime = gameTime;
             
             // check for user input
-            InputListener.Update();
+            InputListener.Update(gameTime);
             // call Update() on the active @Scene object
             SceneManager.CurrentScene.Update(gameTime);
         }
