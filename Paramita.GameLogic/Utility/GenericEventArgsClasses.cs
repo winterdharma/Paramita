@@ -39,4 +39,13 @@ namespace Paramita.GameLogic.Utility
             Destination = tileDest;
         }
     }
+
+    public class PointEventArgs : EventArgs
+    {
+        public Point Point { get; }
+        public PointEventArgs(Point point)
+        {
+            Point = point;
+        }
+    }
 }

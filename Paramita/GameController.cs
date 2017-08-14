@@ -26,6 +26,7 @@ namespace Paramita
 
         public SceneManager SceneManager { get; private set; }
         public InputListenerComponent InputListener { get; private set; }
+        public InputResponder InputResponder { get; private set; }
         public TitleScene TitleScene { get; private set; }
         public MenuScene MenuScene { get; private set; }
         public GameScene GameScene { get; private set; }
@@ -55,8 +56,7 @@ namespace Paramita
             var keyboard = new KeyboardListener();
             var mouse = new MouseListener();
             InputListener = new InputListenerComponent(this, keyboard, mouse);
-            Components.Add(InputListener);
-
+            InputResponder = new InputResponder(keyboard, mouse);
             keyboard.KeyPressed += CheckForExit;
             
 
@@ -121,8 +121,8 @@ namespace Paramita
         protected override void Update(GameTime gameTime)
         {
             _gameTime = gameTime;
-            
-            // check for user input
+
+            base.Update(gameTime);
             InputListener.Update(gameTime);
             // call Update() on the active @Scene object
             SceneManager.CurrentScene.Update(gameTime);
