@@ -5,6 +5,7 @@ using MonoGame.Extended.Input.InputListeners;
 using Paramita.GameLogic;
 using Paramita.GameLogic.Actors;
 using Paramita.GameLogic.Items;
+using Paramita.GameLogic.Utility;
 using Paramita.UI.Input;
 using System;
 using System.Collections.Generic;
@@ -93,6 +94,7 @@ namespace Paramita.UI.Scenes.Game
 
         private int _itemSelected;
         private bool _isOpen = false;
+        private Point _mousePosition = new Point(0, 0);
 
         public static event EventHandler<InventoryEventArgs> OnPlayerDroppedItem;
         public static event EventHandler<InventoryEventArgs> OnPlayerEquippedItem;
@@ -100,10 +102,10 @@ namespace Paramita.UI.Scenes.Game
 
 
 
-        public InventoryPanel(KeyboardListener keyboard, MouseListener mouse)
+        public InventoryPanel(InputResponder input)
         {
             InitializePanel();
-            SubscribeToInputEvents(keyboard, mouse);
+            SubscribeToInputEvents(input);
             Dungeon.GetPlayerInventory();
         }
 
@@ -225,22 +227,37 @@ namespace Paramita.UI.Scenes.Game
 
         #endregion
 
-        
 
-        private void SubscribeToInputEvents(KeyboardListener keyboard, MouseListener mouse)
+        #region Event Handling
+        private void SubscribeToInputEvents(InputResponder input)
         {
-            keyboard.KeyPressed += OnKeyPressed;
-            mouse.MouseClicked += OnMouseClicked;
-            mouse.MouseMoved += OnMouseMoved;
+            input.D0KeyPressed += OnD0KeyPressed;
+            input.D1KeyPressed += OnD1KeyPressed;
+            input.D2KeyPressed += OnD2KeyPressed;
+            input.D3KeyPressed += OnD3KeyPressed;
+            input.D4KeyPressed += OnD4KeyPressed;
+            input.D5KeyPressed += OnD5KeyPressed;
+            input.D6KeyPressed += OnD6KeyPressed;
+            input.D7KeyPressed += OnD7KeyPressed;
+            input.D8KeyPressed += OnD8KeyPressed;
+            input.D9KeyPressed += OnD9KeyPressed;
+            input.DKeyPressed += OnDKeyPressed;
+            input.EKeyPressed += OnEKeyPressed;
+            input.CKeyPressed += OnCKeyPressed;
+            input.UKeyPressed += OnUKeyPressed;
+            input.IKeyPressed += OnIKeyPressed;
+            input.LeftMouseClick += OnMouseClicked;
+            input.NewMousePosition += OnMouseMoved;
             Dungeon.OnInventoryChangeUINotification += HandleInventoryChange;
         }
 
-        private void OnMouseMoved(object sender, MonoGame.Extended.Input.InputListeners.MouseEventArgs e)
+        private void OnMouseMoved(object sender, PointEventArgs e)
         {
             // update SpriteElement tints to indicate getting or losing focus
+            _mousePosition = e.Point;
             foreach (var sprite in _spriteElements)
             {
-                if (sprite.Rectangle.Contains(e.Position))
+                if (sprite.Rectangle.Contains(_mousePosition))
                 {
                     sprite.Color = Color.Red;
                 }
@@ -249,16 +266,14 @@ namespace Paramita.UI.Scenes.Game
             }
         }
 
-        private void OnMouseClicked(object sender, MonoGame.Extended.Input.InputListeners.MouseEventArgs e)
+        private void OnMouseClicked(object sender, EventArgs e)
         {
-            if (e.Button != MouseButton.Left) return;
-
             var toggleSize = _toggleText.Font.MeasureString(_toggleText.Text);
-            if (!_isOpen && _panelRectangle.Contains(e.Position))
+            if (!_isOpen && _panelRectangle.Contains(_mousePosition))
             {
                 TogglePanelOpenOrClosed();
             }
-            else if (e.Position.X > _toggleText.Position.X && e.Position.Y < _toggleText.Position.Y + toggleSize.Y)
+            else if (_mousePosition.X > _toggleText.Position.X && _mousePosition.Y < _toggleText.Position.Y + toggleSize.Y)
             {
                 TogglePanelOpenOrClosed();
             }
@@ -266,7 +281,7 @@ namespace Paramita.UI.Scenes.Game
             {
                 foreach (var sprite in _spriteElements)
                 {
-                    if (sprite.Rectangle.Contains(e.Position))
+                    if (sprite.Rectangle.Contains(_mousePosition))
                     {
                         for (int i = 0; i < _inventorySlots.Count; i++)
                         {
@@ -281,24 +296,81 @@ namespace Paramita.UI.Scenes.Game
             }
         }
 
-        private void OnKeyPressed(object sender, KeyboardEventArgs e)
+        private void OnD0KeyPressed(object sender, EventArgs e)
         {
-            if (e.Key == Keys.D0) HandleInput(InventoryActions.Select0);
-            if (e.Key == Keys.D1) HandleInput(InventoryActions.Select1);
-            if (e.Key == Keys.D2) HandleInput(InventoryActions.Select2);
-            if (e.Key == Keys.D3) HandleInput(InventoryActions.Select3);
-            if (e.Key == Keys.D4) HandleInput(InventoryActions.Select4);
-            if (e.Key == Keys.D5) HandleInput(InventoryActions.Select5);
-            if (e.Key == Keys.D6) HandleInput(InventoryActions.Select6);
-            if (e.Key == Keys.D7) HandleInput(InventoryActions.Select7);
-            if (e.Key == Keys.D8) HandleInput(InventoryActions.Select8);
-            if (e.Key == Keys.D9) HandleInput(InventoryActions.Select9);
-            if (e.Key == Keys.D) HandleInput(InventoryActions.Drop);
-            if (e.Key == Keys.E) HandleInput(InventoryActions.Equip);
-            if (e.Key == Keys.U) HandleInput(InventoryActions.Use);
-            if (e.Key == Keys.C) HandleInput(InventoryActions.Cancel);
-            if (e.Key == Keys.I) TogglePanelOpenOrClosed();
+            HandleInput(InventoryActions.Select0);
         }
+
+        private void OnD1KeyPressed(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Select1);
+        }
+
+        private void OnD2KeyPressed(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Select2);
+        }
+
+        private void OnD3KeyPressed(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Select3);
+        }
+
+        private void OnD4KeyPressed(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Select4);
+        }
+
+        private void OnD5KeyPressed(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Select5);
+        }
+
+        private void OnD6KeyPressed(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Select6);
+        }
+
+        private void OnD7KeyPressed(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Select7);
+        }
+
+        private void OnD8KeyPressed(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Select8);
+        }
+
+        private void OnD9KeyPressed(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Select9);
+        }
+
+        private void OnDKeyPressed(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Drop);
+        }
+
+        private void OnUKeyPressed(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Use);
+        }
+
+        private void OnEKeyPressed(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Equip);
+        }
+
+        private void OnIKeyPressed(object sender, EventArgs e)
+        {
+            TogglePanelOpenOrClosed();
+        }
+
+        private void OnCKeyPressed(object sender, EventArgs e)
+        {
+            HandleInput(InventoryActions.Cancel);
+        }
+        #endregion
 
         private void UpdateInventoryData(Tuple<Dictionary<string, ItemType>, int> inventoryData)
         {

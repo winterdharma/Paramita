@@ -13,22 +13,13 @@ namespace Paramita.UI.Scenes
 
     public class GameScene : Scene
     {
-        private KeyboardListener _keyboard;
-        private MouseListener _mouse;
-        private InputResponder _inputResponder;
         private Dungeon _dungeon;
         private TileMapPanel _tileMapPanel;        
         private static StatusPanel _statusPanel;
         private InventoryPanel _inventoryPanel;
 
-        public GameScene(GameController game, KeyboardListener keyboard, MouseListener mouse) 
-            : base(game)
-        {
-            _keyboard = keyboard;
-            _mouse = mouse;
-            _inputResponder = game.InputResponder;
-        }
 
+        public GameScene(GameController game) : base(game) { }
 
 
         public override void Initialize()
@@ -39,7 +30,7 @@ namespace Paramita.UI.Scenes
 
             _tileMapPanel = new TileMapPanel(Dungeon.GetCurrentLevelLayers());
             _statusPanel = new StatusPanel(GameController.ArialBold, 10, new Point(0,720));
-            _inventoryPanel = new InventoryPanel(_keyboard, _mouse);
+            _inventoryPanel = new InventoryPanel(_input);
             SubscribeToEvents();
         }
 
@@ -90,10 +81,10 @@ namespace Paramita.UI.Scenes
         #region Event Handling
         private void SubscribeToEvents()
         {
-            _inputResponder.LeftKeyPressed += MovePlayerWest;
-            _inputResponder.RightKeyPressed += MovePlayerEast;
-            _inputResponder.UpKeyPressed += MovePlayerNorth;
-            _inputResponder.DownKeyPressed += MovePlayerSouth;
+            _input.LeftKeyPressed += MovePlayerWest;
+            _input.RightKeyPressed += MovePlayerEast;
+            _input.UpKeyPressed += MovePlayerNorth;
+            _input.DownKeyPressed += MovePlayerSouth;
             InventoryPanel.OnPlayerDroppedItem += PlayerDropItemEventHandler;
             InventoryPanel.OnPlayerEquippedItem += PlayerEquipItemEventHandler;
             InventoryPanel.OnPlayerUsedItem += PlayerUseItemEventHandler;
