@@ -69,6 +69,7 @@ namespace Paramita.UI.Scenes.Game
         private List<TextElement> _textElements;
 
         private Rectangle _panelRectangle;
+        private Rectangle _parentScreen;
         private const int PANEL_WIDTH_OPEN = 250;
         private const int PANEL_WIDTH_CLOSED = 150;
         private const int PANEL_HEIGHT_OPEN = 330;
@@ -96,14 +97,15 @@ namespace Paramita.UI.Scenes.Game
         private bool _isOpen = false;
         private Point _mousePosition = new Point(0, 0);
 
-        public static event EventHandler<InventoryEventArgs> OnPlayerDroppedItem;
-        public static event EventHandler<InventoryEventArgs> OnPlayerEquippedItem;
-        public static event EventHandler<InventoryEventArgs> OnPlayerUsedItem;
+        public event EventHandler<InventoryEventArgs> OnPlayerDroppedItem;
+        public event EventHandler<InventoryEventArgs> OnPlayerEquippedItem;
+        public event EventHandler<InventoryEventArgs> OnPlayerUsedItem;
 
 
 
-        public InventoryPanel(InputResponder input)
+        public InventoryPanel(InputResponder input, Rectangle screen)
         {
+            _parentScreen = screen;
             InitializePanel();
             SubscribeToInputEvents(input);
             Dungeon.GetPlayerInventory();
@@ -191,17 +193,16 @@ namespace Paramita.UI.Scenes.Game
 
         private Point GetPanelOrigin(bool isOpen, int offsetFromTop = 0, int offsetFromRight = 0)
         {
-            Rectangle parentScreen = GameController.ScreenRectangle;
             if (isOpen)
             {
                 return new Point(
-                parentScreen.Width - PANEL_WIDTH_OPEN - offsetFromRight,
+                _parentScreen.Width - PANEL_WIDTH_OPEN - offsetFromRight,
                 offsetFromTop);
             }
             else
             {
                 return new Point(
-                parentScreen.Width - PANEL_WIDTH_CLOSED - offsetFromRight,
+                _parentScreen.Width - PANEL_WIDTH_CLOSED - offsetFromRight,
                 offsetFromTop);
             }
 

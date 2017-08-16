@@ -11,7 +11,6 @@ namespace Paramita.UI.Scenes
     public class TitleScene : Scene
     {
         private Texture2D _background;
-        private Rectangle _screenRectangle;
         private SpriteFont _fontArialBold;
         private TimeSpan _elapsedTime;
         private Color _messageColor;
@@ -22,7 +21,6 @@ namespace Paramita.UI.Scenes
         public TitleScene(GameController game)
             : base(game)
         {
-            _screenRectangle = GameController.ScreenRectangle;
             _elapsedTime = TimeSpan.Zero;
         }
 
@@ -72,13 +70,13 @@ namespace Paramita.UI.Scenes
          */
         public override void Draw(GameTime gameTime)
         {
-            GameController.SpriteBatch.Begin();
+            _spriteBatch.Begin();
 
-            GameController.SpriteBatch.Draw(_background, _screenRectangle, Color.White);
+            _spriteBatch.Draw(_background, _screenRectangle, Color.White);
 
-            GameController.SpriteBatch.DrawString(_fontArialBold, MESSAGE, _messagePosition, _messageColor);
+            _spriteBatch.DrawString(_fontArialBold, MESSAGE, _messagePosition, _messageColor);
 
-            GameController.SpriteBatch.End();
+            _spriteBatch.End();
 
             base.Draw(gameTime);
         }

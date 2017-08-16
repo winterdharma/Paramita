@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using Paramita.UI.Input;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,8 @@ namespace Paramita.UI.Scenes
     public abstract partial class Scene : DrawableGameComponent
     {
         protected GameController _game;
+        protected SpriteBatch _spriteBatch;
+        protected Rectangle _screenRectangle;
         protected InputResponder _input;
         protected readonly SceneManager _manager;
         protected ContentManager _content;
@@ -35,6 +38,8 @@ namespace Paramita.UI.Scenes
         public Scene(GameController game) : base(game)
         {
             _game = game;
+            _spriteBatch = game.SpriteBatch;
+            _screenRectangle = game.ScreenRectangle;
             _input = game.InputResponder;
             _components = new List<GameComponent>();
             _content = Game.Content;

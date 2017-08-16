@@ -28,9 +28,9 @@ namespace Paramita.UI.Scenes
 
             _dungeon = new Dungeon();
 
-            _tileMapPanel = new TileMapPanel(Dungeon.GetCurrentLevelLayers());
+            _tileMapPanel = new TileMapPanel(Dungeon.GetCurrentLevelLayers(), _screenRectangle);
             _statusPanel = new StatusPanel(GameController.ArialBold, 10, new Point(0,720));
-            _inventoryPanel = new InventoryPanel(_input);
+            _inventoryPanel = new InventoryPanel(_input, _screenRectangle);
             SubscribeToEvents();
         }
 
@@ -73,9 +73,9 @@ namespace Paramita.UI.Scenes
 
         public override void Draw(GameTime gameTime)
         {
-            _tileMapPanel.Draw(gameTime, GameController.SpriteBatch);
-            _statusPanel.Draw(gameTime, GameController.SpriteBatch);
-            _inventoryPanel.Draw(gameTime, GameController.SpriteBatch);
+            _tileMapPanel.Draw(gameTime, _spriteBatch);
+            _statusPanel.Draw(gameTime, _spriteBatch);
+            _inventoryPanel.Draw(gameTime, _spriteBatch);
         }
 
         #region Event Handling
@@ -85,9 +85,9 @@ namespace Paramita.UI.Scenes
             _input.RightKeyPressed += MovePlayerEast;
             _input.UpKeyPressed += MovePlayerNorth;
             _input.DownKeyPressed += MovePlayerSouth;
-            InventoryPanel.OnPlayerDroppedItem += PlayerDropItemEventHandler;
-            InventoryPanel.OnPlayerEquippedItem += PlayerEquipItemEventHandler;
-            InventoryPanel.OnPlayerUsedItem += PlayerUseItemEventHandler;
+            _inventoryPanel.OnPlayerDroppedItem += PlayerDropItemEventHandler;
+            _inventoryPanel.OnPlayerEquippedItem += PlayerEquipItemEventHandler;
+            _inventoryPanel.OnPlayerUsedItem += PlayerUseItemEventHandler;
         }
 
         private void MovePlayerWest(object sender, EventArgs e)

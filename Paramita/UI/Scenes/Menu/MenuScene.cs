@@ -99,12 +99,12 @@ namespace Paramita.UI.Scenes
 
         public override void Draw(GameTime gameTime)
         {
-            GameController.SpriteBatch.Begin();
+            _spriteBatch.Begin();
 
-            GameController.SpriteBatch.Draw(_background, Vector2.Zero, Color.White);
-            _menuButtons.Draw(gameTime, GameController.SpriteBatch);
+            _spriteBatch.Draw(_background, Vector2.Zero, Color.White);
+            _menuButtons.Draw(gameTime, _spriteBatch);
 
-            GameController.SpriteBatch.End();
+            _spriteBatch.End();
 
             base.Draw(gameTime);
         }

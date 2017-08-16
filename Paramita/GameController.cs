@@ -14,19 +14,16 @@ namespace Paramita
     /// </summary>
     public class GameController : Game
     {
-        public static Random _random = new Random();
         private GraphicsDeviceManager _graphics;
-        private static SpriteBatch _spriteBatch;
-        private static Rectangle _screenRectangle;
-        private static GameTime _gameTime;
+        private SpriteBatch _spriteBatch;
+        private Rectangle _screenRectangle;
 
-        public static GameTime GameTime { get { return _gameTime; } }
-        public static SpriteBatch SpriteBatch { get { return _spriteBatch; } }
-        public static Rectangle ScreenRectangle { get { return _screenRectangle; } }
-
+        public SpriteBatch SpriteBatch { get { return _spriteBatch; } }
+        public Rectangle ScreenRectangle { get { return _screenRectangle; } }
         public SceneManager SceneManager { get; private set; }
         public InputListenerComponent InputListener { get; private set; }
         public InputResponder InputResponder { get; private set; }
+
         public TitleScene TitleScene { get; private set; }
         public MenuScene MenuScene { get; private set; }
         public GameScene GameScene { get; private set; }
@@ -42,7 +39,6 @@ namespace Paramita
         public GameController()
         {
             _graphics = new GraphicsDeviceManager(this);
-            
             _screenRectangle = new Rectangle(0, 0, 1280, 720);
             _graphics.PreferredBackBufferWidth = _screenRectangle.Width;
             _graphics.PreferredBackBufferHeight = _screenRectangle.Height;
@@ -57,14 +53,7 @@ namespace Paramita
             var mouse = new MouseListener();
             InputListener = new InputListenerComponent(this, keyboard, mouse);
             InputResponder = new InputResponder(keyboard, mouse);
-            keyboard.KeyPressed += CheckForExit;
-            
-
-            TitleScene = new TitleScene(this);
-            MenuScene = new MenuScene(this);
-            GameScene = new GameScene(this);
-            
-            SceneManager.ChangeScene(TitleScene);
+            keyboard.KeyPressed += CheckForExit;            
         }
 
         private void CheckForExit(object sender, KeyboardEventArgs e)
@@ -82,19 +71,27 @@ namespace Paramita
         {
             base.Initialize();
 
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            TitleScene = new TitleScene(this);
+            MenuScene = new MenuScene(this);
+            GameScene = new GameScene(this);
+
             TitleScene.Initialize();
             MenuScene.Initialize();
             GameScene.Initialize(); // this also calls GameScene.LoadContent()
+
+            SceneManager.ChangeScene(TitleScene);
         }
 
-        
+
 
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            //_spriteBatch = new SpriteBatch(GraphicsDevice);
             ArialBold = Content.Load<SpriteFont>("Fonts\\InterfaceFont");
             LucidaConsole = Content.Load<SpriteFont>("Fonts\\lucida_console");
             NotoSans = Content.Load<SpriteFont>("Fonts\\noto_sans");
@@ -120,8 +117,6 @@ namespace Paramita
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            _gameTime = gameTime;
-
             base.Update(gameTime);
             InputListener.Update(gameTime);
             // call Update() on the active @Scene object
