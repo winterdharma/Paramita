@@ -114,25 +114,24 @@ namespace Paramita
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
         /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        /// <param name="gameTime">Time passed since the last call to Update.</param>
         protected override void Update(GameTime gameTime)
         {
-            base.Update(gameTime);
+            //base.Update(gameTime);
             InputListener.Update(gameTime);
-            // call Update() on the active @Scene object
-            SceneManager.CurrentScene.Update(gameTime);
+            SceneManager.Update(gameTime);
         }
 
 
 
-        /// This is called when the game should draw itself.
+        /// <summary>This is called when the game should draw itself.</summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
             // clear the previous frame
             GraphicsDevice.Clear(Color.Black);
-            // call Draw() on the active @Scene object
-            SceneManager.CurrentScene.Draw(gameTime);
+            // draw the current scene
+            SceneManager.Draw(gameTime);
         }
     }
 }

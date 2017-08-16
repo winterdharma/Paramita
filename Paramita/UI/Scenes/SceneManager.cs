@@ -29,6 +29,16 @@ namespace Paramita.UI.Scenes
         }
 
 
+        public override void Update(GameTime gameTime)
+        {
+            CurrentScene.Update(gameTime);
+        }
+
+        public void Draw(GameTime gameTime)
+        {
+            CurrentScene.Draw(gameTime);
+        }
+
         public void PushScene(Scene scene)
         {
             AddScene(scene);
