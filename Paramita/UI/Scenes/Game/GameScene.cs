@@ -32,7 +32,6 @@ namespace Paramita.UI.Scenes
             _statusPanel = new StatusPanel(GameController.ArialBold, 10, new Point(0,720));
             _inventoryPanel = new InventoryPanel(_input, _screenRectangle);
             _dungeon.GetPlayerInventory(); // raises event that inventoryPanel catches
-            SubscribeToEvents();
         }
 
         protected override void LoadContent()
@@ -79,6 +78,19 @@ namespace Paramita.UI.Scenes
             _inventoryPanel.Draw(gameTime, _spriteBatch);
         }
 
+        public override void Show()
+        {
+            base.Show();
+            SubscribeToEvents();
+        }
+
+        public override void Hide()
+        {
+            base.Hide();
+            UnsubscribeFromEvents();
+        }
+
+
         #region Event Handling
         private void SubscribeToEvents()
         {
@@ -89,6 +101,17 @@ namespace Paramita.UI.Scenes
             _inventoryPanel.OnPlayerDroppedItem += PlayerDropItemEventHandler;
             _inventoryPanel.OnPlayerEquippedItem += PlayerEquipItemEventHandler;
             _inventoryPanel.OnPlayerUsedItem += PlayerUseItemEventHandler;
+        }
+
+        private void UnsubscribeFromEvents()
+        {
+            _input.LeftKeyPressed -= MovePlayerWest;
+            _input.RightKeyPressed -= MovePlayerEast;
+            _input.UpKeyPressed -= MovePlayerNorth;
+            _input.DownKeyPressed -= MovePlayerSouth;
+            _inventoryPanel.OnPlayerDroppedItem -= PlayerDropItemEventHandler;
+            _inventoryPanel.OnPlayerEquippedItem -= PlayerEquipItemEventHandler;
+            _inventoryPanel.OnPlayerUsedItem -= PlayerUseItemEventHandler;
         }
 
         private void MovePlayerWest(object sender, EventArgs e)

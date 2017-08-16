@@ -229,7 +229,7 @@ namespace Paramita.UI.Scenes.Game
 
 
         #region Event Handling
-        private void SubscribeToInputEvents(InputResponder input)
+        public void SubscribeToInputEvents(InputResponder input)
         {
             input.D0KeyPressed += OnD0KeyPressed;
             input.D1KeyPressed += OnD1KeyPressed;
@@ -249,6 +249,28 @@ namespace Paramita.UI.Scenes.Game
             input.LeftMouseClick += OnMouseClicked;
             input.NewMousePosition += OnMouseMoved;
             Dungeon.OnInventoryChangeUINotification += HandleInventoryChange;
+        }
+
+        public void UnsubscribeFromInputEvents(InputResponder input)
+        {
+            input.D0KeyPressed -= OnD0KeyPressed;
+            input.D1KeyPressed -= OnD1KeyPressed;
+            input.D2KeyPressed -= OnD2KeyPressed;
+            input.D3KeyPressed -= OnD3KeyPressed;
+            input.D4KeyPressed -= OnD4KeyPressed;
+            input.D5KeyPressed -= OnD5KeyPressed;
+            input.D6KeyPressed -= OnD6KeyPressed;
+            input.D7KeyPressed -= OnD7KeyPressed;
+            input.D8KeyPressed -= OnD8KeyPressed;
+            input.D9KeyPressed -= OnD9KeyPressed;
+            input.DKeyPressed -= OnDKeyPressed;
+            input.EKeyPressed -= OnEKeyPressed;
+            input.CKeyPressed -= OnCKeyPressed;
+            input.UKeyPressed -= OnUKeyPressed;
+            input.IKeyPressed -= OnIKeyPressed;
+            input.LeftMouseClick -= OnMouseClicked;
+            input.NewMousePosition -= OnMouseMoved;
+            Dungeon.OnInventoryChangeUINotification -= HandleInventoryChange;
         }
 
         private void OnMouseMoved(object sender, PointEventArgs e)
