@@ -108,7 +108,6 @@ namespace Paramita.UI.Scenes.Game
             _parentScreen = screen;
             InitializePanel();
             SubscribeToInputEvents(input);
-            Dungeon.GetPlayerInventory();
         }
 
 

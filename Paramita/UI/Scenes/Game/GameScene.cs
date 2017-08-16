@@ -28,9 +28,10 @@ namespace Paramita.UI.Scenes
 
             _dungeon = new Dungeon();
 
-            _tileMapPanel = new TileMapPanel(Dungeon.GetCurrentLevelLayers(), _screenRectangle);
+            _tileMapPanel = new TileMapPanel(_dungeon.GetCurrentLevelLayers(), _screenRectangle);
             _statusPanel = new StatusPanel(GameController.ArialBold, 10, new Point(0,720));
             _inventoryPanel = new InventoryPanel(_input, _screenRectangle);
+            _dungeon.GetPlayerInventory(); // raises event that inventoryPanel catches
             SubscribeToEvents();
         }
 
@@ -92,27 +93,27 @@ namespace Paramita.UI.Scenes
 
         private void MovePlayerWest(object sender, EventArgs e)
         {
-            Dungeon.MovePlayer(Compass.West);
+            _dungeon.MovePlayer(Compass.West);
         }
 
         private void MovePlayerEast(object sender, EventArgs e)
         {
-            Dungeon.MovePlayer(Compass.East);
+            _dungeon.MovePlayer(Compass.East);
         }
 
         private void MovePlayerNorth(object sender, EventArgs e)
         {
-            Dungeon.MovePlayer(Compass.North);
+            _dungeon.MovePlayer(Compass.North);
         }
 
         private void MovePlayerSouth(object sender, EventArgs e)
         {
-            Dungeon.MovePlayer(Compass.South);
+            _dungeon.MovePlayer(Compass.South);
         }
 
         private void PlayerDropItemEventHandler(object sender, InventoryEventArgs e)
         {
-            Dungeon.PlayerDropItem(e.InventorySlot, e.InventoryItem);
+            _dungeon.PlayerDropItem(e.InventorySlot, e.InventoryItem);
         }
 
         private void PlayerEquipItemEventHandler(object sender, EventArgs e)

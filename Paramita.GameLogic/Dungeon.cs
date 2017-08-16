@@ -40,21 +40,21 @@ namespace Paramita.GameLogic
     public class Dungeon
     {
         internal static IRandom _random = new RandomNum();
-        private static Dictionary<int, Level> _levels;
-        private static Player _player;
+        private Dictionary<int, Level> _levels;
+        private Player _player;
 
         private static int _currentLevelNumber;
-        private static Level _currentLevel;
+        private Level _currentLevel;
 
         public static int CurrentLevelNumber
         {
             get { return _currentLevelNumber; }
         }
-        public static Level CurrentLevel
+        public Level CurrentLevel
         {
             get { return _currentLevel; }
         }
-        public static Player Player { get { return _player; } }
+        public Player Player { get { return _player; } }
 
         public static event EventHandler<MoveEventArgs> OnActorMoveUINotification;
         public static event EventHandler<InventoryChangeEventArgs> OnInventoryChangeUINotification;
@@ -79,7 +79,7 @@ namespace Paramita.GameLogic
         #region Public API Methods
         
         #region UI TileMap Initialization
-        public static Tuple<TileType[,], ItemType[,], Tuple<ActorType, Compass, bool>[,]> GetCurrentLevelLayers()
+        public Tuple<TileType[,], ItemType[,], Tuple<ActorType, Compass, bool>[,]> GetCurrentLevelLayers()
         { 
             return new Tuple<TileType[,], ItemType[,], Tuple<ActorType, Compass, bool>[,]>(
                     _currentLevel.TileTypeLayer, 
@@ -90,19 +90,19 @@ namespace Paramita.GameLogic
         #endregion
 
         #region Player Input Handlers
-        public static void MovePlayer(Compass direction)
+        public void MovePlayer(Compass direction)
         {
             _player.HandleInput(direction);
         }
         
-        public static void PlayerDropItem(string inventorySlot, ItemType item)
+        public void PlayerDropItem(string inventorySlot, ItemType item)
         {
             _player.DropItem(inventorySlot, item);
         }
 
         #endregion
         
-        public static void GetPlayerInventory()
+        public void GetPlayerInventory()
         {
             _player.GetInventory();
         }
@@ -118,7 +118,7 @@ namespace Paramita.GameLogic
             SubscribeToActorEvents();
         }
 
-        private static void SubscribeToLevelEvents()
+        private void SubscribeToLevelEvents()
         {
             _currentLevel.OnActorWasMoved += HandleActorMovement;
             _currentLevel.OnActorDeath += HandleDeadActor;
@@ -134,7 +134,7 @@ namespace Paramita.GameLogic
             SubscribeToNpcEvents(_currentLevel.Npcs);
         }
 
-        private static void SubscribeToNpcEvents(List<INpc> npcs)
+        private void SubscribeToNpcEvents(List<INpc> npcs)
         {
             foreach (INpc npc in npcs)
             {
@@ -142,7 +142,7 @@ namespace Paramita.GameLogic
             }
         }
 
-        private static void UnsubscribeFromLevelEvents()
+        private void UnsubscribeFromLevelEvents()
         {
             _currentLevel.OnActorWasMoved -= HandleActorMovement;
             _currentLevel.OnActorDeath -= HandleDeadActor;
@@ -150,7 +150,7 @@ namespace Paramita.GameLogic
             _currentLevel.TileMap.OnItemRemoved -= HandleItemRemovedFromTileMap;
         }
 
-        private static void GoUpOneLevel()
+        private void GoUpOneLevel()
         {
             int levelNumber = _currentLevelNumber - 1;
             if (levelNumber > 0)
@@ -159,7 +159,7 @@ namespace Paramita.GameLogic
             }
         }
 
-        private static void GoDownOneLevel()
+        private void GoDownOneLevel()
         {
             int levelNumber = _currentLevelNumber + 1;
             if (!_levels.ContainsKey(levelNumber))
@@ -167,7 +167,7 @@ namespace Paramita.GameLogic
             ChangeLevel(levelNumber);
         }
 
-        private static void ChangeLevel(int levelNumber)
+        private void ChangeLevel(int levelNumber)
         {
             // get the difference between current and new level number
             int upOrDown = levelNumber - _currentLevelNumber;
@@ -184,7 +184,7 @@ namespace Paramita.GameLogic
             OnLevelChangeUINotification?.Invoke(null, new NewLevelEventArgs(_currentLevelNumber, GetCurrentLevelLayers()));
         }
 
-        private static void PlacePlayerOnLevel(int upOrDown)
+        private void PlacePlayerOnLevel(int upOrDown)
         {
             _currentLevel.Player = _player;
             if (upOrDown == -1)
@@ -199,38 +199,38 @@ namespace Paramita.GameLogic
         #endregion
 
         #region Event Handlers
-        private static void HandleLevelChange(object sender, LevelChangeEventArgs eventArgs)
+        private void HandleLevelChange(object sender, LevelChangeEventArgs eventArgs)
         {
             int levelChange = eventArgs.LevelChange;
             MoveOneLevel(levelChange);
         }
 
-        private static void HandleActorMovement(object sender, MoveEventArgs eventArgs)
+        private void HandleActorMovement(object sender, MoveEventArgs eventArgs)
         {
             OnActorMoveUINotification?.Invoke(null, eventArgs);
         }
 
-        private static void HandleDeadActor(object sender, MoveEventArgs eventArgs)
+        private void HandleDeadActor(object sender, MoveEventArgs eventArgs)
         {
             OnActorRemovedUINotification?.Invoke(null, eventArgs);
         }
 
-        private static void HandleInventoryChange(object sender, InventoryChangeEventArgs eventArgs)
+        private void HandleInventoryChange(object sender, InventoryChangeEventArgs eventArgs)
         {
             OnInventoryChangeUINotification?.Invoke(null, eventArgs);
         }
 
-        private static void HandleItemAddedToTileMap(object sender, ItemEventArgs eventArgs)
+        private void HandleItemAddedToTileMap(object sender, ItemEventArgs eventArgs)
         {
             OnItemDroppedUINotification?.Invoke(null, eventArgs);
         }
 
-        private static void HandleItemRemovedFromTileMap(object sender, ItemEventArgs eventArgs)
+        private void HandleItemRemovedFromTileMap(object sender, ItemEventArgs eventArgs)
         {
             OnItemPickedUpUINotification?.Invoke(null, eventArgs);
         }
 
-        private static void HandleStatusMessage(object sender, StatusMessageEventArgs eventArgs)
+        private void HandleStatusMessage(object sender, StatusMessageEventArgs eventArgs)
         {
             OnStatusMsgUINotification?.Invoke(null, eventArgs);
         }
@@ -242,7 +242,7 @@ namespace Paramita.GameLogic
             _currentLevel.Update();
         }
 
-        public static void CreateNextLevel(int levelNumber)
+        public void CreateNextLevel(int levelNumber)
         {
             var level = LevelFactory.CreateLevel(levelNumber);
             _levels[levelNumber] = level;
@@ -250,7 +250,7 @@ namespace Paramita.GameLogic
         }
 
 
-        public static void MoveOneLevel(int levelChange)
+        public void MoveOneLevel(int levelChange)
         {
             if (levelChange == -1)
                 GoUpOneLevel();
