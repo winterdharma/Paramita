@@ -8,23 +8,51 @@ using System.Threading.Tasks;
 
 namespace Paramita.UI.Scenes.Game
 {
-    public class TextElement
+    /// <summary>
+    /// A class representing a single-line text element, such as a message or label.
+    /// </summary>
+    public class TextElement : Element
     {
-        public string Label { get; set; }
+
+        public string Id { get => _id; set => _id = value; }
+        public Component Parent { get => _parent; set => _parent = value; }
+        public Vector2 Position { get => _position; set => _position = value; }
+        
         public string Text { get; set; }
         public SpriteFont Font { get; set; }
-        public Vector2 Position { get; set; }
         public Color Color { get; set; }
 
-        public TextElement() { }
-
-        public TextElement(string label, string text, SpriteFont font, Vector2 position, Color color)
+        public TextElement(string id, Component parent, Vector2 position, string text, SpriteFont font, Color color) 
+            : base(id, parent, position)
         {
-            Label = label;
+            Id = id;
             Text = text;
             Font = font;
             Position = position;
             Color = color;
+            Rectangle = CreateRectangle();
+        }
+
+        protected override Rectangle CreateRectangle()
+        {
+            var size = Font.MeasureString(Text);
+            return new Rectangle((int)Position.X, (int)Position.Y, (int)size.X, (int)size.Y);
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            if(Enabled)
+            {
+
+            }
+        }
+
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            if(Visible)
+            {
+                spriteBatch.DrawString(Font, Text, Position, Color);
+            }
         }
     }
 }

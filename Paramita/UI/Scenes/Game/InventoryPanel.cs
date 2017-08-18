@@ -52,7 +52,7 @@ namespace Paramita.UI.Scenes.Game
      *     Responds to player inventory input events
      *     Raises player inventory change events 
      */
-    public class InventoryPanel
+    public class InventoryPanel : Component
     {
         private List<string> _inventorySlots = new List<string>()
             { "none","left_hand", "right_hand", "head", "body", "feet",
@@ -136,9 +136,33 @@ namespace Paramita.UI.Scenes.Game
                 _isOpen = value;
                 UpdatePanelRectangle();
                 UpdateHeadingPosition();
+
+                if (_isOpen)
+                    ActivateTextElements();
+                else
+                    DeactivateTextElements();
             }
         }
 
+        
+
+        private void ActivateTextElements()
+        {
+            foreach(var element in _textElements)
+            {
+                element.Enabled = true;
+                element.Visible = true;
+            }
+        }
+
+        private void DeactivateTextElements()
+        {
+            foreach (var element in _textElements)
+            {
+                element.Enabled = false;
+                element.Visible = false;
+            }
+        }
 
         #region Inventory Property helpers
 
@@ -290,12 +314,11 @@ namespace Paramita.UI.Scenes.Game
 
         private void OnMouseClicked(object sender, EventArgs e)
         {
-            var toggleSize = _toggleText.Font.MeasureString(_toggleText.Text);
             if (!_isOpen && _panelRectangle.Contains(_mousePosition))
             {
                 TogglePanelOpenOrClosed();
             }
-            else if (_mousePosition.X > _toggleText.Position.X && _mousePosition.Y < _toggleText.Position.Y + toggleSize.Y)
+            else if (_toggleText.Rectangle.Contains(_mousePosition))
             {
                 TogglePanelOpenOrClosed();
             }
@@ -516,11 +539,8 @@ namespace Paramita.UI.Scenes.Game
         {
             SpriteFont font = GameController.ArialBold;
             _heading = new TextElement(
-                "heading",
-                HEADING,
-                font,
-                GetHeadingPosition(HEADING, _panelRectangle, font),
-                Color.White);
+                "heading", this, GetHeadingPosition(HEADING, _panelRectangle, font),
+                HEADING, font, Color.White);
         }
 
         private void ConstructToggleElement()
@@ -531,11 +551,8 @@ namespace Paramita.UI.Scenes.Game
                 _panelRectangle.Right - toggleSize.X, (_panelRectangle.Top + 5));
 
             _toggleText = new TextElement(
-                "toggle_text",
-                TOGGLE_CLOSED,
-                font,
-                position,
-                Color.White);
+                "toggle_text", this, position,
+                TOGGLE_CLOSED, font, Color.White);
         }
 
         private void ConstructUnequipHintElement()
@@ -545,21 +562,15 @@ namespace Paramita.UI.Scenes.Game
                150);
 
             _unequipText = new TextElement(
-                "unequip_text",
-                UNEQUIP_HINT,
-                GameController.NotoSans,
-                position,
-                Color.White);
+                "unequip_text", this, position,
+                UNEQUIP_HINT, GameController.NotoSans, Color.White);
         }
 
         private void ConstructEquipHintElement()
         {
             _equipText = new TextElement(
-                "equip_hint",
-                EQUIP_HINT,
-                GameController.NotoSans,
-                _unequipText.Position,
-                Color.White);
+                "equip_hint", this, _unequipText.Position,
+                EQUIP_HINT, GameController.NotoSans, Color.White);
         }
 
         private void ConstructDropHintElement()
@@ -569,11 +580,8 @@ namespace Paramita.UI.Scenes.Game
             position.Y += font.MeasureString(EQUIP_HINT).Y + 5;
 
             _dropText = new TextElement(
-                "drop_hint",
-                DROP_HINT,
-                font,
-                position,
-                Color.White);
+                "drop_hint", this, position,
+                DROP_HINT, font, Color.White);
         }
 
         private void ConstructCancelHintElement()
@@ -583,11 +591,8 @@ namespace Paramita.UI.Scenes.Game
             position.Y += font.MeasureString(CANCEL_HINT).Y + 5;
 
             _cancelText = new TextElement(
-                "cancel_hint",
-                CANCEL_HINT,
-                font,
-                position,
-                Color.White);
+                "cancel_hint", this, position,
+                CANCEL_HINT, font, Color.White);
         }
 
         private Vector2 GetHeadingPosition(string heading, Rectangle panelRect, SpriteFont font, int offsetTop = 5)
@@ -668,7 +673,7 @@ namespace Paramita.UI.Scenes.Game
 
 
         // Called by GameScene.Update() to check for changes or input to handle
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
             CreateTextElements();
         }
@@ -677,19 +682,19 @@ namespace Paramita.UI.Scenes.Game
 
         #region Draw Methods
         // Called by GameScene.Draw()
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
 
             if (IsOpen)
-                DrawOpenPanel(spriteBatch);
+                DrawOpenPanel(gameTime, spriteBatch);
             else
-                DrawClosedPanel(spriteBatch);
+                DrawClosedPanel(gameTime, spriteBatch);
 
             spriteBatch.End();
         }
 
-        private void DrawOpenPanel(SpriteBatch spriteBatch)
+        private void DrawOpenPanel(GameTime gameTime, SpriteBatch spriteBatch)
         {
             // draw background
             spriteBatch.Draw(_defaultSlotTextures["background"], _panelRectangle, Color.White);
@@ -709,15 +714,12 @@ namespace Paramita.UI.Scenes.Game
             // Draw text elements
             foreach(TextElement textElement in _textElements)
             {
-                spriteBatch.DrawString(textElement.Font, 
-                    textElement.Text, 
-                    textElement.Position, 
-                    textElement.Color);
+                textElement.Draw(gameTime, spriteBatch);
             }
         }
 
 
-        private void DrawClosedPanel(SpriteBatch spriteBatch)
+        private void DrawClosedPanel(GameTime gameTime, SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(_defaultSlotTextures["white_background"], _panelRectangle, Color.DarkBlue);
             

@@ -5,7 +5,7 @@ using System;
 
 namespace Paramita.UI.Scenes.Game
 {
-    public class StatusPanel
+    public class StatusPanel : Component
     {
         private int maxMessages;
         private string[] messages;

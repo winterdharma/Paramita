@@ -11,7 +11,7 @@ using Paramita.GameLogic.Utility;
 
 namespace Paramita.UI.Scenes.Game
 {
-    public class TileMapPanel
+    public class TileMapPanel : Component
     {
         private Rectangle _viewport;
         private Vector2 _playerPosition;
@@ -51,7 +51,7 @@ namespace Paramita.UI.Scenes.Game
             _actorArray = CreateActorSprites(actorLayer);
             _playerPosition = GetPlayerPosition(actorLayer);
         }
-
+        
         private Sprite[,] CreateTileSprites(TileType[,] typeArray)
         {
             var spriteArray = new Sprite[typeArray.GetLength(0), typeArray.GetLength(1)];

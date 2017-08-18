@@ -7,6 +7,7 @@ using Paramita.GameLogic.Items;
 using Paramita.UI.Input;
 using Paramita.UI.Scenes.Game;
 using Paramita.GameLogic.Mechanics;
+using System.Collections.Generic;
 
 namespace Paramita.UI.Scenes
 {
@@ -31,6 +32,9 @@ namespace Paramita.UI.Scenes
             _tileMapPanel = new TileMapPanel(_dungeon.GetCurrentLevelLayers(), _screenRectangle);
             _statusPanel = new StatusPanel(GameController.ArialBold, 10, new Point(0,720));
             _inventoryPanel = new InventoryPanel(_input, _screenRectangle);
+            _components.Add(_tileMapPanel);
+            _components.Add(_statusPanel);
+            _components.Add(_inventoryPanel);
             _dungeon.GetPlayerInventory(); // raises event that inventoryPanel catches
         }
 

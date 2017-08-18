@@ -29,9 +29,9 @@ namespace Paramita.UI.Scenes
         protected InputResponder _input;
         protected readonly SceneManager _manager;
         protected ContentManager _content;
-        protected readonly List<GameComponent> _components;
+        protected readonly List<Component> _components;
         
-        public List<GameComponent> Components { get { return _components; } }
+        public List<Component> Components { get { return _components; } }
 
 
 
@@ -41,7 +41,7 @@ namespace Paramita.UI.Scenes
             _spriteBatch = game.SpriteBatch;
             _screenRectangle = game.ScreenRectangle;
             _input = game.InputResponder;
-            _components = new List<GameComponent>();
+            _components = new List<Component>();
             _content = Game.Content;
             _manager = (SceneManager)Game.Services.GetService(typeof(SceneManager));
         }
@@ -55,7 +55,7 @@ namespace Paramita.UI.Scenes
 
         public override void Update(GameTime gameTime)
         {
-            foreach (GameComponent component in _components)
+            foreach (var component in _components)
             { 
                 if (component.Enabled)
                     component.Update(gameTime);
@@ -68,10 +68,9 @@ namespace Paramita.UI.Scenes
         {
             base.Draw(gameTime);
 
-            foreach(GameComponent component in _components)
+            foreach(var component in _components)
             {
-                if (component is DrawableGameComponent && ((DrawableGameComponent)component).Visible)
-                    ((DrawableGameComponent)component).Draw(gameTime);
+                component.Draw(gameTime, _spriteBatch);
             }
         }
 
@@ -86,13 +85,10 @@ namespace Paramita.UI.Scenes
             Enabled = true;
             Visible = true;
 
-            foreach(GameComponent component in _components)
+            foreach(var component in _components)
             {
                 component.Enabled = true;
-                if(component is DrawableGameComponent)
-                {
-                    ((DrawableGameComponent)component).Visible = true;
-                }
+                component.Visible = true;
             }
         }
 
@@ -101,13 +97,10 @@ namespace Paramita.UI.Scenes
             Enabled = false;
             Visible = false;
 
-            foreach (GameComponent component in _components)
+            foreach (var component in _components)
             {
                 component.Enabled = false;
-                if (component is DrawableGameComponent)
-                {
-                    ((DrawableGameComponent)component).Visible = false;
-                }
+                component.Visible = false;
             }
         }
 
