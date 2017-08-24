@@ -8,12 +8,17 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Paramita.UI.Base
 {
+    /// <summary>
+    /// An Element handles the logic and content for Update() and Draw() on a discrete part of a 
+    /// UI Component.
+    /// </summary>
     public abstract class Element
     {
         protected string _id;
         protected Component _parent;
         protected Vector2 _position;
         protected Rectangle _rectangle;
+        protected Color _color;
 
         public bool Visible { get; set; }
         public bool Enabled { get; set; }

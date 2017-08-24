@@ -5,30 +5,31 @@ namespace Paramita.UI.Base.Game
 {
     public class Image : Element
     {
-        public Image(string id, Component parent, Vector2 position) : base(id, parent, position)
+        public Image(string id, Component parent, Vector2 position, Texture2D texture, Color color) 
+            : base(id, parent, position)
         {
-
+            Id = id;
+            Texture = texture;
         }
 
-        public string Label { get; set; }
+        public string Id { get => _id; set => _id = value; }
         public Texture2D Texture { get; set; }
-        public Vector2 Position { get; set; }
-        public Rectangle Rectangle { get; set; }
-        public Color Color { get; set; }
+        public Vector2 Position { get => _position; set => _position = value; }
+        public Color Color { get => _color; set => _color = value; }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            throw new System.NotImplementedException();
+            spriteBatch.Draw(Texture, Position, Color);
         }
 
         public override void Update(GameTime gameTime)
         {
-            throw new System.NotImplementedException();
+
         }
 
         protected override Rectangle CreateRectangle()
         {
-            throw new System.NotImplementedException();
+            return Texture.Bounds;
         }
     }
 }
