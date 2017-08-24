@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using Paramita.GameLogic;
 using Paramita.GameLogic.Utility;
 
-namespace Paramita.UI.Scenes.Game
+namespace Paramita.UI.Base.Game
 {
     public class TileMapPanel : Component
     {

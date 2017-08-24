@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Paramita.UI.Scenes
+namespace Paramita.UI.Base
 {
     public class Background : Element
     {

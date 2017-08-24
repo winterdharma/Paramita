@@ -43,6 +43,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="UI\BeingSprite.cs" />
+    <Compile Include="UI\Elements\Background.cs" />
+    <Compile Include="UI\Elements\Sprite.cs" />
     <Compile Include="UI\Input\InputResponder.cs" />
     <Compile Include="UI\Base\Component.cs" />
     <Compile Include="UI\Base\Element.cs" />

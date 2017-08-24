@@ -5,11 +5,11 @@ using MonoGame.Extended.Input.InputListeners;
 using Paramita.GameLogic;
 using Paramita.GameLogic.Items;
 using Paramita.UI.Input;
-using Paramita.UI.Scenes.Game;
+using Paramita.UI.Base.Game;
 using Paramita.GameLogic.Mechanics;
 using System.Collections.Generic;
 
-namespace Paramita.UI.Scenes
+namespace Paramita.UI.Base
 {
 
     public class GameScene : Scene

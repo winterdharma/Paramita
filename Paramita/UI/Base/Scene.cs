@@ -5,7 +5,7 @@ using Paramita.UI.Input;
 using System;
 using System.Collections.Generic;
 
-namespace Paramita.UI.Scenes
+namespace Paramita.UI.Base
 {
     /*
      * This is the base class for Scenes of the App. 

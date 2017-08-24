@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Paramita.UI.Scenes.Game
+namespace Paramita.UI.Base.Game
 {
     public class Image : Element
     {

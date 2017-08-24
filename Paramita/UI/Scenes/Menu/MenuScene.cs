@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Input.InputListeners;
 using System;
 
-namespace Paramita.UI.Scenes
+namespace Paramita.UI.Base
 {
 
 

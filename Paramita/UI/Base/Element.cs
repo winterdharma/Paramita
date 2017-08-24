@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Paramita.UI.Scenes
+namespace Paramita.UI.Base
 {
     public abstract class Element
     {

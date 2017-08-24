@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Paramita.GameLogic.Actors;
 using Paramita.GameLogic.Items;
 using Paramita.GameLogic.Levels;
-using Paramita.UI.Scenes;
+using Paramita.UI.Base;
 using System;
 
 namespace Paramita.UI

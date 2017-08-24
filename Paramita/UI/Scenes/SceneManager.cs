@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Paramita.UI.Scenes
+namespace Paramita.UI.Base
 {
     /*
      * The Scene Manager handles transitions from one game scene 

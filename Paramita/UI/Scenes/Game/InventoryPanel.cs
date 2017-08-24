@@ -10,7 +10,7 @@ using Paramita.UI.Input;
 using System;
 using System.Collections.Generic;
 
-namespace Paramita.UI.Scenes.Game
+namespace Paramita.UI.Base.Game
 {
     public enum InventoryActions
     {

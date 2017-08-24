@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Paramita.UI.Scenes
+namespace Paramita.UI.Base
 {
     /// <summary>An collection of several elements that combine to form a single component of a 
     /// Scene.</summary>
