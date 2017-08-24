@@ -65,8 +65,8 @@ namespace Paramita.UI.Scenes.Game
             = new Dictionary<string, ItemType>();
         private int _gold = 0;
 
-        private List<SpriteElement> _spriteElements;
-        private List<TextElement> _textElements;
+        private List<Image> _spriteElements;
+        private List<LineOfText> _textElements;
 
         private Rectangle _panelRectangle;
         private Rectangle _parentScreen;
@@ -77,12 +77,12 @@ namespace Paramita.UI.Scenes.Game
 
         private Vector2 _itemInfoPosition;
 
-        private TextElement _heading;
-        private TextElement _toggleText;
-        private TextElement _unequipText;
-        private TextElement _equipText;
-        private TextElement _dropText;
-        private TextElement _cancelText;
+        private LineOfText _heading;
+        private LineOfText _toggleText;
+        private LineOfText _unequipText;
+        private LineOfText _equipText;
+        private LineOfText _dropText;
+        private LineOfText _cancelText;
 
         private const string HEADING = "(I)nventory";
         private const string TOGGLE_CLOSED = "[X]";
@@ -428,11 +428,11 @@ namespace Paramita.UI.Scenes.Game
         #region SpriteElements
         private void CreateSpriteElements()
         {
-            _spriteElements = new List<SpriteElement>();
+            _spriteElements = new List<Image>();
 
             for (int i = 1; i < _inventorySlots.Count; i++)
             {
-                var sprite = new SpriteElement();
+                var sprite = new Image();
                 sprite.Label = _inventorySlots[i];
                 sprite.Texture = _defaultSlotTextures[GetDefaultTextureKey(_inventorySlots[i])];
                 sprite.Position = GetSpriteElementPosition(i - 1);
@@ -441,7 +441,7 @@ namespace Paramita.UI.Scenes.Game
                 _spriteElements.Add(sprite);
             }
 
-            var tempSpriteElements = new List<SpriteElement>(_spriteElements);
+            var tempSpriteElements = new List<Image>(_spriteElements);
             foreach(var sprite in tempSpriteElements)
             {
                 if(_inventory[sprite.Label] != ItemType.None 
@@ -449,7 +449,7 @@ namespace Paramita.UI.Scenes.Game
                     && _inventory[sprite.Label] != ItemType.Bite)
                 {
                     sprite.Color = Color.DarkSlateGray;
-                    var item = new SpriteElement();
+                    var item = new Image();
                     item.Label = ConvertItemTypeToString(_inventory[sprite.Label]);
                     item.Texture = ItemTextures.ItemTextureMap[_inventory[sprite.Label]];
                     item.Position = sprite.Position;
@@ -514,7 +514,7 @@ namespace Paramita.UI.Scenes.Game
         #region TextElements
         private void CreateTextElements()
         {
-            _textElements = new List<TextElement>();
+            _textElements = new List<LineOfText>();
 
             _textElements.Add(_heading);
             _textElements.Add(_toggleText);
@@ -538,7 +538,7 @@ namespace Paramita.UI.Scenes.Game
         private void ConstructHeadingElement()
         {
             SpriteFont font = GameController.ArialBold;
-            _heading = new TextElement(
+            _heading = new LineOfText(
                 "heading", this, GetHeadingPosition(HEADING, _panelRectangle, font),
                 HEADING, font, Color.White);
         }
@@ -550,7 +550,7 @@ namespace Paramita.UI.Scenes.Game
             var position = new Vector2(
                 _panelRectangle.Right - toggleSize.X, (_panelRectangle.Top + 5));
 
-            _toggleText = new TextElement(
+            _toggleText = new LineOfText(
                 "toggle_text", this, position,
                 TOGGLE_CLOSED, font, Color.White);
         }
@@ -561,14 +561,14 @@ namespace Paramita.UI.Scenes.Game
                _panelRectangle.Right - (PANEL_WIDTH_OPEN - 10),
                150);
 
-            _unequipText = new TextElement(
+            _unequipText = new LineOfText(
                 "unequip_text", this, position,
                 UNEQUIP_HINT, GameController.NotoSans, Color.White);
         }
 
         private void ConstructEquipHintElement()
         {
-            _equipText = new TextElement(
+            _equipText = new LineOfText(
                 "equip_hint", this, _unequipText.Position,
                 EQUIP_HINT, GameController.NotoSans, Color.White);
         }
@@ -579,7 +579,7 @@ namespace Paramita.UI.Scenes.Game
             var position = _unequipText.Position;
             position.Y += font.MeasureString(EQUIP_HINT).Y + 5;
 
-            _dropText = new TextElement(
+            _dropText = new LineOfText(
                 "drop_hint", this, position,
                 DROP_HINT, font, Color.White);
         }
@@ -590,7 +590,7 @@ namespace Paramita.UI.Scenes.Game
             var position = _dropText.Position;
             position.Y += font.MeasureString(CANCEL_HINT).Y + 5;
 
-            _cancelText = new TextElement(
+            _cancelText = new LineOfText(
                 "cancel_hint", this, position,
                 CANCEL_HINT, font, Color.White);
         }
@@ -608,9 +608,9 @@ namespace Paramita.UI.Scenes.Game
             _heading.Position = GetHeadingPosition(_heading.Text, _panelRectangle, _heading.Font);
         }
 
-        private List<TextElement> GetHintTextElements()
+        private List<LineOfText> GetHintTextElements()
         {
-            var hints = new List<TextElement>();
+            var hints = new List<LineOfText>();
 
             if (_itemSelected > 0 && _itemSelected < 6)
             {
@@ -712,7 +712,7 @@ namespace Paramita.UI.Scenes.Game
             }
 
             // Draw text elements
-            foreach(TextElement textElement in _textElements)
+            foreach(LineOfText textElement in _textElements)
             {
                 textElement.Draw(gameTime, spriteBatch);
             }

@@ -1,17 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Paramita.UI.Scenes.Game
 {
     /// <summary>
     /// A class representing a single-line text element, such as a message or label.
     /// </summary>
-    public class TextElement : Element
+    public class LineOfText : Element
     {
 
         public string Id { get => _id; set => _id = value; }
@@ -22,7 +17,7 @@ namespace Paramita.UI.Scenes.Game
         public SpriteFont Font { get; set; }
         public Color Color { get; set; }
 
-        public TextElement(string id, Component parent, Vector2 position, string text, SpriteFont font, Color color) 
+        public LineOfText(string id, Component parent, Vector2 position, string text, SpriteFont font, Color color) 
             : base(id, parent, position)
         {
             Id = id;

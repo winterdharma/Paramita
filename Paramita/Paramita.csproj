@@ -44,11 +44,11 @@
   <ItemGroup>
     <Compile Include="UI\BeingSprite.cs" />
     <Compile Include="UI\Input\InputResponder.cs" />
-    <Compile Include="UI\Scenes\Component.cs" />
-    <Compile Include="UI\Scenes\Element.cs" />
+    <Compile Include="UI\Base\Component.cs" />
+    <Compile Include="UI\Base\Element.cs" />
     <Compile Include="UI\Scenes\Game\ItemTextures.cs" />
-    <Compile Include="UI\Scenes\Game\SpriteElement.cs" />
-    <Compile Include="UI\Scenes\Game\TextElement.cs" />
+    <Compile Include="UI\Elements\Image.cs" />
+    <Compile Include="UI\Elements\LineOfText.cs" />
     <Compile Include="UI\Scenes\Game\TileMapPanel.cs" />
     <Compile Include="UI\Sprite.cs" />
     <Compile Include="UI\Scenes\Game\InventoryPanel.cs" />
@@ -57,7 +57,7 @@
     <Compile Include="UI\Scenes\Game\GameScene.cs" />
     <Compile Include="UI\Scenes\Menu\MenuScene.cs" />
     <Compile Include="UI\Scenes\Title\TitleScene.cs" />
-    <Compile Include="UI\Scenes\Scene.cs" />
+    <Compile Include="UI\Base\Scene.cs" />
     <Compile Include="UI\Scenes\SceneManager.cs" />
     <Compile Include="UI\Animation.cs" />
     <Compile Include="UI\Scenes\Game\Camera.cs" />
