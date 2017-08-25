@@ -100,6 +100,12 @@
     <Content Include="Content\Images\Items\coins.png" />
     <Content Include="Content\Images\Items\meat.png" />
     <Content Include="Content\Images\Items\short_sword.png" />
+    <Content Include="Content\Images\Scenes\inventory_bg_white.png" />
+    <Content Include="Content\Images\Scenes\inventory_body.png" />
+    <Content Include="Content\Images\Scenes\inventory_feet.png" />
+    <Content Include="Content\Images\Scenes\inventory_hand.png" />
+    <Content Include="Content\Images\Scenes\inventory_head.png" />
+    <Content Include="Content\Images\Scenes\inventory_other.png" />
     <Content Include="Content\Images\SentientBeings\giant_rat.png" />
     <Content Include="Content\Images\SentientBeings\human_player.png" />
     <Content Include="Content\Images\Tiles\floor.png" />

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Paramita.GameLogic.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace Paramita.UI.Base
     public abstract class Component
     {
         private List<Element> _elements = new List<Element>();
+
+        public event EventHandler<RectangleEventArgs> RectangleUpdated;
 
         public Component()
         {

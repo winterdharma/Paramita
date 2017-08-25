@@ -48,4 +48,13 @@ namespace Paramita.GameLogic.Utility
             Point = point;
         }
     }
+
+    public class RectangleEventArgs : EventArgs
+    {
+        public Rectangle Rectangle { get; }
+        public RectangleEventArgs(Rectangle rectangle)
+        {
+            Rectangle = rectangle;
+        }
+    }
 }

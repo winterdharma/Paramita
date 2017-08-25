@@ -1,7 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended.Input.InputListeners;
 using Paramita.GameLogic;
 using Paramita.GameLogic.Actors;
 using Paramita.GameLogic.Items;
@@ -330,7 +328,7 @@ namespace Paramita.UI.Base.Game
                     {
                         for (int i = 0; i < _inventorySlots.Count; i++)
                         {
-                            if (sprite.Label.Equals(_inventorySlots[i]))
+                            if (sprite.Id.Equals(_inventorySlots[i]))
                             {
                                 _itemSelected = i;
                                 break;
@@ -432,11 +430,8 @@ namespace Paramita.UI.Base.Game
 
             for (int i = 1; i < _inventorySlots.Count; i++)
             {
-                var sprite = new Image();
-                sprite.Label = _inventorySlots[i];
-                sprite.Texture = _defaultSlotTextures[GetDefaultTextureKey(_inventorySlots[i])];
-                sprite.Position = GetSpriteElementPosition(i - 1);
-                sprite.Color = GetSpriteElementColor(i);
+                var sprite = new Image(_inventorySlots[i], this, GetSpriteElementPosition(i - 1),
+                    _defaultSlotTextures[GetDefaultTextureKey(_inventorySlots[i])], GetSpriteElementColor(i));
                 sprite.Rectangle = new Rectangle((int)sprite.Position.X, (int)sprite.Position.Y, 32, 32);
                 _spriteElements.Add(sprite);
             }
@@ -444,16 +439,14 @@ namespace Paramita.UI.Base.Game
             var tempSpriteElements = new List<Image>(_spriteElements);
             foreach(var sprite in tempSpriteElements)
             {
-                if(_inventory[sprite.Label] != ItemType.None 
-                    && _inventory[sprite.Label] != ItemType.Fist 
-                    && _inventory[sprite.Label] != ItemType.Bite)
+                if(_inventory[sprite.Id] != ItemType.None 
+                    && _inventory[sprite.Id] != ItemType.Fist 
+                    && _inventory[sprite.Id] != ItemType.Bite)
                 {
                     sprite.Color = Color.DarkSlateGray;
-                    var item = new Image();
-                    item.Label = ConvertItemTypeToString(_inventory[sprite.Label]);
-                    item.Texture = ItemTextures.ItemTextureMap[_inventory[sprite.Label]];
-                    item.Position = sprite.Position;
-                    item.Color = Color.White;
+                    var item = new Image(ConvertItemTypeToString(_inventory[sprite.Id]),
+                        this, sprite.Position, ItemTextures.ItemTextureMap[_inventory[sprite.Id]],
+                        Color.White);
                     item.Rectangle = sprite.Rectangle;
                     _spriteElements.Add(item);
                 }
