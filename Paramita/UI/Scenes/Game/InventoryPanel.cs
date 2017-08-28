@@ -63,7 +63,7 @@ namespace Paramita.UI.Base.Game
             = new Dictionary<string, ItemType>();
         private int _gold = 0;
 
-        private List<Image> _spriteElements;
+        private List<Image> _images;
         private List<LineOfText> _textElements;
 
         private Rectangle _panelRectangle;
@@ -122,7 +122,7 @@ namespace Paramita.UI.Base.Game
             set
             {
                 _inventory = value;
-                CreateSpriteElements();
+                InitializeImages();
             }
         }
 
@@ -200,6 +200,7 @@ namespace Paramita.UI.Base.Game
             _isOpen = false;
             _itemSelected = 0;
             UpdatePanelRectangle();
+            _images = new List<Image>(CreateInventorySlotImages());
             InitializeTextElements();
         }
 
@@ -299,14 +300,12 @@ namespace Paramita.UI.Base.Game
         {
             // update SpriteElement tints to indicate getting or losing focus
             _mousePosition = e.Point;
-            foreach (var sprite in _spriteElements)
+            foreach (var image in _images)
             {
-                if (sprite.Rectangle.Contains(_mousePosition))
-                {
-                    sprite.Color = Color.Red;
-                }
+                if (image.Rectangle.Contains(_mousePosition))
+                    image.Color = Color.Red;
                 else
-                    sprite.Color = Color.White;
+                    image.Color = Color.White;
             }
         }
 
@@ -320,22 +319,10 @@ namespace Paramita.UI.Base.Game
             {
                 TogglePanelOpenOrClosed();
             }
-            else
-            {
-                foreach (var sprite in _spriteElements)
-                {
-                    if (sprite.Rectangle.Contains(_mousePosition))
-                    {
-                        for (int i = 0; i < _inventorySlots.Count; i++)
-                        {
-                            if (sprite.Id.Equals(_inventorySlots[i]))
-                            {
-                                _itemSelected = i;
-                                break;
-                            }
-                        }
-                    }
-                }
+            else // add 1 because _itemSelected begins at 1 not 0
+            {   
+                _itemSelected = 
+                    _images.FindIndex(image => image.Rectangle.Contains(_mousePosition)) + 1;
             }
         }
 
@@ -423,34 +410,52 @@ namespace Paramita.UI.Base.Game
 
 
 
-        #region SpriteElements
-        private void CreateSpriteElements()
+        #region Images
+        private void InitializeImages()
         {
-            _spriteElements = new List<Image>();
+            // clear the previous item images
+            if(_images.Count > 10)
+                _images.RemoveRange(10, _images.Count-10);
+            // add the new set of item images
+            _images.AddRange(CreateItemImages(_images));       
+        }
 
+        private List<Image> CreateInventorySlotImages()
+        {
+            var images = new List<Image>();
             for (int i = 1; i < _inventorySlots.Count; i++)
             {
-                var sprite = new Image(_inventorySlots[i], this, GetSpriteElementPosition(i - 1),
-                    _defaultSlotTextures[GetDefaultTextureKey(_inventorySlots[i])], GetSpriteElementColor(i));
-                sprite.Rectangle = new Rectangle((int)sprite.Position.X, (int)sprite.Position.Y, 32, 32);
-                _spriteElements.Add(sprite);
+                var image = new Image(
+                    _inventorySlots[i],
+                    this,
+                    GetSpriteElementPosition(i - 1),
+                    _defaultSlotTextures[GetDefaultTextureKey(_inventorySlots[i])],
+                    Color.White
+                    );
+                image.Rectangle = new Rectangle((int)image.Position.X, (int)image.Position.Y, 32, 32);
+                images.Add(image);
             }
+            return images;
+        }
 
-            var tempSpriteElements = new List<Image>(_spriteElements);
-            foreach(var sprite in tempSpriteElements)
+        private List<Image> CreateItemImages(List<Image> images)
+        {
+            var items = new List<Image>();
+            var tempList = images;
+            foreach (var slotImage in tempList)
             {
-                if(_inventory[sprite.Id] != ItemType.None 
-                    && _inventory[sprite.Id] != ItemType.Fist 
-                    && _inventory[sprite.Id] != ItemType.Bite)
+                if (_inventory[slotImage.Id] != ItemType.None
+                    && _inventory[slotImage.Id] != ItemType.Fist
+                    && _inventory[slotImage.Id] != ItemType.Bite)
                 {
-                    sprite.Color = Color.DarkSlateGray;
-                    var item = new Image(ConvertItemTypeToString(_inventory[sprite.Id]),
-                        this, sprite.Position, ItemTextures.ItemTextureMap[_inventory[sprite.Id]],
+                    var item = new Image(ConvertItemTypeToString(_inventory[slotImage.Id]),
+                        this, slotImage.Position, ItemTextures.ItemTextureMap[_inventory[slotImage.Id]],
                         Color.White);
-                    item.Rectangle = sprite.Rectangle;
-                    _spriteElements.Add(item);
+                    item.Rectangle = slotImage.Rectangle;
+                    items.Add(item);
                 }
-            }
+            } 
+            return items;
         }
 
         private string ConvertItemTypeToString(ItemType type)
@@ -693,15 +698,9 @@ namespace Paramita.UI.Base.Game
             spriteBatch.Draw(_defaultSlotTextures["background"], _panelRectangle, Color.White);
 
             // draw sprite elements
-            for(int i = 0; i < _spriteElements.Count; i++)
+            foreach(var image in _images)
             {
-                var sprite = _spriteElements[i];
-                
-                spriteBatch.Draw(
-                    sprite.Texture,
-                    sprite.Position,
-                    sprite.Color
-                );
+                image.Draw(gameTime, spriteBatch);
             }
 
             // Draw text elements
