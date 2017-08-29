@@ -86,7 +86,7 @@ namespace Paramita.UI.Base.Game
 
         private SpriteFont _headingFont = GameController.ArialBold;
 
-        private int _itemSelected;
+        private int _itemSelected = 0;
         private bool _isOpen = false;
         private Point _mousePosition = new Point(0, 0);
 
@@ -208,53 +208,11 @@ namespace Paramita.UI.Base.Game
         #endregion
 
 
-        
         private void InitializePanel()
         {
-            _isOpen = true;
-            // _itemSelected = 0;
             UpdatePanelRectangle();
             _images = new List<Image>(CreateInventorySlotImages());
-            InitializeTextElements();
-            TogglePanelOpenOrClosed();
-        }
-
-
-
-        #region PanelRectangle
-        private void UpdatePanelRectangle()
-        {
-            _panelRectangle.Location = GetPanelOrigin();
-            _panelRectangle.Size = GetPanelSize();
-        }
-
-        private Point GetPanelOrigin(int offsetFromTop = 0, int offsetFromRight = 0)
-        {
-            if (IsOpen)
-            {
-                return new Point(
-                _parentScreen.Width - PANEL_WIDTH_OPEN - offsetFromRight,
-                offsetFromTop);
-            }
-            else
-            {
-                return new Point(
-                _parentScreen.Width - PANEL_WIDTH_CLOSED - offsetFromRight,
-                offsetFromTop);
-            }
-
-        }
-
-        private Point GetPanelSize()
-        {
-            if (IsOpen)
-            {
-                return new Point(PANEL_WIDTH_OPEN, PANEL_HEIGHT_OPEN);
-            }
-            else
-            {
-                return new Point(PANEL_WIDTH_CLOSED, PANEL_HEIGHT_CLOSED);
-            }
+            _textElements = new List<LineOfText>(InitializeTextElements());
         }
 
         private void TogglePanelOpenOrClosed()
@@ -301,7 +259,48 @@ namespace Paramita.UI.Base.Game
 
         private void UpdateToggleButtonVisibility()
         {
+            var toggle = _textElements.Find(t => t.Id.Equals("toggle_text"));
 
+            if (IsOpen)
+                toggle.Show();
+            else
+                toggle.Hide();
+        }
+
+        #region PanelRectangle
+        private void UpdatePanelRectangle()
+        {
+            _panelRectangle.Location = GetPanelOrigin();
+            _panelRectangle.Size = GetPanelSize();
+        }
+
+        private Point GetPanelOrigin(int offsetFromTop = 0, int offsetFromRight = 0)
+        {
+            if (IsOpen)
+            {
+                return new Point(
+                _parentScreen.Width - PANEL_WIDTH_OPEN - offsetFromRight,
+                offsetFromTop);
+            }
+            else
+            {
+                return new Point(
+                _parentScreen.Width - PANEL_WIDTH_CLOSED - offsetFromRight,
+                offsetFromTop);
+            }
+
+        }
+
+        private Point GetPanelSize()
+        {
+            if (IsOpen)
+            {
+                return new Point(PANEL_WIDTH_OPEN, PANEL_HEIGHT_OPEN);
+            }
+            else
+            {
+                return new Point(PANEL_WIDTH_CLOSED, PANEL_HEIGHT_CLOSED);
+            }
         }
         #endregion
 
@@ -491,6 +490,7 @@ namespace Paramita.UI.Base.Game
                     Color.White
                     );
                 image.Rectangle = new Rectangle((int)image.Position.X, (int)image.Position.Y, 32, 32);
+                image.Hide();
                 images.Add(image);
             }
             return images;
@@ -586,9 +586,9 @@ namespace Paramita.UI.Base.Game
 
 
         #region Text Elements
-        private void InitializeTextElements()
+        private List<LineOfText> InitializeTextElements()
         {
-            _textElements = new List<LineOfText>
+            var textElements = new List<LineOfText>
             {
                 ConstructHeadingElement(),
                 ConstructToggleElement(),
@@ -598,16 +598,22 @@ namespace Paramita.UI.Base.Game
                 ConstructCancelHintElement()
             };
 
+            // intended for future addition of text element showing info about selected item
             _itemInfoPosition = new Vector2(
                 _panelRectangle.Right - (PANEL_WIDTH_OPEN - 10),
-                _panelRectangle.Top + 140); 
+                _panelRectangle.Top + 140);
+
+            return textElements;
         }
 
         private LineOfText ConstructHeadingElement()
         {
-            return new LineOfText(
+            var heading = new LineOfText(
                 "heading", this, GetHeadingPosition(_headingFont),
                 HEADING, _headingFont, Color.White);
+
+            heading.Show();
+            return heading;
         }
 
         private LineOfText ConstructToggleElement()
@@ -617,9 +623,11 @@ namespace Paramita.UI.Base.Game
             var position = new Vector2(
                 _panelRectangle.Right - toggleSize.X, (_panelRectangle.Top + 5));
 
-            return new LineOfText(
+            var toggle = new LineOfText(
                 "toggle_text", this, position,
                 TOGGLE_CLOSED, font, Color.White);
+            toggle.Hide();
+            return toggle;
         }
 
         private LineOfText ConstructUnequipHintElement()
@@ -628,9 +636,12 @@ namespace Paramita.UI.Base.Game
                _panelRectangle.Right - (PANEL_WIDTH_OPEN - 10),
                150);
 
-            return new LineOfText(
+            var unequip = new LineOfText(
                 "unequip_hint", this, position,
                 UNEQUIP_HINT, GameController.NotoSans, Color.White);
+
+            unequip.Hide();
+            return unequip;
         }
 
         private LineOfText ConstructEquipHintElement()
@@ -639,9 +650,11 @@ namespace Paramita.UI.Base.Game
               _panelRectangle.Right - (PANEL_WIDTH_OPEN - 10),
               150);
 
-            return new LineOfText(
+            var equip = new LineOfText(
                 "equip_hint", this, position,
                 EQUIP_HINT, GameController.NotoSans, Color.White);
+            equip.Hide();
+            return equip;
         }
 
         private LineOfText ConstructDropHintElement()
@@ -652,9 +665,11 @@ namespace Paramita.UI.Base.Game
               150);
             position.Y += font.MeasureString(EQUIP_HINT).Y + 5;
 
-            return new LineOfText(
+            var drop = new LineOfText(
                 "drop_hint", this, position,
                 DROP_HINT, font, Color.White);
+            drop.Hide();
+            return drop;
         }
 
         private LineOfText ConstructCancelHintElement()
@@ -666,9 +681,11 @@ namespace Paramita.UI.Base.Game
             position.Y += font.MeasureString(EQUIP_HINT).Y + 5;
             position.Y += font.MeasureString(CANCEL_HINT).Y + 5;
 
-            return new LineOfText(
+            var cancel = new LineOfText(
                 "cancel_hint", this, position,
                 CANCEL_HINT, font, Color.White);
+            cancel.Hide();
+            return cancel;
         }
 
         private Vector2 GetHeadingPosition(SpriteFont font, int offsetTop = 5)
@@ -678,29 +695,6 @@ namespace Paramita.UI.Base.Game
                 _panelRectangle.Left + ((_panelRectangle.Width / 2) - (headingSize.X / 2)),
                 (_panelRectangle.Top + offsetTop));
         }
-
-        private List<LineOfText> GetHintTextElements()
-        {
-            var hints = new List<LineOfText>();
-
-            if (_itemSelected > 0 && _itemSelected < 6)
-            {
-                hints.Add(ConstructUnequipHintElement());
-            }
-            else if (_itemSelected > 5)
-            {
-                hints.Add(ConstructEquipHintElement());
-            }
-
-            if (_itemSelected > 0)
-            {
-                hints.Add(ConstructDropHintElement());
-                hints.Add(ConstructCancelHintElement());
-            }
-
-            return hints;
-        }
-
         #endregion
 
 
