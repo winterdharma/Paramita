@@ -75,13 +75,6 @@ namespace Paramita.UI.Base.Game
 
         private Vector2 _itemInfoPosition;
 
-        private LineOfText _heading;
-        private LineOfText _toggleText;
-        private LineOfText _unequipText;
-        private LineOfText _equipText;
-        private LineOfText _dropText;
-        private LineOfText _cancelText;
-
         private const string HEADING = "(I)nventory";
         private const string TOGGLE_CLOSED = "[X]";
         private const string SELECT_HINT = "Press (0-9) to Select Item ";
@@ -90,6 +83,8 @@ namespace Paramita.UI.Base.Game
         private const string EQUIP_HINT = "(E)quip Item";
         private const string UNEQUIP_HINT = "Un(e)quip Item";
         private const string CANCEL_HINT = "(C)ancel Selection";
+
+        private SpriteFont _headingFont = GameController.ArialBold;
 
         private int _itemSelected;
         private bool _isOpen = false;
@@ -100,14 +95,12 @@ namespace Paramita.UI.Base.Game
         public event EventHandler<InventoryEventArgs> OnPlayerUsedItem;
 
 
-
         public InventoryPanel(InputResponder input, Rectangle screen)
         {
             _parentScreen = screen;
             InitializePanel();
             SubscribeToInputEvents(input);
         }
-
 
 
         #region Properties
@@ -129,28 +122,49 @@ namespace Paramita.UI.Base.Game
         public bool IsOpen
         {
             get { return _isOpen; }
-            set
-            {
-                _isOpen = value;
-                UpdatePanelRectangle();
-                UpdateHeadingPosition();
+            set { _isOpen = value; }
+        }
 
-                if (_isOpen)
-                    ActivateTextElements();
-                else
-                    DeactivateTextElements();
+        public int ItemSelected
+        {
+            get => _itemSelected;
+            private set
+            {
+                _itemSelected = value;
+                UpdateHintTextElements();
             }
         }
 
-        
+        private void UpdateHintTextElements()
+        {
+            if (_itemSelected == 0)
+            {
+                _textElements.Find(t => t.Id.Equals("unequip_hint")).Hide();
+                _textElements.Find(t => t.Id.Equals("equip_hint")).Hide();
+                _textElements.Find(t => t.Id.Equals("cancel_hint")).Hide();
+                _textElements.Find(t => t.Id.Equals("drop_hint")).Hide();
+            }
+            else if (_itemSelected > 0 && _itemSelected < 6)
+            {
+                _textElements.Find(t => t.Id.Equals("unequip_hint")).Show();
+                _textElements.Find(t => t.Id.Equals("equip_hint")).Hide();
+            }
+            else if (_itemSelected >= 6)
+            {
+                _textElements.Find(t => t.Id.Equals("unequip_hint")).Hide();
+                _textElements.Find(t => t.Id.Equals("equip_hint")).Show();
+            }
+
+            if(_itemSelected > 0)
+            {
+                _textElements.Find(t => t.Id.Equals("cancel_hint")).Show();
+                _textElements.Find(t => t.Id.Equals("drop_hint")).Show();
+            }
+        }
 
         private void ActivateTextElements()
         {
-            foreach(var element in _textElements)
-            {
-                element.Enabled = true;
-                element.Visible = true;
-            }
+            UpdateHintTextElements();
         }
 
         private void DeactivateTextElements()
@@ -197,11 +211,12 @@ namespace Paramita.UI.Base.Game
         
         private void InitializePanel()
         {
-            _isOpen = false;
-            _itemSelected = 0;
+            _isOpen = true;
+            // _itemSelected = 0;
             UpdatePanelRectangle();
             _images = new List<Image>(CreateInventorySlotImages());
             InitializeTextElements();
+            TogglePanelOpenOrClosed();
         }
 
 
@@ -209,13 +224,13 @@ namespace Paramita.UI.Base.Game
         #region PanelRectangle
         private void UpdatePanelRectangle()
         {
-            _panelRectangle.Location = GetPanelOrigin(_isOpen);
-            _panelRectangle.Size = GetPanelSize(_isOpen);
+            _panelRectangle.Location = GetPanelOrigin();
+            _panelRectangle.Size = GetPanelSize();
         }
 
-        private Point GetPanelOrigin(bool isOpen, int offsetFromTop = 0, int offsetFromRight = 0)
+        private Point GetPanelOrigin(int offsetFromTop = 0, int offsetFromRight = 0)
         {
-            if (isOpen)
+            if (IsOpen)
             {
                 return new Point(
                 _parentScreen.Width - PANEL_WIDTH_OPEN - offsetFromRight,
@@ -230,9 +245,9 @@ namespace Paramita.UI.Base.Game
 
         }
 
-        private Point GetPanelSize(bool isOpen)
+        private Point GetPanelSize()
         {
-            if (isOpen)
+            if (IsOpen)
             {
                 return new Point(PANEL_WIDTH_OPEN, PANEL_HEIGHT_OPEN);
             }
@@ -244,10 +259,50 @@ namespace Paramita.UI.Base.Game
 
         private void TogglePanelOpenOrClosed()
         {
-            IsOpen = !IsOpen; 
+            IsOpen = !IsOpen;
             // IsOpen property setter calls UpdatePanelRectangle() and UpdateHeadingPosition()
+
+            UpdatePanelRectangle();
+            UpdateBackgroundElement();
+            UpdateImageVisibility();
+            UpdateHintTextVisibility();
+            UpdateHeadingElement();
+            UpdateToggleButtonVisibility();
         }
 
+        private void UpdateHeadingElement()
+        {
+            var heading = _textElements.Find(t => t.Id.Equals("heading"));
+            heading.Position = GetHeadingPosition(_headingFont);
+            heading.Visible = true;
+            heading.Enabled = true;
+        }
+
+        private void UpdateImageVisibility()
+        {
+            if (IsOpen)
+                ActivateImageElements();
+            else
+                DeactivateImageElements();
+        }
+
+        private void UpdateHintTextVisibility()
+        {
+            if (IsOpen)
+                ActivateTextElements();
+            else
+                DeactivateTextElements();
+        }
+
+        private void UpdateBackgroundElement()
+        {
+
+        }
+
+        private void UpdateToggleButtonVisibility()
+        {
+
+        }
         #endregion
 
 
@@ -315,7 +370,7 @@ namespace Paramita.UI.Base.Game
             {
                 TogglePanelOpenOrClosed();
             }
-            else if (_toggleText.Rectangle.Contains(_mousePosition))
+            else if (_textElements.Find(t => t.Id.Equals("toggle_text")).Rectangle.Contains(_mousePosition))
             {
                 TogglePanelOpenOrClosed();
             }
@@ -328,67 +383,70 @@ namespace Paramita.UI.Base.Game
 
         private void OnD0KeyPressed(object sender, EventArgs e)
         {
-            HandleInput(InventoryActions.Select0);
+            ItemSelected = 10;
         }
 
         private void OnD1KeyPressed(object sender, EventArgs e)
         {
-            HandleInput(InventoryActions.Select1);
+            ItemSelected = 1;
         }
 
         private void OnD2KeyPressed(object sender, EventArgs e)
         {
-            HandleInput(InventoryActions.Select2);
+            ItemSelected = 2;
         }
 
         private void OnD3KeyPressed(object sender, EventArgs e)
         {
-            HandleInput(InventoryActions.Select3);
+            ItemSelected = 3;
         }
 
         private void OnD4KeyPressed(object sender, EventArgs e)
         {
-            HandleInput(InventoryActions.Select4);
+            ItemSelected = 4;
         }
 
         private void OnD5KeyPressed(object sender, EventArgs e)
         {
-            HandleInput(InventoryActions.Select5);
+            ItemSelected = 5;
         }
 
         private void OnD6KeyPressed(object sender, EventArgs e)
         {
-            HandleInput(InventoryActions.Select6);
+            ItemSelected = 6;
         }
 
         private void OnD7KeyPressed(object sender, EventArgs e)
         {
-            HandleInput(InventoryActions.Select7);
+            ItemSelected = 7;
         }
 
         private void OnD8KeyPressed(object sender, EventArgs e)
         {
-            HandleInput(InventoryActions.Select8);
+            ItemSelected = 8;
         }
 
         private void OnD9KeyPressed(object sender, EventArgs e)
         {
-            HandleInput(InventoryActions.Select9);
+            ItemSelected = 9;
         }
 
         private void OnDKeyPressed(object sender, EventArgs e)
         {
             HandleInput(InventoryActions.Drop);
+            ItemSelected = 0;
         }
 
         private void OnUKeyPressed(object sender, EventArgs e)
         {
             HandleInput(InventoryActions.Use);
+            ItemSelected = 0;
         }
 
         private void OnEKeyPressed(object sender, EventArgs e)
         {
             HandleInput(InventoryActions.Equip);
+            ItemSelected = 0;
         }
 
         private void OnIKeyPressed(object sender, EventArgs e)
@@ -398,7 +456,7 @@ namespace Paramita.UI.Base.Game
 
         private void OnCKeyPressed(object sender, EventArgs e)
         {
-            HandleInput(InventoryActions.Cancel);
+            ItemSelected = 0;
         }
         #endregion
 
@@ -505,105 +563,120 @@ namespace Paramita.UI.Base.Game
             else
                 return Color.White;
         }
+
+        private void ActivateImageElements()
+        {
+            foreach (var image in _images)
+            {
+                image.Visible = true;
+                image.Enabled = true;
+            }
+        }
+
+        private void DeactivateImageElements()
+        {
+            foreach(var image in _images)
+            {
+                image.Visible = false;
+                image.Enabled = false;
+            }
+        }
         #endregion
 
 
 
-        #region TextElements
-        private void CreateTextElements()
-        {
-            _textElements = new List<LineOfText>();
-
-            _textElements.Add(_heading);
-            _textElements.Add(_toggleText);
-            _textElements.AddRange(GetHintTextElements());
-        }
-
+        #region Text Elements
         private void InitializeTextElements()
         {
-            ConstructHeadingElement();
-            ConstructToggleElement();
-            ConstructUnequipHintElement();
-            ConstructEquipHintElement();
-            ConstructDropHintElement();
-            ConstructCancelHintElement();           
+            _textElements = new List<LineOfText>
+            {
+                ConstructHeadingElement(),
+                ConstructToggleElement(),
+                ConstructUnequipHintElement(),
+                ConstructEquipHintElement(),
+                ConstructDropHintElement(),
+                ConstructCancelHintElement()
+            };
 
             _itemInfoPosition = new Vector2(
                 _panelRectangle.Right - (PANEL_WIDTH_OPEN - 10),
                 _panelRectangle.Top + 140); 
         }
 
-        private void ConstructHeadingElement()
+        private LineOfText ConstructHeadingElement()
         {
-            SpriteFont font = GameController.ArialBold;
-            _heading = new LineOfText(
-                "heading", this, GetHeadingPosition(HEADING, _panelRectangle, font),
-                HEADING, font, Color.White);
+            return new LineOfText(
+                "heading", this, GetHeadingPosition(_headingFont),
+                HEADING, _headingFont, Color.White);
         }
 
-        private void ConstructToggleElement()
+        private LineOfText ConstructToggleElement()
         {
             var font = GameController.NotoSans;
             var toggleSize = font.MeasureString(TOGGLE_CLOSED);
             var position = new Vector2(
                 _panelRectangle.Right - toggleSize.X, (_panelRectangle.Top + 5));
 
-            _toggleText = new LineOfText(
+            return new LineOfText(
                 "toggle_text", this, position,
                 TOGGLE_CLOSED, font, Color.White);
         }
 
-        private void ConstructUnequipHintElement()
+        private LineOfText ConstructUnequipHintElement()
         {
             var position = new Vector2(
                _panelRectangle.Right - (PANEL_WIDTH_OPEN - 10),
                150);
 
-            _unequipText = new LineOfText(
-                "unequip_text", this, position,
+            return new LineOfText(
+                "unequip_hint", this, position,
                 UNEQUIP_HINT, GameController.NotoSans, Color.White);
         }
 
-        private void ConstructEquipHintElement()
+        private LineOfText ConstructEquipHintElement()
         {
-            _equipText = new LineOfText(
-                "equip_hint", this, _unequipText.Position,
+            var position = new Vector2(
+              _panelRectangle.Right - (PANEL_WIDTH_OPEN - 10),
+              150);
+
+            return new LineOfText(
+                "equip_hint", this, position,
                 EQUIP_HINT, GameController.NotoSans, Color.White);
         }
 
-        private void ConstructDropHintElement()
+        private LineOfText ConstructDropHintElement()
         {
             var font = GameController.NotoSans;
-            var position = _unequipText.Position;
+            var position = new Vector2(
+              _panelRectangle.Right - (PANEL_WIDTH_OPEN - 10),
+              150);
             position.Y += font.MeasureString(EQUIP_HINT).Y + 5;
 
-            _dropText = new LineOfText(
+            return new LineOfText(
                 "drop_hint", this, position,
                 DROP_HINT, font, Color.White);
         }
 
-        private void ConstructCancelHintElement()
+        private LineOfText ConstructCancelHintElement()
         {
             var font = GameController.NotoSans;
-            var position = _dropText.Position;
+            var position = new Vector2(
+              _panelRectangle.Right - (PANEL_WIDTH_OPEN - 10),
+              150);
+            position.Y += font.MeasureString(EQUIP_HINT).Y + 5;
             position.Y += font.MeasureString(CANCEL_HINT).Y + 5;
 
-            _cancelText = new LineOfText(
+            return new LineOfText(
                 "cancel_hint", this, position,
                 CANCEL_HINT, font, Color.White);
         }
 
-        private Vector2 GetHeadingPosition(string heading, Rectangle panelRect, SpriteFont font, int offsetTop = 5)
+        private Vector2 GetHeadingPosition(SpriteFont font, int offsetTop = 5)
         {
-            var headingSize = font.MeasureString(heading);
+            var headingSize = font.MeasureString(HEADING);
             return new Vector2(
-                panelRect.Left + ((panelRect.Width / 2) - (headingSize.X / 2)),
-                (panelRect.Top + offsetTop));
-        }
-
-        private void UpdateHeadingPosition()
-        {
-            _heading.Position = GetHeadingPosition(_heading.Text, _panelRectangle, _heading.Font);
+                _panelRectangle.Left + ((_panelRectangle.Width / 2) - (headingSize.X / 2)),
+                (_panelRectangle.Top + offsetTop));
         }
 
         private List<LineOfText> GetHintTextElements()
@@ -612,17 +685,17 @@ namespace Paramita.UI.Base.Game
 
             if (_itemSelected > 0 && _itemSelected < 6)
             {
-                hints.Add(_unequipText);
+                hints.Add(ConstructUnequipHintElement());
             }
             else if (_itemSelected > 5)
             {
-                hints.Add(_equipText);
+                hints.Add(ConstructEquipHintElement());
             }
 
             if (_itemSelected > 0)
             {
-                hints.Add(_dropText);
-                hints.Add(_cancelText);
+                hints.Add(ConstructDropHintElement());
+                hints.Add(ConstructCancelHintElement());
             }
 
             return hints;
@@ -636,35 +709,24 @@ namespace Paramita.UI.Base.Game
         #region Input Handlers
         private void HandleInput(InventoryActions action)
         {
-            int selectionInput = 0;
-            if((int)action > 0 && (int)action < 11)
-                selectionInput = (int)action;
+            if (ItemSelected == 0)
+                return;
 
-            if(selectionInput > 0)
+            if(action == InventoryActions.Drop)
             {
-                _itemSelected = selectionInput;
-            }
-
-            if (_itemSelected > 0 && _itemSelected <= _inventory.Count)
-            {
-                if(action == InventoryActions.Drop)
+                string slot = _inventorySlots[ItemSelected];
+                if(_inventory[slot] != ItemType.None)
                 {
-                    string slot = _inventorySlots[_itemSelected];
                     OnPlayerDroppedItem?.Invoke(null,
-                        new InventoryEventArgs(slot, _inventory[slot]) );
-                    _itemSelected = 0;
+                    new InventoryEventArgs(slot, _inventory[slot]));
                 }
-                else if(action == InventoryActions.Cancel)
-                {
-                    _itemSelected = 0;
-                }
+                
             }
         }
 
         private void HandleInventoryChange(object sender, InventoryChangeEventArgs e)
         {
             UpdateInventoryData(e.Inventory);
-            
         }
         #endregion
 
@@ -673,7 +735,6 @@ namespace Paramita.UI.Base.Game
         // Called by GameScene.Update() to check for changes or input to handle
         public override void Update(GameTime gameTime)
         {
-            CreateTextElements();
         }
 
 
@@ -684,40 +745,23 @@ namespace Paramita.UI.Base.Game
         {
             spriteBatch.Begin();
 
-            if (IsOpen)
-                DrawOpenPanel(gameTime, spriteBatch);
+            if(IsOpen)
+                spriteBatch.Draw(_defaultSlotTextures["background"], _panelRectangle, Color.White);
             else
-                DrawClosedPanel(gameTime, spriteBatch);
+                spriteBatch.Draw(_defaultSlotTextures["white_background"], _panelRectangle, Color.DarkBlue);
+
+            foreach (var element in _images)
+            {
+                element.Draw(gameTime, spriteBatch);
+            }
+
+            foreach (var element in _textElements)
+            {
+                element.Draw(gameTime, spriteBatch);
+            }
 
             spriteBatch.End();
         }
-
-        private void DrawOpenPanel(GameTime gameTime, SpriteBatch spriteBatch)
-        {
-            // draw background
-            spriteBatch.Draw(_defaultSlotTextures["background"], _panelRectangle, Color.White);
-
-            // draw sprite elements
-            foreach(var image in _images)
-            {
-                image.Draw(gameTime, spriteBatch);
-            }
-
-            // Draw text elements
-            foreach(LineOfText textElement in _textElements)
-            {
-                textElement.Draw(gameTime, spriteBatch);
-            }
-        }
-
-
-        private void DrawClosedPanel(GameTime gameTime, SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(_defaultSlotTextures["white_background"], _panelRectangle, Color.DarkBlue);
-            
-            spriteBatch.DrawString(_heading.Font, _heading.Text, _heading.Position, _heading.Color);
-        }
-
         #endregion
     }
 }

@@ -38,5 +38,17 @@ namespace Paramita.UI.Base
         public abstract void Update(GameTime gameTime);
 
         public abstract void Draw(GameTime gameTime, SpriteBatch spriteBatch);
+
+        public virtual void Show()
+        {
+            Visible = true;
+            Enabled = true;
+        }
+
+        public virtual void Hide()
+        {
+            Visible = false;
+            Enabled = false;
+        }
     }
 }
