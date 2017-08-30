@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.GameLogic;
+using Paramita.UI.Input;
 using System;
 
 namespace Paramita.UI.Base.Game
@@ -20,7 +21,7 @@ namespace Paramita.UI.Base.Game
 
 
 
-        public StatusPanel(SpriteFont font, int maxMsgs, Point origin)
+        public StatusPanel(InputResponder input, SpriteFont font, int maxMsgs, Point origin) : base(input)
         {
             maxMessages = maxMsgs;
 

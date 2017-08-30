@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using Paramita.GameLogic;
 using Paramita.GameLogic.Utility;
+using Paramita.UI.Input;
 
 namespace Paramita.UI.Base.Game
 {
@@ -31,8 +32,8 @@ namespace Paramita.UI.Base.Game
 
 
 
-        public TileMapPanel(Tuple<TileType[,], ItemType[,], 
-            Tuple<ActorType, Compass, bool>[,]> tileMapLayers, Rectangle screen)
+        public TileMapPanel(InputResponder input, Tuple<TileType[,], ItemType[,], 
+            Tuple<ActorType, Compass, bool>[,]> tileMapLayers, Rectangle screen) : base(input)
         {
             _viewport = screen;
             _drawFrame = new Rectangle(0, 0, TILE_SIZE, TILE_SIZE);

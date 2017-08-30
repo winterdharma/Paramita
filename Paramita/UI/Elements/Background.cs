@@ -1,35 +1,28 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.GameLogic.Utility;
+using Paramita.UI.Base;
 
-namespace Paramita.UI.Base
+namespace Paramita.UI.Elements
 {
-    public class Background : Element
+    public class Background : Image
     {
-        private Point _size;
-        public Texture2D Texture { get; set; }
-        public Point Size
-        {
-            get { return _size; }
-            set { _size = value; _rectangle = CreateRectangle(); }
-        }
 
-        public Background(string id, Component parent, Vector2 position, Texture2D texture, Point size) 
-            : base(id, parent, position)
+        public Background(string id, Component parent, Vector2 position, Texture2D texture, Color color,  Point size) 
+            : base(id, parent, position, texture, color)
         {
-            Texture = texture;
-            Size = size;
+            Rectangle = CreateRectangle(size);
             parent.RectangleUpdated += OnPanelRectangleUpdate;
         }
 
         private void OnPanelRectangleUpdate(object sender, RectangleEventArgs e)
         {
-            _rectangle = e.Rectangle;
+            Rectangle = e.Rectangle;
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Texture, _rectangle, Color.White);
+            spriteBatch.Draw(Texture, Rectangle, Color);
         }
 
         public override void Update(GameTime gameTime)
@@ -37,9 +30,9 @@ namespace Paramita.UI.Base
             
         }
 
-        protected override Rectangle CreateRectangle()
+        protected Rectangle CreateRectangle(Point size)
         {
-            return new Rectangle((int)_position.X, (int)_position.Y, Size.X, Size.Y);
+            return new Rectangle((int)_position.X, (int)_position.Y, size.X, size.Y);
         }
     }
 }

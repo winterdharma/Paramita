@@ -29,8 +29,8 @@ namespace Paramita.UI.Base
 
             _dungeon = new Dungeon();
 
-            _tileMapPanel = new TileMapPanel(_dungeon.GetCurrentLevelLayers(), _screenRectangle);
-            _statusPanel = new StatusPanel(GameController.ArialBold, 10, new Point(0,720));
+            _tileMapPanel = new TileMapPanel(_input, _dungeon.GetCurrentLevelLayers(), _screenRectangle);
+            _statusPanel = new StatusPanel(_input, GameController.ArialBold, 10, new Point(0,720));
             _inventoryPanel = new InventoryPanel(_input, _screenRectangle);
             _components.Add(_tileMapPanel);
             _components.Add(_statusPanel);

@@ -5,6 +5,7 @@ using Paramita.GameLogic.Actors;
 using Paramita.GameLogic.Items;
 using Paramita.GameLogic.Utility;
 using Paramita.UI.Input;
+using Paramita.UI.Elements;
 using System;
 using System.Collections.Generic;
 
@@ -52,7 +53,6 @@ namespace Paramita.UI.Base.Game
      */
     public class InventoryPanel : Component
     {
-        private InputResponder _input;
         private List<string> _inventorySlots = new List<string>()
             { "none","left_hand", "right_hand", "head", "body", "feet",
                 "other1", "other2", "other3", "other4", "other5"};
@@ -66,8 +66,8 @@ namespace Paramita.UI.Base.Game
 
         private List<Image> _images;
         private List<LineOfText> _textElements;
+        private Background _background;
 
-        private Rectangle _panelRectangle;
         private Rectangle _parentScreen;
         private const int PANEL_WIDTH_OPEN = 250;
         private const int PANEL_WIDTH_CLOSED = 150;
@@ -96,10 +96,9 @@ namespace Paramita.UI.Base.Game
         public event EventHandler<InventoryEventArgs> OnPlayerUsedItem;
 
 
-        public InventoryPanel(InputResponder input, Rectangle screen)
+        public InventoryPanel(InputResponder input, Rectangle screen) : base(input)
         {
             _parentScreen = screen;
-            _input = input;
             InitializePanel();
             SubscribeToInputEvents();
         }
@@ -210,40 +209,24 @@ namespace Paramita.UI.Base.Game
         #endregion
 
 
+        #region Panel States
         private void InitializePanel()
         {
             UpdatePanelRectangle();
+
+            _background = new Background(
+                "background", 
+                this, 
+                new Vector2(PanelRectangle.X, PanelRectangle.Y),
+                _defaultSlotTextures["white_background"], 
+                Color.DarkBlue, 
+                PanelRectangle.Size
+                );
+
             _images = new List<Image>(CreateInventorySlotImages());
             SubscribeToSlotMouseEvents();
+
             _textElements = new List<LineOfText>(InitializeTextElements());
-        }
-
-        private void SubscribeToSlotMouseEvents()
-        {
-            foreach(var image in _images)
-            {
-                image.MouseOver += ImageMousedOver;
-                image.MouseGone += ImageMouseGone;
-                image.LeftClicked += ImageClicked;
-            }
-        }
-
-        private void ImageClicked(object sender, EventArgs e)
-        {
-            var image = sender as Image;
-            ItemSelected = _images.FindIndex(i => i.Id.Equals(image.Id)) + 1;
-        }
-
-        private void ImageMouseGone(object sender, EventArgs e)
-        {
-            var image = sender as Image;
-            image.Color = Color.White;
-        }
-
-        private void ImageMousedOver(object sender, EventArgs e)
-        {
-            var image = sender as Image;
-            image.Color = Color.Red;
         }
 
         private void TogglePanelOpenOrClosed()
@@ -285,7 +268,16 @@ namespace Paramita.UI.Base.Game
 
         private void UpdateBackgroundElement()
         {
-
+            if (IsOpen)
+            {
+                _background.Texture = _defaultSlotTextures["background"];
+                _background.Color = Color.White;
+            }
+            else
+            {
+                _background.Texture = _defaultSlotTextures["white_background"];
+                _background.Color = Color.DarkBlue;
+            }
         }
 
         private void UpdateToggleButtonVisibility()
@@ -297,12 +289,12 @@ namespace Paramita.UI.Base.Game
             else
                 toggle.Hide();
         }
+        #endregion
 
         #region PanelRectangle
         private void UpdatePanelRectangle()
         {
-            _panelRectangle.Location = GetPanelOrigin();
-            _panelRectangle.Size = GetPanelSize();
+            PanelRectangle = new Rectangle(GetPanelOrigin(), GetPanelSize());
         }
 
         private Point GetPanelOrigin(int offsetFromTop = 0, int offsetFromRight = 0)
@@ -339,53 +331,79 @@ namespace Paramita.UI.Base.Game
         #region Event Handling
         public void SubscribeToInputEvents()
         {
-            _input.D0KeyPressed += OnD0KeyPressed;
-            _input.D1KeyPressed += OnD1KeyPressed;
-            _input.D2KeyPressed += OnD2KeyPressed;
-            _input.D3KeyPressed += OnD3KeyPressed;
-            _input.D4KeyPressed += OnD4KeyPressed;
-            _input.D5KeyPressed += OnD5KeyPressed;
-            _input.D6KeyPressed += OnD6KeyPressed;
-            _input.D7KeyPressed += OnD7KeyPressed;
-            _input.D8KeyPressed += OnD8KeyPressed;
-            _input.D9KeyPressed += OnD9KeyPressed;
-            _input.DKeyPressed += OnDKeyPressed;
-            _input.EKeyPressed += OnEKeyPressed;
-            _input.CKeyPressed += OnCKeyPressed;
-            _input.UKeyPressed += OnUKeyPressed;
-            _input.IKeyPressed += OnIKeyPressed;
-            _input.LeftMouseClick += OnMouseClicked;
-            _input.NewMousePosition += OnMouseMoved;
+            Input.D0KeyPressed += OnD0KeyPressed;
+            Input.D1KeyPressed += OnD1KeyPressed;
+            Input.D2KeyPressed += OnD2KeyPressed;
+            Input.D3KeyPressed += OnD3KeyPressed;
+            Input.D4KeyPressed += OnD4KeyPressed;
+            Input.D5KeyPressed += OnD5KeyPressed;
+            Input.D6KeyPressed += OnD6KeyPressed;
+            Input.D7KeyPressed += OnD7KeyPressed;
+            Input.D8KeyPressed += OnD8KeyPressed;
+            Input.D9KeyPressed += OnD9KeyPressed;
+            Input.DKeyPressed += OnDKeyPressed;
+            Input.EKeyPressed += OnEKeyPressed;
+            Input.CKeyPressed += OnCKeyPressed;
+            Input.UKeyPressed += OnUKeyPressed;
+            Input.IKeyPressed += OnIKeyPressed;
+            Input.LeftMouseClick += OnMouseClicked;
+            Input.NewMousePosition += OnMouseMoved;
             Dungeon.OnInventoryChangeUINotification += HandleInventoryChange;
         }
 
-        public void UnsubscribeFromInputEvents(InputResponder input)
+        public void UnsubscribeFromInputEvents()
         {
-            input.D0KeyPressed -= OnD0KeyPressed;
-            input.D1KeyPressed -= OnD1KeyPressed;
-            input.D2KeyPressed -= OnD2KeyPressed;
-            input.D3KeyPressed -= OnD3KeyPressed;
-            input.D4KeyPressed -= OnD4KeyPressed;
-            input.D5KeyPressed -= OnD5KeyPressed;
-            input.D6KeyPressed -= OnD6KeyPressed;
-            input.D7KeyPressed -= OnD7KeyPressed;
-            input.D8KeyPressed -= OnD8KeyPressed;
-            input.D9KeyPressed -= OnD9KeyPressed;
-            input.DKeyPressed -= OnDKeyPressed;
-            input.EKeyPressed -= OnEKeyPressed;
-            input.CKeyPressed -= OnCKeyPressed;
-            input.UKeyPressed -= OnUKeyPressed;
-            input.IKeyPressed -= OnIKeyPressed;
-            input.LeftMouseClick -= OnMouseClicked;
-            input.NewMousePosition -= OnMouseMoved;
+            Input.D0KeyPressed -= OnD0KeyPressed;
+            Input.D1KeyPressed -= OnD1KeyPressed;
+            Input.D2KeyPressed -= OnD2KeyPressed;
+            Input.D3KeyPressed -= OnD3KeyPressed;
+            Input.D4KeyPressed -= OnD4KeyPressed;
+            Input.D5KeyPressed -= OnD5KeyPressed;
+            Input.D6KeyPressed -= OnD6KeyPressed;
+            Input.D7KeyPressed -= OnD7KeyPressed;
+            Input.D8KeyPressed -= OnD8KeyPressed;
+            Input.D9KeyPressed -= OnD9KeyPressed;
+            Input.DKeyPressed -= OnDKeyPressed;
+            Input.EKeyPressed -= OnEKeyPressed;
+            Input.CKeyPressed -= OnCKeyPressed;
+            Input.UKeyPressed -= OnUKeyPressed;
+            Input.IKeyPressed -= OnIKeyPressed;
+            Input.LeftMouseClick -= OnMouseClicked;
+            Input.NewMousePosition -= OnMouseMoved;
             Dungeon.OnInventoryChangeUINotification -= HandleInventoryChange;
+        }
+
+        private void SubscribeToSlotMouseEvents()
+        {
+            foreach (var image in _images)
+            {
+                image.MouseOver += ImageMousedOver;
+                image.MouseGone += ImageMouseGone;
+                image.LeftClicked += ImageClicked;
+            }
+        }
+
+        private void ImageClicked(object sender, EventArgs e)
+        {
+            var image = sender as Image;
+            ItemSelected = _images.FindIndex(i => i.Id.Equals(image.Id)) + 1;
+        }
+
+        private void ImageMouseGone(object sender, EventArgs e)
+        {
+            var image = sender as Image;
+            image.Color = Color.White;
+        }
+
+        private void ImageMousedOver(object sender, EventArgs e)
+        {
+            var image = sender as Image;
+            image.Color = Color.Red;
         }
 
         private void OnMouseMoved(object sender, PointEventArgs e)
         {
-            // update SpriteElement tints to indicate getting or losing focus
             _mousePosition = e.Point;
-
         }
 
         private void OnMouseClicked(object sender, EventArgs e)
@@ -507,7 +525,7 @@ namespace Paramita.UI.Base.Game
                     this,
                     GetSpriteElementPosition(i - 1),
                     _defaultSlotTextures[GetDefaultTextureKey(_inventorySlots[i])],
-                    Color.White, _input
+                    Color.White
                     );
                 image.Rectangle = new Rectangle((int)image.Position.X, (int)image.Position.Y, 32, 32);
                 image.Hide();
@@ -528,7 +546,7 @@ namespace Paramita.UI.Base.Game
                 {
                     var item = new Image(ConvertItemTypeToString(_inventory[slotImage.Id]),
                         this, slotImage.Position, ItemTextures.ItemTextureMap[_inventory[slotImage.Id]],
-                        Color.White, _input);
+                        Color.White);
                     item.Rectangle = slotImage.Rectangle;
                     items.Add(item);
                 }
@@ -752,17 +770,12 @@ namespace Paramita.UI.Base.Game
         }
 
 
-
-        #region Draw Methods
         // Called by GameScene.Draw()
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
 
-            if(IsOpen)
-                spriteBatch.Draw(_defaultSlotTextures["background"], _panelRectangle, Color.White);
-            else
-                spriteBatch.Draw(_defaultSlotTextures["white_background"], _panelRectangle, Color.DarkBlue);
+            _background.Draw(gameTime, spriteBatch);
 
             foreach (var element in _images)
             {
@@ -776,6 +789,5 @@ namespace Paramita.UI.Base.Game
 
             spriteBatch.End();
         }
-        #endregion
     }
 }

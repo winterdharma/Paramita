@@ -3,8 +3,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Paramita.UI.Input;
 using System;
 using Paramita.GameLogic.Utility;
+using Paramita.UI.Base;
 
-namespace Paramita.UI.Base.Game
+namespace Paramita.UI.Elements
 {
     /// <summary>
     /// Handles the content and display logic for a discrete image drawn to the screen.
@@ -13,44 +14,22 @@ namespace Paramita.UI.Base.Game
     {
         private bool _mouseOver = false;
         private Point _mousePosition;
+
         public event EventHandler<EventArgs> LeftClicked;
         public event EventHandler<EventArgs> MouseOver;
         public event EventHandler<EventArgs> MouseGone;
 
         public Image(string id, Component parent, Vector2 position, Texture2D texture, 
-            Color color, InputResponder input) : base(id, parent, position)
+            Color color) : base(id, parent, position)
         {
             Id = id;
             Texture = texture;
             Visible = true;
             Enabled = true;
             Color = color;
-            input.LeftMouseClick += OnMouseClicked;
-            input.NewMousePosition += OnMouseMoved;
+            parent.Input.LeftMouseClick += OnMouseClicked;
+            parent.Input.NewMousePosition += OnMouseMoved;
 
-        }
-
-        private void OnMouseMoved(object sender, PointEventArgs e)
-        {
-            _mousePosition = e.Point;
-
-            if (Rectangle.Contains(_mousePosition) && !_mouseOver)
-            {
-                _mouseOver = true;
-                MouseOver?.Invoke(this, new EventArgs());
-
-            }
-            else if (!Rectangle.Contains(_mousePosition) && _mouseOver)
-            {
-                _mouseOver = false;
-                MouseGone?.Invoke(this, new EventArgs());
-            }
-        }
-
-        private void OnMouseClicked(object sender, EventArgs e)
-        {
-            if (Rectangle.Contains(_mousePosition))
-                LeftClicked?.Invoke(this, new EventArgs());
         }
 
         public string Id { get => _id; set => _id = value; }
@@ -74,6 +53,29 @@ namespace Paramita.UI.Base.Game
         protected override Rectangle CreateRectangle()
         {
             return new Rectangle((int)Position.X, (int)Position.Y, Texture.Bounds.Width, Texture.Bounds.Height);
+        }
+
+        private void OnMouseMoved(object sender, PointEventArgs e)
+        {
+            _mousePosition = e.Point;
+
+            if (Rectangle.Contains(_mousePosition) && !_mouseOver)
+            {
+                _mouseOver = true;
+                MouseOver?.Invoke(this, new EventArgs());
+
+            }
+            else if (!Rectangle.Contains(_mousePosition) && _mouseOver)
+            {
+                _mouseOver = false;
+                MouseGone?.Invoke(this, new EventArgs());
+            }
+        }
+
+        private void OnMouseClicked(object sender, EventArgs e)
+        {
+            if (Rectangle.Contains(_mousePosition))
+                LeftClicked?.Invoke(this, new EventArgs());
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.GameLogic.Utility;
+using Paramita.UI.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,15 +14,26 @@ namespace Paramita.UI.Base
     /// Scene.</summary>
     public abstract class Component
     {
-        private List<Element> _elements = new List<Element>();
+        protected List<Element> _elements = new List<Element>();
+        protected Rectangle _panelRectangle = new Rectangle();
 
         public event EventHandler<RectangleEventArgs> RectangleUpdated;
 
-        public Component()
+        public Component(InputResponder input)
         {
-
+            Input = input;
         }
 
+        public InputResponder Input { get; private set; }
+        public Rectangle PanelRectangle
+        {
+            get => _panelRectangle;
+            protected set
+            {
+                _panelRectangle = value;
+                RectangleUpdated?.Invoke(this, new RectangleEventArgs(_panelRectangle));
+            }
+        }
         public List<Element> Elements
         {
             get { return _elements; }
