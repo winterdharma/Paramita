@@ -241,7 +241,6 @@ namespace Paramita.UI.Base.Game
             UpdateImageVisibility();
             UpdateHintTextVisibility();
             UpdateHeadingElement();
-            UpdateMinimizeIcon();
         }
 
         private void UpdateEventSubscriptions()
@@ -295,16 +294,6 @@ namespace Paramita.UI.Base.Game
                 _background.Texture = _defaultSlotTextures["white_background"];
                 _background.Color = Color.DarkBlue;
             }
-        }
-
-        private void UpdateMinimizeIcon()
-        {
-            var toggle = _images.Find(i => i.Id.Equals("minimize_icon"));
-
-            if (IsOpen)
-                toggle.Show();
-            else
-                toggle.Hide();
         }
         #endregion
 

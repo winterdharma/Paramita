@@ -10,7 +10,6 @@ namespace Paramita.UI.Base.Game
     {
 
         public string Id { get => _id; set => _id = value; }
-        public Component Parent { get => _parent; set => _parent = value; }
         public Vector2 Position { get => _position; set => _position = value; }
         
         public string Text { get; set; }
@@ -48,6 +47,14 @@ namespace Paramita.UI.Base.Game
             {
                 spriteBatch.DrawString(Font, Text, Position, Color);
             }
+        }
+
+        public override void SubscribeToEvents()
+        {
+        }
+
+        public override void UnsubscribeFromEvents()
+        {
         }
     }
 }

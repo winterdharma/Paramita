@@ -29,8 +29,6 @@ namespace Paramita.UI.Elements
             Color = color;
             Scale = scale;
             Rectangle = CreateRectangle();
-            parent.Input.LeftMouseClick += OnMouseClicked;
-            parent.Input.NewMousePosition += OnMouseMoved;
         }
 
         public string Id { get => _id; set => _id = value; }
@@ -44,6 +42,7 @@ namespace Paramita.UI.Elements
             if (Visible)
                 spriteBatch.Draw(Texture, Position, null, Color, 0f, new Vector2(0,0), Scale, SpriteEffects.None, 0f);
         }
+
         public override void Update(GameTime gameTime)
         {
             if(Enabled)
@@ -55,6 +54,19 @@ namespace Paramita.UI.Elements
         {
             return new Rectangle((int)Position.X, (int)Position.Y, 
                 (int)(Texture.Bounds.Width * Scale), (int)(Texture.Bounds.Height * Scale));
+        }
+
+        #region Events
+        public override void SubscribeToEvents()
+        {
+            Parent.Input.LeftMouseClick += OnMouseClicked;
+            Parent.Input.NewMousePosition += OnMouseMoved;
+        }
+
+        public override void UnsubscribeFromEvents()
+        {
+            Parent.Input.LeftMouseClick -= OnMouseClicked;
+            Parent.Input.NewMousePosition -= OnMouseMoved;
         }
 
         private void OnMouseMoved(object sender, PointEventArgs e)
@@ -79,5 +91,6 @@ namespace Paramita.UI.Elements
             if (Rectangle.Contains(_mousePosition))
                 LeftClicked?.Invoke(this, new EventArgs());
         }
+        #endregion
     }
 }
