@@ -53,13 +53,14 @@ namespace Paramita.UI.Base
             TileMapPanel.Spritesheets.Add(SpriteType.Actor_GiantRat, _content.Load<Texture2D>("Images\\SentientBeings\\giant_rat"));
             TileMapPanel.Spritesheets.Add(SpriteType.Actor_Player, _content.Load<Texture2D>("Images\\SentientBeings\\human_player"));
 
-            InventoryPanel.DefaultTextures.Add("background", _content.Load<Texture2D>("black_background1"));
+            InventoryPanel.DefaultTextures["background"] = _content.Load<Texture2D>("black_background1");
+            InventoryPanel.DefaultTextures["minimize_icon"] = _content.Load<Texture2D>("Images\\Scenes\\minimize_icon");
             InventoryPanel.DefaultTextures["white_background"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_bg_white");
-            InventoryPanel.DefaultTextures.Add("default_hand", _content.Load<Texture2D>("Images\\Scenes\\inventory_hand"));
-            InventoryPanel.DefaultTextures.Add("default_head", _content.Load<Texture2D>("Images\\Scenes\\inventory_head"));
-            InventoryPanel.DefaultTextures.Add("default_body", _content.Load<Texture2D>("Images\\Scenes\\inventory_body"));
-            InventoryPanel.DefaultTextures.Add("default_feet", _content.Load<Texture2D>("Images\\Scenes\\inventory_feet"));
-            InventoryPanel.DefaultTextures.Add("default_other", _content.Load<Texture2D>("Images\\Scenes\\inventory_other"));
+            InventoryPanel.DefaultTextures["default_hand"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_hand");
+            InventoryPanel.DefaultTextures["default_head"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_head");
+            InventoryPanel.DefaultTextures["default_body"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_body");
+            InventoryPanel.DefaultTextures["default_feet"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_feet");
+            InventoryPanel.DefaultTextures["default_other"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_other");
         }
 
 

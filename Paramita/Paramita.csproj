@@ -106,6 +106,7 @@
     <Content Include="Content\Images\Scenes\inventory_hand.png" />
     <Content Include="Content\Images\Scenes\inventory_head.png" />
     <Content Include="Content\Images\Scenes\inventory_other.png" />
+    <Content Include="Content\Images\Scenes\minimize_icon.png" />
     <Content Include="Content\Images\SentientBeings\giant_rat.png" />
     <Content Include="Content\Images\SentientBeings\human_player.png" />
     <Content Include="Content\Images\Tiles\floor.png" />

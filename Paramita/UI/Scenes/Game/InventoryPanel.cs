@@ -77,7 +77,6 @@ namespace Paramita.UI.Base.Game
         private Vector2 _itemInfoPosition;
 
         private const string HEADING = "(I)nventory";
-        private const string TOGGLE_CLOSED = "[X]";
         private const string SELECT_HINT = "Press (0-9) to Select Item ";
         private const string DROP_HINT = "(D)rop Item";
         private const string USE_HINT = "(U)se Item";
@@ -116,7 +115,7 @@ namespace Paramita.UI.Base.Game
             set
             {
                 _inventory = value;
-                InitializeImages();
+                UpdateItemImages();
             }
         }
 
@@ -223,8 +222,10 @@ namespace Paramita.UI.Base.Game
                 PanelRectangle.Size
                 );
 
-            _images = new List<Image>(CreateInventorySlotImages());
-            SubscribeToSlotMouseEvents();
+            _images = new List<Image>(CreateInventorySlotImages())
+            {
+                CreateMinimizeIcon()
+            };
 
             _textElements = new List<LineOfText>(InitializeTextElements());
         }
@@ -232,14 +233,30 @@ namespace Paramita.UI.Base.Game
         private void TogglePanelOpenOrClosed()
         {
             IsOpen = !IsOpen;
-            // IsOpen property setter calls UpdatePanelRectangle() and UpdateHeadingPosition()
+
+            UpdateEventSubscriptions();
 
             UpdatePanelRectangle();
             UpdateBackgroundElement();
             UpdateImageVisibility();
             UpdateHintTextVisibility();
             UpdateHeadingElement();
-            UpdateToggleButtonVisibility();
+            UpdateMinimizeIcon();
+        }
+
+        private void UpdateEventSubscriptions()
+        {
+            if(!IsOpen)
+            {
+                Input.LeftMouseClick += OnMouseClicked;
+                Input.NewMousePosition += OnMouseMoved;
+            }
+            else
+            {
+                Input.LeftMouseClick -= OnMouseClicked;
+                Input.NewMousePosition -= OnMouseMoved;
+            }
+            
         }
 
         private void UpdateHeadingElement()
@@ -280,9 +297,9 @@ namespace Paramita.UI.Base.Game
             }
         }
 
-        private void UpdateToggleButtonVisibility()
+        private void UpdateMinimizeIcon()
         {
-            var toggle = _textElements.Find(t => t.Id.Equals("toggle_text"));
+            var toggle = _images.Find(i => i.Id.Equals("minimize_icon"));
 
             if (IsOpen)
                 toggle.Show();
@@ -346,8 +363,7 @@ namespace Paramita.UI.Base.Game
             Input.CKeyPressed += OnCKeyPressed;
             Input.UKeyPressed += OnUKeyPressed;
             Input.IKeyPressed += OnIKeyPressed;
-            Input.LeftMouseClick += OnMouseClicked;
-            Input.NewMousePosition += OnMouseMoved;
+            SubscribeToMouseEvents();
             Dungeon.OnInventoryChangeUINotification += HandleInventoryChange;
         }
 
@@ -373,8 +389,11 @@ namespace Paramita.UI.Base.Game
             Dungeon.OnInventoryChangeUINotification -= HandleInventoryChange;
         }
 
-        private void SubscribeToSlotMouseEvents()
+        private void SubscribeToMouseEvents()
         {
+            Input.LeftMouseClick += OnMouseClicked;
+            Input.NewMousePosition += OnMouseMoved;
+
             foreach (var image in _images)
             {
                 image.MouseOver += ImageMousedOver;
@@ -386,7 +405,10 @@ namespace Paramita.UI.Base.Game
         private void ImageClicked(object sender, EventArgs e)
         {
             var image = sender as Image;
-            ItemSelected = _images.FindIndex(i => i.Id.Equals(image.Id)) + 1;
+            if (image.Id.Equals("minimize_icon"))
+                TogglePanelOpenOrClosed();
+            else
+                ItemSelected = _images.FindIndex(i => i.Id.Equals(image.Id)) + 1;
         }
 
         private void ImageMouseGone(object sender, EventArgs e)
@@ -409,10 +431,6 @@ namespace Paramita.UI.Base.Game
         private void OnMouseClicked(object sender, EventArgs e)
         {
             if (!_isOpen && _panelRectangle.Contains(_mousePosition))
-            {
-                TogglePanelOpenOrClosed();
-            }
-            else if (_textElements.Find(t => t.Id.Equals("toggle_text")).Rectangle.Contains(_mousePosition))
             {
                 TogglePanelOpenOrClosed();
             }
@@ -506,11 +524,11 @@ namespace Paramita.UI.Base.Game
 
 
         #region Images
-        private void InitializeImages()
+        private void UpdateItemImages()
         {
             // clear the previous item images
-            if(_images.Count > 10)
-                _images.RemoveRange(10, _images.Count-10);
+            if(_images.Count > 11)
+                _images.RemoveRange(11, _images.Count-11);
             // add the new set of item images
             _images.AddRange(CreateItemImages(_images));       
         }
@@ -527,17 +545,26 @@ namespace Paramita.UI.Base.Game
                     _defaultSlotTextures[GetDefaultTextureKey(_inventorySlots[i])],
                     Color.White
                     );
-                image.Rectangle = new Rectangle((int)image.Position.X, (int)image.Position.Y, 32, 32);
                 image.Hide();
                 images.Add(image);
             }
             return images;
         }
 
+        private Image CreateMinimizeIcon()
+        {
+            var icon = new Image("minimize_icon", this, new Vector2(PanelRectangle.Right - 20, PanelRectangle.Top + 5),
+                DefaultTextures["minimize_icon"], Color.White, 0.0784f);
+            icon.Hide();
+            return icon;
+        }
+
         private List<Image> CreateItemImages(List<Image> images)
         {
             var items = new List<Image>();
-            var tempList = images;
+            var tempList = new List<Image>(images);
+            tempList.RemoveAt(10); // remove minimize icon
+
             foreach (var slotImage in tempList)
             {
                 if (_inventory[slotImage.Id] != ItemType.None
@@ -547,10 +574,10 @@ namespace Paramita.UI.Base.Game
                     var item = new Image(ConvertItemTypeToString(_inventory[slotImage.Id]),
                         this, slotImage.Position, ItemTextures.ItemTextureMap[_inventory[slotImage.Id]],
                         Color.White);
-                    item.Rectangle = slotImage.Rectangle;
                     items.Add(item);
                 }
-            } 
+            }
+
             return items;
         }
 
@@ -572,6 +599,7 @@ namespace Paramita.UI.Base.Game
         private Texture2D GetSpriteElementTexture(string slot, ItemType itemType)
         {
             Texture2D texture;
+
             if(itemType == ItemType.None || itemType == ItemType.Fist || itemType == ItemType.Bite)
                 texture = _defaultSlotTextures[GetDefaultTextureKey(slot)];
             else
@@ -591,7 +619,6 @@ namespace Paramita.UI.Base.Game
             spritePosition.X += (position % spritesPerRow) * 37;
             spritePosition.Y += (position / spritesPerRow) * 37;
             return spritePosition;
-            
         }
 
         private Color GetSpriteElementColor(int index)
@@ -629,7 +656,6 @@ namespace Paramita.UI.Base.Game
             var textElements = new List<LineOfText>
             {
                 ConstructHeadingElement(),
-                ConstructToggleElement(),
                 ConstructUnequipHintElement(),
                 ConstructEquipHintElement(),
                 ConstructDropHintElement(),
@@ -652,20 +678,6 @@ namespace Paramita.UI.Base.Game
 
             heading.Show();
             return heading;
-        }
-
-        private LineOfText ConstructToggleElement()
-        {
-            var font = GameController.NotoSans;
-            var toggleSize = font.MeasureString(TOGGLE_CLOSED);
-            var position = new Vector2(
-                _panelRectangle.Right - toggleSize.X, (_panelRectangle.Top + 5));
-
-            var toggle = new LineOfText(
-                "toggle_text", this, position,
-                TOGGLE_CLOSED, font, Color.White);
-            toggle.Hide();
-            return toggle;
         }
 
         private LineOfText ConstructUnequipHintElement()
@@ -734,7 +746,6 @@ namespace Paramita.UI.Base.Game
                 (_panelRectangle.Top + offsetTop));
         }
         #endregion
-
 
 
 
