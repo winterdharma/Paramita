@@ -32,7 +32,7 @@ namespace Paramita.UI.Elements
 
         protected Rectangle CreateRectangle(Point size)
         {
-            return new Rectangle((int)_position.X, (int)_position.Y, size.X, size.Y);
+            return new Rectangle((int)Position.X, (int)Position.Y, size.X, size.Y);
         }
     }
 }

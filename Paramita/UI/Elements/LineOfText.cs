@@ -7,11 +7,7 @@ namespace Paramita.UI.Base.Game
     /// A class representing a single-line text element, such as a message or label.
     /// </summary>
     public class LineOfText : Element
-    {
-
-        public string Id { get => _id; set => _id = value; }
-        public Vector2 Position { get => _position; set => _position = value; }
-        
+    {        
         public string Text { get; set; }
         public SpriteFont Font { get; set; }
         public Color Color { get; set; }

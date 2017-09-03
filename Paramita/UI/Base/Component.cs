@@ -14,7 +14,9 @@ namespace Paramita.UI.Base
     /// Scene.</summary>
     public abstract class Component
     {
-        protected List<Element> _elements = new List<Element>();
+        protected Dictionary<string, Element> _elements = new Dictionary<string, Element>();
+        protected List<Element> _visibleElements = new List<Element>();
+        protected List<Element> _enabledElements = new List<Element>();
         protected Rectangle _panelRectangle = new Rectangle();
 
         public event EventHandler<RectangleEventArgs> RectangleUpdated;
@@ -34,18 +36,23 @@ namespace Paramita.UI.Base
                 RectangleUpdated?.Invoke(this, new RectangleEventArgs(_panelRectangle));
             }
         }
-        public List<Element> Elements
+        public Dictionary<string, Element> Elements
         {
             get { return _elements; }
-            set { _elements = value; }
+            set
+            {
+                _elements = value;              
+            }
         }
-
         public bool Enabled { get; internal set; }
         public bool Visible { get; internal set; }
 
         public virtual void Update(GameTime gameTime)
         {
-            foreach(var element in _elements)
+            _visibleElements = GetVisibleElements();
+            _enabledElements = GetEnabledElements();
+
+            foreach (var element in _enabledElements)
             {
                 element.Update(gameTime);
             }
@@ -53,10 +60,30 @@ namespace Paramita.UI.Base
 
         public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            foreach(var element in _elements)
+            spriteBatch.Begin();
+            foreach (var element in _visibleElements)
             {
                 element.Draw(gameTime, spriteBatch);
             }
+            spriteBatch.End();
         }
+
+        #region Private Helper Methods
+        private List<Element> GetEnabledElements()
+        {
+            var enabledElements = new List<Element>();
+            enabledElements = _elements.Values.ToList();
+            enabledElements.RemoveAll(e => !e.Enabled);
+            return enabledElements;
+        }
+
+        private List<Element> GetVisibleElements()
+        {
+            var visibleElements = new List<Element>();
+            visibleElements = _elements.Values.ToList();
+            visibleElements.RemoveAll(e => !e.Visible);
+            return visibleElements;
+        }
+        #endregion
     }
 }

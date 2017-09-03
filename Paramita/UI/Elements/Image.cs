@@ -31,9 +31,7 @@ namespace Paramita.UI.Elements
             Rectangle = CreateRectangle();
         }
 
-        public string Id { get => _id; set => _id = value; }
         public Texture2D Texture { get; set; }
-        public Vector2 Position { get => _position; set => _position = value; }
         public float Scale { get; set; }
         public Color Color { get => _color; set => _color = value; }
 

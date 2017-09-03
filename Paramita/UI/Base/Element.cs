@@ -14,12 +14,11 @@ namespace Paramita.UI.Base
     /// </summary>
     public abstract class Element
     {
-        protected string _id;
-        protected Vector2 _position;
         protected Rectangle _rectangle;
         protected Color _color;
         private bool _enabled;
 
+        public string Id { get; set; }
         public bool Visible { get; set; }
         public bool Enabled
         {
@@ -33,14 +32,15 @@ namespace Paramita.UI.Base
                     UnsubscribeFromEvents();
             }
         }
+        public Vector2 Position { get; set; }
         public Rectangle Rectangle { get => _rectangle; set => _rectangle = value; }
         public Component Parent { get; set; }
 
         public Element(string id, Component parent, Vector2 position)
         {
-            _id = id;
+            Id = id;
             Parent = parent;
-            _position = position;
+            Position = position;
             Visible = false;
             Enabled = false;
         }

@@ -54,7 +54,7 @@ namespace Paramita.UI.Base.Game
     public class InventoryPanel : Component
     {
         private List<string> _inventorySlots = new List<string>()
-            { "none","left_hand", "right_hand", "head", "body", "feet",
+            { "left_hand", "right_hand", "head", "body", "feet",
                 "other1", "other2", "other3", "other4", "other5"};
 
         private static Dictionary<string, Texture2D> _defaultSlotTextures 
@@ -63,10 +63,6 @@ namespace Paramita.UI.Base.Game
         private Dictionary<string, ItemType> _inventory 
             = new Dictionary<string, ItemType>();
         private int _gold = 0;
-
-        private List<Image> _images;
-        private List<LineOfText> _textElements;
-        private Background _background;
 
         private Rectangle _parentScreen;
         private const int PANEL_WIDTH_OPEN = 250;
@@ -139,26 +135,26 @@ namespace Paramita.UI.Base.Game
         {
             if (_itemSelected == 0)
             {
-                _textElements.Find(t => t.Id.Equals("unequip_hint")).Hide();
-                _textElements.Find(t => t.Id.Equals("equip_hint")).Hide();
-                _textElements.Find(t => t.Id.Equals("cancel_hint")).Hide();
-                _textElements.Find(t => t.Id.Equals("drop_hint")).Hide();
+                Elements["unequip_hint"].Hide();
+                Elements["equip_hint"].Hide();
+                Elements["cancel_hint"].Hide();
+                Elements["drop_hint"].Hide();
             }
             else if (_itemSelected > 0 && _itemSelected < 6)
             {
-                _textElements.Find(t => t.Id.Equals("unequip_hint")).Show();
-                _textElements.Find(t => t.Id.Equals("equip_hint")).Hide();
+                Elements["unequip_hint"].Show();
+                Elements["equip_hint"].Hide();
             }
             else if (_itemSelected >= 6)
             {
-                _textElements.Find(t => t.Id.Equals("unequip_hint")).Hide();
-                _textElements.Find(t => t.Id.Equals("equip_hint")).Show();
+                Elements["unequip_hint"].Hide();
+                Elements["equip_hint"].Show();
             }
 
             if(_itemSelected > 0)
             {
-                _textElements.Find(t => t.Id.Equals("cancel_hint")).Show();
-                _textElements.Find(t => t.Id.Equals("drop_hint")).Show();
+                Elements["cancel_hint"].Show();
+                Elements["drop_hint"].Show();
             }
         }
 
@@ -169,10 +165,13 @@ namespace Paramita.UI.Base.Game
 
         private void DeactivateTextElements()
         {
-            foreach (var element in _textElements)
+            foreach (var key in Elements.Keys)
             {
-                element.Enabled = false;
-                element.Visible = false;
+                if (Elements[key] is LineOfText)
+                {
+                    Elements[key].Enabled = false;
+                    Elements[key].Visible = false;
+                }
             }
         }
 
@@ -212,22 +211,13 @@ namespace Paramita.UI.Base.Game
         private void InitializePanel()
         {
             UpdatePanelRectangle();
+            InitializeElements();
+        }
 
-            _background = new Background(
-                "background", 
-                this, 
-                new Vector2(PanelRectangle.X, PanelRectangle.Y),
-                _defaultSlotTextures["white_background"], 
-                Color.DarkBlue, 
-                PanelRectangle.Size
-                );
-
-            _images = new List<Image>(CreateInventorySlotImages())
-            {
-                CreateMinimizeIcon()
-            };
-
-            _textElements = new List<LineOfText>(InitializeTextElements());
+        private void InitializeElements()
+        {
+            InitializeImageElements();
+            InitializeTextElements();
         }
 
         private void TogglePanelOpenOrClosed()
@@ -260,10 +250,9 @@ namespace Paramita.UI.Base.Game
 
         private void UpdateHeadingElement()
         {
-            var heading = _textElements.Find(t => t.Id.Equals("heading"));
-            heading.Position = GetHeadingPosition(_headingFont);
-            heading.Visible = true;
-            heading.Enabled = true;
+            Elements["heading"].Position = GetHeadingPosition(_headingFont);
+            Elements["heading"].Visible = true;
+            Elements["heading"].Enabled = true;
         }
 
         private void UpdateImageVisibility()
@@ -284,16 +273,18 @@ namespace Paramita.UI.Base.Game
 
         private void UpdateBackgroundElement()
         {
+            var background = Elements["background"] as Background;
             if (IsOpen)
             {
-                _background.Texture = _defaultSlotTextures["background"];
-                _background.Color = Color.White;
+                background.Texture = _defaultSlotTextures["background"];
+                background.Color = Color.White;
             }
             else
             {
-                _background.Texture = _defaultSlotTextures["white_background"];
-                _background.Color = Color.DarkBlue;
+                background.Texture = _defaultSlotTextures["white_background"];
+                background.Color = Color.DarkBlue;
             }
+            Elements["background"] = background;
         }
         #endregion
 
@@ -383,11 +374,15 @@ namespace Paramita.UI.Base.Game
             Input.LeftMouseClick += OnMouseClicked;
             Input.NewMousePosition += OnMouseMoved;
 
-            foreach (var image in _images)
+            foreach (var key in Elements.Keys)
             {
-                image.MouseOver += ImageMousedOver;
-                image.MouseGone += ImageMouseGone;
-                image.LeftClicked += ImageClicked;
+                if (Elements[key] is Image)
+                {
+                    var image = Elements[key] as Image;
+                    image.MouseOver += ImageMousedOver;
+                    image.MouseGone += ImageMouseGone;
+                    image.LeftClicked += ImageClicked;
+                }
             }
         }
 
@@ -397,7 +392,7 @@ namespace Paramita.UI.Base.Game
             if (image.Id.Equals("minimize_icon"))
                 TogglePanelOpenOrClosed();
             else
-                ItemSelected = _images.FindIndex(i => i.Id.Equals(image.Id)) + 1;
+                ItemSelected = _inventorySlots.FindIndex(slot => slot.Equals(image.Id)) + 1;
         }
 
         private void ImageMouseGone(object sender, EventArgs e)
@@ -513,61 +508,84 @@ namespace Paramita.UI.Base.Game
 
 
         #region Images
-        private void UpdateItemImages()
+        private void InitializeImageElements()
         {
-            // clear the previous item images
-            if(_images.Count > 11)
-                _images.RemoveRange(11, _images.Count-11);
-            // add the new set of item images
-            _images.AddRange(CreateItemImages(_images));       
+            Elements["background"] = CreateBackgroundImage();
+            Elements["minimize_icon"] = CreateMinimizeIcon();
+            CreateInventorySlotImages();            
         }
 
-        private List<Image> CreateInventorySlotImages()
+        private Image CreateBackgroundImage()
         {
-            var images = new List<Image>();
-            for (int i = 1; i < _inventorySlots.Count; i++)
+            return new Background(
+                "background",
+                this,
+                new Vector2(PanelRectangle.X, PanelRectangle.Y),
+                _defaultSlotTextures["white_background"],
+                Color.DarkBlue,
+                PanelRectangle.Size
+                );
+        }
+
+        private Image CreateMinimizeIcon()
+        {
+            return new Image(
+                "minimize_icon", 
+                this, 
+                new Vector2(PanelRectangle.Right - 20, PanelRectangle.Top + 5),
+                DefaultTextures["minimize_icon"], 
+                Color.White, 
+                0.0784f
+                );
+        }
+
+        private void UpdateItemImages()
+        {
+            RemoveItemImages();
+            CreateItemImages();
+        }
+
+        private void CreateInventorySlotImages()
+        {
+            for (int i = 0; i < _inventorySlots.Count; i++)
             {
-                var image = new Image(
+                Elements[_inventorySlots[i]] = new Image(
                     _inventorySlots[i],
                     this,
                     GetSpriteElementPosition(i - 1),
                     _defaultSlotTextures[GetDefaultTextureKey(_inventorySlots[i])],
                     Color.White
                     );
-                image.Hide();
-                images.Add(image);
             }
-            return images;
         }
 
-        private Image CreateMinimizeIcon()
+        private void CreateItemImages()
         {
-            var icon = new Image("minimize_icon", this, new Vector2(PanelRectangle.Right - 20, PanelRectangle.Top + 5),
-                DefaultTextures["minimize_icon"], Color.White, 0.0784f);
-            icon.Hide();
-            return icon;
-        }
+            int count = 0;
 
-        private List<Image> CreateItemImages(List<Image> images)
-        {
-            var items = new List<Image>();
-            var tempList = new List<Image>(images);
-            tempList.RemoveAt(10); // remove minimize icon
-
-            foreach (var slotImage in tempList)
+            foreach (var slot in _inventorySlots)
             {
-                if (_inventory[slotImage.Id] != ItemType.None
-                    && _inventory[slotImage.Id] != ItemType.Fist
-                    && _inventory[slotImage.Id] != ItemType.Bite)
+                if (_inventory[slot] != ItemType.None
+                    && _inventory[slot] != ItemType.Fist
+                    && _inventory[slot] != ItemType.Bite)
                 {
-                    var item = new Image(ConvertItemTypeToString(_inventory[slotImage.Id]),
-                        this, slotImage.Position, ItemTextures.ItemTextureMap[_inventory[slotImage.Id]],
+                    var slotImage = Elements[slot];
+                    var item = new Image("item_" + ConvertItemTypeToString(_inventory[slot]) + ++count,
+                        this, slotImage.Position, ItemTextures.ItemTextureMap[_inventory[slot]],
                         Color.White);
-                    items.Add(item);
+                    Elements[item.Id] = item;
                 }
             }
+        }
 
-            return items;
+        private void RemoveItemImages()
+        {
+            var keys = Elements.Keys;
+            foreach (var key in keys)
+            {
+                if (key.Contains("item_"))
+                    Elements.Remove(key);
+            }
         }
 
         private string ConvertItemTypeToString(ItemType type)
@@ -620,19 +638,27 @@ namespace Paramita.UI.Base.Game
 
         private void ActivateImageElements()
         {
-            foreach (var image in _images)
+            foreach (var key in Elements.Keys)
             {
-                image.Visible = true;
-                image.Enabled = true;
+                if (Elements[key] is Image)
+                {
+                    var image = Elements[key] as Image;
+                    image.Visible = true;
+                    image.Enabled = true;
+                }
             }
         }
 
         private void DeactivateImageElements()
         {
-            foreach(var image in _images)
+            foreach (var key in Elements.Keys)
             {
-                image.Visible = false;
-                image.Enabled = false;
+                if (Elements[key] is Image)
+                {
+                    var image = Elements[key] as Image;
+                    image.Visible = false;
+                    image.Enabled = false;
+                }
             }
         }
         #endregion
@@ -640,23 +666,18 @@ namespace Paramita.UI.Base.Game
 
 
         #region Text Elements
-        private List<LineOfText> InitializeTextElements()
+        private void InitializeTextElements()
         {
-            var textElements = new List<LineOfText>
-            {
-                ConstructHeadingElement(),
-                ConstructUnequipHintElement(),
-                ConstructEquipHintElement(),
-                ConstructDropHintElement(),
-                ConstructCancelHintElement()
-            };
+            Elements["heading"] = ConstructHeadingElement();
+            Elements["unequip_hint"] = ConstructUnequipHintElement();
+            Elements["equip_hint"] = ConstructEquipHintElement();
+            Elements["drop_hint"] = ConstructDropHintElement();
+            Elements["cancel_hint"] = ConstructCancelHintElement();
 
             // intended for future addition of text element showing info about selected item
             _itemInfoPosition = new Vector2(
                 _panelRectangle.Right - (PANEL_WIDTH_OPEN - 10),
                 _panelRectangle.Top + 140);
-
-            return textElements;
         }
 
         private LineOfText ConstructHeadingElement()
@@ -767,27 +788,28 @@ namespace Paramita.UI.Base.Game
         // Called by GameScene.Update() to check for changes or input to handle
         public override void Update(GameTime gameTime)
         {
+            base.Update(gameTime);
         }
 
 
         // Called by GameScene.Draw()
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin();
+            base.Draw(gameTime, spriteBatch);
 
-            _background.Draw(gameTime, spriteBatch);
+            //_background.Draw(gameTime, spriteBatch);
 
-            foreach (var element in _images)
-            {
-                element.Draw(gameTime, spriteBatch);
-            }
+            //foreach (var element in _images)
+            //{
+            //    element.Draw(gameTime, spriteBatch);
+            //}
 
-            foreach (var element in _textElements)
-            {
-                element.Draw(gameTime, spriteBatch);
-            }
+            //foreach (var element in _textElements)
+            //{
+            //    element.Draw(gameTime, spriteBatch);
+            //}
 
-            spriteBatch.End();
+           
         }
     }
 }
