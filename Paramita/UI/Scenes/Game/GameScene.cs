@@ -53,11 +53,16 @@ namespace Paramita.UI.Base
             InventoryPanel.DefaultTextures["background"] = _content.Load<Texture2D>("black_background1");
             InventoryPanel.DefaultTextures["minimize_icon"] = _content.Load<Texture2D>("Images\\Scenes\\minimize_icon");
             InventoryPanel.DefaultTextures["white_background"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_bg_white");
-            InventoryPanel.DefaultTextures["default_hand"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_hand");
-            InventoryPanel.DefaultTextures["default_head"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_head");
-            InventoryPanel.DefaultTextures["default_body"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_body");
-            InventoryPanel.DefaultTextures["default_feet"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_feet");
-            InventoryPanel.DefaultTextures["default_other"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_other");
+            InventoryPanel.DefaultTextures["left_hand"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_hand");
+            InventoryPanel.DefaultTextures["right_hand"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_hand");
+            InventoryPanel.DefaultTextures["head"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_head");
+            InventoryPanel.DefaultTextures["body"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_body");
+            InventoryPanel.DefaultTextures["feet"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_feet");
+            InventoryPanel.DefaultTextures["other1"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_other");
+            InventoryPanel.DefaultTextures["other2"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_other");
+            InventoryPanel.DefaultTextures["other3"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_other");
+            InventoryPanel.DefaultTextures["other4"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_other");
+            InventoryPanel.DefaultTextures["other5"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_other");
         }
 
 

@@ -71,7 +71,6 @@ namespace Paramita.UI.Base.Game
         private SpriteFont _headingFont = GameController.ArialBold;
 
         private int _itemSelected = 0;
-        private bool _isOpen = false;
         private Point _mousePosition = new Point(0, 0);
 
         public event EventHandler<InventoryEventArgs> OnPlayerDroppedItem;
@@ -103,11 +102,7 @@ namespace Paramita.UI.Base.Game
             }
         }
 
-        public bool IsOpen
-        {
-            get { return _isOpen; }
-            set { _isOpen = value; }
-        }
+        public bool IsOpen { get; set; }
 
         public int ItemSelected
         {
@@ -118,42 +113,13 @@ namespace Paramita.UI.Base.Game
                 UpdateHintTextElements();
             }
         }
-
-        #region Inventory Property helpers
-
-        private string GetDefaultTextureKey(string str)
-        {
-            switch (str)
-            {
-                case "right_hand":
-                case "left_hand":
-                    return "default_hand";
-                case "head":
-                    return "default_head";
-                case "body":
-                    return "default_body";
-                case "feet":
-                    return "default_feet";
-                case "other1":
-                case "other2":
-                case "other3":
-                case "other4":
-                case "other5":
-                    return "default_other";
-                default:
-                    throw new NotImplementedException("InventoryPanel.GetDefaultTextureType():"
-                        + " Unknown type from Dungeon.GetPlayerInventory()");
-            }
-        }
-
-        #endregion
-
         #endregion
 
 
         #region Initialization
         private void InitializePanel()
         {
+            IsOpen = false;
             UpdatePanelRectangle();
             InitializeElements();
             InitializeInventoryData();
@@ -361,7 +327,7 @@ namespace Paramita.UI.Base.Game
 
         private void OnMouseClicked(object sender, EventArgs e)
         {
-            if (!_isOpen && _panelRectangle.Contains(_mousePosition))
+            if (!IsOpen && _panelRectangle.Contains(_mousePosition))
             {
                 TogglePanelOpenOrClosed();
             }
@@ -538,7 +504,7 @@ namespace Paramita.UI.Base.Game
                     _inventorySlots[i],
                     this,
                     GetSpriteElementPosition(i),
-                    _defaultSlotTextures[GetDefaultTextureKey(_inventorySlots[i])],
+                    _defaultSlotTextures[_inventorySlots[i]],
                     Color.White,
                     Color.Red
                     );
@@ -603,7 +569,7 @@ namespace Paramita.UI.Base.Game
             Texture2D texture;
 
             if(itemType == ItemType.None || itemType == ItemType.Fist || itemType == ItemType.Bite)
-                texture = _defaultSlotTextures[GetDefaultTextureKey(slot)];
+                texture = _defaultSlotTextures[slot];
             else
                 texture = ItemTextures.ItemTextureMap[itemType];
 
@@ -763,7 +729,6 @@ namespace Paramita.UI.Base.Game
         {
             base.Update(gameTime);
         }
-
 
         // Called by GameScene.Draw()
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
