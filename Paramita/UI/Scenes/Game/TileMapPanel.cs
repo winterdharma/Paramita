@@ -32,10 +32,10 @@ namespace Paramita.UI.Base.Game
 
 
 
-        public TileMapPanel(InputResponder input, Tuple<TileType[,], ItemType[,], 
-            Tuple<ActorType, Compass, bool>[,]> tileMapLayers, Rectangle screen) : base(input)
+        public TileMapPanel(Scene parent, Tuple<TileType[,], ItemType[,], 
+            Tuple<ActorType, Compass, bool>[,]> tileMapLayers) : base(parent)
         {
-            _viewport = screen;
+            _viewport = parent.ScreenRectangle;
             _drawFrame = new Rectangle(0, 0, TILE_SIZE, TILE_SIZE);
             InitializeLevelMap(tileMapLayers.Item1, tileMapLayers.Item2, tileMapLayers.Item3);
             SubscribeToDungeonNotifications();

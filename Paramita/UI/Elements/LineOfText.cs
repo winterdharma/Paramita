@@ -10,16 +10,15 @@ namespace Paramita.UI.Base.Game
     {        
         public string Text { get; set; }
         public SpriteFont Font { get; set; }
-        public Color Color { get; set; }
 
-        public LineOfText(string id, Component parent, Vector2 position, string text, SpriteFont font, Color color) 
-            : base(id, parent, position)
+        public LineOfText(string id, Component parent, Vector2 position, string text, 
+            SpriteFont font, Color unhighlighted, Color highlighted) 
+            : base(id, parent, position, unhighlighted, highlighted)
         {
             Id = id;
             Text = text;
             Font = font;
             Position = position;
-            Color = color;
             Rectangle = CreateRectangle();
         }
 

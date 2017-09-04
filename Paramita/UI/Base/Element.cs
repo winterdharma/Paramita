@@ -15,7 +15,6 @@ namespace Paramita.UI.Base
     public abstract class Element
     {
         protected Rectangle _rectangle;
-        protected Color _color;
         private bool _enabled;
 
         public string Id { get; set; }
@@ -33,14 +32,20 @@ namespace Paramita.UI.Base
             }
         }
         public Vector2 Position { get; set; }
+        public Color Color { get; set; }
+        public Color HighlightedColor { get; set; }
+        public Color UnhighlightedColor { get; set; }
         public Rectangle Rectangle { get => _rectangle; set => _rectangle = value; }
         public Component Parent { get; set; }
 
-        public Element(string id, Component parent, Vector2 position)
+        public Element(string id, Component parent, Vector2 position, Color unhighlighted, Color highlighted)
         {
             Id = id;
             Parent = parent;
             Position = position;
+            Color = unhighlighted;
+            UnhighlightedColor = unhighlighted;
+            HighlightedColor = highlighted;
             Visible = false;
             Enabled = false;
         }
@@ -61,6 +66,16 @@ namespace Paramita.UI.Base
         {
             Visible = false;
             Enabled = false;
+        }
+
+        public void Highlight()
+        {
+            Color = HighlightedColor;
+        }
+
+        public void Unhighlight()
+        {
+            Color = UnhighlightedColor;
         }
 
         public abstract void SubscribeToEvents();

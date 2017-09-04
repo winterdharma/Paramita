@@ -1,20 +1,16 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended.Input.InputListeners;
 using Paramita.GameLogic;
 using Paramita.GameLogic.Items;
-using Paramita.UI.Input;
 using Paramita.UI.Base.Game;
 using Paramita.GameLogic.Mechanics;
-using System.Collections.Generic;
 
 namespace Paramita.UI.Base
 {
 
     public class GameScene : Scene
     {
-        private Dungeon _dungeon;
         private TileMapPanel _tileMapPanel;        
         private static StatusPanel _statusPanel;
         private InventoryPanel _inventoryPanel;
@@ -22,20 +18,21 @@ namespace Paramita.UI.Base
 
         public GameScene(GameController game) : base(game) { }
 
+        public Dungeon Dungeon { get; set; }
 
         public override void Initialize()
         {
             base.Initialize(); // This calls LoadContent()
 
-            _dungeon = new Dungeon();
+            Dungeon = new Dungeon();
 
-            _tileMapPanel = new TileMapPanel(_input, _dungeon.GetCurrentLevelLayers(), _screenRectangle);
-            _statusPanel = new StatusPanel(_input, GameController.ArialBold, 10, new Point(0,720));
-            _inventoryPanel = new InventoryPanel(_input, _screenRectangle);
+            _tileMapPanel = new TileMapPanel(this, Dungeon.GetCurrentLevelLayers());
+            _statusPanel = new StatusPanel(this, GameController.ArialBold, 10, new Point(0,720));
+            _inventoryPanel = new InventoryPanel(this);
             _components.Add(_tileMapPanel);
             _components.Add(_statusPanel);
             _components.Add(_inventoryPanel);
-            _dungeon.GetPlayerInventory(); // raises event that inventoryPanel catches
+           // Dungeon.GetPlayerInventory(); // raises event that inventoryPanel catches
         }
 
         protected override void LoadContent()
@@ -66,7 +63,7 @@ namespace Paramita.UI.Base
 
         public override void Update(GameTime gameTime)
         {
-            _dungeon.Update();
+            Dungeon.Update();
 
             _tileMapPanel.Update(gameTime);
             _statusPanel.Update(gameTime);
@@ -99,10 +96,10 @@ namespace Paramita.UI.Base
         #region Event Handling
         private void SubscribeToEvents()
         {
-            _input.LeftKeyPressed += MovePlayerWest;
-            _input.RightKeyPressed += MovePlayerEast;
-            _input.UpKeyPressed += MovePlayerNorth;
-            _input.DownKeyPressed += MovePlayerSouth;
+            Input.LeftKeyPressed += MovePlayerWest;
+            Input.RightKeyPressed += MovePlayerEast;
+            Input.UpKeyPressed += MovePlayerNorth;
+            Input.DownKeyPressed += MovePlayerSouth;
             _inventoryPanel.OnPlayerDroppedItem += PlayerDropItemEventHandler;
             _inventoryPanel.OnPlayerEquippedItem += PlayerEquipItemEventHandler;
             _inventoryPanel.OnPlayerUsedItem += PlayerUseItemEventHandler;
@@ -110,10 +107,10 @@ namespace Paramita.UI.Base
 
         private void UnsubscribeFromEvents()
         {
-            _input.LeftKeyPressed -= MovePlayerWest;
-            _input.RightKeyPressed -= MovePlayerEast;
-            _input.UpKeyPressed -= MovePlayerNorth;
-            _input.DownKeyPressed -= MovePlayerSouth;
+            Input.LeftKeyPressed -= MovePlayerWest;
+            Input.RightKeyPressed -= MovePlayerEast;
+            Input.UpKeyPressed -= MovePlayerNorth;
+            Input.DownKeyPressed -= MovePlayerSouth;
             _inventoryPanel.OnPlayerDroppedItem -= PlayerDropItemEventHandler;
             _inventoryPanel.OnPlayerEquippedItem -= PlayerEquipItemEventHandler;
             _inventoryPanel.OnPlayerUsedItem -= PlayerUseItemEventHandler;
@@ -121,27 +118,27 @@ namespace Paramita.UI.Base
 
         private void MovePlayerWest(object sender, EventArgs e)
         {
-            _dungeon.MovePlayer(Compass.West);
+            Dungeon.MovePlayer(Compass.West);
         }
 
         private void MovePlayerEast(object sender, EventArgs e)
         {
-            _dungeon.MovePlayer(Compass.East);
+            Dungeon.MovePlayer(Compass.East);
         }
 
         private void MovePlayerNorth(object sender, EventArgs e)
         {
-            _dungeon.MovePlayer(Compass.North);
+            Dungeon.MovePlayer(Compass.North);
         }
 
         private void MovePlayerSouth(object sender, EventArgs e)
         {
-            _dungeon.MovePlayer(Compass.South);
+            Dungeon.MovePlayer(Compass.South);
         }
 
         private void PlayerDropItemEventHandler(object sender, InventoryEventArgs e)
         {
-            _dungeon.PlayerDropItem(e.InventorySlot, e.InventoryItem);
+            Dungeon.PlayerDropItem(e.InventorySlot, e.InventoryItem);
         }
 
         private void PlayerEquipItemEventHandler(object sender, EventArgs e)

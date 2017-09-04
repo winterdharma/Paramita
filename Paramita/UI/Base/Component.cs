@@ -21,11 +21,13 @@ namespace Paramita.UI.Base
 
         public event EventHandler<RectangleEventArgs> RectangleUpdated;
 
-        public Component(InputResponder input)
+        public Component(Scene parent)
         {
-            Input = input;
+            Parent = parent;
+            Input = parent.Input;
         }
 
+        public Scene Parent { get; set; }
         public InputResponder Input { get; private set; }
         public Rectangle PanelRectangle
         {

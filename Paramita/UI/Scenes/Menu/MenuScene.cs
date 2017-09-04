@@ -31,7 +31,7 @@ namespace Paramita.UI.Base
             string[] menuItems = { "NEW GAME", "CONTINUE", "OPTIONS", "EXIT" };
             Vector2 position = new Vector2( (1200 - _buttonTexture.Width), 90);
             _menuButtons = new MenuComponent(_fontArialBold, _buttonTexture, menuItems, position, 
-                _input);
+                Input);
         }
 
 
@@ -84,8 +84,8 @@ namespace Paramita.UI.Base
         public override void Hide()
         {
             base.Hide();
-            _input.LeftMouseClick -= HandleMouseClick;
-            _input.EnterKeyPressed -= HandleMenuItemSelected;
+            Input.LeftMouseClick -= HandleMouseClick;
+            Input.EnterKeyPressed -= HandleMenuItemSelected;
 
 
         }
@@ -93,8 +93,8 @@ namespace Paramita.UI.Base
         public override void Show()
         {
             base.Show();
-            _input.LeftMouseClick += HandleMouseClick;
-            _input.EnterKeyPressed += HandleMenuItemSelected;
+            Input.LeftMouseClick += HandleMouseClick;
+            Input.EnterKeyPressed += HandleMenuItemSelected;
         }
 
         public override void Draw(GameTime gameTime)

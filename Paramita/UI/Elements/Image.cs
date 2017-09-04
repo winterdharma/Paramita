@@ -20,20 +20,19 @@ namespace Paramita.UI.Elements
         public event EventHandler<EventArgs> MouseGone;
 
         public Image(string id, Component parent, Vector2 position, Texture2D texture, 
-            Color color, float scale = 1) : base(id, parent, position)
+            Color normal, Color highlighted, float scale = 1) 
+            : base(id, parent, position, normal, highlighted)
         {
             Id = id;
             Texture = texture;
             Visible = true;
             Enabled = true;
-            Color = color;
             Scale = scale;
             Rectangle = CreateRectangle();
         }
 
         public Texture2D Texture { get; set; }
         public float Scale { get; set; }
-        public Color Color { get => _color; set => _color = value; }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {

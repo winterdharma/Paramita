@@ -4,7 +4,6 @@ using Paramita.GameLogic;
 using Paramita.GameLogic.Actors;
 using Paramita.GameLogic.Items;
 using Paramita.GameLogic.Utility;
-using Paramita.UI.Input;
 using Paramita.UI.Elements;
 using System;
 using System.Collections.Generic;
@@ -14,21 +13,10 @@ namespace Paramita.UI.Base.Game
     public enum InventoryActions
     {
         None,
-        Select1,
-        Select2,
-        Select3,
-        Select4,
-        Select5,
-        Select6,
-        Select7,
-        Select8,
-        Select9,
-        Select0,
         Drop,
         Use,
         Equip,
-        Cancel,
-        TogglePanel
+        Cancel
     }
 
 
@@ -91,9 +79,9 @@ namespace Paramita.UI.Base.Game
         public event EventHandler<InventoryEventArgs> OnPlayerUsedItem;
 
 
-        public InventoryPanel(InputResponder input, Rectangle screen) : base(input)
+        public InventoryPanel(Scene parent) : base(parent)
         {
-            _parentScreen = screen;
+            _parentScreen = Parent.ScreenRectangle;
             InitializePanel();
             SubscribeToInputEvents();
         }
@@ -131,50 +119,6 @@ namespace Paramita.UI.Base.Game
             }
         }
 
-        private void UpdateHintTextElements()
-        {
-            if (_itemSelected == 0)
-            {
-                Elements["unequip_hint"].Hide();
-                Elements["equip_hint"].Hide();
-                Elements["cancel_hint"].Hide();
-                Elements["drop_hint"].Hide();
-            }
-            else if (_itemSelected > 0 && _itemSelected < 6)
-            {
-                Elements["unequip_hint"].Show();
-                Elements["equip_hint"].Hide();
-            }
-            else if (_itemSelected >= 6)
-            {
-                Elements["unequip_hint"].Hide();
-                Elements["equip_hint"].Show();
-            }
-
-            if(_itemSelected > 0)
-            {
-                Elements["cancel_hint"].Show();
-                Elements["drop_hint"].Show();
-            }
-        }
-
-        private void ActivateTextElements()
-        {
-            UpdateHintTextElements();
-        }
-
-        private void DeactivateTextElements()
-        {
-            foreach (var key in Elements.Keys)
-            {
-                if (Elements[key] is LineOfText)
-                {
-                    Elements[key].Enabled = false;
-                    Elements[key].Visible = false;
-                }
-            }
-        }
-
         #region Inventory Property helpers
 
         private string GetDefaultTextureKey(string str)
@@ -207,11 +151,12 @@ namespace Paramita.UI.Base.Game
         #endregion
 
 
-        #region Panel States
+        #region Initialization
         private void InitializePanel()
         {
             UpdatePanelRectangle();
             InitializeElements();
+            InitializeInventoryData();
         }
 
         private void InitializeElements()
@@ -220,19 +165,31 @@ namespace Paramita.UI.Base.Game
             InitializeTextElements();
         }
 
+        private void InitializeInventoryData()
+        {
+            var parent = Parent as GameScene;
+            parent.Dungeon.GetPlayerInventory(); 
+            // data is received as an event from Dungeon
+        }
+        #endregion
+
+
+        #region Panel State Change Logic
         private void TogglePanelOpenOrClosed()
         {
             IsOpen = !IsOpen;
 
             UpdateEventSubscriptions();
-
             UpdatePanelRectangle();
-            UpdateBackgroundElement();
-            UpdateImageVisibility();
-            UpdateHintTextVisibility();
-            UpdateHeadingElement();
+
+            UpdateBackground();
+            UpdateHeading();
+            UpdateElements();
         }
 
+        /// <summary>
+        /// Subscribes to mouse events when the panel is closed and unsubscribes from them when open.
+        /// </summary>
         private void UpdateEventSubscriptions()
         {
             if(!IsOpen)
@@ -248,79 +205,67 @@ namespace Paramita.UI.Base.Game
             
         }
 
-        private void UpdateHeadingElement()
+        private void UpdateBackground()
+        {
+            if (IsOpen)
+            {
+                Elements["background_open"].Show();
+                Elements["background_closed"].Hide();
+            }
+            else
+            {
+                Elements["background_closed"].Show();
+                Elements["background_open"].Hide();
+            }
+        }
+
+        private void UpdateHeading()
         {
             Elements["heading"].Position = GetHeadingPosition(_headingFont);
-            Elements["heading"].Visible = true;
-            Elements["heading"].Enabled = true;
         }
 
-        private void UpdateImageVisibility()
+        private void UpdateElements()
         {
-            if (IsOpen)
-                ActivateImageElements();
-            else
-                DeactivateImageElements();
-        }
+            var exceptions = new List<string>()
+            { "heading", "background_open", "background_closed" };
 
-        private void UpdateHintTextVisibility()
-        {
-            if (IsOpen)
-                ActivateTextElements();
-            else
-                DeactivateTextElements();
-        }
-
-        private void UpdateBackgroundElement()
-        {
-            var background = Elements["background"] as Background;
-            if (IsOpen)
+            foreach (var key in Elements.Keys)
             {
-                background.Texture = _defaultSlotTextures["background"];
-                background.Color = Color.White;
+                if (exceptions.Contains(key))
+                    continue;
+
+                if (IsOpen)
+                    Elements[key].Show();
+                else
+                    Elements[key].Hide();
             }
-            else
-            {
-                background.Texture = _defaultSlotTextures["white_background"];
-                background.Color = Color.DarkBlue;
-            }
-            Elements["background"] = background;
+            // if panel is open, show/hide hint texts depending on _itemSelected value
+            if(IsOpen)
+                UpdateHintTextElements();
         }
         #endregion
 
-        #region PanelRectangle
+
+        #region Update PanelRectangle Methods
         private void UpdatePanelRectangle()
         {
             PanelRectangle = new Rectangle(GetPanelOrigin(), GetPanelSize());
         }
 
-        private Point GetPanelOrigin(int offsetFromTop = 0, int offsetFromRight = 0)
+        private Point GetPanelOrigin(int offsetTop = 0, int offsetRight = 0)
         {
             if (IsOpen)
-            {
-                return new Point(
-                _parentScreen.Width - PANEL_WIDTH_OPEN - offsetFromRight,
-                offsetFromTop);
-            }
+                return new Point(_parentScreen.Width - PANEL_WIDTH_OPEN - offsetRight, offsetTop);
             else
-            {
-                return new Point(
-                _parentScreen.Width - PANEL_WIDTH_CLOSED - offsetFromRight,
-                offsetFromTop);
-            }
-
+                return new Point(_parentScreen.Width - PANEL_WIDTH_CLOSED - offsetRight, offsetTop);
         }
 
         private Point GetPanelSize()
         {
             if (IsOpen)
-            {
                 return new Point(PANEL_WIDTH_OPEN, PANEL_HEIGHT_OPEN);
-            }
             else
-            {
                 return new Point(PANEL_WIDTH_CLOSED, PANEL_HEIGHT_CLOSED);
-            }
         }
         #endregion
 
@@ -376,7 +321,9 @@ namespace Paramita.UI.Base.Game
 
             foreach (var key in Elements.Keys)
             {
-                if (Elements[key] is Image)
+                if (Elements[key] is Background)
+                    continue;
+                else if (Elements[key] is Image)
                 {
                     var image = Elements[key] as Image;
                     image.MouseOver += ImageMousedOver;
@@ -398,13 +345,13 @@ namespace Paramita.UI.Base.Game
         private void ImageMouseGone(object sender, EventArgs e)
         {
             var image = sender as Image;
-            image.Color = Color.White;
+            image.Unhighlight();
         }
 
         private void ImageMousedOver(object sender, EventArgs e)
         {
             var image = sender as Image;
-            image.Color = Color.Red;
+            image.Highlight();
         }
 
         private void OnMouseMoved(object sender, PointEventArgs e)
@@ -497,46 +444,84 @@ namespace Paramita.UI.Base.Game
         {
             ItemSelected = 0;
         }
-        #endregion
 
-        private void UpdateInventoryData(Tuple<Dictionary<string, ItemType>, int> inventoryData)
+        private void HandleInput(InventoryActions action)
         {
-            Inventory = inventoryData.Item1;
-            _gold = inventoryData.Item2;
+            if (ItemSelected == 0)
+                return;
+
+            if (action == InventoryActions.Drop)
+            {
+                string slot = _inventorySlots[ItemSelected - 1];
+                if (_inventory[slot] != ItemType.None)
+                {
+                    OnPlayerDroppedItem?.Invoke(null,
+                    new InventoryEventArgs(slot, _inventory[slot]));
+                }
+            }
         }
 
+        private void HandleInventoryChange(object sender, InventoryChangeEventArgs e)
+        {
+            Inventory = e.Inventory.Item1;
+            _gold = e.Inventory.Item2;
+        }
+        #endregion
 
 
         #region Images
         private void InitializeImageElements()
         {
-            Elements["background"] = CreateBackgroundImage();
+            Elements["background_closed"] = CreateClosedPanelBackground();
+            Elements["background_open"] = CreateOpenPanelBackground();
             Elements["minimize_icon"] = CreateMinimizeIcon();
+            Elements["minimize_icon"].Hide();
             CreateInventorySlotImages();            
         }
 
-        private Image CreateBackgroundImage()
+        private Image CreateClosedPanelBackground()
         {
-            return new Background(
-                "background",
+            var background = new Background(
+                "background_closed",
                 this,
                 new Vector2(PanelRectangle.X, PanelRectangle.Y),
                 _defaultSlotTextures["white_background"],
                 Color.DarkBlue,
+                Color.White,
                 PanelRectangle.Size
                 );
+            background.Show();
+            return background;
+        }
+
+        private Image CreateOpenPanelBackground()
+        {
+            var background = new Background(
+                "background_open",
+                this,
+                new Vector2(PanelRectangle.X, PanelRectangle.Y),
+                _defaultSlotTextures["background"],
+                Color.White,
+                Color.White,
+                PanelRectangle.Size
+                );
+            background.Hide();
+            return background;
         }
 
         private Image CreateMinimizeIcon()
         {
-            return new Image(
+            var image = new Image(
                 "minimize_icon", 
                 this, 
                 new Vector2(PanelRectangle.Right - 20, PanelRectangle.Top + 5),
                 DefaultTextures["minimize_icon"], 
-                Color.White, 
+                Color.Gray, 
+                Color.White,
                 0.0784f
                 );
+            image.Hide();
+            return image;
         }
 
         private void UpdateItemImages()
@@ -552,10 +537,12 @@ namespace Paramita.UI.Base.Game
                 Elements[_inventorySlots[i]] = new Image(
                     _inventorySlots[i],
                     this,
-                    GetSpriteElementPosition(i - 1),
+                    GetSpriteElementPosition(i),
                     _defaultSlotTextures[GetDefaultTextureKey(_inventorySlots[i])],
-                    Color.White
+                    Color.White,
+                    Color.Red
                     );
+                Elements[_inventorySlots[i]].Hide();
             }
         }
 
@@ -572,7 +559,7 @@ namespace Paramita.UI.Base.Game
                     var slotImage = Elements[slot];
                     var item = new Image("item_" + ConvertItemTypeToString(_inventory[slot]) + ++count,
                         this, slotImage.Position, ItemTextures.ItemTextureMap[_inventory[slot]],
-                        Color.White);
+                        Color.White, Color.Red);
                     Elements[item.Id] = item;
                 }
             }
@@ -580,11 +567,19 @@ namespace Paramita.UI.Base.Game
 
         private void RemoveItemImages()
         {
-            var keys = Elements.Keys;
-            foreach (var key in keys)
+            var itemsToRemove = new List<string>();
+            foreach (var key in Elements.Keys)
             {
                 if (key.Contains("item_"))
+                    itemsToRemove.Add(key);
+            }
+            
+            if(itemsToRemove.Count > 0)
+            {
+                foreach(var key in itemsToRemove)
+                {
                     Elements.Remove(key);
+                }
             }
         }
 
@@ -635,44 +630,22 @@ namespace Paramita.UI.Base.Game
             else
                 return Color.White;
         }
-
-        private void ActivateImageElements()
-        {
-            foreach (var key in Elements.Keys)
-            {
-                if (Elements[key] is Image)
-                {
-                    var image = Elements[key] as Image;
-                    image.Visible = true;
-                    image.Enabled = true;
-                }
-            }
-        }
-
-        private void DeactivateImageElements()
-        {
-            foreach (var key in Elements.Keys)
-            {
-                if (Elements[key] is Image)
-                {
-                    var image = Elements[key] as Image;
-                    image.Visible = false;
-                    image.Enabled = false;
-                }
-            }
-        }
         #endregion
-
 
 
         #region Text Elements
         private void InitializeTextElements()
         {
             Elements["heading"] = ConstructHeadingElement();
+            Elements["heading"].Show();
             Elements["unequip_hint"] = ConstructUnequipHintElement();
+            Elements["unequip_hint"].Hide();
             Elements["equip_hint"] = ConstructEquipHintElement();
+            Elements["equip_hint"].Hide();
             Elements["drop_hint"] = ConstructDropHintElement();
+            Elements["drop_hint"].Hide();
             Elements["cancel_hint"] = ConstructCancelHintElement();
+            Elements["cancel_hint"].Hide();
 
             // intended for future addition of text element showing info about selected item
             _itemInfoPosition = new Vector2(
@@ -684,7 +657,7 @@ namespace Paramita.UI.Base.Game
         {
             var heading = new LineOfText(
                 "heading", this, GetHeadingPosition(_headingFont),
-                HEADING, _headingFont, Color.White);
+                HEADING, _headingFont, Color.White, Color.White);
 
             heading.Show();
             return heading;
@@ -698,7 +671,7 @@ namespace Paramita.UI.Base.Game
 
             var unequip = new LineOfText(
                 "unequip_hint", this, position,
-                UNEQUIP_HINT, GameController.NotoSans, Color.White);
+                UNEQUIP_HINT, GameController.NotoSans, Color.White, Color.White);
 
             unequip.Hide();
             return unequip;
@@ -712,7 +685,7 @@ namespace Paramita.UI.Base.Game
 
             var equip = new LineOfText(
                 "equip_hint", this, position,
-                EQUIP_HINT, GameController.NotoSans, Color.White);
+                EQUIP_HINT, GameController.NotoSans, Color.White, Color.White);
             equip.Hide();
             return equip;
         }
@@ -727,7 +700,7 @@ namespace Paramita.UI.Base.Game
 
             var drop = new LineOfText(
                 "drop_hint", this, position,
-                DROP_HINT, font, Color.White);
+                DROP_HINT, font, Color.White, Color.White);
             drop.Hide();
             return drop;
         }
@@ -743,7 +716,7 @@ namespace Paramita.UI.Base.Game
 
             var cancel = new LineOfText(
                 "cancel_hint", this, position,
-                CANCEL_HINT, font, Color.White);
+                CANCEL_HINT, font, Color.White, Color.White);
             cancel.Hide();
             return cancel;
         }
@@ -755,34 +728,34 @@ namespace Paramita.UI.Base.Game
                 _panelRectangle.Left + ((_panelRectangle.Width / 2) - (headingSize.X / 2)),
                 (_panelRectangle.Top + offsetTop));
         }
-        #endregion
 
-
-
-        #region Input Handlers
-        private void HandleInput(InventoryActions action)
+        private void UpdateHintTextElements()
         {
-            if (ItemSelected == 0)
-                return;
-
-            if(action == InventoryActions.Drop)
+            if (_itemSelected == 0)
             {
-                string slot = _inventorySlots[ItemSelected];
-                if(_inventory[slot] != ItemType.None)
-                {
-                    OnPlayerDroppedItem?.Invoke(null,
-                    new InventoryEventArgs(slot, _inventory[slot]));
-                }
-                
+                Elements["unequip_hint"].Hide();
+                Elements["equip_hint"].Hide();
+                Elements["cancel_hint"].Hide();
+                Elements["drop_hint"].Hide();
+            }
+            else if (_itemSelected > 0 && _itemSelected < 6)
+            {
+                Elements["unequip_hint"].Show();
+                Elements["equip_hint"].Hide();
+            }
+            else if (_itemSelected >= 6)
+            {
+                Elements["unequip_hint"].Hide();
+                Elements["equip_hint"].Show();
+            }
+
+            if (_itemSelected > 0)
+            {
+                Elements["cancel_hint"].Show();
+                Elements["drop_hint"].Show();
             }
         }
-
-        private void HandleInventoryChange(object sender, InventoryChangeEventArgs e)
-        {
-            UpdateInventoryData(e.Inventory);
-        }
         #endregion
-
 
 
         // Called by GameScene.Update() to check for changes or input to handle
@@ -796,20 +769,6 @@ namespace Paramita.UI.Base.Game
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             base.Draw(gameTime, spriteBatch);
-
-            //_background.Draw(gameTime, spriteBatch);
-
-            //foreach (var element in _images)
-            //{
-            //    element.Draw(gameTime, spriteBatch);
-            //}
-
-            //foreach (var element in _textElements)
-            //{
-            //    element.Draw(gameTime, spriteBatch);
-            //}
-
-           
         }
     }
 }

@@ -25,22 +25,21 @@ namespace Paramita.UI.Base
     {
         protected GameController _game;
         protected SpriteBatch _spriteBatch;
-        protected Rectangle _screenRectangle;
-        protected InputResponder _input;
         protected readonly SceneManager _manager;
         protected ContentManager _content;
         protected readonly List<Component> _components;
         
         public List<Component> Components { get { return _components; } }
-
+        public InputResponder Input { get; set; }
+        public Rectangle ScreenRectangle { get; set; }
 
 
         public Scene(GameController game) : base(game)
         {
             _game = game;
             _spriteBatch = game.SpriteBatch;
-            _screenRectangle = game.ScreenRectangle;
-            _input = game.InputResponder;
+            ScreenRectangle = game.ScreenRectangle;
+            Input = game.InputResponder;
             _components = new List<Component>();
             _content = Game.Content;
             _manager = (SceneManager)Game.Services.GetService(typeof(SceneManager));

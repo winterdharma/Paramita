@@ -39,8 +39,8 @@ namespace Paramita.UI.Base
         private void SetMessagePosition()
         {
             Vector2 size = _fontArialBold.MeasureString(MESSAGE);
-            _messagePosition = new Vector2((_screenRectangle.Width - size.X) / 2,
-                _screenRectangle.Bottom - 50 - _fontArialBold.LineSpacing);
+            _messagePosition = new Vector2((ScreenRectangle.Width - size.X) / 2,
+                ScreenRectangle.Bottom - 50 - _fontArialBold.LineSpacing);
         }
 
         
@@ -72,7 +72,7 @@ namespace Paramita.UI.Base
         {
             _spriteBatch.Begin();
 
-            _spriteBatch.Draw(_background, _screenRectangle, Color.White);
+            _spriteBatch.Draw(_background, ScreenRectangle, Color.White);
 
             _spriteBatch.DrawString(_fontArialBold, MESSAGE, _messagePosition, _messageColor);
 
@@ -84,15 +84,15 @@ namespace Paramita.UI.Base
         public override void Hide()
         {
             base.Hide();
-            _input.KeyPressed -= HandleInput;
-            _input.MouseClick -= HandleInput;
+            Input.KeyPressed -= HandleInput;
+            Input.MouseClick -= HandleInput;
         }
 
         public override void Show()
         {
             base.Show();
-            _input.KeyPressed += HandleInput;
-            _input.MouseClick += HandleInput;
+            Input.KeyPressed += HandleInput;
+            Input.MouseClick += HandleInput;
         }
     }
 }
