@@ -60,15 +60,26 @@ namespace Paramita.UI.Base.Game
 
         private Vector2 _itemInfoPosition;
 
-        private const string HEADING = "(I)nventory";
-        private const string SELECT_HINT = "Press (0-9) to Select Item ";
-        private const string DROP_HINT = "(D)rop Item";
-        private const string USE_HINT = "(U)se Item";
-        private const string EQUIP_HINT = "(E)quip Item";
-        private const string UNEQUIP_HINT = "Un(e)quip Item";
-        private const string CANCEL_HINT = "(C)ancel Selection";
+        private const string HEADING_ID = "heading";
+        private const string HEADING_TEXT = "(I)nventory";
+        private const string DROP_HINT_ID = "drop_hint";
+        private const string DROP_HINT_TEXT = "(D)rop Item";
+        private const string USE_HINT_ID = "use_hint";
+        private const string USE_HINT_TEXT = "(U)se Item";
+        private const string EQUIP_HINT_ID = "equip_hint";
+        private const string EQUIP_HINT_TEXT = "(E)quip Item";
+        private const string UNEQUIP_HINT_ID = "unequip_hint";
+        private const string UNEQUIP_HINT_TEXT = "Un(e)quip Item";
+        private const string CANCEL_HINT_ID = "cancel_hint";
+        private const string CANCEL_HINT_TEXT = "(C)ancel Selection";
 
-        private SpriteFont _headingFont = GameController.ArialBold;
+        private readonly SpriteFont HEADING_FONT = GameController.ArialBold;
+        private readonly SpriteFont HINT_FONT = GameController.NotoSans;
+
+        private readonly Color WHITE = Color.White;
+        private readonly Color RED = Color.Red;
+        private readonly Color GRAY = Color.Gray;
+        private readonly Color DARK_BLUE = Color.DarkBlue;
 
         private int _itemSelected = 0;
         private Point _mousePosition = new Point(0, 0);
@@ -187,7 +198,7 @@ namespace Paramita.UI.Base.Game
 
         private void UpdateHeading()
         {
-            Elements["heading"].Position = GetHeadingPosition(_headingFont);
+            Elements["heading"].Position = GetElementPosition(HEADING_ID);
         }
 
         private void UpdateElements()
@@ -602,16 +613,36 @@ namespace Paramita.UI.Base.Game
         #region Text Elements
         private void InitializeTextElements()
         {
-            Elements["heading"] = ConstructHeadingElement();
-            Elements["heading"].Show();
-            Elements["unequip_hint"] = ConstructUnequipHintElement();
-            Elements["unequip_hint"].Hide();
-            Elements["equip_hint"] = ConstructEquipHintElement();
-            Elements["equip_hint"].Hide();
-            Elements["drop_hint"] = ConstructDropHintElement();
-            Elements["drop_hint"].Hide();
-            Elements["cancel_hint"] = ConstructCancelHintElement();
-            Elements["cancel_hint"].Hide();
+            var textIds = new List<string>
+            {
+                HEADING_ID, EQUIP_HINT_ID, UNEQUIP_HINT_ID, USE_HINT_ID, DROP_HINT_ID,  
+                 CANCEL_HINT_ID
+            };
+            var textContents = new List<string>
+            {
+                HEADING_TEXT, EQUIP_HINT_TEXT, UNEQUIP_HINT_TEXT, USE_HINT_TEXT, DROP_HINT_TEXT,  
+                 CANCEL_HINT_TEXT
+            };
+            var fonts = new List<SpriteFont>
+            {
+                HEADING_FONT, HINT_FONT, HINT_FONT, HINT_FONT, HINT_FONT, HINT_FONT
+            };
+            var highlights = new List<Color> { WHITE, WHITE, WHITE, WHITE, WHITE, WHITE };
+            var unhighlights = new List<Color> { WHITE, WHITE, WHITE, WHITE, WHITE, WHITE };
+            var showElement = new List<bool> { true, false, false, false, false , false };
+
+            for (var i = 0; i < textIds.Count; i++)
+            {
+                var id = textIds[i];
+                var str = textContents[i];
+                Elements[id] = new LineOfText(id, this, GetElementPosition(id), str, fonts[i], 
+                    highlights[i], unhighlights[i]);
+
+                if (showElement[i])
+                    Elements[id].Show();
+                else
+                    Elements[id].Hide();
+            }
 
             // intended for future addition of text element showing info about selected item
             _itemInfoPosition = new Vector2(
@@ -619,106 +650,66 @@ namespace Paramita.UI.Base.Game
                 _panelRectangle.Top + 140);
         }
 
-        private LineOfText ConstructHeadingElement()
+        private Vector2 GetElementPosition(string id)
         {
-            var heading = new LineOfText(
-                "heading", this, GetHeadingPosition(_headingFont),
-                HEADING, _headingFont, Color.White, Color.White);
+            var hintsLeftMargin = PanelRectangle.Right - (PANEL_WIDTH_OPEN - 10);
+            var hintsTopMargin = 150;
+            var hintsLineHeight = HINT_FONT.MeasureString("Hint").Y;
+            var lines = 1;
+            var headingSize = HEADING_FONT.MeasureString(HEADING_TEXT);
+            var headingLeftMargin = PanelRectangle.Left + ((PanelRectangle.Width / 2) - (headingSize.X / 2));
+            var headingTopMargin = PanelRectangle.Top + 5;
 
-            heading.Show();
-            return heading;
-        }
-
-        private LineOfText ConstructUnequipHintElement()
-        {
-            var position = new Vector2(
-               _panelRectangle.Right - (PANEL_WIDTH_OPEN - 10),
-               150);
-
-            var unequip = new LineOfText(
-                "unequip_hint", this, position,
-                UNEQUIP_HINT, GameController.NotoSans, Color.White, Color.White);
-
-            unequip.Hide();
-            return unequip;
-        }
-
-        private LineOfText ConstructEquipHintElement()
-        {
-            var position = new Vector2(
-              _panelRectangle.Right - (PANEL_WIDTH_OPEN - 10),
-              150);
-
-            var equip = new LineOfText(
-                "equip_hint", this, position,
-                EQUIP_HINT, GameController.NotoSans, Color.White, Color.White);
-            equip.Hide();
-            return equip;
-        }
-
-        private LineOfText ConstructDropHintElement()
-        {
-            var font = GameController.NotoSans;
-            var position = new Vector2(
-              _panelRectangle.Right - (PANEL_WIDTH_OPEN - 10),
-              150);
-            position.Y += font.MeasureString(EQUIP_HINT).Y + 5;
-
-            var drop = new LineOfText(
-                "drop_hint", this, position,
-                DROP_HINT, font, Color.White, Color.White);
-            drop.Hide();
-            return drop;
-        }
-
-        private LineOfText ConstructCancelHintElement()
-        {
-            var font = GameController.NotoSans;
-            var position = new Vector2(
-              _panelRectangle.Right - (PANEL_WIDTH_OPEN - 10),
-              150);
-            position.Y += font.MeasureString(EQUIP_HINT).Y + 5;
-            position.Y += font.MeasureString(CANCEL_HINT).Y + 5;
-
-            var cancel = new LineOfText(
-                "cancel_hint", this, position,
-                CANCEL_HINT, font, Color.White, Color.White);
-            cancel.Hide();
-            return cancel;
-        }
-
-        private Vector2 GetHeadingPosition(SpriteFont font, int offsetTop = 5)
-        {
-            var headingSize = font.MeasureString(HEADING);
-            return new Vector2(
-                _panelRectangle.Left + ((_panelRectangle.Width / 2) - (headingSize.X / 2)),
-                (_panelRectangle.Top + offsetTop));
+            switch (id)
+            {
+                case HEADING_ID:
+                    return new Vector2(headingLeftMargin, headingTopMargin);
+                case UNEQUIP_HINT_ID:
+                case EQUIP_HINT_ID:
+                    return new Vector2(hintsLeftMargin, hintsTopMargin);
+                case USE_HINT_ID:
+                    return new Vector2(hintsLeftMargin, hintsTopMargin + hintsLineHeight);
+                case DROP_HINT_ID:
+                    if (Elements[USE_HINT_ID].Visible)
+                        lines = 2;
+                    return new Vector2(hintsLeftMargin, hintsTopMargin + (hintsLineHeight * lines));
+                case CANCEL_HINT_ID:
+                    if (Elements[USE_HINT_ID].Visible)
+                        lines = 2;
+                    return new Vector2(hintsLeftMargin, hintsTopMargin + (hintsLineHeight * (lines + 1)));
+                default:
+                    throw new ArgumentException("Element Id unimplemented");
+            }
         }
 
         private void UpdateHintTextElements()
         {
+            Elements[USE_HINT_ID].Hide(); // unimplemented feature
+
             if (_itemSelected == 0)
             {
-                Elements["unequip_hint"].Hide();
-                Elements["equip_hint"].Hide();
-                Elements["cancel_hint"].Hide();
-                Elements["drop_hint"].Hide();
+                Elements[UNEQUIP_HINT_ID].Hide();
+                Elements[EQUIP_HINT_ID].Hide();
+                Elements[CANCEL_HINT_ID].Hide();
+                Elements[DROP_HINT_ID].Hide();
             }
             else if (_itemSelected > 0 && _itemSelected < 6)
             {
-                Elements["unequip_hint"].Show();
-                Elements["equip_hint"].Hide();
+                Elements[UNEQUIP_HINT_ID].Show();
+                Elements[EQUIP_HINT_ID].Hide();
             }
             else if (_itemSelected >= 6)
             {
-                Elements["unequip_hint"].Hide();
-                Elements["equip_hint"].Show();
+                Elements[UNEQUIP_HINT_ID].Hide();
+                Elements[EQUIP_HINT_ID].Show();
             }
 
             if (_itemSelected > 0)
             {
-                Elements["cancel_hint"].Show();
-                Elements["drop_hint"].Show();
+                Elements[CANCEL_HINT_ID].Position = GetElementPosition(CANCEL_HINT_ID);
+                Elements[CANCEL_HINT_ID].Show();
+                Elements[DROP_HINT_ID].Position = GetElementPosition(DROP_HINT_ID);
+                Elements[DROP_HINT_ID].Show();
             }
         }
         #endregion
