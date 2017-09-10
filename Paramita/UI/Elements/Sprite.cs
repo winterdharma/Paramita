@@ -18,14 +18,6 @@ namespace Paramita.UI.Elements
         {
         }
 
-        public override void SubscribeToEvents()
-        {
-        }
-
-        public override void UnsubscribeFromEvents()
-        {
-        }
-
         public override void Update(GameTime gameTime)
         {
         }

@@ -43,13 +43,5 @@ namespace Paramita.UI.Base.Game
                 spriteBatch.DrawString(Font, Text, Position, Color);
             }
         }
-
-        public override void SubscribeToEvents()
-        {
-        }
-
-        public override void UnsubscribeFromEvents()
-        {
-        }
     }
 }

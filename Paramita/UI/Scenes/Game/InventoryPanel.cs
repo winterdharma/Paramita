@@ -328,7 +328,7 @@ namespace Paramita.UI.Base.Game
                     var image = Elements[key] as Image;
                     image.MouseOver += ImageMousedOver;
                     image.MouseGone += ImageMouseGone;
-                    image.LeftClicked += ImageClicked;
+                    image.LeftClick += ImageClicked;
                 }
             }
         }
