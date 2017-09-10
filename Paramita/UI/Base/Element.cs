@@ -15,11 +15,37 @@ namespace Paramita.UI.Base
     /// </summary>
     public abstract class Element : IDrawable
     {
+        #region Fields
         protected Rectangle _rectangle;
-        private Point _mousePosition;
-        private bool _mouseOver;
+        private bool _mouseOver = false;
         private bool _enabled;
+        #endregion
 
+        #region Events
+        public event EventHandler<EventArgs> LeftClick;
+        public event EventHandler<EventArgs> RightClick;
+        public event EventHandler<EventArgs> DoubleClick;
+        public event EventHandler<EventArgs> MouseOver;
+        public event EventHandler<EventArgs> MouseGone;
+        public event EventHandler<EventArgs> ScrollWheelChange;
+        #endregion
+
+        #region Constructors
+        public Element(string id, Component parent, Vector2 position, Color unhighlighted, 
+            Color highlighted, int drawOrder)
+        {
+            Id = id;
+            Parent = parent;
+            Position = position;
+            Color = unhighlighted;
+            UnhighlightedColor = unhighlighted;
+            HighlightedColor = highlighted;
+            Visible = false;
+            Enabled = false;
+        }
+        #endregion
+
+        #region Properties
         public string Id { get; set; }
         public bool Visible { get; set; }
         public bool Enabled
@@ -41,57 +67,12 @@ namespace Paramita.UI.Base
         public Color UnhighlightedColor { get; set; }
         public Rectangle Rectangle { get => _rectangle; set => _rectangle = value; }
         public Component Parent { get; set; }
+        #endregion
 
-        public event EventHandler<EventArgs> LeftClick;
-        public event EventHandler<EventArgs> RightClick;
-        public event EventHandler<EventArgs> DoubleClick;
-        public event EventHandler<EventArgs> MouseOver;
-        public event EventHandler<EventArgs> MouseGone;
-        public event EventHandler<EventArgs> ScrollWheelChange;
-
-
-        public Element(string id, Component parent, Vector2 position, Color unhighlighted, 
-            Color highlighted, int drawOrder)
-        {
-            Id = id;
-            Parent = parent;
-            Position = position;
-            Color = unhighlighted;
-            UnhighlightedColor = unhighlighted;
-            HighlightedColor = highlighted;
-            Visible = false;
-            Enabled = false;
-        }
-
+        #region Initialization
         protected abstract Rectangle CreateRectangle();
 
-        public abstract void Update(GameTime gameTime);
-
-        public abstract void Draw(GameTime gameTime, SpriteBatch spriteBatch);
-
-        public virtual void Show()
-        {
-            Visible = true;
-            Enabled = true;
-        }
-
-        public virtual void Hide()
-        {
-            Visible = false;
-            Enabled = false;
-        }
-
-        public void Highlight()
-        {
-            Color = HighlightedColor;
-        }
-
-        public void Unhighlight()
-        {
-            Color = UnhighlightedColor;
-        }
-
-        public virtual void SubscribeToEvents()
+        protected virtual void SubscribeToEvents()
         {
             Parent.Input.LeftMouseClick += OnLeftClick;
             Parent.Input.NewMousePosition += OnMouseMoved;
@@ -100,7 +81,7 @@ namespace Paramita.UI.Base
             Parent.Input.ScrollWheelMoved += OnScrollWheelMove;
         }
 
-        public virtual void UnsubscribeFromEvents()
+        protected virtual void UnsubscribeFromEvents()
         {
             Parent.Input.NewMousePosition -= OnMouseMoved;
             Parent.Input.LeftMouseClick -= OnLeftClick;
@@ -108,18 +89,19 @@ namespace Paramita.UI.Base
             Parent.Input.DoubleLeftMouseClick -= OnDoubleClick;
             Parent.Input.ScrollWheelMoved -= OnScrollWheelMove;
         }
+        #endregion
 
+        #region Event Handling
         private void OnMouseMoved(object sender, PointEventArgs e)
         {
-            _mousePosition = e.Point;
+            var mousePosition = e.Point;
 
-            if (!_mouseOver && Rectangle.Contains(_mousePosition))
+            if (!_mouseOver && Rectangle.Contains(mousePosition))
             {
                 _mouseOver = true;
                 MouseOver?.Invoke(this, new EventArgs());
-
             }
-            else if (_mouseOver && !Rectangle.Contains(_mousePosition))
+            else if (_mouseOver && !Rectangle.Contains(mousePosition))
             {
                 _mouseOver = false;
                 MouseGone?.Invoke(this, new EventArgs());
@@ -148,6 +130,36 @@ namespace Paramita.UI.Base
         {
             if (_mouseOver)
                 ScrollWheelChange?.Invoke(this, e);
+        }
+        #endregion
+
+        public virtual void Update(GameTime gameTime)
+        {
+
+        }
+
+        public abstract void Draw(GameTime gameTime, SpriteBatch spriteBatch);
+
+        public virtual void Show()
+        {
+            Visible = true;
+            Enabled = true;
+        }
+
+        public virtual void Hide()
+        {
+            Visible = false;
+            Enabled = false;
+        }
+
+        public virtual void Highlight()
+        {
+            Color = HighlightedColor;
+        }
+
+        public virtual void Unhighlight()
+        {
+            Color = UnhighlightedColor;
         }
     }
 }
