@@ -50,7 +50,11 @@ namespace Paramita
             IsMouseVisible = true;
 
             var keyboard = new KeyboardListener();
-            var mouse = new MouseListener();
+            var mouseSettings = new MouseListenerSettings
+            {
+                DoubleClickMilliseconds = 250
+            };
+            var mouse = new MouseListener(mouseSettings);
             InputListener = new InputListenerComponent(this, keyboard, mouse);
             InputResponder = new InputResponder(keyboard, mouse);
             keyboard.KeyPressed += CheckForExit;            

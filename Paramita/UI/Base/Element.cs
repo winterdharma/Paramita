@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Paramita.GameLogic.Utility;
 
 namespace Paramita.UI.Base
 {
@@ -15,6 +16,8 @@ namespace Paramita.UI.Base
     public abstract class Element : IDrawable
     {
         protected Rectangle _rectangle;
+        private Point _mousePosition;
+        private bool _mouseOver;
         private bool _enabled;
 
         public string Id { get; set; }
@@ -38,6 +41,14 @@ namespace Paramita.UI.Base
         public Color UnhighlightedColor { get; set; }
         public Rectangle Rectangle { get => _rectangle; set => _rectangle = value; }
         public Component Parent { get; set; }
+
+        public event EventHandler<EventArgs> LeftClick;
+        public event EventHandler<EventArgs> RightClick;
+        public event EventHandler<EventArgs> DoubleClick;
+        public event EventHandler<EventArgs> MouseOver;
+        public event EventHandler<EventArgs> MouseGone;
+        public event EventHandler<EventArgs> ScrollWheelChange;
+
 
         public Element(string id, Component parent, Vector2 position, Color unhighlighted, 
             Color highlighted, int drawOrder)
@@ -80,7 +91,63 @@ namespace Paramita.UI.Base
             Color = UnhighlightedColor;
         }
 
-        public abstract void SubscribeToEvents();
-        public abstract void UnsubscribeFromEvents();
+        public virtual void SubscribeToEvents()
+        {
+            Parent.Input.LeftMouseClick += OnLeftClick;
+            Parent.Input.NewMousePosition += OnMouseMoved;
+            Parent.Input.RightMouseClick += OnRightClick;
+            Parent.Input.DoubleLeftMouseClick += OnDoubleClick;
+            Parent.Input.ScrollWheelMoved += OnScrollWheelMove;
+        }
+
+        public virtual void UnsubscribeFromEvents()
+        {
+            Parent.Input.NewMousePosition -= OnMouseMoved;
+            Parent.Input.LeftMouseClick -= OnLeftClick;
+            Parent.Input.RightMouseClick -= OnRightClick;
+            Parent.Input.DoubleLeftMouseClick -= OnDoubleClick;
+            Parent.Input.ScrollWheelMoved -= OnScrollWheelMove;
+        }
+
+        private void OnMouseMoved(object sender, PointEventArgs e)
+        {
+            _mousePosition = e.Point;
+
+            if (!_mouseOver && Rectangle.Contains(_mousePosition))
+            {
+                _mouseOver = true;
+                MouseOver?.Invoke(this, new EventArgs());
+
+            }
+            else if (_mouseOver && !Rectangle.Contains(_mousePosition))
+            {
+                _mouseOver = false;
+                MouseGone?.Invoke(this, new EventArgs());
+            }
+        }
+
+        private void OnLeftClick(object sender, EventArgs e)
+        {
+            if (_mouseOver)
+                LeftClick?.Invoke(this, e);
+        }
+
+        private void OnDoubleClick(object sender, EventArgs e)
+        {
+            if (_mouseOver)
+                DoubleClick?.Invoke(this, e);
+        }
+
+        private void OnRightClick(object sender, EventArgs e)
+        {
+            if (_mouseOver)
+                RightClick?.Invoke(this, e);
+        }
+
+        private void OnScrollWheelMove(object sender, IntegerEventArgs e)
+        {
+            if (_mouseOver)
+                ScrollWheelChange?.Invoke(this, e);
+        }
     }
 }

@@ -45,8 +45,10 @@ namespace Paramita.UI.Input
         public event EventHandler<EventArgs> IKeyPressed;
         public event EventHandler<EventArgs> MouseClick;
         public event EventHandler<EventArgs> LeftMouseClick;
+        public event EventHandler<EventArgs> DoubleLeftMouseClick;
         public event EventHandler<EventArgs> RightMouseClick;
         public event EventHandler<PointEventArgs> NewMousePosition;
+        public event EventHandler<IntegerEventArgs> ScrollWheelMoved;
         #endregion
 
 
@@ -54,6 +56,7 @@ namespace Paramita.UI.Input
         {
             _keyboard = keyboard;
             _mouse = mouse;
+            
 
             SubscribeToInputListenerEvents();
         }
@@ -62,10 +65,12 @@ namespace Paramita.UI.Input
         {
             _keyboard.KeyPressed += OnKeyPressed;
             _mouse.MouseClicked += OnMouseClick;
-            _mouse.MouseMoved += OnMouseMove;
+            _mouse.MouseMoved += OnMouseMoved;
+            _mouse.MouseDoubleClicked += OnMouseDoubleClick;
+            _mouse.MouseWheelMoved += OnMouseScrollWheelMove;
         }
 
-        private void OnMouseMove(object sender, MouseEventArgs e)
+        private void OnMouseMoved(object sender, MouseEventArgs e)
         {
             NewMousePosition?.Invoke(this, new PointEventArgs(e.Position));
         }
@@ -75,6 +80,16 @@ namespace Paramita.UI.Input
             MouseClick?.Invoke(this, new EventArgs());
             if (e.Button == MouseButton.Left) LeftMouseClick?.Invoke(this, new EventArgs());
             else if (e.Button == MouseButton.Right) RightMouseClick?.Invoke(this, new EventArgs());
+        }
+
+        private void OnMouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButton.Left) DoubleLeftMouseClick?.Invoke(this, new EventArgs());
+        }
+
+        private void OnMouseScrollWheelMove(object sender, MouseEventArgs e)
+        {
+            ScrollWheelMoved?.Invoke(this, new IntegerEventArgs(e.ScrollWheelDelta));
         }
 
         private void OnKeyPressed(object sender, KeyboardEventArgs e)
