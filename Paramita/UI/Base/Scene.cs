@@ -27,7 +27,7 @@ namespace Paramita.UI.Base
         protected SpriteBatch _spriteBatch;
         protected readonly SceneManager _manager;
         protected ContentManager _content;
-        protected readonly List<Component> _components;
+        private List<Component> _components;
         
         public List<Component> Components { get { return _components; } }
         public InputResponder Input { get; set; }
@@ -46,6 +46,32 @@ namespace Paramita.UI.Base
         }
 
 
+        /// <summary>
+        /// Adds a Component object to the Scene's Components list and ensures the list is sorted
+        /// by DrawOrder.
+        /// </summary>
+        /// <param name="component"></param>
+        protected void AddComponent(Component component)
+        {
+            _components.Add(component);
+            _components.Sort(new Comparison<Component>(CompareDrawOrders));
+        }
+
+        /// <summary>
+        /// Compares the DrawOrder values of two objects that implement the IDrawable interface.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public int CompareDrawOrders(IDrawable x, IDrawable y)
+        {
+            if (x.DrawOrder > y.DrawOrder)
+                return 1;
+            else if (x.DrawOrder < y.DrawOrder)
+                return -1;
+            else
+                return 0;
+        }
 
         protected override void LoadContent()
         {

@@ -26,13 +26,12 @@ namespace Paramita.UI.Base
 
             Dungeon = new Dungeon();
 
-            _tileMapPanel = new TileMapPanel(this, Dungeon.GetCurrentLevelLayers());
-            _statusPanel = new StatusPanel(this, GameController.ArialBold, 10, new Point(0,720));
-            _inventoryPanel = new InventoryPanel(this);
-            _components.Add(_tileMapPanel);
-            _components.Add(_statusPanel);
-            _components.Add(_inventoryPanel);
-           // Dungeon.GetPlayerInventory(); // raises event that inventoryPanel catches
+            _tileMapPanel = new TileMapPanel(this, Dungeon.GetCurrentLevelLayers(), 0);
+            _statusPanel = new StatusPanel(this, GameController.ArialBold, 10, new Point(0,720), 1);
+            _inventoryPanel = new InventoryPanel(this, 2);
+            AddComponent(_tileMapPanel);
+            AddComponent(_statusPanel);
+            AddComponent(_inventoryPanel);
         }
 
         protected override void LoadContent()

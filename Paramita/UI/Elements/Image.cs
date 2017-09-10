@@ -20,8 +20,8 @@ namespace Paramita.UI.Elements
         public event EventHandler<EventArgs> MouseGone;
 
         public Image(string id, Component parent, Vector2 position, Texture2D texture, 
-            Color normal, Color highlighted, float scale = 1) 
-            : base(id, parent, position, normal, highlighted)
+            Color normal, Color highlighted, int drawOrder, float scale = 1) 
+            : base(id, parent, position, normal, highlighted, drawOrder)
         {
             Id = id;
             Texture = texture;

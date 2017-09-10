@@ -12,7 +12,7 @@ namespace Paramita.UI.Base
     /// An Element handles the logic and content for Update() and Draw() on a discrete part of a 
     /// UI Component.
     /// </summary>
-    public abstract class Element
+    public abstract class Element : IDrawable
     {
         protected Rectangle _rectangle;
         private bool _enabled;
@@ -31,6 +31,7 @@ namespace Paramita.UI.Base
                     UnsubscribeFromEvents();
             }
         }
+        public int DrawOrder { get; set; }
         public Vector2 Position { get; set; }
         public Color Color { get; set; }
         public Color HighlightedColor { get; set; }
@@ -38,7 +39,8 @@ namespace Paramita.UI.Base
         public Rectangle Rectangle { get => _rectangle; set => _rectangle = value; }
         public Component Parent { get; set; }
 
-        public Element(string id, Component parent, Vector2 position, Color unhighlighted, Color highlighted)
+        public Element(string id, Component parent, Vector2 position, Color unhighlighted, 
+            Color highlighted, int drawOrder)
         {
             Id = id;
             Parent = parent;

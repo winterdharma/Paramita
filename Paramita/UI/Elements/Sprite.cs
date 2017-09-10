@@ -8,7 +8,8 @@ namespace Paramita.UI.Elements
     public class Sprite : Element
     {
         public Sprite(string id, Component parent, Vector2 position, Color unhighlighted, 
-            Color highlighted) : base(id, parent, position, unhighlighted, highlighted)
+            Color highlighted, int drawOrder) 
+            : base(id, parent, position, unhighlighted, highlighted, drawOrder)
         {
 
         }

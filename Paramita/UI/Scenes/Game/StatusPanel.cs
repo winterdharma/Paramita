@@ -21,7 +21,8 @@ namespace Paramita.UI.Base.Game
 
 
 
-        public StatusPanel(Scene parent, SpriteFont font, int maxMsgs, Point origin) : base(parent)
+        public StatusPanel(Scene parent, SpriteFont font, int maxMsgs, Point origin, int drawOrder) 
+            : base(parent, drawOrder)
         {
             maxMessages = maxMsgs;
 

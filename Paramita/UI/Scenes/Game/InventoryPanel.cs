@@ -41,10 +41,6 @@ namespace Paramita.UI.Base.Game
      */
     public class InventoryPanel : Component
     {
-        private List<string> _inventorySlots = new List<string>()
-            { "left_hand", "right_hand", "head", "body", "feet",
-                "other1", "other2", "other3", "other4", "other5"};
-
         private static Dictionary<string, Texture2D> _defaultSlotTextures 
             = new Dictionary<string, Texture2D>();
 
@@ -72,6 +68,33 @@ namespace Paramita.UI.Base.Game
         private const string UNEQUIP_HINT_TEXT = "Un(e)quip Item";
         private const string CANCEL_HINT_ID = "cancel_hint";
         private const string CANCEL_HINT_TEXT = "(C)ancel Selection";
+        private const string BACKGROUND_OPEN_ID = "background_open";
+        private const string BACKGROUND_CLOSED_ID = "background_closed";
+        private const string MINIMIZE_ID = "minimize_icon";
+        private const string LEFT_HAND_SLOT = "left_hand";
+        private const string RIGHT_HAND_SLOT = "right_hand";
+        private const string HEAD_SLOT = "head";
+        private const string BODY_SLOT = "body";
+        private const string FEET_SLOT = "feet";
+        private const string OTHER1_SLOT = "other1";
+        private const string OTHER2_SLOT = "other2";
+        private const string OTHER3_SLOT = "other3";
+        private const string OTHER4_SLOT = "other4";
+        private const string OTHER5_SLOT = "other5";
+        private const string LEFT_HAND_ITEM = "left_hand_item";
+        private const string RIGHT_HAND_ITEM = "right_hand_item";
+        private const string HEAD_ITEM = "head_item";
+        private const string BODY_ITEM = "body_item";
+        private const string FEET_ITEM = "feet_item";
+        private const string OTHER1_ITEM = "other1_item";
+        private const string OTHER2_ITEM = "other2_item";
+        private const string OTHER3_ITEM = "other3_item";
+        private const string OTHER4_ITEM = "other4_item";
+        private const string OTHER5_ITEM = "other5_item";
+
+        private List<string> _inventorySlots = new List<string>()
+            { LEFT_HAND_SLOT, RIGHT_HAND_SLOT, HEAD_SLOT, BODY_SLOT, FEET_SLOT,
+                OTHER1_SLOT, OTHER2_SLOT, OTHER3_SLOT, OTHER4_SLOT, OTHER5_SLOT};
 
         private readonly SpriteFont HEADING_FONT = GameController.ArialBold;
         private readonly SpriteFont HINT_FONT = GameController.NotoSans;
@@ -89,7 +112,7 @@ namespace Paramita.UI.Base.Game
         public event EventHandler<InventoryEventArgs> OnPlayerUsedItem;
 
 
-        public InventoryPanel(Scene parent) : base(parent)
+        public InventoryPanel(Scene parent, int drawOrder) : base(parent, drawOrder)
         {
             _parentScreen = Parent.ScreenRectangle;
             InitializePanel();
@@ -449,6 +472,7 @@ namespace Paramita.UI.Base.Game
         #region Images
         private void InitializeImageElements()
         {
+
             Elements["background_closed"] = CreateClosedPanelBackground();
             Elements["background_open"] = CreateOpenPanelBackground();
             Elements["minimize_icon"] = CreateMinimizeIcon();
@@ -465,7 +489,8 @@ namespace Paramita.UI.Base.Game
                 _defaultSlotTextures["white_background"],
                 Color.DarkBlue,
                 Color.White,
-                PanelRectangle.Size
+                PanelRectangle.Size,
+                0
                 );
             background.Show();
             return background;
@@ -480,7 +505,8 @@ namespace Paramita.UI.Base.Game
                 _defaultSlotTextures["background"],
                 Color.White,
                 Color.White,
-                PanelRectangle.Size
+                PanelRectangle.Size,
+                0
                 );
             background.Hide();
             return background;
@@ -495,6 +521,7 @@ namespace Paramita.UI.Base.Game
                 DefaultTextures["minimize_icon"], 
                 Color.Gray, 
                 Color.White,
+                1, 
                 0.0784f
                 );
             image.Hide();
@@ -517,7 +544,8 @@ namespace Paramita.UI.Base.Game
                     GetSpriteElementPosition(i),
                     _defaultSlotTextures[_inventorySlots[i]],
                     Color.White,
-                    Color.Red
+                    Color.Red,
+                    1
                     );
                 Elements[_inventorySlots[i]].Hide();
             }
@@ -536,7 +564,7 @@ namespace Paramita.UI.Base.Game
                     var slotImage = Elements[slot];
                     var item = new Image("item_" + ConvertItemTypeToString(_inventory[slot]) + ++count,
                         this, slotImage.Position, ItemTextures.ItemTextureMap[_inventory[slot]],
-                        Color.White, Color.Red);
+                        Color.White, Color.Red, 2);
                     Elements[item.Id] = item;
                 }
             }
@@ -636,7 +664,7 @@ namespace Paramita.UI.Base.Game
                 var id = textIds[i];
                 var str = textContents[i];
                 Elements[id] = new LineOfText(id, this, GetElementPosition(id), str, fonts[i], 
-                    highlights[i], unhighlights[i]);
+                    highlights[i], unhighlights[i], 1);
 
                 if (showElement[i])
                     Elements[id].Show();

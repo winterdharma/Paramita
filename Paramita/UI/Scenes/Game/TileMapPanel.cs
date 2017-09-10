@@ -33,7 +33,7 @@ namespace Paramita.UI.Base.Game
 
 
         public TileMapPanel(Scene parent, Tuple<TileType[,], ItemType[,], 
-            Tuple<ActorType, Compass, bool>[,]> tileMapLayers) : base(parent)
+            Tuple<ActorType, Compass, bool>[,]> tileMapLayers, int drawOrder) : base(parent, drawOrder)
         {
             _viewport = parent.ScreenRectangle;
             _drawFrame = new Rectangle(0, 0, TILE_SIZE, TILE_SIZE);

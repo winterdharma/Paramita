@@ -5,14 +5,12 @@ using Paramita.UI.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Paramita.UI.Base
 {
     /// <summary>An collection of several elements that combine to form a single component of a 
     /// Scene.</summary>
-    public abstract class Component
+    public abstract class Component : IDrawable
     {
         protected Dictionary<string, Element> _elements = new Dictionary<string, Element>();
         protected List<Element> _visibleElements = new List<Element>();
@@ -21,10 +19,11 @@ namespace Paramita.UI.Base
 
         public event EventHandler<RectangleEventArgs> RectangleUpdated;
 
-        public Component(Scene parent)
+        public Component(Scene parent, int drawOrder)
         {
             Parent = parent;
             Input = parent.Input;
+            DrawOrder = drawOrder;
         }
 
         public Scene Parent { get; set; }
@@ -48,6 +47,7 @@ namespace Paramita.UI.Base
         }
         public bool Enabled { get; internal set; }
         public bool Visible { get; internal set; }
+        public int DrawOrder { get; set; }
 
         public virtual void Update(GameTime gameTime)
         {
@@ -84,6 +84,7 @@ namespace Paramita.UI.Base
             var visibleElements = new List<Element>();
             visibleElements = _elements.Values.ToList();
             visibleElements.RemoveAll(e => !e.Visible);
+            visibleElements.Sort(new Comparison<Element>(Parent.CompareDrawOrders));
             return visibleElements;
         }
         #endregion

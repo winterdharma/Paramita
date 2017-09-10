@@ -12,8 +12,8 @@ namespace Paramita.UI.Base.Game
         public SpriteFont Font { get; set; }
 
         public LineOfText(string id, Component parent, Vector2 position, string text, 
-            SpriteFont font, Color unhighlighted, Color highlighted) 
-            : base(id, parent, position, unhighlighted, highlighted)
+            SpriteFont font, Color unhighlighted, Color highlighted, int drawOrder) 
+            : base(id, parent, position, unhighlighted, highlighted, drawOrder)
         {
             Id = id;
             Text = text;
