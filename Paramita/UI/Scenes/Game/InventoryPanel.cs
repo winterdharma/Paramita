@@ -7,6 +7,7 @@ using Paramita.GameLogic.Utility;
 using Paramita.UI.Elements;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Paramita.UI.Base.Game
 {
@@ -48,7 +49,6 @@ namespace Paramita.UI.Base.Game
             = new Dictionary<string, ItemType>();
         private int _gold = 0;
 
-        private Rectangle _parentScreen;
         private const int PANEL_WIDTH_OPEN = 250;
         private const int PANEL_WIDTH_CLOSED = 150;
         private const int PANEL_HEIGHT_OPEN = 330;
@@ -114,9 +114,10 @@ namespace Paramita.UI.Base.Game
 
         public InventoryPanel(Scene parent, int drawOrder) : base(parent, drawOrder)
         {
-            _parentScreen = Parent.ScreenRectangle;
-            InitializePanel();
+            //InitializePanel();
+            IsOpen = false;
             SubscribeToInputEvents();
+            InitializeInventoryData();
         }
 
 
@@ -153,16 +154,71 @@ namespace Paramita.UI.Base.Game
         #region Initialization
         private void InitializePanel()
         {
-            IsOpen = false;
             UpdatePanelRectangle();
             InitializeElements();
-            InitializeInventoryData();
         }
 
-        private void InitializeElements()
+        protected override Dictionary<string, Element> InitializeElements()
         {
-            InitializeImageElements();
-            InitializeTextElements();
+            var images = InitializeImageElements();
+            var texts = InitializeTextElements();
+            texts.ToList().ForEach(x => images.Add(x.Key, x.Value));
+            return images;
+        }
+
+        private Dictionary<string, Element> InitializeImageElements()
+        {
+            var images = new Dictionary<string, Element>();
+            images["background_closed"] = CreateClosedPanelBackground();
+            images["background_open"] = CreateOpenPanelBackground();
+            images["minimize_icon"] = CreateMinimizeIcon();
+            images["minimize_icon"].Hide();
+            var slotImages = CreateInventorySlotImages();
+            slotImages.ToList().ForEach(x => images.Add(x.Key, x.Value));
+            return images;
+        }
+
+        private Dictionary<string, Element> InitializeTextElements()
+        {
+            var texts = new Dictionary<string, Element>();
+            var textIds = new List<string>
+            {
+                HEADING_ID, EQUIP_HINT_ID, UNEQUIP_HINT_ID, USE_HINT_ID, DROP_HINT_ID,
+                 CANCEL_HINT_ID
+            };
+            var textContents = new List<string>
+            {
+                HEADING_TEXT, EQUIP_HINT_TEXT, UNEQUIP_HINT_TEXT, USE_HINT_TEXT, DROP_HINT_TEXT,
+                 CANCEL_HINT_TEXT
+            };
+            var fonts = new List<SpriteFont>
+            {
+                HEADING_FONT, HINT_FONT, HINT_FONT, HINT_FONT, HINT_FONT, HINT_FONT
+            };
+            var highlights = new List<Color> { WHITE, WHITE, WHITE, WHITE, WHITE, WHITE };
+            var unhighlights = new List<Color> { WHITE, WHITE, WHITE, WHITE, WHITE, WHITE };
+            var showElement = new List<bool> { true, false, false, false, false, false };
+            var drawOrder = new List<int> { 1, 1, 1, 1, 1, 1 };
+
+            for (var i = 0; i < textIds.Count; i++)
+            {
+                var id = textIds[i];
+                var str = textContents[i];
+                texts[id] = new LineOfText(id, this, GetElementPosition(id, showElement[3]), str, fonts[i],
+                    highlights[i], unhighlights[i], drawOrder[i]);
+
+                if (showElement[i])
+                    texts[id].Show();
+                else
+                    texts[id].Hide();
+            }
+
+            // intended for future addition of text element showing info about selected item
+            _itemInfoPosition = new Vector2(
+                _panelRectangle.Right - (PANEL_WIDTH_OPEN - 10),
+                _panelRectangle.Top + 140);
+
+            return texts;
         }
 
         private void InitializeInventoryData()
@@ -180,7 +236,7 @@ namespace Paramita.UI.Base.Game
             IsOpen = !IsOpen;
 
             UpdateEventSubscriptions();
-            UpdatePanelRectangle();
+            PanelRectangle = UpdatePanelRectangle();
 
             UpdateBackground();
             UpdateHeading();
@@ -202,7 +258,6 @@ namespace Paramita.UI.Base.Game
                 Input.LeftMouseClick -= OnMouseClicked;
                 Input.NewMousePosition -= OnMouseMoved;
             }
-            
         }
 
         private void UpdateBackground()
@@ -221,7 +276,7 @@ namespace Paramita.UI.Base.Game
 
         private void UpdateHeading()
         {
-            Elements["heading"].Position = GetElementPosition(HEADING_ID);
+            Elements["heading"].Position = GetElementPosition(HEADING_ID, Elements[USE_HINT_ID].Visible);
         }
 
         private void UpdateElements()
@@ -247,17 +302,17 @@ namespace Paramita.UI.Base.Game
 
 
         #region Update PanelRectangle Methods
-        private void UpdatePanelRectangle()
+        protected override Rectangle UpdatePanelRectangle()
         {
-            PanelRectangle = new Rectangle(GetPanelOrigin(), GetPanelSize());
+            return new Rectangle(GetPanelOrigin(), GetPanelSize());
         }
 
         private Point GetPanelOrigin(int offsetTop = 0, int offsetRight = 0)
         {
             if (IsOpen)
-                return new Point(_parentScreen.Width - PANEL_WIDTH_OPEN - offsetRight, offsetTop);
+                return new Point(_parentRectangle.Width - PANEL_WIDTH_OPEN - offsetRight, offsetTop);
             else
-                return new Point(_parentScreen.Width - PANEL_WIDTH_CLOSED - offsetRight, offsetTop);
+                return new Point(_parentRectangle.Width - PANEL_WIDTH_CLOSED - offsetRight, offsetTop);
         }
 
         private Point GetPanelSize()
@@ -470,16 +525,6 @@ namespace Paramita.UI.Base.Game
 
 
         #region Images
-        private void InitializeImageElements()
-        {
-
-            Elements["background_closed"] = CreateClosedPanelBackground();
-            Elements["background_open"] = CreateOpenPanelBackground();
-            Elements["minimize_icon"] = CreateMinimizeIcon();
-            Elements["minimize_icon"].Hide();
-            CreateInventorySlotImages();            
-        }
-
         private Image CreateClosedPanelBackground()
         {
             var background = new Background(
@@ -528,17 +573,12 @@ namespace Paramita.UI.Base.Game
             return image;
         }
 
-        private void UpdateItemImages()
+        private Dictionary<string, Element> CreateInventorySlotImages()
         {
-            RemoveItemImages();
-            CreateItemImages();
-        }
-
-        private void CreateInventorySlotImages()
-        {
+            var slotImages = new Dictionary<string, Element>();
             for (int i = 0; i < _inventorySlots.Count; i++)
             {
-                Elements[_inventorySlots[i]] = new Image(
+                slotImages[_inventorySlots[i]] = new Image(
                     _inventorySlots[i],
                     this,
                     GetSpriteElementPosition(i),
@@ -547,8 +587,15 @@ namespace Paramita.UI.Base.Game
                     Color.Red,
                     1
                     );
-                Elements[_inventorySlots[i]].Hide();
+                slotImages[_inventorySlots[i]].Hide();
             }
+            return slotImages;
+        }
+
+        private void UpdateItemImages()
+        {
+            RemoveItemImages();
+            CreateItemImages();
         }
 
         private void CreateItemImages()
@@ -639,46 +686,7 @@ namespace Paramita.UI.Base.Game
 
 
         #region Text Elements
-        private void InitializeTextElements()
-        {
-            var textIds = new List<string>
-            {
-                HEADING_ID, EQUIP_HINT_ID, UNEQUIP_HINT_ID, USE_HINT_ID, DROP_HINT_ID,  
-                 CANCEL_HINT_ID
-            };
-            var textContents = new List<string>
-            {
-                HEADING_TEXT, EQUIP_HINT_TEXT, UNEQUIP_HINT_TEXT, USE_HINT_TEXT, DROP_HINT_TEXT,  
-                 CANCEL_HINT_TEXT
-            };
-            var fonts = new List<SpriteFont>
-            {
-                HEADING_FONT, HINT_FONT, HINT_FONT, HINT_FONT, HINT_FONT, HINT_FONT
-            };
-            var highlights = new List<Color> { WHITE, WHITE, WHITE, WHITE, WHITE, WHITE };
-            var unhighlights = new List<Color> { WHITE, WHITE, WHITE, WHITE, WHITE, WHITE };
-            var showElement = new List<bool> { true, false, false, false, false , false };
-
-            for (var i = 0; i < textIds.Count; i++)
-            {
-                var id = textIds[i];
-                var str = textContents[i];
-                Elements[id] = new LineOfText(id, this, GetElementPosition(id), str, fonts[i], 
-                    highlights[i], unhighlights[i], 1);
-
-                if (showElement[i])
-                    Elements[id].Show();
-                else
-                    Elements[id].Hide();
-            }
-
-            // intended for future addition of text element showing info about selected item
-            _itemInfoPosition = new Vector2(
-                _panelRectangle.Right - (PANEL_WIDTH_OPEN - 10),
-                _panelRectangle.Top + 140);
-        }
-
-        private Vector2 GetElementPosition(string id)
+        private Vector2 GetElementPosition(string id, bool isUseHintVisible )
         {
             var hintsLeftMargin = PanelRectangle.Right - (PANEL_WIDTH_OPEN - 10);
             var hintsTopMargin = 150;
@@ -698,11 +706,11 @@ namespace Paramita.UI.Base.Game
                 case USE_HINT_ID:
                     return new Vector2(hintsLeftMargin, hintsTopMargin + hintsLineHeight);
                 case DROP_HINT_ID:
-                    if (Elements[USE_HINT_ID].Visible)
+                    if (isUseHintVisible)
                         lines = 2;
                     return new Vector2(hintsLeftMargin, hintsTopMargin + (hintsLineHeight * lines));
                 case CANCEL_HINT_ID:
-                    if (Elements[USE_HINT_ID].Visible)
+                    if (isUseHintVisible)
                         lines = 2;
                     return new Vector2(hintsLeftMargin, hintsTopMargin + (hintsLineHeight * (lines + 1)));
                 default:
@@ -734,9 +742,11 @@ namespace Paramita.UI.Base.Game
 
             if (_itemSelected > 0)
             {
-                Elements[CANCEL_HINT_ID].Position = GetElementPosition(CANCEL_HINT_ID);
+                Elements[CANCEL_HINT_ID].Position 
+                    = GetElementPosition(CANCEL_HINT_ID, Elements[USE_HINT_ID].Visible);
                 Elements[CANCEL_HINT_ID].Show();
-                Elements[DROP_HINT_ID].Position = GetElementPosition(DROP_HINT_ID);
+                Elements[DROP_HINT_ID].Position 
+                    = GetElementPosition(DROP_HINT_ID, Elements[USE_HINT_ID].Visible);
                 Elements[DROP_HINT_ID].Show();
             }
         }

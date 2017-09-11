@@ -17,17 +17,16 @@ namespace Paramita.UI.Base
     {
         #region Fields
         protected Rectangle _rectangle;
-        private bool _mouseOver = false;
         private bool _enabled;
         #endregion
 
         #region Events
-        public event EventHandler<EventArgs> LeftClick;
-        public event EventHandler<EventArgs> RightClick;
-        public event EventHandler<EventArgs> DoubleClick;
-        public event EventHandler<EventArgs> MouseOver;
-        public event EventHandler<EventArgs> MouseGone;
-        public event EventHandler<EventArgs> ScrollWheelChange;
+        public event EventHandler LeftClick;
+        public event EventHandler RightClick;
+        public event EventHandler DoubleClick;
+        public event EventHandler MouseOver;
+        public event EventHandler MouseGone;
+        public event EventHandler<IntegerEventArgs> ScrollWheelChange;
         #endregion
 
         #region Constructors
@@ -42,6 +41,7 @@ namespace Paramita.UI.Base
             HighlightedColor = highlighted;
             Visible = false;
             Enabled = false;
+            IsMouseOver = false;
         }
         #endregion
 
@@ -61,6 +61,7 @@ namespace Paramita.UI.Base
             }
         }
         public int DrawOrder { get; set; }
+        public bool IsMouseOver { get; private set; }
         public Vector2 Position { get; set; }
         public Color Color { get; set; }
         public Color HighlightedColor { get; set; }
@@ -96,39 +97,39 @@ namespace Paramita.UI.Base
         {
             var mousePosition = e.Point;
 
-            if (!_mouseOver && Rectangle.Contains(mousePosition))
+            if (!IsMouseOver && Rectangle.Contains(mousePosition))
             {
-                _mouseOver = true;
+                IsMouseOver = true;
                 MouseOver?.Invoke(this, new EventArgs());
             }
-            else if (_mouseOver && !Rectangle.Contains(mousePosition))
+            else if (IsMouseOver && !Rectangle.Contains(mousePosition))
             {
-                _mouseOver = false;
+                IsMouseOver = false;
                 MouseGone?.Invoke(this, new EventArgs());
             }
         }
 
         private void OnLeftClick(object sender, EventArgs e)
         {
-            if (_mouseOver)
+            if (IsMouseOver)
                 LeftClick?.Invoke(this, e);
         }
 
         private void OnDoubleClick(object sender, EventArgs e)
         {
-            if (_mouseOver)
+            if (IsMouseOver)
                 DoubleClick?.Invoke(this, e);
         }
 
         private void OnRightClick(object sender, EventArgs e)
         {
-            if (_mouseOver)
+            if (IsMouseOver)
                 RightClick?.Invoke(this, e);
         }
 
         private void OnScrollWheelMove(object sender, IntegerEventArgs e)
         {
-            if (_mouseOver)
+            if (IsMouseOver)
                 ScrollWheelChange?.Invoke(this, e);
         }
         #endregion

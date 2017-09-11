@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Input.InputListeners;
 using Paramita.GameLogic.Utility;
 using System;
@@ -57,9 +58,11 @@ namespace Paramita.UI.Input
             _keyboard = keyboard;
             _mouse = mouse;
             
-
             SubscribeToInputListenerEvents();
         }
+
+        public Point PreviousMousePosition { get; private set; }
+        public Point CurrentMousePosition { get; private set; }
 
         private void SubscribeToInputListenerEvents()
         {
@@ -72,6 +75,8 @@ namespace Paramita.UI.Input
 
         private void OnMouseMoved(object sender, MouseEventArgs e)
         {
+            PreviousMousePosition = CurrentMousePosition;
+            CurrentMousePosition = e.Position;
             NewMousePosition?.Invoke(this, new PointEventArgs(e.Position));
         }
 

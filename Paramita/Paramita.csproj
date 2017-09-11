@@ -42,6 +42,7 @@
     <StartupObject>Paramita.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="UI\Base\ElementEventArgs.cs" />
     <Compile Include="UI\Base\IDrawable.cs" />
     <Compile Include="UI\BeingSprite.cs" />
     <Compile Include="UI\Elements\Background.cs" />

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Paramita.GameLogic;
 using Paramita.UI.Input;
 using System;
+using System.Collections.Generic;
 
 namespace Paramita.UI.Base.Game
 {
@@ -122,7 +123,7 @@ namespace Paramita.UI.Base.Game
 
 
         // Updates the messages elapsed time and colors
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
             for(int x = 0; x < messages.Length; x++)
             {
@@ -141,7 +142,7 @@ namespace Paramita.UI.Base.Game
 
 
         // Draws the messages to the GameScene
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
             for(int x = 0; x < messages.Length; x++)
@@ -155,6 +156,16 @@ namespace Paramita.UI.Base.Game
                 }
             }
             spriteBatch.End();
+        }
+
+        protected override Dictionary<string, Element> InitializeElements()
+        {
+            return new Dictionary<string, Element>();
+        }
+
+        protected override Rectangle UpdatePanelRectangle()
+        {
+            return new Rectangle();
         }
     }
 }

@@ -273,5 +273,15 @@ namespace Paramita.UI.Base.Game
         {
             return new Point((int)position.X / TILE_SIZE, (int)position.Y / TILE_SIZE);
         }
+
+        protected override Dictionary<string, Element> InitializeElements()
+        {
+            return new Dictionary<string, Element>();
+        }
+
+        protected override Rectangle UpdatePanelRectangle()
+        {
+            return new Rectangle();
+        }
     }
 }
