@@ -154,6 +154,14 @@ namespace Paramita.UI.Base
         {
             throw new NotImplementedException();
         }
+
+        protected override void SubscribeToKeyboardEvents()
+        {
+        }
+
+        protected override void UnsubscribeFromKeyboardEvents()
+        {
+        }
         #endregion
     }
 }

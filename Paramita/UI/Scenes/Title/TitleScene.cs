@@ -59,7 +59,7 @@ namespace Paramita.UI.Base
 
         private void HandleInput(object sender, EventArgs e)
         {
-            _manager.ChangeScene(_game.MenuScene);
+            _manager.ChangeScene(Game.MenuScene);
             Hide();
         }
 
@@ -93,6 +93,14 @@ namespace Paramita.UI.Base
             base.Show();
             Input.KeyPressed += HandleInput;
             Input.MouseClick += HandleInput;
+        }
+
+        protected override void SubscribeToKeyboardEvents()
+        {
+        }
+
+        protected override void UnsubscribeFromKeyboardEvents()
+        {
         }
     }
 }

@@ -61,7 +61,7 @@ namespace Paramita.UI.Base
         {
             if (_menuButtons.SelectedIndex == 0)
             {
-                _manager.PushScene(_game.GameScene);
+                _manager.PushScene(Game.GameScene);
                 Hide();
             }
 
@@ -107,6 +107,14 @@ namespace Paramita.UI.Base
             _spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        protected override void SubscribeToKeyboardEvents()
+        {
+        }
+
+        protected override void UnsubscribeFromKeyboardEvents()
+        {
         }
     }
 }
