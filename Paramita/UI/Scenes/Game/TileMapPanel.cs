@@ -197,12 +197,12 @@ namespace Paramita.UI.Base.Game
 
 
 
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
             Camera.LockToSprite(_mapSizeInPixels, _playerPosition, _viewport);
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             Point min; Point max;
             int tilesWide = _tileArray.GetLength(0);

@@ -29,9 +29,10 @@ namespace Paramita.UI.Base
             _tileMapPanel = new TileMapPanel(this, Dungeon.GetCurrentLevelLayers(), 0);
             _statusPanel = new StatusPanel(this, GameController.ArialBold, 10, new Point(0,720), 1);
             _inventoryPanel = new InventoryPanel(this, 2);
-            AddComponent(_tileMapPanel);
-            AddComponent(_statusPanel);
-            AddComponent(_inventoryPanel);
+
+            AddComponents(_tileMapPanel, _statusPanel, _inventoryPanel);
+
+            SubscribeToEvents();
         }
 
         protected override void LoadContent()
@@ -69,57 +70,16 @@ namespace Paramita.UI.Base
         {
             Dungeon.Update();
 
-            _tileMapPanel.Update(gameTime);
-            _statusPanel.Update(gameTime);
-            _inventoryPanel.Update(gameTime);
-
             base.Update(gameTime);
         }
 
 
         public override void Draw(GameTime gameTime)
         {
-            _tileMapPanel.Draw(gameTime, _spriteBatch);
-            _statusPanel.Draw(gameTime, _spriteBatch);
-            _inventoryPanel.Draw(gameTime, _spriteBatch);
+            base.Draw(gameTime);
         }
-
-        public override void Show()
-        {
-            base.Show();
-            SubscribeToEvents();
-        }
-
-        public override void Hide()
-        {
-            base.Hide();
-            UnsubscribeFromEvents();
-        }
-
 
         #region Event Handling
-        private void SubscribeToEvents()
-        {
-            Input.LeftKeyPressed += MovePlayerWest;
-            Input.RightKeyPressed += MovePlayerEast;
-            Input.UpKeyPressed += MovePlayerNorth;
-            Input.DownKeyPressed += MovePlayerSouth;
-            _inventoryPanel.OnPlayerDroppedItem += PlayerDropItemEventHandler;
-            _inventoryPanel.OnPlayerEquippedItem += PlayerEquipItemEventHandler;
-            _inventoryPanel.OnPlayerUsedItem += PlayerUseItemEventHandler;
-        }
-
-        private void UnsubscribeFromEvents()
-        {
-            Input.LeftKeyPressed -= MovePlayerWest;
-            Input.RightKeyPressed -= MovePlayerEast;
-            Input.UpKeyPressed -= MovePlayerNorth;
-            Input.DownKeyPressed -= MovePlayerSouth;
-            _inventoryPanel.OnPlayerDroppedItem -= PlayerDropItemEventHandler;
-            _inventoryPanel.OnPlayerEquippedItem -= PlayerEquipItemEventHandler;
-            _inventoryPanel.OnPlayerUsedItem -= PlayerUseItemEventHandler;
-        }
-
         private void MovePlayerWest(object sender, EventArgs e)
         {
             Dungeon.MovePlayer(Compass.West);
@@ -157,10 +117,24 @@ namespace Paramita.UI.Base
 
         protected override void SubscribeToKeyboardEvents()
         {
+            Input.LeftKeyPressed += MovePlayerWest;
+            Input.RightKeyPressed += MovePlayerEast;
+            Input.UpKeyPressed += MovePlayerNorth;
+            Input.DownKeyPressed += MovePlayerSouth;
+            _inventoryPanel.OnPlayerDroppedItem += PlayerDropItemEventHandler;
+            _inventoryPanel.OnPlayerEquippedItem += PlayerEquipItemEventHandler;
+            _inventoryPanel.OnPlayerUsedItem += PlayerUseItemEventHandler;
         }
 
         protected override void UnsubscribeFromKeyboardEvents()
         {
+            Input.LeftKeyPressed -= MovePlayerWest;
+            Input.RightKeyPressed -= MovePlayerEast;
+            Input.UpKeyPressed -= MovePlayerNorth;
+            Input.DownKeyPressed -= MovePlayerSouth;
+            _inventoryPanel.OnPlayerDroppedItem -= PlayerDropItemEventHandler;
+            _inventoryPanel.OnPlayerEquippedItem -= PlayerEquipItemEventHandler;
+            _inventoryPanel.OnPlayerUsedItem -= PlayerUseItemEventHandler;
         }
         #endregion
     }

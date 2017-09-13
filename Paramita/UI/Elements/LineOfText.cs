@@ -20,6 +20,7 @@ namespace Paramita.UI.Base.Game
             Font = font;
             Position = position;
             Rectangle = CreateRectangle();
+            DrawOrder = drawOrder;
         }
 
         protected override Rectangle CreateRectangle()

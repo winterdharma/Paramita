@@ -236,7 +236,7 @@ namespace Paramita.UI.Base.Game
             IsOpen = !IsOpen;
 
             UpdateEventSubscriptions();
-            PanelRectangle = UpdatePanelRectangle();
+            Rectangle = UpdatePanelRectangle();
 
             UpdateBackground();
             UpdateHeading();
@@ -530,11 +530,11 @@ namespace Paramita.UI.Base.Game
             var background = new Background(
                 "background_closed",
                 this,
-                new Vector2(PanelRectangle.X, PanelRectangle.Y),
+                new Vector2(Rectangle.X, Rectangle.Y),
                 _defaultSlotTextures["white_background"],
                 Color.DarkBlue,
                 Color.White,
-                PanelRectangle.Size,
+                Rectangle.Size,
                 0
                 );
             background.Show();
@@ -546,11 +546,11 @@ namespace Paramita.UI.Base.Game
             var background = new Background(
                 "background_open",
                 this,
-                new Vector2(PanelRectangle.X, PanelRectangle.Y),
+                new Vector2(Rectangle.X, Rectangle.Y),
                 _defaultSlotTextures["background"],
                 Color.White,
                 Color.White,
-                PanelRectangle.Size,
+                Rectangle.Size,
                 0
                 );
             background.Hide();
@@ -562,7 +562,7 @@ namespace Paramita.UI.Base.Game
             var image = new Image(
                 "minimize_icon", 
                 this, 
-                new Vector2(PanelRectangle.Right - 20, PanelRectangle.Top + 5),
+                new Vector2(Rectangle.Right - 20, Rectangle.Top + 5),
                 DefaultTextures["minimize_icon"], 
                 Color.Gray, 
                 Color.White,
@@ -612,6 +612,12 @@ namespace Paramita.UI.Base.Game
                     var item = new Image("item_" + ConvertItemTypeToString(_inventory[slot]) + ++count,
                         this, slotImage.Position, ItemTextures.ItemTextureMap[_inventory[slot]],
                         Color.White, Color.Red, 2);
+
+                    if (IsOpen)
+                        item.Show();
+                    else
+                        item.Hide();
+
                     Elements[item.Id] = item;
                 }
             }
@@ -688,13 +694,13 @@ namespace Paramita.UI.Base.Game
         #region Text Elements
         private Vector2 GetElementPosition(string id, bool isUseHintVisible )
         {
-            var hintsLeftMargin = PanelRectangle.Right - (PANEL_WIDTH_OPEN - 10);
+            var hintsLeftMargin = Rectangle.Right - (PANEL_WIDTH_OPEN - 10);
             var hintsTopMargin = 150;
             var hintsLineHeight = HINT_FONT.MeasureString("Hint").Y;
             var lines = 1;
             var headingSize = HEADING_FONT.MeasureString(HEADING_TEXT);
-            var headingLeftMargin = PanelRectangle.Left + ((PanelRectangle.Width / 2) - (headingSize.X / 2));
-            var headingTopMargin = PanelRectangle.Top + 5;
+            var headingLeftMargin = Rectangle.Left + ((Rectangle.Width / 2) - (headingSize.X / 2));
+            var headingTopMargin = Rectangle.Top + 5;
 
             switch (id)
             {

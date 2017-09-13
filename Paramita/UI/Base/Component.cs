@@ -45,7 +45,7 @@ namespace Paramita.UI.Base
         #region Properties
         public Scene Parent { get; set; }
         public InputResponder Input { get; private set; }
-        public Rectangle PanelRectangle
+        public Rectangle Rectangle
         {
             get => _panelRectangle;
             protected set
@@ -75,13 +75,14 @@ namespace Paramita.UI.Base
             }
         }
         public bool Visible { get; internal set; }
+        public bool IsMouseOver { get; private set; }
         public int DrawOrder { get; set; }
         #endregion
 
         #region Initialization
         protected virtual void Initialize()
         {
-            PanelRectangle = UpdatePanelRectangle();
+            Rectangle = UpdatePanelRectangle();
             Elements = InitializeElements();
             _visibleElements = GetVisibleElements();
             _enabledElements = GetEnabledElements();
@@ -123,7 +124,7 @@ namespace Paramita.UI.Base
         {
             var element = sender as Element;
 
-            if (IsElementOnTopDrawLayer(element))
+            if (Parent.IsDrawableOnTopDrawLayer(element, _visibleElements.ToList<IDrawable>()))
                 ElementLeftClicked?.Invoke(this, new ElementEventArgs(element));
         }
 
@@ -131,7 +132,7 @@ namespace Paramita.UI.Base
         {
             var element = sender as Element;
 
-            if (IsElementOnTopDrawLayer(element))
+            if (Parent.IsDrawableOnTopDrawLayer(element, _visibleElements.ToList<IDrawable>()))
                 ElementRightClicked?.Invoke(this, new ElementEventArgs(element));
         }
 
@@ -139,23 +140,27 @@ namespace Paramita.UI.Base
         {
             var element = sender as Element;
 
-            if (IsElementOnTopDrawLayer(element))
+            if (Parent.IsDrawableOnTopDrawLayer(element, _visibleElements.ToList<IDrawable>()))
                 ElementDoubleClicked?.Invoke(this, new ElementEventArgs(element));
         }
 
         protected virtual void OnElementMousedOver(object sender, EventArgs e)
         {
+            IsMouseOver = true;
             var element = sender as Element;
 
-            if (IsElementOnTopDrawLayer(element))
+            if (Parent.IsDrawableOnTopDrawLayer(element, _visibleElements.ToList<IDrawable>()))
                 ElementMousedOver?.Invoke(this, new ElementEventArgs(element));
         }
 
         protected virtual void OnElementMouseGone(object sender, EventArgs e)
         {
+            if(!Rectangle.Contains(Input.CurrentMousePosition))
+                IsMouseOver = false;
+
             var element = sender as Element;
 
-            if (IsElementOnTopDrawLayer(element))
+            if (Parent.IsDrawableOnTopDrawLayer(element, _visibleElements.ToList<IDrawable>()))
                 ElementMouseGone?.Invoke(this, new ElementEventArgs(element));
         }
 
@@ -163,30 +168,8 @@ namespace Paramita.UI.Base
         {
             var element = sender as Element;
 
-            if (IsElementOnTopDrawLayer(element))
+            if (Parent.IsDrawableOnTopDrawLayer(element, _visibleElements.ToList<IDrawable>()))
                 ElementScrollWheelMoved?.Invoke(this, new ElementEventArgs(element, e.Value));
-        }
-
-        private bool IsElementOnTopDrawLayer(Element element)
-        {
-            Point mousePosition;
-            // if element has raised MouseGone event, use the previous Input.MousePosition
-            if (element.IsMouseOver)
-                mousePosition = Input.CurrentMousePosition;
-            else
-                mousePosition = Input.PreviousMousePosition;
-
-            var elementsMousedOver = _visibleElements.FindAll(e => e.Rectangle.Contains(mousePosition));
-
-            if (elementsMousedOver.Count == 0)
-                throw new Exception("No elements were under the mouse.");
-            else if (elementsMousedOver.Count == 1)
-                return true;
-            else
-            {
-                var max = elementsMousedOver.Max(e => e.DrawOrder);
-                return element.DrawOrder == max;
-            }   
         }
         #endregion
 

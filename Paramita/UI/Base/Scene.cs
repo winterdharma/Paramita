@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Paramita.UI.Input;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Paramita.UI.Base
 {
@@ -57,12 +58,11 @@ namespace Paramita.UI.Base
         public virtual void Initialize()
         {
             LoadContent();
-            SubscribeToEvents();
         }
         #endregion
 
         #region Event Handling
-        private void SubscribeToEvents()
+        protected virtual void SubscribeToEvents()
         {
             SubscribeToComponentMouseEvents();
             SubscribeToKeyboardEvents();
@@ -98,35 +98,51 @@ namespace Paramita.UI.Base
 
         private void OnElementLeftClicked(object sender, ElementEventArgs e)
         {
-            throw new NotImplementedException();
         }
 
         private void OnElementRightClicked(object sender, ElementEventArgs e)
         {
-            throw new NotImplementedException();
         }
 
         private void OnElementDoubleClicked(object sender, ElementEventArgs e)
         {
-            throw new NotImplementedException();
         }
 
         private void OnElementMousedOver(object sender, ElementEventArgs e)
         {
-            throw new NotImplementedException();
         }
 
         private void OnElementMouseGone(object sender, ElementEventArgs e)
         {
-            throw new NotImplementedException();
         }
 
         private void OnElementScrollWheelMoved(object sender, ElementEventArgs e)
         {
-            throw new NotImplementedException();
         }
 
         protected abstract void UnsubscribeFromKeyboardEvents();
+
+        public bool IsDrawableOnTopDrawLayer(IDrawable drawable, List<IDrawable> visibleDrawables)
+        {
+            Point mousePosition;
+            // if IDrawable has raised MouseGone event, use the previous Input.MousePosition
+            if (drawable.IsMouseOver)
+                mousePosition = Input.CurrentMousePosition;
+            else
+                mousePosition = Input.PreviousMousePosition;
+
+            var drawablesMousedOver = visibleDrawables.FindAll(d => d.Rectangle.Contains(mousePosition));
+
+            if (drawablesMousedOver.Count == 0)
+                throw new Exception("No elements were under the mouse.");
+            else if (drawablesMousedOver.Count == 1)
+                return true;
+            else
+            {
+                var max = drawablesMousedOver.Max(e => e.DrawOrder);
+                return drawable.DrawOrder == max;
+            }
+        }
         #endregion
 
 
@@ -195,15 +211,15 @@ namespace Paramita.UI.Base
             else { Hide(); }
         }
 
+        
         /// <summary>
-        /// Adds a Component object to the Scene's Components list and ensures the list is sorted
-        /// by DrawOrder.
+        /// Adds supplied Component objects to the Scene's List of Components and sorts the list by DrawOrder.
         /// </summary>
-        /// <param name="component"></param>
-        protected void AddComponent(Component component)
+        /// <param name="components"></param>
+        protected void AddComponents(params Component[] components)
         {
-            _components.Add(component);
-            _components.Sort(new Comparison<Component>(CompareDrawOrders));
+            Components.AddRange(components);
+            Components.Sort(new Comparison<Component>(CompareDrawOrders));
         }
         #endregion
 
