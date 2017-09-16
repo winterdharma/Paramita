@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.Input.InputListeners;
 using Paramita.UI.Input;
 using System;
+using System.Collections.Generic;
 
 namespace Paramita.UI.Base
 {
@@ -101,6 +102,12 @@ namespace Paramita.UI.Base
 
         protected override void UnsubscribeFromKeyboardEvents()
         {
+        }
+
+        protected override List<UserAction> InitializeUserActions()
+        {
+            var actionsList = new List<UserAction>();
+            return actionsList;
         }
     }
 }

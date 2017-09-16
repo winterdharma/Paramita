@@ -20,6 +20,7 @@ namespace Paramita.UI.Elements
             Enabled = true;
             Scale = scale;
             Rectangle = CreateRectangle();
+            DrawOrder = drawOrder;
         }
         #endregion
 

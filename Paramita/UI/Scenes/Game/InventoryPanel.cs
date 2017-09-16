@@ -231,7 +231,7 @@ namespace Paramita.UI.Base.Game
 
 
         #region Panel State Change Logic
-        private void TogglePanelOpenOrClosed()
+        public void TogglePanelState()
         {
             IsOpen = !IsOpen;
 
@@ -391,8 +391,8 @@ namespace Paramita.UI.Base.Game
         private void ImageClicked(object sender, EventArgs e)
         {
             var image = sender as Image;
-            if (image.Id.Equals("minimize_icon"))
-                TogglePanelOpenOrClosed();
+            if (image.Id.Equals("minimize_icon")) { }
+            //    TogglePanelState();
             else
                 ItemSelected = _inventorySlots.FindIndex(slot => slot.Equals(image.Id)) + 1;
         }
@@ -418,7 +418,7 @@ namespace Paramita.UI.Base.Game
         {
             if (!IsOpen && _panelRectangle.Contains(_mousePosition))
             {
-                TogglePanelOpenOrClosed();
+                TogglePanelState();
             }
         }
 
@@ -492,7 +492,7 @@ namespace Paramita.UI.Base.Game
 
         private void OnIKeyPressed(object sender, EventArgs e)
         {
-            TogglePanelOpenOrClosed();
+            TogglePanelState();
         }
 
         private void OnCKeyPressed(object sender, EventArgs e)

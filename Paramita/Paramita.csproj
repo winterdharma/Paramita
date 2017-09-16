@@ -44,12 +44,15 @@
   <ItemGroup>
     <Compile Include="UI\Base\ElementEventArgs.cs" />
     <Compile Include="UI\Base\IDrawable.cs" />
+    <Compile Include="UI\Base\UserAction.cs" />
+    <Compile Include="UI\Base\UserInputEventArgs.cs" />
     <Compile Include="UI\BeingSprite.cs" />
     <Compile Include="UI\Elements\Background.cs" />
     <Compile Include="UI\Elements\Sprite.cs" />
     <Compile Include="UI\Input\InputResponder.cs" />
     <Compile Include="UI\Base\Component.cs" />
     <Compile Include="UI\Base\Element.cs" />
+    <Compile Include="UI\Input\InputSource.cs" />
     <Compile Include="UI\Scenes\Game\ItemTextures.cs" />
     <Compile Include="UI\Elements\Image.cs" />
     <Compile Include="UI\Elements\LineOfText.cs" />

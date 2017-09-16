@@ -5,6 +5,8 @@ using Paramita.GameLogic;
 using Paramita.GameLogic.Items;
 using Paramita.UI.Base.Game;
 using Paramita.GameLogic.Mechanics;
+using System.Collections.Generic;
+using Paramita.UI.Input;
 
 namespace Paramita.UI.Base
 {
@@ -28,11 +30,12 @@ namespace Paramita.UI.Base
 
             _tileMapPanel = new TileMapPanel(this, Dungeon.GetCurrentLevelLayers(), 0);
             _statusPanel = new StatusPanel(this, GameController.ArialBold, 10, new Point(0,720), 1);
-            _inventoryPanel = new InventoryPanel(this, 2);
+            _inventoryPanel = new InventoryPanel(this, 1);
 
             AddComponents(_tileMapPanel, _statusPanel, _inventoryPanel);
 
             SubscribeToEvents();
+            UserActions = InitializeUserActions();
         }
 
         protected override void LoadContent()
@@ -65,6 +68,23 @@ namespace Paramita.UI.Base
             InventoryPanel.DefaultTextures["other5"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_other");
         }
 
+        protected override List<UserAction> InitializeUserActions()
+        {
+            var actionsList = new List<UserAction>
+            {
+                new UserAction(ToggleInventoryPanel, this,
+                    new InputSource(_inventoryPanel.Elements["minimize_icon"]),
+                    EventType.LeftClick)
+            };
+
+            return actionsList;
+        }
+
+        private void ToggleInventoryPanel(Scene parent)
+        {
+            var panel = (InventoryPanel)parent.Components.Find(c => c is InventoryPanel);
+            panel.TogglePanelState();
+        }
 
         public override void Update(GameTime gameTime)
         {

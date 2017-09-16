@@ -31,6 +31,10 @@ namespace Paramita.UI.Base
         private List<Component> _components;
         #endregion
 
+        #region Events
+        public event EventHandler<UserInputEventArgs> UserInputEvent; 
+        #endregion
+
         #region Constructors
         public Scene(GameController game)
         {
@@ -47,6 +51,7 @@ namespace Paramita.UI.Base
         #region Properties
         public GameController Game { get; set; }
         public List<Component> Components { get { return _components; } }
+        public List<UserAction> UserActions { get; protected set; }
         public InputResponder Input { get; set; }
         public int DrawOrder { get; set; }
         public Rectangle ScreenRectangle { get; set; }
@@ -59,6 +64,8 @@ namespace Paramita.UI.Base
         {
             LoadContent();
         }
+
+        protected abstract List<UserAction> InitializeUserActions();
         #endregion
 
         #region Event Handling
@@ -98,6 +105,12 @@ namespace Paramita.UI.Base
 
         private void OnElementLeftClicked(object sender, ElementEventArgs e)
         {
+            if (IsDrawableOnTopDrawLayer((Component)sender, Components.ToList<IDrawable>()))
+                UserInputEvent?.Invoke(this, new UserInputEventArgs(
+                    new InputSource(e.Element), 
+                    EventType.LeftClick)
+                    );
+
         }
 
         private void OnElementRightClicked(object sender, ElementEventArgs e)
