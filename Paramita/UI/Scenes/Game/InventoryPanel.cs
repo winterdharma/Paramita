@@ -168,11 +168,12 @@ namespace Paramita.UI.Base.Game
 
         private Dictionary<string, Element> InitializeImageElements()
         {
-            var images = new Dictionary<string, Element>();
-            images["background_closed"] = CreateClosedPanelBackground();
-            images["background_open"] = CreateOpenPanelBackground();
-            images["minimize_icon"] = CreateMinimizeIcon();
-            images["minimize_icon"].Hide();
+            var images = new Dictionary<string, Element>
+            {
+                ["background_closed"] = CreateClosedPanelBackground(),
+                ["background_open"] = CreateOpenPanelBackground(),
+                ["minimize_icon"] = CreateMinimizeIcon()
+            };
             var slotImages = CreateInventorySlotImages();
             slotImages.ToList().ForEach(x => images.Add(x.Key, x.Value));
             return images;
@@ -197,20 +198,16 @@ namespace Paramita.UI.Base.Game
             };
             var highlights = new List<Color> { WHITE, WHITE, WHITE, WHITE, WHITE, WHITE };
             var unhighlights = new List<Color> { WHITE, WHITE, WHITE, WHITE, WHITE, WHITE };
-            var showElement = new List<bool> { true, false, false, false, false, false };
             var drawOrder = new List<int> { 1, 1, 1, 1, 1, 1 };
 
             for (var i = 0; i < textIds.Count; i++)
             {
                 var id = textIds[i];
                 var str = textContents[i];
-                texts[id] = new LineOfText(id, this, GetElementPosition(id, showElement[3]), str, fonts[i],
+                texts[id] = new LineOfText(id, this, GetElementPosition(id, false), str, fonts[i],
                     highlights[i], unhighlights[i], drawOrder[i]);
 
-                if (showElement[i])
-                    texts[id].Show();
-                else
-                    texts[id].Hide();
+                texts[id].Hide();
             }
 
             // intended for future addition of text element showing info about selected item
@@ -234,7 +231,11 @@ namespace Paramita.UI.Base.Game
         public void TogglePanelState()
         {
             IsOpen = !IsOpen;
+            UpdatePanel();
+        }
 
+        private void UpdatePanel()
+        {
             UpdateEventSubscriptions();
             Rectangle = UpdatePanelRectangle();
 
@@ -537,7 +538,7 @@ namespace Paramita.UI.Base.Game
                 Rectangle.Size,
                 0
                 );
-            background.Show();
+            background.Hide();
             return background;
         }
 
@@ -758,7 +759,7 @@ namespace Paramita.UI.Base.Game
         }
         #endregion
 
-
+        #region Public API
         // Called by GameScene.Update() to check for changes or input to handle
         public override void Update(GameTime gameTime)
         {
@@ -770,5 +771,14 @@ namespace Paramita.UI.Base.Game
         {
             base.Draw(gameTime, spriteBatch);
         }
+
+        public override void Show()
+        {
+            Enabled = true;
+            Visible = true;
+            Elements[HEADING_ID].Show();
+            UpdatePanel();
+        }
+        #endregion
     }
 }

@@ -177,12 +177,16 @@ namespace Paramita.UI.Base
         {
             Visible = true;
             Enabled = true;
+
+            Elements.Values.ToList().ForEach(e => e.Show());
         }
 
         public virtual void Hide()
         {
             Visible = false;
             Enabled = false;
+
+            Elements.Values.ToList().ForEach(e => e.Hide());
         }
 
         public virtual void Update(GameTime gameTime)
