@@ -1,11 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended.Input;
 using MonoGame.Extended.Input.InputListeners;
 using Paramita.UI.Input;
 using Paramita.UI.Base;
-using System;
 
 namespace Paramita
 {
@@ -14,16 +12,30 @@ namespace Paramita
     /// </summary>
     public class GameController : Game
     {
+        #region Fields
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private Rectangle _screenRectangle;
+        private Scene _currentScene;
+        #endregion
 
+        #region Properties
         public SpriteBatch SpriteBatch { get { return _spriteBatch; } }
         public Rectangle ScreenRectangle { get { return _screenRectangle; } }
-        public SceneManager SceneManager { get; private set; }
         public InputListenerComponent InputListener { get; private set; }
         public InputResponder InputResponder { get; private set; }
 
+        public Scene CurrentScene
+        {
+            get => _currentScene;
+            set
+            {
+                if(_currentScene != null)
+                    _currentScene.Hide();
+                _currentScene = value;
+                _currentScene.Show();
+            }
+        }
         public TitleScene TitleScene { get; private set; }
         public MenuScene MenuScene { get; private set; }
         public GameScene GameScene { get; private set; }
@@ -31,11 +43,12 @@ namespace Paramita
         public static SpriteFont ArialBold { get; private set; }
         public static SpriteFont LucidaConsole { get; private set; }
         public static SpriteFont NotoSans { get; private set; }
+        #endregion
 
 
 
 
-
+        #region Constructors
         public GameController()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -45,8 +58,6 @@ namespace Paramita
 
             Content.RootDirectory = "Content";
 
-            SceneManager = new SceneManager(this);
-            Components.Add(SceneManager);
             IsMouseVisible = true;
 
             var keyboard = new KeyboardListener();
@@ -59,12 +70,16 @@ namespace Paramita
             InputResponder = new InputResponder(keyboard, mouse);
             keyboard.KeyPressed += CheckForExit;            
         }
+        #endregion
 
+        #region Event Handling
         private void CheckForExit(object sender, KeyboardEventArgs e)
         {
             if (e.Key == Keys.Escape) Exit();
         }
+        #endregion
 
+        #region Initialization
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -85,9 +100,8 @@ namespace Paramita
             MenuScene.Initialize();
             GameScene.Initialize(); // this also calls GameScene.LoadContent()
 
-            SceneManager.ChangeScene(TitleScene);
+            CurrentScene = TitleScene;
         }
-
 
 
         /// LoadContent will be called once per game and is the place to load
@@ -100,8 +114,7 @@ namespace Paramita
             LucidaConsole = Content.Load<SpriteFont>("Fonts\\lucida_console");
             NotoSans = Content.Load<SpriteFont>("Fonts\\noto_sans");
         }
-
-
+        #endregion
 
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
@@ -112,8 +125,6 @@ namespace Paramita
             
         }
 
-
-
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -121,9 +132,8 @@ namespace Paramita
         /// <param name="gameTime">Time passed since the last call to Update.</param>
         protected override void Update(GameTime gameTime)
         {
-            //base.Update(gameTime);
             InputListener.Update(gameTime);
-            SceneManager.Update(gameTime);
+            CurrentScene.Update(gameTime);
         }
 
 
@@ -134,8 +144,7 @@ namespace Paramita
         {
             // clear the previous frame
             GraphicsDevice.Clear(Color.Black);
-            // draw the current scene
-            SceneManager.Draw(gameTime);
+            CurrentScene.Draw(gameTime);
         }
     }
 }

@@ -32,10 +32,9 @@ namespace Paramita.UI.Base
             _statusPanel = new StatusPanel(this, GameController.ArialBold, 10, new Point(0,720), 1);
             _inventoryPanel = new InventoryPanel(this, 1);
 
-            AddComponents(_tileMapPanel, _statusPanel, _inventoryPanel);
+            Components = InitializeComponents(_tileMapPanel, _statusPanel, _inventoryPanel);
 
-            SubscribeToEvents();
-            UserActions = InitializeUserActions();
+            UserActions = InitializeUserActions(Components);
         }
 
         protected override void LoadContent()
@@ -68,12 +67,13 @@ namespace Paramita.UI.Base
             InventoryPanel.DefaultTextures["other5"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_other");
         }
 
-        protected override List<UserAction> InitializeUserActions()
+        protected override List<UserAction> InitializeUserActions(List<Component> components)
         {
+            var inventoryPanel = (InventoryPanel)components.Find(c => c is InventoryPanel);
             var actionsList = new List<UserAction>
             {
                 new UserAction(ToggleInventoryPanel, this,
-                    new InputSource(_inventoryPanel.Elements["minimize_icon"]),
+                    new InputSource(inventoryPanel.Elements["minimize_icon"]),
                     EventType.LeftClick)
             };
 

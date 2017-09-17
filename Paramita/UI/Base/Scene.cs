@@ -26,7 +26,6 @@ namespace Paramita.UI.Base
     {
         #region Fields
         protected SpriteBatch _spriteBatch;
-        protected readonly SceneManager _manager;
         protected ContentManager _content;
         private List<Component> _components;
         #endregion
@@ -44,13 +43,16 @@ namespace Paramita.UI.Base
             Input = game.InputResponder;
             _components = new List<Component>();
             _content = Game.Content;
-            _manager = (SceneManager)Game.Services.GetService(typeof(SceneManager));
         }
         #endregion
 
         #region Properties
         public GameController Game { get; set; }
-        public List<Component> Components { get { return _components; } }
+        public List<Component> Components
+        {
+            get { return _components; }
+            protected set { _components = value; }
+        }
         public List<UserAction> UserActions { get; protected set; }
         public InputResponder Input { get; set; }
         public int DrawOrder { get; set; }
@@ -65,7 +67,7 @@ namespace Paramita.UI.Base
             LoadContent();
         }
 
-        protected abstract List<UserAction> InitializeUserActions();
+        protected abstract List<UserAction> InitializeUserActions(List<Component> components);
         #endregion
 
         #region Event Handling
@@ -218,21 +220,16 @@ namespace Paramita.UI.Base
         {
         }
 
-        protected internal virtual void SceneChanged(object sender, EventArgs e)
-        {
-            if(_manager.CurrentScene == this) { Show(); }
-            else { Hide(); }
-        }
-
-        
         /// <summary>
         /// Adds supplied Component objects to the Scene's List of Components and sorts the list by DrawOrder.
         /// </summary>
         /// <param name="components"></param>
-        protected void AddComponents(params Component[] components)
+        protected List<Component> InitializeComponents(params Component[] components)
         {
-            Components.AddRange(components);
-            Components.Sort(new Comparison<Component>(CompareDrawOrders));
+            var componentList = new List<Component>();
+            componentList.AddRange(components);
+            componentList.Sort(new Comparison<Component>(CompareDrawOrders));
+            return componentList;
         }
         #endregion
 

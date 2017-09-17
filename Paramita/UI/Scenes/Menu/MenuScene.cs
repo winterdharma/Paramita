@@ -62,8 +62,7 @@ namespace Paramita.UI.Base
         {
             if (_menuButtons.SelectedIndex == 0)
             {
-                _manager.PushScene(Game.GameScene);
-                Hide();
+                Game.CurrentScene = Game.GameScene;
             }
 
             else if (_menuButtons.SelectedIndex == 1)
@@ -118,7 +117,7 @@ namespace Paramita.UI.Base
         {
         }
 
-        protected override List<UserAction> InitializeUserActions()
+        protected override List<UserAction> InitializeUserActions(List<Component> components)
         {
             var actionsList = new List<UserAction>();
             return actionsList;
