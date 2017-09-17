@@ -84,9 +84,6 @@ namespace Paramita.UI.Base
         {
             Rectangle = UpdatePanelRectangle();
             Elements = InitializeElements();
-            _visibleElements = GetVisibleElements();
-            _enabledElements = GetEnabledElements();
-            SubscribeToEvents();
         }
 
         protected abstract Rectangle UpdatePanelRectangle();
@@ -191,8 +188,7 @@ namespace Paramita.UI.Base
 
         public virtual void Update(GameTime gameTime)
         {
-            _visibleElements = GetVisibleElements();
-            _enabledElements = GetEnabledElements();
+            UpdateEnabledAndVisibleElements();
 
             foreach (var element in _enabledElements)
             {
@@ -210,7 +206,13 @@ namespace Paramita.UI.Base
             spriteBatch.End();
         }
 
-        #region Private Helper Methods
+        #region Helper Methods
+        protected void UpdateEnabledAndVisibleElements()
+        {
+            _enabledElements = GetEnabledElements();
+            _visibleElements = GetVisibleElements();
+        }
+
         private List<Element> GetEnabledElements()
         {
             var enabledElements = new List<Element>();

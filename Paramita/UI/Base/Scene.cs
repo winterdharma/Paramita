@@ -28,6 +28,7 @@ namespace Paramita.UI.Base
         protected SpriteBatch _spriteBatch;
         protected ContentManager _content;
         private List<Component> _components;
+        private bool _enabled;
         #endregion
 
         #region Events
@@ -57,7 +58,18 @@ namespace Paramita.UI.Base
         public InputResponder Input { get; set; }
         public int DrawOrder { get; set; }
         public Rectangle ScreenRectangle { get; set; }
-        public bool Enabled { get; set; }
+        public bool Enabled
+        {
+            get => _enabled;
+            set
+            {
+                _enabled = value;
+                if (_enabled)
+                    SubscribeToEvents();
+                else
+                    UnsubscribeFromEvents();
+            }
+        }
         public bool Visible { get; set; }
         #endregion
 
@@ -77,6 +89,12 @@ namespace Paramita.UI.Base
             SubscribeToKeyboardEvents();
         }
 
+        protected virtual void UnsubscribeFromEvents()
+        {
+            UnsubscribeFromComponentMouseEvents();
+            UnsubscribeFromKeyboardEvents();
+        }
+
         protected virtual void SubscribeToComponentMouseEvents()
         {
             foreach(var component in Components)
@@ -90,8 +108,6 @@ namespace Paramita.UI.Base
             }
         }
 
-        protected abstract void SubscribeToKeyboardEvents();
-
         protected virtual void UnsubscribeFromComponentMouseEvents()
         {
             foreach (var component in Components)
@@ -104,6 +120,8 @@ namespace Paramita.UI.Base
                 component.ElementScrollWheelMoved -= OnElementScrollWheelMoved;
             }
         }
+
+        protected abstract void SubscribeToKeyboardEvents();
 
         private void OnElementLeftClicked(object sender, ElementEventArgs e)
         {

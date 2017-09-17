@@ -231,7 +231,10 @@ namespace Paramita.UI.Base.Game
         public void TogglePanelState()
         {
             IsOpen = !IsOpen;
+            UnsubscribeFromEvents();
             UpdatePanel();
+            UpdateEnabledAndVisibleElements();
+            SubscribeToEvents();
         }
 
         private void UpdatePanel()
@@ -774,10 +777,11 @@ namespace Paramita.UI.Base.Game
 
         public override void Show()
         {
-            Enabled = true;
-            Visible = true;
             Elements[HEADING_ID].Show();
             UpdatePanel();
+            UpdateEnabledAndVisibleElements();
+            Enabled = true;
+            Visible = true;
         }
         #endregion
     }
