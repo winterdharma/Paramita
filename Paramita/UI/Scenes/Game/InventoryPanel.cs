@@ -114,7 +114,6 @@ namespace Paramita.UI.Base.Game
 
         public InventoryPanel(Scene parent, int drawOrder) : base(parent, drawOrder)
         {
-            //InitializePanel();
             IsOpen = false;
             SubscribeToInputEvents();
             InitializeInventoryData();
@@ -152,12 +151,6 @@ namespace Paramita.UI.Base.Game
 
 
         #region Initialization
-        //private void InitializePanel()
-        //{
-        //    UpdatePanelRectangle();
-        //    InitializeElements();
-        //}
-
         protected override Dictionary<string, Element> InitializeElements()
         {
             var images = InitializeImageElements();
@@ -231,10 +224,7 @@ namespace Paramita.UI.Base.Game
         public void TogglePanelState()
         {
             IsOpen = !IsOpen;
-            //UnsubscribeFromEvents();
             UpdatePanel();
-            //UpdateEnabledAndVisibleElements();
-            //SubscribeToEvents();
         }
 
         private void UpdatePanel()
@@ -396,7 +386,6 @@ namespace Paramita.UI.Base.Game
         {
             var image = sender as Image;
             if (image.Id.Equals("minimize_icon")) { }
-            //    TogglePanelState();
             else
                 ItemSelected = _inventorySlots.FindIndex(slot => slot.Equals(image.Id)) + 1;
         }
@@ -604,8 +593,6 @@ namespace Paramita.UI.Base.Game
 
         private void CreateItemImages()
         {
-            int count = 0;
-
             foreach (var slot in _inventorySlots)
             {
                 if (_inventory[slot] != ItemType.None
@@ -613,7 +600,7 @@ namespace Paramita.UI.Base.Game
                     && _inventory[slot] != ItemType.Bite)
                 {
                     var slotImage = Elements[slot];
-                    var item = new Image("item_" + ConvertItemTypeToString(_inventory[slot]) + ++count,
+                    var item = new Image("item_" + ConvertItemTypeToString(_inventory[slot]),
                         this, slotImage.Position, ItemTextures.ItemTextureMap[_inventory[slot]],
                         Color.White, Color.Red, 2);
 
@@ -779,7 +766,6 @@ namespace Paramita.UI.Base.Game
         {
             Elements[HEADING_ID].Show();
             UpdatePanel();
-            //UpdateEnabledAndVisibleElements();
             Enabled = true;
             Visible = true;
         }
