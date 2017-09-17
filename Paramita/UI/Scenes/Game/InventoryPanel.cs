@@ -152,11 +152,11 @@ namespace Paramita.UI.Base.Game
 
 
         #region Initialization
-        private void InitializePanel()
-        {
-            UpdatePanelRectangle();
-            InitializeElements();
-        }
+        //private void InitializePanel()
+        //{
+        //    UpdatePanelRectangle();
+        //    InitializeElements();
+        //}
 
         protected override Dictionary<string, Element> InitializeElements()
         {
@@ -231,10 +231,10 @@ namespace Paramita.UI.Base.Game
         public void TogglePanelState()
         {
             IsOpen = !IsOpen;
-            UnsubscribeFromEvents();
+            //UnsubscribeFromEvents();
             UpdatePanel();
-            UpdateEnabledAndVisibleElements();
-            SubscribeToEvents();
+            //UpdateEnabledAndVisibleElements();
+            //SubscribeToEvents();
         }
 
         private void UpdatePanel()
@@ -779,7 +779,7 @@ namespace Paramita.UI.Base.Game
         {
             Elements[HEADING_ID].Show();
             UpdatePanel();
-            UpdateEnabledAndVisibleElements();
+            //UpdateEnabledAndVisibleElements();
             Enabled = true;
             Visible = true;
         }

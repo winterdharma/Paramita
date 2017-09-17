@@ -65,14 +65,7 @@ namespace Paramita.UI.Base
         public bool Enabled
         {
             get => _enabled;
-            set
-            {
-                _enabled = value;
-                if (_enabled)
-                    SubscribeToEvents();
-                else
-                    UnsubscribeFromEvents();
-            }
+            set {_enabled = value; }
         }
         public bool Visible { get; internal set; }
         public bool IsMouseOver { get; private set; }
@@ -84,6 +77,7 @@ namespace Paramita.UI.Base
         {
             Rectangle = UpdatePanelRectangle();
             Elements = InitializeElements();
+            SubscribeToElementPropertyEvents();
         }
 
         protected abstract Rectangle UpdatePanelRectangle();
@@ -91,32 +85,56 @@ namespace Paramita.UI.Base
         #endregion
 
         #region Event Handling
-        protected void SubscribeToEvents()
+        protected virtual void OnElementEnabledChange(object sender, EventArgs e)
         {
-            foreach(var element in _enabledElements)
+            var element = (Element)sender;
+            if(element.Enabled)
             {
-                element.LeftClick += OnElementLeftClicked;
-                element.RightClick += OnElementRightClicked;
-                element.DoubleClick += OnElementDoubleClicked;
-                element.MouseOver += OnElementMousedOver;
-                element.MouseGone += OnElementMouseGone;
-                element.ScrollWheelChange += OnElementScrollWheelMoved;
+                _enabledElements.Add(element);
+                SubscribeToElementEvents(element);
+            }
+            else
+            {
+                _enabledElements.Remove(element);
+                UnsubscribeFromElementEvents(element);
             }
         }
 
-        protected void UnsubscribeFromEvents()
+        protected void OnElementVisibleChange(object sender, EventArgs e)
         {
-            foreach (var element in _enabledElements)
+            var element = (Element)sender;
+            if (element.Visible)
             {
-                element.LeftClick -= OnElementLeftClicked;
-                element.RightClick -= OnElementRightClicked;
-                element.DoubleClick -= OnElementDoubleClicked;
-                element.MouseOver -= OnElementMousedOver;
-                element.MouseGone -= OnElementMouseGone;
-                element.ScrollWheelChange -= OnElementScrollWheelMoved;
+                _visibleElements.Add(element);
+                _visibleElements.Sort(new Comparison<Element>(Parent.CompareDrawOrders));
+            }
+            else
+            {
+                _visibleElements.Remove(element);
+                _visibleElements.Sort(new Comparison<Element>(Parent.CompareDrawOrders));
             }
         }
-        
+
+        private void SubscribeToElementEvents(Element element)
+        {
+            element.LeftClick += OnElementLeftClicked;
+            element.RightClick += OnElementRightClicked;
+            element.DoubleClick += OnElementDoubleClicked;
+            element.MouseOver += OnElementMousedOver;
+            element.MouseGone += OnElementMouseGone;
+            element.ScrollWheelChange += OnElementScrollWheelMoved;
+        }
+
+        private void UnsubscribeFromElementEvents(Element element)
+        {
+            element.LeftClick -= OnElementLeftClicked;
+            element.RightClick -= OnElementRightClicked;
+            element.DoubleClick -= OnElementDoubleClicked;
+            element.MouseOver -= OnElementMousedOver;
+            element.MouseGone -= OnElementMouseGone;
+            element.ScrollWheelChange -= OnElementScrollWheelMoved;
+        }
+
         protected virtual void OnElementLeftClicked(object sender, EventArgs e)
         {
             var element = sender as Element;
@@ -188,8 +206,6 @@ namespace Paramita.UI.Base
 
         public virtual void Update(GameTime gameTime)
         {
-            UpdateEnabledAndVisibleElements();
-
             foreach (var element in _enabledElements)
             {
                 element.Update(gameTime);
@@ -207,27 +223,20 @@ namespace Paramita.UI.Base
         }
 
         #region Helper Methods
-        protected void UpdateEnabledAndVisibleElements()
+        private void SubscribeToElementPropertyEvents()
         {
-            _enabledElements = GetEnabledElements();
-            _visibleElements = GetVisibleElements();
+            SubscribeToElementEnabledEvents();
+            SubscribeToElementVisibleEvents();
         }
 
-        private List<Element> GetEnabledElements()
+        private void SubscribeToElementEnabledEvents()
         {
-            var enabledElements = new List<Element>();
-            enabledElements = _elements.Values.ToList();
-            enabledElements.RemoveAll(e => !e.Enabled);
-            return enabledElements;
+            Elements.Values.ToList().ForEach(e => e.EnabledChanged += OnElementEnabledChange);
         }
 
-        private List<Element> GetVisibleElements()
+        private void SubscribeToElementVisibleEvents()
         {
-            var visibleElements = new List<Element>();
-            visibleElements = _elements.Values.ToList();
-            visibleElements.RemoveAll(e => !e.Visible);
-            visibleElements.Sort(new Comparison<Element>(Parent.CompareDrawOrders));
-            return visibleElements;
+            Elements.Values.ToList().ForEach(e => e.VisibleChanged += OnElementVisibleChange);
         }
         #endregion
     }

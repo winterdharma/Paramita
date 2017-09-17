@@ -14,9 +14,12 @@ namespace Paramita.UI.Base
         #region Fields
         protected Rectangle _rectangle;
         private bool _enabled;
+        private bool _visible;
         #endregion
 
         #region Events
+        public event EventHandler EnabledChanged;
+        public event EventHandler VisibleChanged;
         public event EventHandler LeftClick;
         public event EventHandler RightClick;
         public event EventHandler DoubleClick;
@@ -43,17 +46,32 @@ namespace Paramita.UI.Base
 
         #region Properties
         public string Id { get; set; }
-        public bool Visible { get; set; }
+        public bool Visible
+        {
+            get => _visible;
+            set
+            {
+                if (value != _visible)
+                {
+                    _visible = value;
+                    VisibleChanged?.Invoke(this, new EventArgs());
+                }
+            }
+        }
         public bool Enabled
         {
             get => _enabled;
             set
             {
-                _enabled = value;
-                if (_enabled)
-                    SubscribeToEvents();
-                else
-                    UnsubscribeFromEvents();
+                if(value != _enabled)
+                {
+                    _enabled = value;
+
+                    if (_enabled)   SubscribeToEvents();
+                    else            UnsubscribeFromEvents();
+
+                    EnabledChanged?.Invoke(this, new EventArgs());
+                }
             }
         }
         public int DrawOrder { get; set; }
