@@ -73,14 +73,7 @@ namespace Paramita.UI.Base
             var inventoryPanel = (InventoryPanel)components.Find(c => c is InventoryPanel);
             var actionsList = new List<UserAction>
             {
-                new UserAction(ToggleInventoryPanel, this,
-                    new InputSource(
-                        new List<Element>()
-                            { inventoryPanel.Elements["minimize_icon"],
-                              inventoryPanel.Elements["background_closed"] },
-                            Keys.I
-                        ),
-                    EventType.LeftClick)
+                new UserAction(this, ToggleInventoryPanel, ToggleConditions)
             };
             return actionsList;
         }
@@ -88,6 +81,32 @@ namespace Paramita.UI.Base
         private void SelectInventoryItem(Scene obj)
         {
             throw new NotImplementedException();
+        }
+
+        private bool ToggleConditions(Tuple<Scene, UserInputEventArgs> context)
+        {
+            var scene = context.Item1;
+            var eventArgs = context.Item2;
+
+            var inventory = (InventoryPanel)scene.Components.Find(c => c is InventoryPanel);
+            var inputSources = new InputSource(new List<Element>()
+            {
+                inventory.Elements["minimize_icon"], inventory.Elements["background_closed"],
+                inventory.Elements["heading"]
+            }, Keys.I);
+
+
+            if (!inputSources.Contains(eventArgs.EventSource))
+                return false;
+
+            if (eventArgs.EventType != EventType.LeftClick && 
+                eventArgs.EventType != EventType.Keyboard)
+                return false;
+
+            if (eventArgs.EventSource == inventory.Elements["heading"] && inventory.IsOpen)
+                return false;
+
+            return true;
         }
 
         private void ToggleInventoryPanel(Scene parent)
