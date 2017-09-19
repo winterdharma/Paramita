@@ -243,15 +243,9 @@ namespace Paramita.UI.Base.Game
         private void UpdateEventSubscriptions()
         {
             if(!IsOpen)
-            {
-                Input.LeftMouseClick += OnMouseClicked;
                 Input.NewMousePosition += OnMouseMoved;
-            }
             else
-            {
-                Input.LeftMouseClick -= OnMouseClicked;
                 Input.NewMousePosition -= OnMouseMoved;
-            }
         }
 
         private void UpdateBackground()
@@ -336,7 +330,6 @@ namespace Paramita.UI.Base.Game
             Input.EKeyPressed += OnEKeyPressed;
             Input.CKeyPressed += OnCKeyPressed;
             Input.UKeyPressed += OnUKeyPressed;
-            Input.IKeyPressed += OnIKeyPressed;
             SubscribeToMouseEvents();
             Dungeon.OnInventoryChangeUINotification += HandleInventoryChange;
         }
@@ -357,15 +350,13 @@ namespace Paramita.UI.Base.Game
             Input.EKeyPressed -= OnEKeyPressed;
             Input.CKeyPressed -= OnCKeyPressed;
             Input.UKeyPressed -= OnUKeyPressed;
-            Input.IKeyPressed -= OnIKeyPressed;
-            Input.LeftMouseClick -= OnMouseClicked;
             Input.NewMousePosition -= OnMouseMoved;
             Dungeon.OnInventoryChangeUINotification -= HandleInventoryChange;
         }
 
         private void SubscribeToMouseEvents()
         {
-            Input.LeftMouseClick += OnMouseClicked;
+            //Input.LeftMouseClick += OnMouseClicked;
             Input.NewMousePosition += OnMouseMoved;
 
             foreach (var key in Elements.Keys)
@@ -385,7 +376,8 @@ namespace Paramita.UI.Base.Game
         private void ImageClicked(object sender, EventArgs e)
         {
             var image = sender as Image;
-            if (image.Id.Equals("minimize_icon")) { }
+            if (image.Id.Equals("minimize_icon"))
+                return;
             else
                 ItemSelected = _inventorySlots.FindIndex(slot => slot.Equals(image.Id)) + 1;
         }

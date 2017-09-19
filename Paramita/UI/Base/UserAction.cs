@@ -1,4 +1,5 @@
-﻿using Paramita.UI.Input;
+﻿using Microsoft.Xna.Framework.Input;
+using Paramita.UI.Input;
 using System;
 
 namespace Paramita.UI.Base
@@ -27,13 +28,10 @@ namespace Paramita.UI.Base
 
         private void OnUserInput(object sender, UserInputEventArgs e)
         {
-            if (InputType == e.Type)
+            if(e.EventSource is Keys && InputSource.Contains(e.EventSource) ||
+                InputType == e.EventType && InputSource.Contains(e.EventSource))
             {
-                if(InputSource.SourceElement == e.Source.SourceElement 
-                    && InputSource.SourceKey == e.Source.SourceKey)
-                {
-                    ExecuteAction();
-                }
+                ExecuteAction();
             }
         }
     }

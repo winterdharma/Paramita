@@ -1,4 +1,5 @@
-﻿using Paramita.UI.Input;
+﻿using Microsoft.Xna.Framework.Input;
+using Paramita.UI.Input;
 using System;
 
 namespace Paramita.UI.Base
@@ -16,13 +17,29 @@ namespace Paramita.UI.Base
 
     public class UserInputEventArgs : EventArgs
     {
-        public InputSource Source { get; }
-        public EventType Type { get; }
+        private Element _element;
+        private Keys _key;
 
-        public UserInputEventArgs(InputSource eventSource, EventType eventType)
+        public object EventSource
         {
-            Source = eventSource;
-            Type = eventType;
+            get
+            {
+                if (_element != null && _key == Keys.None)
+                    return _element;
+                else if (_key != Keys.None && _element == null)
+                    return _key;
+                else
+                    throw new ArgumentException("One source is required, either an Element or a Key.");
+            }
+        }
+        public EventType EventType { get; }
+
+        public UserInputEventArgs(EventType eventType, Element elementSource = null, 
+            Keys keySource = Keys.None)
+        {
+            _element = elementSource;
+            _key = keySource;
+            EventType = eventType;
         }
     }
 }

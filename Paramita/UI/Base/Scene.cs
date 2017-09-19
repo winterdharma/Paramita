@@ -123,13 +123,12 @@ namespace Paramita.UI.Base
 
         protected abstract void SubscribeToKeyboardEvents();
 
+        protected abstract void UnsubscribeFromKeyboardEvents();
+
         private void OnElementLeftClicked(object sender, ElementEventArgs e)
         {
             if (IsDrawableOnTopDrawLayer((Component)sender, Components.ToList<IDrawable>()))
-                UserInputEvent?.Invoke(this, new UserInputEventArgs(
-                    new InputSource(e.Element), 
-                    EventType.LeftClick)
-                    );
+                UserInputEvent?.Invoke(this, new UserInputEventArgs(EventType.LeftClick, e.Element));
 
         }
 
@@ -153,8 +152,6 @@ namespace Paramita.UI.Base
         {
         }
 
-        protected abstract void UnsubscribeFromKeyboardEvents();
-
         public bool IsDrawableOnTopDrawLayer(IDrawable drawable, List<IDrawable> visibleDrawables)
         {
             Point mousePosition;
@@ -175,6 +172,11 @@ namespace Paramita.UI.Base
                 var max = drawablesMousedOver.Max(e => e.DrawOrder);
                 return drawable.DrawOrder == max;
             }
+        }
+
+        protected void InvokeUserInputEvent(UserInputEventArgs userInputEventArgs)
+        {
+            UserInputEvent?.Invoke(this, userInputEventArgs);
         }
         #endregion
 

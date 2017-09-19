@@ -7,6 +7,7 @@ using Paramita.UI.Base.Game;
 using Paramita.GameLogic.Mechanics;
 using System.Collections.Generic;
 using Paramita.UI.Input;
+using Microsoft.Xna.Framework.Input;
 
 namespace Paramita.UI.Base
 {
@@ -73,11 +74,20 @@ namespace Paramita.UI.Base
             var actionsList = new List<UserAction>
             {
                 new UserAction(ToggleInventoryPanel, this,
-                    new InputSource(inventoryPanel.Elements["minimize_icon"]),
+                    new InputSource(
+                        new List<Element>()
+                            { inventoryPanel.Elements["minimize_icon"],
+                              inventoryPanel.Elements["background_closed"] },
+                            Keys.I
+                        ),
                     EventType.LeftClick)
             };
-
             return actionsList;
+        }
+
+        private void SelectInventoryItem(Scene obj)
+        {
+            throw new NotImplementedException();
         }
 
         private void ToggleInventoryPanel(Scene parent)
@@ -100,6 +110,11 @@ namespace Paramita.UI.Base
         }
 
         #region Event Handling
+        private void OnIKeyPressed(object sender, EventArgs e)
+        {
+            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.I));
+        }
+
         private void MovePlayerWest(object sender, EventArgs e)
         {
             Dungeon.MovePlayer(Compass.West);
@@ -137,6 +152,7 @@ namespace Paramita.UI.Base
 
         protected override void SubscribeToKeyboardEvents()
         {
+            Input.IKeyPressed += OnIKeyPressed;
             Input.LeftKeyPressed += MovePlayerWest;
             Input.RightKeyPressed += MovePlayerEast;
             Input.UpKeyPressed += MovePlayerNorth;
@@ -148,6 +164,7 @@ namespace Paramita.UI.Base
 
         protected override void UnsubscribeFromKeyboardEvents()
         {
+            Input.IKeyPressed -= OnIKeyPressed;
             Input.LeftKeyPressed -= MovePlayerWest;
             Input.RightKeyPressed -= MovePlayerEast;
             Input.UpKeyPressed -= MovePlayerNorth;

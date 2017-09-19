@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using Paramita.UI.Base;
 using System.Collections.Generic;
+using System;
 
 namespace Paramita.UI.Input
 {
@@ -38,7 +39,7 @@ namespace Paramita.UI.Input
             SourceKeys.AddRange(keys);
         }
 
-        public InputSource(List<Element> elements, List<Keys> keys)
+        public InputSource(List<Element> elements, params Keys[] keys)
         {
             SourceElements.AddRange(elements);
             SourceKeys.AddRange(keys);
@@ -46,8 +47,16 @@ namespace Paramita.UI.Input
         #endregion
 
         #region Properties
-        public List<Element> SourceElements { get; set; }
-        public List<Keys> SourceKeys { get; set; }
+        public List<Element> SourceElements
+        {
+            get => _sourceElements;
+            set { _sourceElements = value; }
+        }
+        public List<Keys> SourceKeys
+        {
+            get => _sourceKeys;
+            set { _sourceKeys = value; }
+        }
         #endregion
 
         #region Public API
@@ -59,6 +68,16 @@ namespace Paramita.UI.Input
         public bool Contains(Keys key)
         {
             return SourceKeys.Contains(key);
+        }
+
+        public bool Contains(object inputSource)
+        {
+            if (inputSource is Element)
+                return Contains((Element)inputSource);
+            else if (inputSource is Keys)
+                return Contains((Keys)inputSource);
+            else
+                throw new ArgumentException("inputSource must be of type Element or Keys");
         }
         #endregion
     }
