@@ -119,6 +119,7 @@
     <Content Include="Content\Images\Tiles\wall.png" />
     <Content Include="Content\Images\Scenes\menuscreen.png" />
     <Content Include="Content\Images\Scenes\titlescreen.png" />
+    <Content Include="Content\transparent.png" />
     <Content Include="Content\white.png" />
     <Content Include="Content\Images\Scenes\wooden-button.png" />
     <Content Include="Icon.ico" />

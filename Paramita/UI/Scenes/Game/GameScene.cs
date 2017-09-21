@@ -44,6 +44,9 @@ namespace Paramita.UI.Base
             ItemTextures.ItemTextureMap[ItemType.Meat] = _content.Load<Texture2D>("Images\\Items\\meat");
             ItemTextures.ItemTextureMap[ItemType.Shield] = _content.Load<Texture2D>("Images\\Items\\buckler");
             ItemTextures.ItemTextureMap[ItemType.ShortSword] = _content.Load<Texture2D>("Images\\Items\\short_sword");
+            ItemTextures.ItemTextureMap[ItemType.Bite] = _content.Load<Texture2D>("transparent");
+            ItemTextures.ItemTextureMap[ItemType.Fist] = _content.Load<Texture2D>("transparent");
+            ItemTextures.ItemTextureMap[ItemType.None] = _content.Load<Texture2D>("transparent");
 
             TileMapPanel.Spritesheets.Add(SpriteType.Tile_Floor, _content.Load<Texture2D>("Images\\Tiles\\floor"));
             TileMapPanel.Spritesheets.Add(SpriteType.Tile_Door, _content.Load<Texture2D>("Images\\Tiles\\door"));
@@ -68,14 +71,20 @@ namespace Paramita.UI.Base
             InventoryPanel.DefaultTextures["other5"] = _content.Load<Texture2D>("Images\\Scenes\\inventory_other");
         }
 
+        #region User Actions
         protected override List<UserAction> InitializeUserActions(List<Component> components)
         {
             var inventoryPanel = (InventoryPanel)components.Find(c => c is InventoryPanel);
             var actionsList = new List<UserAction>
             {
-                new UserAction(this, ToggleInventoryPanel, ToggleConditions)
+                new UserAction(this, ToggleInventoryPanel, CanToggleInventoryPanel)
             };
             return actionsList;
+        }
+
+        private bool CanSelectInventoryItem(Tuple<Scene, UserInputEventArgs> context)
+        {
+            return true;
         }
 
         private void SelectInventoryItem(Scene obj)
@@ -83,7 +92,7 @@ namespace Paramita.UI.Base
             throw new NotImplementedException();
         }
 
-        private bool ToggleConditions(Tuple<Scene, UserInputEventArgs> context)
+        private bool CanToggleInventoryPanel(Tuple<Scene, UserInputEventArgs> context)
         {
             var scene = context.Item1;
             var eventArgs = context.Item2;
@@ -91,7 +100,8 @@ namespace Paramita.UI.Base
             var inventory = (InventoryPanel)scene.Components.Find(c => c is InventoryPanel);
             var inputSources = new InputSource(new List<Element>()
             {
-                inventory.Elements["minimize_icon"], inventory.Elements["background_closed"],
+                inventory.Elements["minimize_icon"],
+                inventory.Elements["background_closed"],
                 inventory.Elements["heading"]
             }, Keys.I);
 
@@ -114,6 +124,7 @@ namespace Paramita.UI.Base
             var panel = (InventoryPanel)parent.Components.Find(c => c is InventoryPanel);
             panel.TogglePanelState();
         }
+        #endregion
 
         public override void Update(GameTime gameTime)
         {

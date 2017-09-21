@@ -8,12 +8,12 @@ namespace Paramita.UI.Base
         {
             Action = action;
             Parent = parent;
-            Predicate = predicate;
+            CanExecute = predicate;
             Parent.UserInputEvent += OnUserInput;
         }
 
         public Action<Scene> Action { get; private set; }
-        public Predicate<Tuple<Scene, UserInputEventArgs>> Predicate { get; private set; }
+        public Predicate<Tuple<Scene, UserInputEventArgs>> CanExecute { get; private set; }
         public Scene Parent { get; private set; }
 
         public void ExecuteAction()
@@ -24,7 +24,7 @@ namespace Paramita.UI.Base
         private void OnUserInput(object sender, UserInputEventArgs e)
         {
             var context = new Tuple<Scene, UserInputEventArgs>(Parent, e);
-            if(Predicate(context))
+            if(CanExecute(context))
             {
                 ExecuteAction();
             }

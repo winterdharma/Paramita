@@ -93,8 +93,12 @@ namespace Paramita.UI.Base.Game
         private const string OTHER5_ITEM = "other5_item";
 
         private List<string> _inventorySlots = new List<string>()
-            { LEFT_HAND_SLOT, RIGHT_HAND_SLOT, HEAD_SLOT, BODY_SLOT, FEET_SLOT,
-                OTHER1_SLOT, OTHER2_SLOT, OTHER3_SLOT, OTHER4_SLOT, OTHER5_SLOT};
+        {   LEFT_HAND_SLOT, RIGHT_HAND_SLOT, HEAD_SLOT, BODY_SLOT, FEET_SLOT,
+            OTHER1_SLOT, OTHER2_SLOT, OTHER3_SLOT, OTHER4_SLOT, OTHER5_SLOT };
+
+        private List<string> _inventoryItems = new List<string>()
+        {   LEFT_HAND_ITEM, RIGHT_HAND_ITEM, HEAD_ITEM, BODY_ITEM, FEET_ITEM,
+            OTHER1_ITEM, OTHER2_ITEM, OTHER3_ITEM, OTHER4_ITEM, OTHER5_ITEM };
 
         private readonly SpriteFont HEADING_FONT = GameController.ArialBold;
         private readonly SpriteFont HINT_FONT = GameController.NotoSans;
@@ -168,7 +172,9 @@ namespace Paramita.UI.Base.Game
                 ["minimize_icon"] = CreateMinimizeIcon()
             };
             var slotImages = CreateInventorySlotImages();
+            var itemImages = CreateItemImages();
             slotImages.ToList().ForEach(x => images.Add(x.Key, x.Value));
+            itemImages.ToList().ForEach(x => images.Add(x.Key, x.Value));
             return images;
         }
 
@@ -234,7 +240,20 @@ namespace Paramita.UI.Base.Game
 
             UpdateBackground();
             UpdateHeading();
+            UpdateItemSlots();
             UpdateElements();
+        }
+
+        private void UpdateItemSlots()
+        {
+            foreach(var item in _inventory)
+            {
+                if(item.Value != ItemType.None && 
+                    item.Value != ItemType.Bite && item.Value != ItemType.Fist)
+                {
+                    Elements[item.Key + "_item"].Show();
+                }
+            }
         }
 
         /// <summary>
@@ -271,6 +290,7 @@ namespace Paramita.UI.Base.Game
         {
             var exceptions = new List<string>()
             { "heading", "background_open", "background_closed" };
+            exceptions.AddRange(_inventoryItems);
 
             foreach (var key in Elements.Keys)
             {
@@ -577,49 +597,39 @@ namespace Paramita.UI.Base.Game
             return slotImages;
         }
 
+        private Dictionary<string, Element> CreateItemImages()
+        {
+            var itemImages = new Dictionary<string, Element>();
+            for (var i = 0; i < _inventoryItems.Count; i++)
+            {
+                var slotID = _inventorySlots[i];
+                var itemID = _inventoryItems[i];
+
+                var item = new Image(itemID, this, GetSpriteElementPosition(i), 
+                    ItemTextures.ItemTextureMap[ItemType.None], Color.White, Color.Red, 2);
+
+                item.Hide();
+                itemImages[itemID] = item;
+            }
+            return itemImages;
+        }
+
         private void UpdateItemImages()
         {
-            RemoveItemImages();
-            CreateItemImages();
-        }
-
-        private void CreateItemImages()
-        {
-            foreach (var slot in _inventorySlots)
+            foreach(var item in _inventory)
             {
-                if (_inventory[slot] != ItemType.None
-                    && _inventory[slot] != ItemType.Fist
-                    && _inventory[slot] != ItemType.Bite)
+                string itemID = item.Key + "_item";
+                var itemImage = (Image)Elements[itemID];
+                itemImage.Texture = ItemTextures.ItemTextureMap[item.Value];
+
+                if (item.Value == ItemType.None || item.Value == ItemType.Bite ||
+                    item.Value == ItemType.Fist || !IsOpen)
                 {
-                    var slotImage = Elements[slot];
-                    var item = new Image("item_" + ConvertItemTypeToString(_inventory[slot]),
-                        this, slotImage.Position, ItemTextures.ItemTextureMap[_inventory[slot]],
-                        Color.White, Color.Red, 2);
-
-                    if (IsOpen)
-                        item.Show();
-                    else
-                        item.Hide();
-
-                    Elements[item.Id] = item;
+                    itemImage.Hide();
                 }
-            }
-        }
-
-        private void RemoveItemImages()
-        {
-            var itemsToRemove = new List<string>();
-            foreach (var key in Elements.Keys)
-            {
-                if (key.Contains("item_"))
-                    itemsToRemove.Add(key);
-            }
-            
-            if(itemsToRemove.Count > 0)
-            {
-                foreach(var key in itemsToRemove)
+                else if (IsOpen)
                 {
-                    Elements.Remove(key);
+                    itemImage.Show();
                 }
             }
         }

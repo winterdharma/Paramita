@@ -9,6 +9,10 @@ namespace Paramita.UI.Elements
     /// </summary>
     public class Image : Element
     {
+        #region Fields
+        private Texture2D _texture;
+        #endregion
+
         #region Constructors
         public Image(string id, Component parent, Vector2 position, Texture2D texture, 
             Color normal, Color highlighted, int drawOrder, float scale = 1) 
@@ -25,7 +29,15 @@ namespace Paramita.UI.Elements
         #endregion
 
         #region Properties
-        public Texture2D Texture { get; set; }
+        public Texture2D Texture
+        {
+            get => _texture;
+            set
+            {
+                _texture = value;
+                Rectangle = CreateRectangle();
+            }
+        }
         public float Scale { get; set; }
         #endregion
 
