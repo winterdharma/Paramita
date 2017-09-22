@@ -42,6 +42,7 @@ namespace Paramita.UI.Base.Game
      */
     public class InventoryPanel : Component
     {
+        #region Fields
         private static Dictionary<string, Texture2D> _defaultSlotTextures 
             = new Dictionary<string, Texture2D>();
 
@@ -96,7 +97,7 @@ namespace Paramita.UI.Base.Game
         {   LEFT_HAND_SLOT, RIGHT_HAND_SLOT, HEAD_SLOT, BODY_SLOT, FEET_SLOT,
             OTHER1_SLOT, OTHER2_SLOT, OTHER3_SLOT, OTHER4_SLOT, OTHER5_SLOT };
 
-        private List<string> _inventoryItems = new List<string>()
+        internal List<string> _inventoryItems = new List<string>()
         {   LEFT_HAND_ITEM, RIGHT_HAND_ITEM, HEAD_ITEM, BODY_ITEM, FEET_ITEM,
             OTHER1_ITEM, OTHER2_ITEM, OTHER3_ITEM, OTHER4_ITEM, OTHER5_ITEM };
 
@@ -110,19 +111,22 @@ namespace Paramita.UI.Base.Game
 
         private int _itemSelected = 0;
         private Point _mousePosition = new Point(0, 0);
+        #endregion
 
+        #region Events
         public event EventHandler<InventoryEventArgs> OnPlayerDroppedItem;
         public event EventHandler<InventoryEventArgs> OnPlayerEquippedItem;
         public event EventHandler<InventoryEventArgs> OnPlayerUsedItem;
+        #endregion
 
-
+        #region Constructors
         public InventoryPanel(Scene parent, int drawOrder) : base(parent, drawOrder)
         {
             IsOpen = false;
             SubscribeToInputEvents();
             InitializeInventoryData();
         }
-
+        #endregion
 
         #region Properties
         public static Dictionary<string, Texture2D> DefaultTextures
@@ -145,7 +149,7 @@ namespace Paramita.UI.Base.Game
         public int ItemSelected
         {
             get => _itemSelected;
-            private set
+            set
             {
                 _itemSelected = value;
                 UpdateHintTextElements();
@@ -261,10 +265,10 @@ namespace Paramita.UI.Base.Game
         /// </summary>
         private void UpdateEventSubscriptions()
         {
-            if(!IsOpen)
-                Input.NewMousePosition += OnMouseMoved;
-            else
-                Input.NewMousePosition -= OnMouseMoved;
+            //if(!IsOpen)
+            //    Input.NewMousePosition += OnMouseMoved;
+            //else
+            //    Input.NewMousePosition -= OnMouseMoved;
         }
 
         private void UpdateBackground()
@@ -336,145 +340,20 @@ namespace Paramita.UI.Base.Game
         #region Event Handling
         public void SubscribeToInputEvents()
         {
-            Input.D0KeyPressed += OnD0KeyPressed;
-            Input.D1KeyPressed += OnD1KeyPressed;
-            Input.D2KeyPressed += OnD2KeyPressed;
-            Input.D3KeyPressed += OnD3KeyPressed;
-            Input.D4KeyPressed += OnD4KeyPressed;
-            Input.D5KeyPressed += OnD5KeyPressed;
-            Input.D6KeyPressed += OnD6KeyPressed;
-            Input.D7KeyPressed += OnD7KeyPressed;
-            Input.D8KeyPressed += OnD8KeyPressed;
-            Input.D9KeyPressed += OnD9KeyPressed;
             Input.DKeyPressed += OnDKeyPressed;
             Input.EKeyPressed += OnEKeyPressed;
             Input.CKeyPressed += OnCKeyPressed;
             Input.UKeyPressed += OnUKeyPressed;
-            SubscribeToMouseEvents();
             Dungeon.OnInventoryChangeUINotification += HandleInventoryChange;
         }
 
         public void UnsubscribeFromInputEvents()
         {
-            Input.D0KeyPressed -= OnD0KeyPressed;
-            Input.D1KeyPressed -= OnD1KeyPressed;
-            Input.D2KeyPressed -= OnD2KeyPressed;
-            Input.D3KeyPressed -= OnD3KeyPressed;
-            Input.D4KeyPressed -= OnD4KeyPressed;
-            Input.D5KeyPressed -= OnD5KeyPressed;
-            Input.D6KeyPressed -= OnD6KeyPressed;
-            Input.D7KeyPressed -= OnD7KeyPressed;
-            Input.D8KeyPressed -= OnD8KeyPressed;
-            Input.D9KeyPressed -= OnD9KeyPressed;
             Input.DKeyPressed -= OnDKeyPressed;
             Input.EKeyPressed -= OnEKeyPressed;
             Input.CKeyPressed -= OnCKeyPressed;
             Input.UKeyPressed -= OnUKeyPressed;
-            Input.NewMousePosition -= OnMouseMoved;
             Dungeon.OnInventoryChangeUINotification -= HandleInventoryChange;
-        }
-
-        private void SubscribeToMouseEvents()
-        {
-            //Input.LeftMouseClick += OnMouseClicked;
-            Input.NewMousePosition += OnMouseMoved;
-
-            foreach (var key in Elements.Keys)
-            {
-                if (Elements[key] is Background)
-                    continue;
-                else if (Elements[key] is Image)
-                {
-                    var image = Elements[key] as Image;
-                    image.MouseOver += ImageMousedOver;
-                    image.MouseGone += ImageMouseGone;
-                    image.LeftClick += ImageClicked;
-                }
-            }
-        }
-
-        private void ImageClicked(object sender, EventArgs e)
-        {
-            var image = sender as Image;
-            if (image.Id.Equals("minimize_icon"))
-                return;
-            else
-                ItemSelected = _inventorySlots.FindIndex(slot => slot.Equals(image.Id)) + 1;
-        }
-
-        private void ImageMouseGone(object sender, EventArgs e)
-        {
-            var image = sender as Image;
-            image.Unhighlight();
-        }
-
-        private void ImageMousedOver(object sender, EventArgs e)
-        {
-            var image = sender as Image;
-            image.Highlight();
-        }
-
-        private void OnMouseMoved(object sender, PointEventArgs e)
-        {
-            _mousePosition = e.Point;
-        }
-
-        private void OnMouseClicked(object sender, EventArgs e)
-        {
-            if (!IsOpen && _panelRectangle.Contains(_mousePosition))
-            {
-                TogglePanelState();
-            }
-        }
-
-        private void OnD0KeyPressed(object sender, EventArgs e)
-        {
-            ItemSelected = 10;
-        }
-
-        private void OnD1KeyPressed(object sender, EventArgs e)
-        {
-            ItemSelected = 1;
-        }
-
-        private void OnD2KeyPressed(object sender, EventArgs e)
-        {
-            ItemSelected = 2;
-        }
-
-        private void OnD3KeyPressed(object sender, EventArgs e)
-        {
-            ItemSelected = 3;
-        }
-
-        private void OnD4KeyPressed(object sender, EventArgs e)
-        {
-            ItemSelected = 4;
-        }
-
-        private void OnD5KeyPressed(object sender, EventArgs e)
-        {
-            ItemSelected = 5;
-        }
-
-        private void OnD6KeyPressed(object sender, EventArgs e)
-        {
-            ItemSelected = 6;
-        }
-
-        private void OnD7KeyPressed(object sender, EventArgs e)
-        {
-            ItemSelected = 7;
-        }
-
-        private void OnD8KeyPressed(object sender, EventArgs e)
-        {
-            ItemSelected = 8;
-        }
-
-        private void OnD9KeyPressed(object sender, EventArgs e)
-        {
-            ItemSelected = 9;
         }
 
         private void OnDKeyPressed(object sender, EventArgs e)
@@ -493,11 +372,6 @@ namespace Paramita.UI.Base.Game
         {
             HandleInput(InventoryActions.Equip);
             ItemSelected = 0;
-        }
-
-        private void OnIKeyPressed(object sender, EventArgs e)
-        {
-            TogglePanelState();
         }
 
         private void OnCKeyPressed(object sender, EventArgs e)
@@ -538,7 +412,7 @@ namespace Paramita.UI.Base.Game
                 new Vector2(Rectangle.X, Rectangle.Y),
                 _defaultSlotTextures["white_background"],
                 Color.DarkBlue,
-                Color.White,
+                Color.DarkBlue,
                 Rectangle.Size,
                 0
                 );

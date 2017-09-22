@@ -8,6 +8,7 @@ using Paramita.GameLogic.Mechanics;
 using System.Collections.Generic;
 using Paramita.UI.Input;
 using Microsoft.Xna.Framework.Input;
+using Paramita.UI.Elements;
 
 namespace Paramita.UI.Base
 {
@@ -77,19 +78,120 @@ namespace Paramita.UI.Base
             var inventoryPanel = (InventoryPanel)components.Find(c => c is InventoryPanel);
             var actionsList = new List<UserAction>
             {
-                new UserAction(this, ToggleInventoryPanel, CanToggleInventoryPanel)
+                new UserAction(this, ToggleInventoryPanel, CanToggleInventoryPanel),
+                new UserAction(this, SelectInventoryItem, CanSelectInventoryItem),
+                new UserAction(this, FocusOnElement, CanFocusOnElement),
+                new UserAction(this, StopFocusOnElement, CanStopFocusOnElement)
             };
+
             return actionsList;
+        }
+
+        private bool CanFocusOnElement(Tuple<Scene, UserInputEventArgs> context)
+        {
+            var eventArgs = context.Item2;            
+
+            if (!(eventArgs.EventSource is Image))
+                return false;
+
+            if (eventArgs.EventType != EventType.MouseOver)
+                return false;
+
+            return true;
+        }
+
+        private void FocusOnElement(Scene parent, UserInputEventArgs eventArgs)
+        {
+            var image = (Image)eventArgs.EventSource;
+            _inventoryPanel.Elements[image.Id].Highlight();
+        }
+
+        private bool CanStopFocusOnElement(Tuple<Scene, UserInputEventArgs> context)
+        {
+            var eventArgs = context.Item2;
+
+            if (!(eventArgs.EventSource is Image))
+                return false;
+
+            if (eventArgs.EventType != EventType.MouseGone)
+                return false;
+
+            return true;
+        }
+
+        private void StopFocusOnElement(Scene parent, UserInputEventArgs eventArgs)
+        {
+            var image = (Image)eventArgs.EventSource;
+            _inventoryPanel.Elements[image.Id].Unhighlight();
         }
 
         private bool CanSelectInventoryItem(Tuple<Scene, UserInputEventArgs> context)
         {
+            var scene = context.Item1;
+            var eventArgs = context.Item2;
+
+            var inventory = (InventoryPanel)scene.Components.Find(c => c is InventoryPanel);
+            var inputSources = new InputSource(new List<Element>()
+            {
+                inventory.Elements["left_hand_item"],
+                inventory.Elements["right_hand_item"],
+                inventory.Elements["head_item"],
+                inventory.Elements["body_item"],
+                inventory.Elements["feet_item"],
+                inventory.Elements["other1_item"],
+                inventory.Elements["other2_item"],
+                inventory.Elements["other3_item"],
+                inventory.Elements["other4_item"],
+                inventory.Elements["other5_item"]
+            }, 
+                Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5, Keys.D6, Keys.D7, Keys.D8, Keys.D9, 
+                Keys.D0);
+
+
+            if (!inputSources.Contains(eventArgs.EventSource))
+                return false;
+
+            if (eventArgs.EventType != EventType.LeftClick &&
+                eventArgs.EventType != EventType.Keyboard)
+                return false;
+
+            // don't select an item with the keyboard if no item is visible on that slot
+            if(eventArgs.EventSource is Keys key)
+            {
+                if (key == Keys.D1 && !inventory.Elements["left_hand_item"].Visible)    return false;
+                if (key == Keys.D2 && !inventory.Elements["right_hand_item"].Visible)   return false;
+                if (key == Keys.D3 && !inventory.Elements["head_item"].Visible)         return false;
+                if (key == Keys.D4 && !inventory.Elements["body_item"].Visible)         return false;
+                if (key == Keys.D5 && !inventory.Elements["feet_item"].Visible)         return false;
+                if (key == Keys.D6 && !inventory.Elements["other1_item"].Visible)       return false;
+                if (key == Keys.D7 && !inventory.Elements["other2_item"].Visible)       return false;
+                if (key == Keys.D8 && !inventory.Elements["other3_item"].Visible)       return false;
+                if (key == Keys.D9 && !inventory.Elements["other4_item"].Visible)       return false;
+                if (key == Keys.D0 && !inventory.Elements["other5_item"].Visible)       return false;
+            }
+
             return true;
         }
 
-        private void SelectInventoryItem(Scene obj)
+        private void SelectInventoryItem(Scene parent, UserInputEventArgs eventArgs)
         {
-            throw new NotImplementedException();
+            GameScene scene = (GameScene)parent;
+            if (eventArgs.EventSource is Image image)
+            {
+                int index = scene._inventoryPanel._inventoryItems.FindIndex(id => id.Equals(image.Id));
+                
+                scene._inventoryPanel.ItemSelected = index + 1;
+            }
+            else
+            {
+                if(eventArgs.EventSource is Keys key)
+                {
+                    if (key is Keys.D0)
+                        scene._inventoryPanel.ItemSelected = (int)key - 38;
+                    else
+                        scene._inventoryPanel.ItemSelected = (int)key - 48;
+                }
+            }
         }
 
         private bool CanToggleInventoryPanel(Tuple<Scene, UserInputEventArgs> context)
@@ -119,7 +221,7 @@ namespace Paramita.UI.Base
             return true;
         }
 
-        private void ToggleInventoryPanel(Scene parent)
+        private void ToggleInventoryPanel(Scene parent, UserInputEventArgs eventArgs)
         {
             var panel = (InventoryPanel)parent.Components.Find(c => c is InventoryPanel);
             panel.TogglePanelState();
@@ -182,6 +284,16 @@ namespace Paramita.UI.Base
 
         protected override void SubscribeToKeyboardEvents()
         {
+            Input.D0KeyPressed += OnD0KeyPressed;
+            Input.D1KeyPressed += OnD1KeyPressed;
+            Input.D2KeyPressed += OnD2KeyPressed;
+            Input.D3KeyPressed += OnD3KeyPressed;
+            Input.D4KeyPressed += OnD4KeyPressed;
+            Input.D5KeyPressed += OnD5KeyPressed;
+            Input.D6KeyPressed += OnD6KeyPressed;
+            Input.D7KeyPressed += OnD7KeyPressed;
+            Input.D8KeyPressed += OnD8KeyPressed;
+            Input.D9KeyPressed += OnD9KeyPressed;
             Input.IKeyPressed += OnIKeyPressed;
             Input.LeftKeyPressed += MovePlayerWest;
             Input.RightKeyPressed += MovePlayerEast;
@@ -194,6 +306,16 @@ namespace Paramita.UI.Base
 
         protected override void UnsubscribeFromKeyboardEvents()
         {
+            Input.D0KeyPressed -= OnD0KeyPressed;
+            Input.D1KeyPressed -= OnD1KeyPressed;
+            Input.D2KeyPressed -= OnD2KeyPressed;
+            Input.D3KeyPressed -= OnD3KeyPressed;
+            Input.D4KeyPressed -= OnD4KeyPressed;
+            Input.D5KeyPressed -= OnD5KeyPressed;
+            Input.D6KeyPressed -= OnD6KeyPressed;
+            Input.D7KeyPressed -= OnD7KeyPressed;
+            Input.D8KeyPressed -= OnD8KeyPressed;
+            Input.D9KeyPressed -= OnD9KeyPressed;
             Input.IKeyPressed -= OnIKeyPressed;
             Input.LeftKeyPressed -= MovePlayerWest;
             Input.RightKeyPressed -= MovePlayerEast;
@@ -202,6 +324,56 @@ namespace Paramita.UI.Base
             _inventoryPanel.OnPlayerDroppedItem -= PlayerDropItemEventHandler;
             _inventoryPanel.OnPlayerEquippedItem -= PlayerEquipItemEventHandler;
             _inventoryPanel.OnPlayerUsedItem -= PlayerUseItemEventHandler;
+        }
+
+        private void OnD0KeyPressed(object sender, EventArgs e)
+        {
+            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.D0));
+        }
+
+        private void OnD1KeyPressed(object sender, EventArgs e)
+        {
+            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.D1));
+        }
+
+        private void OnD2KeyPressed(object sender, EventArgs e)
+        {
+            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.D2));
+        }
+
+        private void OnD3KeyPressed(object sender, EventArgs e)
+        {
+            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.D3));
+        }
+
+        private void OnD4KeyPressed(object sender, EventArgs e)
+        {
+            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.D4));
+        }
+
+        private void OnD5KeyPressed(object sender, EventArgs e)
+        {
+            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.D5));
+        }
+
+        private void OnD6KeyPressed(object sender, EventArgs e)
+        {
+            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.D6));
+        }
+
+        private void OnD7KeyPressed(object sender, EventArgs e)
+        {
+            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.D7));
+        }
+
+        private void OnD8KeyPressed(object sender, EventArgs e)
+        {
+            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.D8));
+        }
+
+        private void OnD9KeyPressed(object sender, EventArgs e)
+        {
+            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.D9));
         }
         #endregion
     }

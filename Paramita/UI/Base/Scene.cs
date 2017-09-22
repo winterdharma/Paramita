@@ -129,7 +129,6 @@ namespace Paramita.UI.Base
         {
             if (IsDrawableOnTopDrawLayer((Component)sender, Components.ToList<IDrawable>()))
                 UserInputEvent?.Invoke(this, new UserInputEventArgs(EventType.LeftClick, e.Element));
-
         }
 
         private void OnElementRightClicked(object sender, ElementEventArgs e)
@@ -142,10 +141,14 @@ namespace Paramita.UI.Base
 
         private void OnElementMousedOver(object sender, ElementEventArgs e)
         {
+            if (IsDrawableOnTopDrawLayer((Component)sender, Components.ToList<IDrawable>()))
+                UserInputEvent?.Invoke(this, new UserInputEventArgs(EventType.MouseOver, e.Element));
         }
 
         private void OnElementMouseGone(object sender, ElementEventArgs e)
         {
+            if (IsDrawableOnTopDrawLayer((Component)sender, Components.ToList<IDrawable>()))
+                UserInputEvent?.Invoke(this, new UserInputEventArgs(EventType.MouseGone, e.Element));
         }
 
         private void OnElementScrollWheelMoved(object sender, ElementEventArgs e)
