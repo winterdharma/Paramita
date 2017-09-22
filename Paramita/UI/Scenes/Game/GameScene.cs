@@ -19,7 +19,6 @@ namespace Paramita.UI.Base
         private static StatusPanel _statusPanel;
         private InventoryPanel _inventoryPanel;
 
-
         public GameScene(GameController game) : base(game) { }
 
         public Dungeon Dungeon { get; set; }
@@ -81,10 +80,39 @@ namespace Paramita.UI.Base
                 new UserAction(this, ToggleInventoryPanel, CanToggleInventoryPanel),
                 new UserAction(this, SelectInventoryItem, CanSelectInventoryItem),
                 new UserAction(this, FocusOnElement, CanFocusOnElement),
-                new UserAction(this, StopFocusOnElement, CanStopFocusOnElement)
+                new UserAction(this, StopFocusOnElement, CanStopFocusOnElement),
+                new UserAction(this, DropSelectedItem, CanDropSelectedItem)
             };
 
             return actionsList;
+        }
+
+        private bool CanDropSelectedItem(Tuple<Scene, UserInputEventArgs> context)
+        {
+            var scene = context.Item1;
+            var eventArgs = context.Item2;
+            InventoryPanel panel = _inventoryPanel;
+            var inputSources = new InputSource(Keys.D);
+
+            if (!inputSources.Contains(eventArgs.EventSource))
+                return false;
+
+            if (eventArgs.EventType != EventType.Keyboard)
+                return false;
+
+            if (panel.ItemSelected == 0)
+                return false;
+
+            return true;
+        }
+
+        private void DropSelectedItem(Scene parent, UserInputEventArgs eventArgs)
+        {
+            string slot = _inventoryPanel._inventorySlots[_inventoryPanel.ItemSelected - 1];
+            ItemType itemType = _inventoryPanel._inventory[slot];
+
+            Dungeon.PlayerDropItem(slot, itemType);
+            _inventoryPanel.ItemSelected = 0;
         }
 
         private bool CanFocusOnElement(Tuple<Scene, UserInputEventArgs> context)
@@ -267,11 +295,6 @@ namespace Paramita.UI.Base
             Dungeon.MovePlayer(Compass.South);
         }
 
-        private void PlayerDropItemEventHandler(object sender, InventoryEventArgs e)
-        {
-            Dungeon.PlayerDropItem(e.InventorySlot, e.InventoryItem);
-        }
-
         private void PlayerEquipItemEventHandler(object sender, EventArgs e)
         {
             throw new NotImplementedException();
@@ -295,13 +318,16 @@ namespace Paramita.UI.Base
             Input.D8KeyPressed += OnD8KeyPressed;
             Input.D9KeyPressed += OnD9KeyPressed;
             Input.IKeyPressed += OnIKeyPressed;
+            Input.DKeyPressed += OnDKeyPressed;
             Input.LeftKeyPressed += MovePlayerWest;
             Input.RightKeyPressed += MovePlayerEast;
             Input.UpKeyPressed += MovePlayerNorth;
             Input.DownKeyPressed += MovePlayerSouth;
-            _inventoryPanel.OnPlayerDroppedItem += PlayerDropItemEventHandler;
-            _inventoryPanel.OnPlayerEquippedItem += PlayerEquipItemEventHandler;
-            _inventoryPanel.OnPlayerUsedItem += PlayerUseItemEventHandler;
+        }
+
+        private void OnDKeyPressed(object sender, EventArgs e)
+        {
+            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.D));
         }
 
         protected override void UnsubscribeFromKeyboardEvents()
@@ -317,13 +343,11 @@ namespace Paramita.UI.Base
             Input.D8KeyPressed -= OnD8KeyPressed;
             Input.D9KeyPressed -= OnD9KeyPressed;
             Input.IKeyPressed -= OnIKeyPressed;
+            Input.DKeyPressed -= OnDKeyPressed;
             Input.LeftKeyPressed -= MovePlayerWest;
             Input.RightKeyPressed -= MovePlayerEast;
             Input.UpKeyPressed -= MovePlayerNorth;
             Input.DownKeyPressed -= MovePlayerSouth;
-            _inventoryPanel.OnPlayerDroppedItem -= PlayerDropItemEventHandler;
-            _inventoryPanel.OnPlayerEquippedItem -= PlayerEquipItemEventHandler;
-            _inventoryPanel.OnPlayerUsedItem -= PlayerUseItemEventHandler;
         }
 
         private void OnD0KeyPressed(object sender, EventArgs e)

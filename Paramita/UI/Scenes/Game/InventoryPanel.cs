@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Paramita.GameLogic;
 using Paramita.GameLogic.Actors;
 using Paramita.GameLogic.Items;
-using Paramita.GameLogic.Utility;
 using Paramita.UI.Elements;
 using System;
 using System.Collections.Generic;
@@ -46,7 +45,7 @@ namespace Paramita.UI.Base.Game
         private static Dictionary<string, Texture2D> _defaultSlotTextures 
             = new Dictionary<string, Texture2D>();
 
-        private Dictionary<string, ItemType> _inventory 
+        internal Dictionary<string, ItemType> _inventory 
             = new Dictionary<string, ItemType>();
         private int _gold = 0;
 
@@ -93,7 +92,7 @@ namespace Paramita.UI.Base.Game
         private const string OTHER4_ITEM = "other4_item";
         private const string OTHER5_ITEM = "other5_item";
 
-        private List<string> _inventorySlots = new List<string>()
+        internal List<string> _inventorySlots = new List<string>()
         {   LEFT_HAND_SLOT, RIGHT_HAND_SLOT, HEAD_SLOT, BODY_SLOT, FEET_SLOT,
             OTHER1_SLOT, OTHER2_SLOT, OTHER3_SLOT, OTHER4_SLOT, OTHER5_SLOT };
 
@@ -111,12 +110,6 @@ namespace Paramita.UI.Base.Game
 
         private int _itemSelected = 0;
         private Point _mousePosition = new Point(0, 0);
-        #endregion
-
-        #region Events
-        public event EventHandler<InventoryEventArgs> OnPlayerDroppedItem;
-        public event EventHandler<InventoryEventArgs> OnPlayerEquippedItem;
-        public event EventHandler<InventoryEventArgs> OnPlayerUsedItem;
         #endregion
 
         #region Constructors
@@ -239,7 +232,6 @@ namespace Paramita.UI.Base.Game
 
         private void UpdatePanel()
         {
-            UpdateEventSubscriptions();
             Rectangle = UpdatePanelRectangle();
 
             UpdateBackground();
@@ -258,17 +250,6 @@ namespace Paramita.UI.Base.Game
                     Elements[item.Key + "_item"].Show();
                 }
             }
-        }
-
-        /// <summary>
-        /// Subscribes to mouse events when the panel is closed and unsubscribes from them when open.
-        /// </summary>
-        private void UpdateEventSubscriptions()
-        {
-            //if(!IsOpen)
-            //    Input.NewMousePosition += OnMouseMoved;
-            //else
-            //    Input.NewMousePosition -= OnMouseMoved;
         }
 
         private void UpdateBackground()
@@ -340,59 +321,19 @@ namespace Paramita.UI.Base.Game
         #region Event Handling
         public void SubscribeToInputEvents()
         {
-            Input.DKeyPressed += OnDKeyPressed;
-            Input.EKeyPressed += OnEKeyPressed;
             Input.CKeyPressed += OnCKeyPressed;
-            Input.UKeyPressed += OnUKeyPressed;
             Dungeon.OnInventoryChangeUINotification += HandleInventoryChange;
         }
 
         public void UnsubscribeFromInputEvents()
         {
-            Input.DKeyPressed -= OnDKeyPressed;
-            Input.EKeyPressed -= OnEKeyPressed;
             Input.CKeyPressed -= OnCKeyPressed;
-            Input.UKeyPressed -= OnUKeyPressed;
             Dungeon.OnInventoryChangeUINotification -= HandleInventoryChange;
-        }
-
-        private void OnDKeyPressed(object sender, EventArgs e)
-        {
-            HandleInput(InventoryActions.Drop);
-            ItemSelected = 0;
-        }
-
-        private void OnUKeyPressed(object sender, EventArgs e)
-        {
-            HandleInput(InventoryActions.Use);
-            ItemSelected = 0;
-        }
-
-        private void OnEKeyPressed(object sender, EventArgs e)
-        {
-            HandleInput(InventoryActions.Equip);
-            ItemSelected = 0;
         }
 
         private void OnCKeyPressed(object sender, EventArgs e)
         {
             ItemSelected = 0;
-        }
-
-        private void HandleInput(InventoryActions action)
-        {
-            if (ItemSelected == 0)
-                return;
-
-            if (action == InventoryActions.Drop)
-            {
-                string slot = _inventorySlots[ItemSelected - 1];
-                if (_inventory[slot] != ItemType.None)
-                {
-                    OnPlayerDroppedItem?.Invoke(null,
-                    new InventoryEventArgs(slot, _inventory[slot]));
-                }
-            }
         }
 
         private void HandleInventoryChange(object sender, InventoryChangeEventArgs e)
