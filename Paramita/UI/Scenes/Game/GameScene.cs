@@ -79,12 +79,27 @@ namespace Paramita.UI.Base
             {
                 new UserAction(this, ToggleInventoryPanel, CanToggleInventoryPanel),
                 new UserAction(this, SelectInventoryItem, CanSelectInventoryItem),
+                new UserAction(this, CancelInventorySelection, CanCancelInventorySelection),
                 new UserAction(this, FocusOnElement, CanFocusOnElement),
                 new UserAction(this, StopFocusOnElement, CanStopFocusOnElement),
                 new UserAction(this, DropSelectedItem, CanDropSelectedItem)
             };
 
             return actionsList;
+        }
+
+        private bool CanCancelInventorySelection(Tuple<Scene, UserInputEventArgs> context)
+        {
+            var source = new InputSource(Keys.C);
+
+            if (source.Contains(context.Item2.EventSource) && _inventoryPanel.ItemSelected != 0)    
+                return true;
+            return false;
+        }
+
+        private void CancelInventorySelection(Scene parent, UserInputEventArgs eventArgs)
+        {
+            _inventoryPanel.ItemSelected = 0;
         }
 
         private bool CanDropSelectedItem(Tuple<Scene, UserInputEventArgs> context)
@@ -295,16 +310,6 @@ namespace Paramita.UI.Base
             Dungeon.MovePlayer(Compass.South);
         }
 
-        private void PlayerEquipItemEventHandler(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void PlayerUseItemEventHandler(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
         protected override void SubscribeToKeyboardEvents()
         {
             Input.D0KeyPressed += OnD0KeyPressed;
@@ -319,10 +324,16 @@ namespace Paramita.UI.Base
             Input.D9KeyPressed += OnD9KeyPressed;
             Input.IKeyPressed += OnIKeyPressed;
             Input.DKeyPressed += OnDKeyPressed;
+            Input.CKeyPressed += OnCKeyPressed;
             Input.LeftKeyPressed += MovePlayerWest;
             Input.RightKeyPressed += MovePlayerEast;
             Input.UpKeyPressed += MovePlayerNorth;
             Input.DownKeyPressed += MovePlayerSouth;
+        }
+
+        private void OnCKeyPressed(object sender, EventArgs e)
+        {
+            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.C));
         }
 
         private void OnDKeyPressed(object sender, EventArgs e)
@@ -344,6 +355,7 @@ namespace Paramita.UI.Base
             Input.D9KeyPressed -= OnD9KeyPressed;
             Input.IKeyPressed -= OnIKeyPressed;
             Input.DKeyPressed -= OnDKeyPressed;
+            Input.CKeyPressed -= OnCKeyPressed;
             Input.LeftKeyPressed -= MovePlayerWest;
             Input.RightKeyPressed -= MovePlayerEast;
             Input.UpKeyPressed -= MovePlayerNorth;

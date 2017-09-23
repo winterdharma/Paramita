@@ -321,19 +321,12 @@ namespace Paramita.UI.Base.Game
         #region Event Handling
         public void SubscribeToInputEvents()
         {
-            Input.CKeyPressed += OnCKeyPressed;
             Dungeon.OnInventoryChangeUINotification += HandleInventoryChange;
         }
 
         public void UnsubscribeFromInputEvents()
         {
-            Input.CKeyPressed -= OnCKeyPressed;
             Dungeon.OnInventoryChangeUINotification -= HandleInventoryChange;
-        }
-
-        private void OnCKeyPressed(object sender, EventArgs e)
-        {
-            ItemSelected = 0;
         }
 
         private void HandleInventoryChange(object sender, InventoryChangeEventArgs e)
