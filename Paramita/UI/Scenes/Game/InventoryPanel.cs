@@ -116,7 +116,6 @@ namespace Paramita.UI.Base.Game
         public InventoryPanel(Scene parent, int drawOrder) : base(parent, drawOrder)
         {
             IsOpen = false;
-            SubscribeToInputEvents();
             InitializeInventoryData();
         }
         #endregion
@@ -136,7 +135,7 @@ namespace Paramita.UI.Base.Game
                 UpdateItemImages();
             }
         }
-
+        public int Gold { get => _gold; set => _gold = value; }
         public bool IsOpen { get; set; }
 
         public int ItemSelected
@@ -216,12 +215,11 @@ namespace Paramita.UI.Base.Game
 
         private void InitializeInventoryData()
         {
-            var parent = Parent as GameScene;
+            var parent = (GameScene)Parent;
             parent.Dungeon.GetPlayerInventory(); 
             // data is received as an event from Dungeon
         }
         #endregion
-
 
         #region Panel State Change Logic
         public void TogglePanelState()
@@ -296,7 +294,6 @@ namespace Paramita.UI.Base.Game
         }
         #endregion
 
-
         #region Update PanelRectangle Methods
         protected override Rectangle UpdatePanelRectangle()
         {
@@ -319,26 +316,6 @@ namespace Paramita.UI.Base.Game
                 return new Point(PANEL_WIDTH_CLOSED, PANEL_HEIGHT_CLOSED);
         }
         #endregion
-
-
-        #region Event Handling
-        public void SubscribeToInputEvents()
-        {
-            Dungeon.OnInventoryChangeUINotification += HandleInventoryChange;
-        }
-
-        public void UnsubscribeFromInputEvents()
-        {
-            Dungeon.OnInventoryChangeUINotification -= HandleInventoryChange;
-        }
-
-        private void HandleInventoryChange(object sender, InventoryChangeEventArgs e)
-        {
-            Inventory = e.Inventory.Item1;
-            _gold = e.Inventory.Item2;
-        }
-        #endregion
-
 
         #region Images
         private Image CreateClosedPanelBackground()
@@ -493,7 +470,6 @@ namespace Paramita.UI.Base.Game
                 return Color.White;
         }
         #endregion
-
 
         #region Text Elements
         private Vector2 GetElementPosition(string id, bool isUseHintVisible )

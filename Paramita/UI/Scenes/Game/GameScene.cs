@@ -10,6 +10,7 @@ using Paramita.UI.Input;
 using Microsoft.Xna.Framework.Input;
 using Paramita.UI.Elements;
 using MonoGame.Extended.Input.InputListeners;
+using Paramita.GameLogic.Actors;
 
 namespace Paramita.UI.Base
 {
@@ -290,6 +291,26 @@ namespace Paramita.UI.Base
         {
             var panel = (InventoryPanel)parent.Components.Find(c => c is InventoryPanel);
             panel.TogglePanelState();
+        }
+        #endregion
+
+        #region Event Handling
+        protected override void SubscribeToEvents()
+        {
+            base.SubscribeToEvents();
+            Dungeon.OnInventoryChangeUINotification += HandleInventoryChange;
+        }
+
+        protected override void UnsubscribeFromEvents()
+        {
+            base.UnsubscribeFromEvents();
+            Dungeon.OnInventoryChangeUINotification -= HandleInventoryChange;
+        }
+
+        private void HandleInventoryChange(object sender, InventoryChangeEventArgs e)
+        {
+            _inventoryPanel.Inventory = e.Inventory.Item1;
+            _inventoryPanel.Gold = e.Inventory.Item2;
         }
         #endregion
 
