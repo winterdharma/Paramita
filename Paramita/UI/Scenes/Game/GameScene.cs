@@ -82,10 +82,34 @@ namespace Paramita.UI.Base
                 new UserAction(this, CancelInventorySelection, CanCancelInventorySelection),
                 new UserAction(this, FocusOnElement, CanFocusOnElement),
                 new UserAction(this, StopFocusOnElement, CanStopFocusOnElement),
-                new UserAction(this, DropSelectedItem, CanDropSelectedItem)
+                new UserAction(this, DropSelectedItem, CanDropSelectedItem),
+                new UserAction(this, MovePlayer, CanMovePlayer)
             };
 
             return actionsList;
+        }
+
+        private bool CanMovePlayer(Tuple<Scene, UserInputEventArgs> context)
+        {
+            var sources = new InputSource(Keys.Up, Keys.Right, Keys.Left, Keys.Down);
+
+            if(sources.Contains(context.Item2.EventSource))
+                return true;
+            return false;
+        }
+
+        private void MovePlayer(Scene parent, UserInputEventArgs eventArgs)
+        {
+            var source = (Keys)eventArgs.EventSource;
+
+            if (source == Keys.Up)
+                Dungeon.MovePlayer(Compass.North);
+            else if(source == Keys.Down)
+                Dungeon.MovePlayer(Compass.South);
+            else if(source == Keys.Right)
+                Dungeon.MovePlayer(Compass.East);
+            else if(source == Keys.Left)
+                Dungeon.MovePlayer(Compass.West);
         }
 
         private bool CanCancelInventorySelection(Tuple<Scene, UserInputEventArgs> context)
@@ -292,22 +316,22 @@ namespace Paramita.UI.Base
 
         private void MovePlayerWest(object sender, EventArgs e)
         {
-            Dungeon.MovePlayer(Compass.West);
+            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.Left));
         }
 
         private void MovePlayerEast(object sender, EventArgs e)
         {
-            Dungeon.MovePlayer(Compass.East);
+            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.Right));
         }
 
         private void MovePlayerNorth(object sender, EventArgs e)
         {
-            Dungeon.MovePlayer(Compass.North);
+            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.Up));
         }
 
         private void MovePlayerSouth(object sender, EventArgs e)
         {
-            Dungeon.MovePlayer(Compass.South);
+            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.Down));
         }
 
         protected override void SubscribeToKeyboardEvents()
