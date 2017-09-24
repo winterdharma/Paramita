@@ -247,7 +247,10 @@ namespace Paramita.UI.Base.Game
                 if(item.Value != ItemType.None && 
                     item.Value != ItemType.Bite && item.Value != ItemType.Fist)
                 {
-                    Elements[item.Key + "_item"].Show();
+                    if (IsOpen)
+                        Elements[item.Key + "_item"].Show();
+                    else
+                        Elements[item.Key + "_item"].Hide();
                 }
             }
         }

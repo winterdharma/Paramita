@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using Paramita.UI.Input;
 using Microsoft.Xna.Framework.Input;
 using Paramita.UI.Elements;
+using MonoGame.Extended.Input.InputListeners;
 
 namespace Paramita.UI.Base
 {
@@ -74,8 +75,7 @@ namespace Paramita.UI.Base
         #region User Actions
         protected override List<UserAction> InitializeUserActions(List<Component> components)
         {
-            var inventoryPanel = (InventoryPanel)components.Find(c => c is InventoryPanel);
-            var actionsList = new List<UserAction>
+            return new List<UserAction>()
             {
                 new UserAction(this, ToggleInventoryPanel, CanToggleInventoryPanel),
                 new UserAction(this, SelectInventoryItem, CanSelectInventoryItem),
@@ -85,8 +85,6 @@ namespace Paramita.UI.Base
                 new UserAction(this, DropSelectedItem, CanDropSelectedItem),
                 new UserAction(this, MovePlayer, CanMovePlayer)
             };
-
-            return actionsList;
         }
 
         private bool CanMovePlayer(Tuple<Scene, UserInputEventArgs> context)
@@ -302,139 +300,9 @@ namespace Paramita.UI.Base
             base.Update(gameTime);
         }
 
-
         public override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
         }
-
-        #region Event Handling
-        private void OnIKeyPressed(object sender, EventArgs e)
-        {
-            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.I));
-        }
-
-        private void MovePlayerWest(object sender, EventArgs e)
-        {
-            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.Left));
-        }
-
-        private void MovePlayerEast(object sender, EventArgs e)
-        {
-            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.Right));
-        }
-
-        private void MovePlayerNorth(object sender, EventArgs e)
-        {
-            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.Up));
-        }
-
-        private void MovePlayerSouth(object sender, EventArgs e)
-        {
-            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.Down));
-        }
-
-        protected override void SubscribeToKeyboardEvents()
-        {
-            Input.D0KeyPressed += OnD0KeyPressed;
-            Input.D1KeyPressed += OnD1KeyPressed;
-            Input.D2KeyPressed += OnD2KeyPressed;
-            Input.D3KeyPressed += OnD3KeyPressed;
-            Input.D4KeyPressed += OnD4KeyPressed;
-            Input.D5KeyPressed += OnD5KeyPressed;
-            Input.D6KeyPressed += OnD6KeyPressed;
-            Input.D7KeyPressed += OnD7KeyPressed;
-            Input.D8KeyPressed += OnD8KeyPressed;
-            Input.D9KeyPressed += OnD9KeyPressed;
-            Input.IKeyPressed += OnIKeyPressed;
-            Input.DKeyPressed += OnDKeyPressed;
-            Input.CKeyPressed += OnCKeyPressed;
-            Input.LeftKeyPressed += MovePlayerWest;
-            Input.RightKeyPressed += MovePlayerEast;
-            Input.UpKeyPressed += MovePlayerNorth;
-            Input.DownKeyPressed += MovePlayerSouth;
-        }
-
-        private void OnCKeyPressed(object sender, EventArgs e)
-        {
-            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.C));
-        }
-
-        private void OnDKeyPressed(object sender, EventArgs e)
-        {
-            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.D));
-        }
-
-        protected override void UnsubscribeFromKeyboardEvents()
-        {
-            Input.D0KeyPressed -= OnD0KeyPressed;
-            Input.D1KeyPressed -= OnD1KeyPressed;
-            Input.D2KeyPressed -= OnD2KeyPressed;
-            Input.D3KeyPressed -= OnD3KeyPressed;
-            Input.D4KeyPressed -= OnD4KeyPressed;
-            Input.D5KeyPressed -= OnD5KeyPressed;
-            Input.D6KeyPressed -= OnD6KeyPressed;
-            Input.D7KeyPressed -= OnD7KeyPressed;
-            Input.D8KeyPressed -= OnD8KeyPressed;
-            Input.D9KeyPressed -= OnD9KeyPressed;
-            Input.IKeyPressed -= OnIKeyPressed;
-            Input.DKeyPressed -= OnDKeyPressed;
-            Input.CKeyPressed -= OnCKeyPressed;
-            Input.LeftKeyPressed -= MovePlayerWest;
-            Input.RightKeyPressed -= MovePlayerEast;
-            Input.UpKeyPressed -= MovePlayerNorth;
-            Input.DownKeyPressed -= MovePlayerSouth;
-        }
-
-        private void OnD0KeyPressed(object sender, EventArgs e)
-        {
-            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.D0));
-        }
-
-        private void OnD1KeyPressed(object sender, EventArgs e)
-        {
-            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.D1));
-        }
-
-        private void OnD2KeyPressed(object sender, EventArgs e)
-        {
-            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.D2));
-        }
-
-        private void OnD3KeyPressed(object sender, EventArgs e)
-        {
-            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.D3));
-        }
-
-        private void OnD4KeyPressed(object sender, EventArgs e)
-        {
-            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.D4));
-        }
-
-        private void OnD5KeyPressed(object sender, EventArgs e)
-        {
-            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.D5));
-        }
-
-        private void OnD6KeyPressed(object sender, EventArgs e)
-        {
-            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.D6));
-        }
-
-        private void OnD7KeyPressed(object sender, EventArgs e)
-        {
-            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.D7));
-        }
-
-        private void OnD8KeyPressed(object sender, EventArgs e)
-        {
-            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.D8));
-        }
-
-        private void OnD9KeyPressed(object sender, EventArgs e)
-        {
-            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, Keys.D9));
-        }
-        #endregion
     }
 }

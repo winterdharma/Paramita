@@ -109,14 +109,6 @@ namespace Paramita.UI.Base
             base.Draw(gameTime);
         }
 
-        protected override void SubscribeToKeyboardEvents()
-        {
-        }
-
-        protected override void UnsubscribeFromKeyboardEvents()
-        {
-        }
-
         protected override List<UserAction> InitializeUserActions(List<Component> components)
         {
             var actionsList = new List<UserAction>();

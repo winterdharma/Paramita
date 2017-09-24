@@ -19,10 +19,13 @@ namespace Paramita.UI.Base
         protected Rectangle _panelRectangle = new Rectangle();
         protected Rectangle _parentRectangle = new Rectangle();
         protected bool _enabled;
+        protected bool _visible;
         #endregion
 
         #region Events
         public event EventHandler<RectangleEventArgs> RectangleUpdated;
+        public event EventHandler EnabledChanged;
+        public event EventHandler VisibleChanged;
         public event EventHandler<ElementEventArgs> ElementLeftClicked;
         public event EventHandler<ElementEventArgs> ElementRightClicked;
         public event EventHandler<ElementEventArgs> ElementDoubleClicked;
@@ -65,9 +68,27 @@ namespace Paramita.UI.Base
         public bool Enabled
         {
             get => _enabled;
-            set {_enabled = value; }
+            set
+            {
+                if (value != _enabled)
+                {
+                    _enabled = value;
+                    EnabledChanged?.Invoke(this, new EventArgs());
+                }
+            }
         }
-        public bool Visible { get; internal set; }
+        public bool Visible
+        {
+            get => _visible;
+            set
+            {
+                if (value != _visible)
+                {
+                    _visible = value;
+                    VisibleChanged?.Invoke(this, new EventArgs());
+                }
+            }
+        }
         public bool IsMouseOver { get; private set; }
         public int DrawOrder { get; set; }
         #endregion

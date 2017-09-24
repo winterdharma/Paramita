@@ -23,7 +23,7 @@ namespace Paramita.UI.Input
 
 
         #region Events
-        public event EventHandler<EventArgs> KeyPressed;
+        public event EventHandler<KeyboardEventArgs> KeyPressed;
         public event EventHandler<EventArgs> EnterKeyPressed;
         public event EventHandler<EventArgs> LeftKeyPressed;
         public event EventHandler<EventArgs> RightKeyPressed;
@@ -99,7 +99,7 @@ namespace Paramita.UI.Input
 
         private void OnKeyPressed(object sender, KeyboardEventArgs e)
         {
-            KeyPressed?.Invoke(this, new EventArgs());
+            KeyPressed?.Invoke(this, e);
 
             switch (e.Key)
             {

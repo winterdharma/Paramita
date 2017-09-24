@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Input.InputListeners;
 using Paramita.UI.Input;
 using System;
 using System.Collections.Generic;
@@ -121,9 +122,20 @@ namespace Paramita.UI.Base
             }
         }
 
-        protected abstract void SubscribeToKeyboardEvents();
+        protected void SubscribeToKeyboardEvents()
+        {
+            Input.KeyPressed += OnKeyPressed;
+        }
 
-        protected abstract void UnsubscribeFromKeyboardEvents();
+        protected void UnsubscribeFromKeyboardEvents()
+        {
+            Input.KeyPressed -= OnKeyPressed;
+        }
+
+        private void OnKeyPressed(object sender, KeyboardEventArgs e)
+        {
+            UserInputEvent?.Invoke(this, new UserInputEventArgs(EventType.Keyboard, null, e.Key));
+        }
 
         private void OnElementLeftClicked(object sender, ElementEventArgs e)
         {

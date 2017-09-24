@@ -53,14 +53,6 @@ namespace Paramita.UI.Base
         {
             Game.CurrentScene = Game.MenuScene;
         }
-
-        protected override void SubscribeToKeyboardEvents()
-        {
-        }
-
-        protected override void UnsubscribeFromKeyboardEvents()
-        {
-        }
         #endregion
 
         #region Public API
