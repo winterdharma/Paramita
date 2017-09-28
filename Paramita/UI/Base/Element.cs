@@ -30,14 +30,26 @@ namespace Paramita.UI.Base
 
         #region Constructors
         public Element(string id, Component parent, Vector2 position, Color unhighlighted, 
-            Color highlighted, int drawOrder)
+            Color highlighted, int drawOrder) : this(id, parent, unhighlighted, highlighted, drawOrder)
+        {
+            Position = position;
+        }
+
+        public Element(string id, Component parent, Point position, Color unhighlighted,
+            Color highlighted, int drawOrder) : this(id, parent, unhighlighted, highlighted, drawOrder)
+        {
+            Position = new Vector2(position.X, position.Y);  
+        }
+
+        private Element(string id, Component parent, Color unhighlighted, Color highlighted, int drawOrder)
         {
             Id = id;
             Parent = parent;
-            Position = position;
             Color = unhighlighted;
             UnhighlightedColor = unhighlighted;
             HighlightedColor = highlighted;
+            DrawOrder = drawOrder;
+
             Visible = false;
             Enabled = false;
             IsMouseOver = false;

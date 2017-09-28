@@ -3,16 +3,15 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.GameLogic;
 using Paramita.GameLogic.Items;
-using Paramita.UI.Base.Game;
 using Paramita.GameLogic.Mechanics;
 using System.Collections.Generic;
 using Paramita.UI.Input;
 using Microsoft.Xna.Framework.Input;
 using Paramita.UI.Elements;
-using MonoGame.Extended.Input.InputListeners;
 using Paramita.GameLogic.Actors;
+using Paramita.UI.Base;
 
-namespace Paramita.UI.Base
+namespace Paramita.UI.Scenes
 {
 
     public class GameScene : Scene

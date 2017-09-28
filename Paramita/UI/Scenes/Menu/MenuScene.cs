@@ -1,14 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended.Input.InputListeners;
+using Paramita.UI.Base;
 using System;
 using System.Collections.Generic;
 
-namespace Paramita.UI.Base
+namespace Paramita.UI.Scenes
 {
-
-
     public class MenuScene : Scene
     {
         private Texture2D _background;

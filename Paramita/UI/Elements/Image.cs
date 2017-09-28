@@ -18,13 +18,21 @@ namespace Paramita.UI.Elements
             Color normal, Color highlighted, int drawOrder, float scale = 1) 
             : base(id, parent, position, normal, highlighted, drawOrder)
         {
-            Id = id;
+            SetImageProperties(texture, scale);
+        }
+
+        public Image(string id, Component parent, Point position, Texture2D texture,
+            Color normal, Color highlighted, int drawOrder, float scale = 1)
+            : base(id, parent, position, normal, highlighted, drawOrder)
+        {
+            SetImageProperties(texture, scale);
+        }
+
+        private void SetImageProperties(Texture2D texture, float scale = 1)
+        {
             Texture = texture;
-            Visible = true;
-            Enabled = true;
             Scale = scale;
             Rectangle = CreateRectangle();
-            DrawOrder = drawOrder;
         }
         #endregion
 

@@ -1,7 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Paramita.UI.Base;
 
-namespace Paramita.UI.Base.Game
+namespace Paramita.UI.Elements
 {
     /// <summary>
     /// A class representing a single-line text element, such as a message or label.

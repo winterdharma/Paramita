@@ -2,7 +2,7 @@
 using Paramita.GameLogic.Items;
 using System.Collections.Generic;
 
-namespace Paramita.UI.Base.Game
+namespace Paramita.UI.Scenes
 {
     public static class ItemTextures
     {

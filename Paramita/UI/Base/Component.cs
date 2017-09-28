@@ -8,12 +8,13 @@ using System.Linq;
 
 namespace Paramita.UI.Base
 {
-    /// <summary>An collection of several elements that combine to form a single component of a 
-    /// Scene.</summary>
+    /// <summary>An collection of several elements combine to form a single component of a 
+    /// Scene. The Component class holds this collection of related Element objects and handles
+    /// the logic for their display, etc.</summary>
     public abstract class Component : IDrawable
     {
         #region Fields
-        protected Dictionary<string, Element> _elements = new Dictionary<string, Element>();
+        protected Dictionary<string, Element> _elements;
         protected List<Element> _visibleElements = new List<Element>();
         protected List<Element> _enabledElements = new List<Element>();
         protected Rectangle _panelRectangle = new Rectangle();
@@ -62,7 +63,8 @@ namespace Paramita.UI.Base
             get { return _elements; }
             set
             {
-                _elements = value;              
+                _elements = value;
+                SubscribeToElementPropertyEvents();
             }
         }
         public bool Enabled
@@ -98,11 +100,13 @@ namespace Paramita.UI.Base
         {
             Rectangle = UpdatePanelRectangle();
             Elements = InitializeElements();
-            SubscribeToElementPropertyEvents();
         }
 
         protected abstract Rectangle UpdatePanelRectangle();
-        protected abstract Dictionary<string, Element> InitializeElements();
+        protected virtual Dictionary<string, Element> InitializeElements()
+        {
+            return new Dictionary<string, Element>();
+        }
         #endregion
 
         #region Event Handling

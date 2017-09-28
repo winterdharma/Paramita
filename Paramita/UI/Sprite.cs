@@ -4,6 +4,7 @@ using Paramita.GameLogic.Actors;
 using Paramita.GameLogic.Items;
 using Paramita.GameLogic.Levels;
 using Paramita.UI.Base;
+using Paramita.UI.Scenes;
 using System;
 
 namespace Paramita.UI

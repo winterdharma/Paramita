@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.GameLogic.Mechanics;
 using Paramita.UI.Base;
+using Paramita.UI.Scenes;
 
 namespace Paramita.UI
 {

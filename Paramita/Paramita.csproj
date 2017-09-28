@@ -57,6 +57,7 @@
     <Compile Include="UI\Elements\Image.cs" />
     <Compile Include="UI\Elements\LineOfText.cs" />
     <Compile Include="UI\Scenes\Game\TileMapPanel.cs" />
+    <Compile Include="UI\Components\Screen.cs" />
     <Compile Include="UI\Sprite.cs" />
     <Compile Include="UI\Scenes\Game\InventoryPanel.cs" />
     <Compile Include="UI\Scenes\Game\StatusPanel.cs" />

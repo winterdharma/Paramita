@@ -2,6 +2,12 @@
 
 namespace Paramita.UI.Base
 {
+    /// <summary>
+    /// UserAction encapsulates the conditions for a user action to take place and the logic that
+    /// executes that action. It evaluates UserInputEvents with the CanExecute Predicate and then
+    /// performs the Action if the Predicate returns true. UserAction objects are held by the Scene
+    /// class and collectively define the User's ability to interact with the active Scene.
+    /// </summary>
     public class UserAction
     {
         public UserAction(Scene parent, Action<Scene, UserInputEventArgs> action, Predicate<Tuple<Scene, UserInputEventArgs>> predicate)

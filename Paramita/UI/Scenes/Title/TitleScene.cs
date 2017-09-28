@@ -1,19 +1,20 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Input.InputListeners;
+using Paramita.UI.Base;
+using Paramita.UI.Components;
+using Paramita.UI.Elements;
 using System;
 using System.Collections.Generic;
 
-namespace Paramita.UI.Base
+namespace Paramita.UI.Scenes
 {
     public class TitleScene : Scene
     {
         #region Fields
         private Texture2D _background;
-        private SpriteFont _fontArialBold;
         private TimeSpan _elapsedTime;
-        private Color _messageColor;
         private Color WHITE = new Color(1f, 1f, 1f);
-        private Vector2 _messagePosition;
         private const string MESSAGE = "PRESS ANY KEY TO CONTINUE";
         #endregion
 
@@ -31,15 +32,40 @@ namespace Paramita.UI.Base
          */
         public override void Initialize()
         {
-            LoadContent();
-            _fontArialBold = GameController.ArialBold;
-            SetMessagePosition();
+            base.Initialize();
+
+            var screen = new Screen(this, 0);
+            screen.Elements = new Dictionary<string, Element>()
+            {
+                { "background", new Background("background", screen, ScreenRectangle.Location, 
+                    _background, WHITE, WHITE, ScreenRectangle.Size, 0) },
+                { "continue_text", new LineOfText("continue_text", screen, SetMessagePosition(), 
+                    MESSAGE, GameController.ArialBold, WHITE, WHITE, 1) }
+            };
+            Components = InitializeComponents(screen);
+            UserActions = InitializeUserActions(Components);
         }
 
         protected override List<UserAction> InitializeUserActions(List<Component> components)
         {
-            var actionsList = new List<UserAction>();
+            var actionsList = new List<UserAction>()
+            {
+                new UserAction(this, ContinueToMenu, CanContinueToMenu)
+            };
             return actionsList;
+        }
+
+        private bool CanContinueToMenu(Tuple<Scene,UserInputEventArgs> context)
+        {
+            if(context.Item2.EventType == EventType.LeftClick ||
+                context.Item2.EventType == EventType.Keyboard)
+                return true;
+            return false;
+        }
+
+        private void ContinueToMenu(Scene parent, UserInputEventArgs eventArgs)
+        {
+            Game.CurrentScene = Game.MenuScene;
         }
 
         protected override void LoadContent()
@@ -49,9 +75,9 @@ namespace Paramita.UI.Base
         #endregion
 
         #region Event Handling
-        private void HandleInput(object sender, EventArgs e)
+        private void HandleInput(object sender, KeyboardEventArgs e)
         {
-            Game.CurrentScene = Game.MenuScene;
+            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, e.Key));
         }
         #endregion
 
@@ -59,7 +85,8 @@ namespace Paramita.UI.Base
         public override void Update(GameTime gameTime)
         {
             _elapsedTime += gameTime.ElapsedGameTime;
-            _messageColor = WHITE * (float)Math.Abs(Math.Sin(_elapsedTime.TotalSeconds * 2));
+            Components[0].Elements["continue_text"].Color = 
+                WHITE * (float)Math.Abs(Math.Sin(_elapsedTime.TotalSeconds * 2));
             base.Update(gameTime);
         }
 
@@ -69,38 +96,29 @@ namespace Paramita.UI.Base
          */
         public override void Draw(GameTime gameTime)
         {
-            _spriteBatch.Begin();
-
-            _spriteBatch.Draw(_background, ScreenRectangle, Color.White);
-
-            _spriteBatch.DrawString(_fontArialBold, MESSAGE, _messagePosition, _messageColor);
-
-            _spriteBatch.End();
-
             base.Draw(gameTime);
         }
 
-        public override void Hide()
-        {
-            base.Hide();
-            Input.KeyPressed -= HandleInput;
-            Input.MouseClick -= HandleInput;
-        }
+        //public override void Hide()
+        //{
+        //    base.Hide();
+        //    Input.KeyPressed -= HandleInput;
+        //}
 
-        public override void Show()
-        {
-            base.Show();
-            Input.KeyPressed += HandleInput;
-            Input.MouseClick += HandleInput;
-        }
+        //public override void Show()
+        //{
+        //    base.Show();
+        //    Input.KeyPressed += HandleInput;
+        //}
         #endregion
 
         #region Helper Methods
-        private void SetMessagePosition()
+        private Vector2 SetMessagePosition()
         {
-            Vector2 size = _fontArialBold.MeasureString(MESSAGE);
-            _messagePosition = new Vector2((ScreenRectangle.Width - size.X) / 2,
-                ScreenRectangle.Bottom - 50 - _fontArialBold.LineSpacing);
+            SpriteFont font = GameController.ArialBold;
+            Vector2 size = font.MeasureString(MESSAGE);
+            return new Vector2((ScreenRectangle.Width - size.X) / 2,
+                ScreenRectangle.Bottom - 50 - font.LineSpacing);
         }
         #endregion
     }

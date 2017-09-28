@@ -1,11 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.GameLogic;
+using Paramita.UI.Base;
 using Paramita.UI.Input;
 using System;
 using System.Collections.Generic;
 
-namespace Paramita.UI.Base.Game
+namespace Paramita.UI.Scenes
 {
     public class StatusPanel : Component
     {

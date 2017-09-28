@@ -1,13 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended.Input.InputListeners;
 using Paramita.GameLogic.Utility;
 using Paramita.UI.Input;
 using System;
 using System.Collections.Generic;
 
-namespace Paramita.UI.Base
+namespace Paramita.UI.Scenes
 {
     public class MenuComponent
     {

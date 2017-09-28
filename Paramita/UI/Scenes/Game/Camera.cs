@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 //using Paramita.Levels;
 
-namespace Paramita.UI.Base
+namespace Paramita.UI.Scenes
 {
     public static class Camera
     {

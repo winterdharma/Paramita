@@ -1,14 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Paramita.GameLogic;
-using Paramita.GameLogic.Actors;
 using Paramita.GameLogic.Items;
+using Paramita.UI.Base;
 using Paramita.UI.Elements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Paramita.UI.Base.Game
+namespace Paramita.UI.Scenes
 {
     public enum InventoryActions
     {
@@ -153,6 +152,7 @@ namespace Paramita.UI.Base.Game
         #region Initialization
         protected override Dictionary<string, Element> InitializeElements()
         {
+            base.InitializeElements();
             var images = InitializeImageElements();
             var texts = InitializeTextElements();
             texts.ToList().ForEach(x => images.Add(x.Key, x.Value));
@@ -323,7 +323,7 @@ namespace Paramita.UI.Base.Game
             var background = new Background(
                 "background_closed",
                 this,
-                new Vector2(Rectangle.X, Rectangle.Y),
+                Rectangle.Location,
                 _defaultSlotTextures["white_background"],
                 Color.DarkBlue,
                 Color.DarkBlue,
@@ -339,7 +339,7 @@ namespace Paramita.UI.Base.Game
             var background = new Background(
                 "background_open",
                 this,
-                new Vector2(Rectangle.X, Rectangle.Y),
+                Rectangle.Location,
                 _defaultSlotTextures["background"],
                 Color.White,
                 Color.White,
@@ -356,7 +356,7 @@ namespace Paramita.UI.Base.Game
                 "minimize_icon", 
                 this, 
                 new Vector2(Rectangle.Right - 20, Rectangle.Top + 5),
-                DefaultTextures["minimize_icon"], 
+                DefaultTextures["minimize_icon"],
                 Color.Gray, 
                 Color.White,
                 1, 

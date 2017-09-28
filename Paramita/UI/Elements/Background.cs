@@ -8,7 +8,7 @@ namespace Paramita.UI.Elements
     public class Background : Image
     {
 
-        public Background(string id, Component parent, Vector2 position, Texture2D texture, 
+        public Background(string id, Component parent, Point position, Texture2D texture, 
             Color color1, Color color2, Point size, int drawOrder) 
             : base(id, parent, position, texture, color1, color2, drawOrder)
         {
