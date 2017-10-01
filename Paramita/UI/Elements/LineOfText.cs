@@ -45,5 +45,22 @@ namespace Paramita.UI.Elements
                 spriteBatch.DrawString(Font, Text, Position, Color);
             }
         }
+
+        /// <summary>
+        /// Calculates the horizontally and veritcally centered position for the LineOfText given a 
+        /// container rectangle. This method assumes that the container rectangle has a absolute location 
+        /// that places it on the app screen.
+        /// </summary>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public Vector2 GetCenteredPosition(Rectangle container)
+        {
+            var textSize = Rectangle.Size;
+            var containerSize = container.Size;
+            return new Vector2(
+                (container.X + containerSize.X / 2 - textSize.X / 2),
+                (container.Y + containerSize.Y / 2 - textSize.Y / 2)
+                );
+        }
     }
 }

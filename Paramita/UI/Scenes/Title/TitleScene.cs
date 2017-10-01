@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended.Input.InputListeners;
 using Paramita.UI.Base;
 using Paramita.UI.Components;
 using Paramita.UI.Elements;
@@ -27,9 +26,6 @@ namespace Paramita.UI.Scenes
         #endregion
 
         #region Initialization
-        /*
-         * Called once by GameController.Initialize() 
-         */
         public override void Initialize()
         {
             base.Initialize();
@@ -74,13 +70,6 @@ namespace Paramita.UI.Scenes
         }
         #endregion
 
-        #region Event Handling
-        private void HandleInput(object sender, KeyboardEventArgs e)
-        {
-            InvokeUserInputEvent(new UserInputEventArgs(EventType.Keyboard, null, e.Key));
-        }
-        #endregion
-
         #region Public API
         public override void Update(GameTime gameTime)
         {
@@ -90,26 +79,10 @@ namespace Paramita.UI.Scenes
             base.Update(gameTime);
         }
 
-        /* 
-         * Called by GameController when this @Scene is the @CurrentScene in SceneManager
-         *   Draws the @Scene to the screen.
-         */
         public override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
         }
-
-        //public override void Hide()
-        //{
-        //    base.Hide();
-        //    Input.KeyPressed -= HandleInput;
-        //}
-
-        //public override void Show()
-        //{
-        //    base.Show();
-        //    Input.KeyPressed += HandleInput;
-        //}
         #endregion
 
         #region Helper Methods

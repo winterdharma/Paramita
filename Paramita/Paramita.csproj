@@ -48,6 +48,7 @@
     <Compile Include="UI\Base\UserInputEventArgs.cs" />
     <Compile Include="UI\BeingSprite.cs" />
     <Compile Include="UI\Elements\Background.cs" />
+    <Compile Include="UI\Elements\Button.cs" />
     <Compile Include="UI\Elements\Sprite.cs" />
     <Compile Include="UI\Input\InputResponder.cs" />
     <Compile Include="UI\Base\Component.cs" />
@@ -61,7 +62,6 @@
     <Compile Include="UI\Sprite.cs" />
     <Compile Include="UI\Scenes\Game\InventoryPanel.cs" />
     <Compile Include="UI\Scenes\Game\StatusPanel.cs" />
-    <Compile Include="UI\Scenes\Menu\MenuComponent.cs" />
     <Compile Include="UI\Scenes\Game\GameScene.cs" />
     <Compile Include="UI\Scenes\Menu\MenuScene.cs" />
     <Compile Include="UI\Scenes\Title\TitleScene.cs" />

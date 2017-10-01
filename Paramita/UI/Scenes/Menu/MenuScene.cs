@@ -1,6 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Paramita.UI.Base;
+using Paramita.UI.Components;
+using Paramita.UI.Elements;
 using System;
 using System.Collections.Generic;
 
@@ -8,30 +11,164 @@ namespace Paramita.UI.Scenes
 {
     public class MenuScene : Scene
     {
+        #region Fields
         private Texture2D _background;
         private SpriteFont _fontArialBold;
-        private MenuComponent _menuButtons;
         private Texture2D _buttonTexture;
+        private const string NEW_GAME_LABEL = "NEW GAME";
+        private const string CONTINUE_LABEL = "CONTINUE";
+        private const string OPTIONS_LABEL = "OPTIONS";
+        private const string EXIT_LABEL = "EXIT";
 
+        private List<string> _buttonIds = new List<string>()
+        {
+            "new_game_button", "continue_button", "options_button", "exit_button"
+        };
+        private int _selectedButtonId;
+        #endregion
+
+        #region Constructors
         public MenuScene(GameController game) : base(game) { }
+        #endregion
 
+        #region Properties
+        public int SelectedButtonId
+        {
+            get => _selectedButtonId;
+            set
+            {
+                string buttonId = _buttonIds[_selectedButtonId];
+                Components[0].Elements[buttonId].Unhighlight();
 
+                _selectedButtonId = value;
 
+                buttonId = _buttonIds[_selectedButtonId];
+                Components[0].Elements[buttonId].Highlight();
+            }
+        }
+        #endregion
+
+        #region Initialization
         public override void Initialize()
         {
             base.Initialize();
-            InitializeMenuComponent();
+            var screen = new Screen(this, 0);
+            screen.Elements = new Dictionary<string, Element>()
+            {
+                { "background", new Background("background", screen, ScreenRectangle.Location,
+                    _background, Color.White, Color.White, ScreenRectangle.Size, 0)
+                },
+                { "new_game_button", new Button(_buttonIds[0], screen, 
+                    new Point(1200 - _buttonTexture.Width, 90), _buttonTexture, 
+                    new LineOfText("new_game_label", screen, new Vector2(0,0), NEW_GAME_LABEL, _fontArialBold,
+                        Color.White, Color.Red, 2),
+                    Color.White, Color.White, 1) },
+                { "continue_button", new Button(_buttonIds[1], screen, 
+                    new Point(1200 - _buttonTexture.Width, _buttonTexture.Height + 140), _buttonTexture,
+                    new LineOfText("continue_label", screen, new Vector2(0,0), CONTINUE_LABEL, _fontArialBold,
+                        Color.White, Color.Red, 2),
+                    Color.White, Color.White, 1) },
+                { "options_button", new Button(_buttonIds[2], screen, 
+                    new Point(1200 - _buttonTexture.Width, (_buttonTexture.Height * 2) + 190), _buttonTexture,
+                    new LineOfText("options_label", screen, new Vector2(0,0), OPTIONS_LABEL, _fontArialBold,
+                        Color.White, Color.Red, 2),
+                    Color.White, Color.White, 1) },
+                { "exit_button", new Button(_buttonIds[3], screen, 
+                    new Point(1200 - _buttonTexture.Width, (_buttonTexture.Height * 3) + 240), _buttonTexture,
+                    new LineOfText("exit_label", screen, new Vector2(0,0), EXIT_LABEL, _fontArialBold,
+                        Color.White, Color.Red, 2),
+                    Color.White, Color.White, 1) }
+            };
+            Components = InitializeComponents(screen);
+            UserActions = InitializeUserActions(Components);
         }
 
-
-        private void InitializeMenuComponent()
+        protected override List<UserAction> InitializeUserActions(List<Component> components)
         {
-            string[] menuItems = { "NEW GAME", "CONTINUE", "OPTIONS", "EXIT" };
-            Vector2 position = new Vector2( (1200 - _buttonTexture.Width), 90);
-            _menuButtons = new MenuComponent(_fontArialBold, _buttonTexture, menuItems, position, 
-                Input);
+            var actionsList = new List<UserAction>()
+            {
+                new UserAction(this, SelectButton, CanSelectButton),
+                //new UserAction(this, DeselectButton, CanDeselectButton),
+                new UserAction(this, SelectNewGame, CanSelectNewGame),
+                //new UserAction(this, SelectContinueGame, CanSelectContinueGame),
+                //new UserAction(this, SelectOptions, CanSelectOptions),
+                new UserAction(this, ExitGame, CanExitGame)
+            };
+            return actionsList;
         }
 
+        private bool CanSelectButton(Tuple<Scene, UserInputEventArgs> context)
+        {
+            var eventArgs = context.Item2;
+            if (eventArgs.EventType != EventType.MouseOver && 
+                eventArgs.EventType != EventType.Keyboard)
+                return false;
+
+            if (!(eventArgs.EventSource is Button) && !(eventArgs.EventSource is Keys))
+                return false;
+
+            if (eventArgs.EventSource is Keys key && (key != Keys.Up && key != Keys.Down))
+                return false;
+
+            return true;
+        }
+
+        private void SelectButton(Scene parent, UserInputEventArgs eventArgs)
+        {
+            if (eventArgs.EventSource is Button button)
+                SelectedButtonId = _buttonIds.FindIndex(s => s.Equals(button.Id));
+            else if (eventArgs.EventSource is Keys key)
+                if (key == Keys.Up && SelectedButtonId > 0)
+                    SelectedButtonId--;
+                else if (key == Keys.Up && SelectedButtonId == 0)
+                    SelectedButtonId = 3;
+                else if (key == Keys.Down && SelectedButtonId < 3)
+                    SelectedButtonId++;
+                else if (key == Keys.Down && SelectedButtonId == 3)
+                    SelectedButtonId = 0;
+            else
+                throw new ArgumentException("EventSource must be typeof Keys or Button");
+        }
+
+        private bool CanSelectNewGame(Tuple<Scene, UserInputEventArgs> context)
+        {
+            if (!_buttonIds[SelectedButtonId].Equals("new_game_button"))
+                return false;
+
+            if (context.Item2.EventType != EventType.Keyboard &&
+                context.Item2.EventType != EventType.LeftClick)
+                return false;
+
+            if (context.Item2.EventSource is Keys key && key != Keys.Enter)
+                return false;
+
+            return true;
+        }
+
+        private void SelectNewGame(Scene parent, UserInputEventArgs eventArgs)
+        {
+            Game.CurrentScene = Game.GameScene;
+        }
+
+        private bool CanExitGame(Tuple<Scene, UserInputEventArgs> context)
+        {
+            if (!_buttonIds[SelectedButtonId].Equals("exit_button"))
+                return false;
+
+            if (context.Item2.EventType != EventType.Keyboard && 
+                context.Item2.EventType != EventType.LeftClick)
+                return false;
+
+            if(context.Item2.EventSource is Keys key && key != Keys.Enter)
+                return false;
+
+            return true;
+        }
+
+        private void ExitGame(Scene parent, UserInputEventArgs eventArgs)
+        {
+            Game.Exit();
+        }
 
         protected override void LoadContent()
         {
@@ -39,77 +176,13 @@ namespace Paramita.UI.Scenes
             _background = _content.Load<Texture2D>("Images\\Scenes\\menuscreen");
             _buttonTexture = _content.Load<Texture2D>("Images\\Scenes\\wooden-button");
         }
+        #endregion
 
-
-        private void HandleMouseClick(object sender, EventArgs e)
-        {
-            if (_menuButtons.MouseOver)
-            {
-                SelectMenuItem();
-            }
-        }
-
-
-        private void HandleMenuItemSelected(object sender, EventArgs e)
-        {
-            SelectMenuItem();
-        }
-
-        private void SelectMenuItem()
-        {
-            if (_menuButtons.SelectedIndex == 0)
-            {
-                Game.CurrentScene = Game.GameScene;
-            }
-
-            else if (_menuButtons.SelectedIndex == 1)
-            {
-                // Loading saved games is not implemented yet
-                //GameRef.GameScene.LoadSavedGame();
-                //manager.PushScene(GameRef.GameScene, PlayerIndexInControl);
-            }
-            else if (_menuButtons.SelectedIndex == 2)
-            {
-                // Options screen is not implemented yet
-            }
-            else if (_menuButtons.SelectedIndex == 3)
-            {
-                Game.Exit();
-            }
-        }
-
-        public override void Hide()
-        {
-            base.Hide();
-            Input.LeftMouseClick -= HandleMouseClick;
-            Input.EnterKeyPressed -= HandleMenuItemSelected;
-
-
-        }
-
-        public override void Show()
-        {
-            base.Show();
-            Input.LeftMouseClick += HandleMouseClick;
-            Input.EnterKeyPressed += HandleMenuItemSelected;
-        }
-
+        #region Public API
         public override void Draw(GameTime gameTime)
         {
-            _spriteBatch.Begin();
-
-            _spriteBatch.Draw(_background, Vector2.Zero, Color.White);
-            _menuButtons.Draw(gameTime, _spriteBatch);
-
-            _spriteBatch.End();
-
             base.Draw(gameTime);
         }
-
-        protected override List<UserAction> InitializeUserActions(List<Component> components)
-        {
-            var actionsList = new List<UserAction>();
-            return actionsList;
-        }
+        #endregion
     }
 }
