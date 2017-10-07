@@ -21,9 +21,23 @@ namespace Paramita.UI.Elements
             SetImageProperties(texture, scale);
         }
 
+        public Image(string id, Component parent, Vector2 position, Texture2D texture,
+            int drawOrder, float scale = 1)
+            : base(id, parent, position, Color.White, Color.White, drawOrder)
+        {
+            SetImageProperties(texture, scale);
+        }
+
         public Image(string id, Component parent, Point position, Texture2D texture,
             Color normal, Color highlighted, int drawOrder, float scale = 1)
             : base(id, parent, position, normal, highlighted, drawOrder)
+        {
+            SetImageProperties(texture, scale);
+        }
+
+        public Image(string id, Component parent, Point position, Texture2D texture,
+            int drawOrder, float scale = 1)
+            : base(id, parent, position, Color.White, Color.White, drawOrder)
         {
             SetImageProperties(texture, scale);
         }

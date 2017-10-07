@@ -30,7 +30,7 @@ namespace Paramita.UI.Scenes
 
             Dungeon = new Dungeon();
 
-            _tileMapPanel = new TileMapPanel(this, Dungeon.GetCurrentLevelLayers(), 0);
+            _tileMapPanel = new TileMapPanel(this, 0);
             _statusPanel = new StatusPanel(this, GameController.ArialBold, 10, new Point(0,720), 1);
             _inventoryPanel = new InventoryPanel(this, 1);
 
@@ -49,13 +49,13 @@ namespace Paramita.UI.Scenes
             ItemTextures.ItemTextureMap[ItemType.Fist] = _content.Load<Texture2D>("transparent");
             ItemTextures.ItemTextureMap[ItemType.None] = _content.Load<Texture2D>("transparent");
 
-            TileMapPanel.Spritesheets.Add(SpriteType.Tile_Floor, _content.Load<Texture2D>("Images\\Tiles\\floor"));
-            TileMapPanel.Spritesheets.Add(SpriteType.Tile_Door, _content.Load<Texture2D>("Images\\Tiles\\door"));
-            TileMapPanel.Spritesheets.Add(SpriteType.Tile_Wall, _content.Load<Texture2D>("Images\\Tiles\\wall"));
-            TileMapPanel.Spritesheets.Add(SpriteType.Tile_StairsUp, _content.Load<Texture2D>("Images\\Tiles\\stairs_up"));
-            TileMapPanel.Spritesheets.Add(SpriteType.Tile_StairsDown, _content.Load<Texture2D>("Images\\Tiles\\stairs_down"));
-            TileMapPanel.Spritesheets.Add(SpriteType.Actor_GiantRat, _content.Load<Texture2D>("Images\\SentientBeings\\giant_rat"));
-            TileMapPanel.Spritesheets.Add(SpriteType.Actor_Player, _content.Load<Texture2D>("Images\\SentientBeings\\human_player"));
+            TileMapPanel.Spritesheets.Add("Floor", _content.Load<Texture2D>("Images\\Tiles\\floor"));
+            TileMapPanel.Spritesheets.Add("Door", _content.Load<Texture2D>("Images\\Tiles\\door"));
+            TileMapPanel.Spritesheets.Add("Wall", _content.Load<Texture2D>("Images\\Tiles\\wall"));
+            TileMapPanel.Spritesheets.Add("StairsUp", _content.Load<Texture2D>("Images\\Tiles\\stairs_up"));
+            TileMapPanel.Spritesheets.Add("StairsDown", _content.Load<Texture2D>("Images\\Tiles\\stairs_down"));
+            TileMapPanel.Spritesheets.Add("GiantRat", _content.Load<Texture2D>("Images\\SentientBeings\\giant_rat"));
+            TileMapPanel.Spritesheets.Add("HumanPlayer", _content.Load<Texture2D>("Images\\SentientBeings\\human_player"));
 
             InventoryPanel.DefaultTextures["background"] = _content.Load<Texture2D>("black_background1");
             InventoryPanel.DefaultTextures["minimize_icon"] = _content.Load<Texture2D>("Images\\Scenes\\minimize_icon");

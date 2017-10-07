@@ -9,16 +9,6 @@ using System.Linq;
 
 namespace Paramita.UI.Scenes
 {
-    public enum InventoryActions
-    {
-        None,
-        Drop,
-        Use,
-        Equip,
-        Cancel
-    }
-
-
     public class InventoryEventArgs : EventArgs
     {
         public string InventorySlot { get; private set; }
@@ -55,6 +45,7 @@ namespace Paramita.UI.Scenes
 
         private Vector2 _itemInfoPosition;
 
+        #region Strings
         private const string HEADING_ID = "heading";
         private const string HEADING_TEXT = "(I)nventory";
         private const string DROP_HINT_ID = "drop_hint";
@@ -98,6 +89,7 @@ namespace Paramita.UI.Scenes
         internal List<string> _inventoryItems = new List<string>()
         {   LEFT_HAND_ITEM, RIGHT_HAND_ITEM, HEAD_ITEM, BODY_ITEM, FEET_ITEM,
             OTHER1_ITEM, OTHER2_ITEM, OTHER3_ITEM, OTHER4_ITEM, OTHER5_ITEM };
+        #endregion
 
         private readonly SpriteFont HEADING_FONT = GameController.ArialBold;
         private readonly SpriteFont HINT_FONT = GameController.NotoSans;
@@ -108,7 +100,6 @@ namespace Paramita.UI.Scenes
         private readonly Color DARK_BLUE = Color.DarkBlue;
 
         private int _itemSelected = 0;
-        private Point _mousePosition = new Point(0, 0);
         #endregion
 
         #region Constructors
@@ -147,7 +138,6 @@ namespace Paramita.UI.Scenes
             }
         }
         #endregion
-
 
         #region Initialization
         protected override Dictionary<string, Element> InitializeElements()
@@ -217,7 +207,8 @@ namespace Paramita.UI.Scenes
         {
             var parent = (GameScene)Parent;
             parent.Dungeon.GetPlayerInventory(); 
-            // data is received as an event from Dungeon
+            // Dungeon returns data to GameScene as an event and GameScene sets
+            // the InventoryPanel properties
         }
         #endregion
 
