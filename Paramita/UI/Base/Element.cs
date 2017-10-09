@@ -13,6 +13,7 @@ namespace Paramita.UI.Base
     {
         #region Fields
         protected Rectangle _rectangle;
+        private Vector2 _position;
         private bool _enabled;
         private bool _visible;
         #endregion
@@ -88,7 +89,18 @@ namespace Paramita.UI.Base
         }
         public int DrawOrder { get; set; }
         public bool IsMouseOver { get; private set; }
-        public Vector2 Position { get; set; }
+        public Vector2 Position
+        {
+            get => _position;
+            set
+            {
+                if(value != _position)
+                {
+                    _position = value;
+                    _rectangle.Location = new Point((int)_position.X, (int)_position.Y);
+                }
+            }
+        }
         public Color Color { get; set; }
         public Color HighlightedColor { get; set; }
         public Color UnhighlightedColor { get; set; }
@@ -166,6 +178,7 @@ namespace Paramita.UI.Base
         }
 
         public abstract void Draw(GameTime gameTime, SpriteBatch spriteBatch);
+        public abstract void Draw(GameTime gameTime, SpriteBatch spriteBatch, Vector2 position);
 
         public virtual void Show()
         {

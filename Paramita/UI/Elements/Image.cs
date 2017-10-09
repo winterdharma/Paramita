@@ -77,5 +77,19 @@ namespace Paramita.UI.Elements
                 spriteBatch.Draw(Texture, Position, null, Color, 0f, new Vector2(0,0), 
                     Scale, SpriteEffects.None, 0f);
         }
+
+        /// <summary>
+        /// Use this method when the Image should be drawn to a different position
+        /// than is stored in its properties, such as when an offset is performed.
+        /// </summary>
+        /// <param name="gameTime"></param>
+        /// <param name="spriteBatch"></param>
+        /// <param name="position"></param>
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Vector2 position)
+        {
+            if (Visible)
+                spriteBatch.Draw(Texture, position, null, Color, 0f, new Vector2(0, 0),
+                    Scale, SpriteEffects.None, 0f);
+        }
     }
 }

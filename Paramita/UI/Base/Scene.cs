@@ -179,7 +179,7 @@ namespace Paramita.UI.Base
             var drawablesMousedOver = visibleDrawables.FindAll(d => d.Rectangle.Contains(mousePosition));
 
             if (drawablesMousedOver.Count == 0)
-                throw new Exception("No elements were under the mouse.");
+                return false;
             else if (drawablesMousedOver.Count == 1)
                 return true;
             else
@@ -267,8 +267,5 @@ namespace Paramita.UI.Base
             return componentList;
         }
         #endregion
-
-
-
     }
 }

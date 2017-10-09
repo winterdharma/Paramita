@@ -71,7 +71,7 @@ namespace Paramita.UI.Elements
         #region Initialization
         protected override Rectangle CreateRectangle()
         {
-            return _frame;
+            return new Rectangle((int)Position.X, (int)Position.Y, _frame.Height, _frame.Width);
         }
 
         private Dictionary<Compass, Rectangle> CreateFrames()
@@ -91,6 +91,12 @@ namespace Paramita.UI.Elements
         {
             if(Visible)
                 spriteBatch.Draw(Texture, Position, Frames[Facing], Color.White);
+        }
+
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Vector2 position)
+        {
+            if (Visible)
+                spriteBatch.Draw(Texture, position, Frames[Facing], Color.White);
         }
 
         public override void Update(GameTime gameTime)

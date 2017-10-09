@@ -46,6 +46,14 @@ namespace Paramita.UI.Elements
             }
         }
 
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch, Vector2 position)
+        {
+            if (Visible)
+            {
+                spriteBatch.DrawString(Font, Text, position, Color);
+            }
+        }
+
         /// <summary>
         /// Calculates the horizontally and veritcally centered position for the LineOfText given a 
         /// container rectangle. This method assumes that the container rectangle has a absolute location 

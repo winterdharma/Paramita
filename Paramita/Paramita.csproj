@@ -65,7 +65,6 @@
     <Compile Include="UI\Scenes\Title\TitleScene.cs" />
     <Compile Include="UI\Base\Scene.cs" />
     <Compile Include="UI\Animation.cs" />
-    <Compile Include="UI\Scenes\Game\Camera.cs" />
     <Compile Include="GameController.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -168,7 +168,8 @@ namespace Paramita.UI.Scenes
         private void FocusOnElement(Scene parent, UserInputEventArgs eventArgs)
         {
             var image = (Image)eventArgs.EventSource;
-            _inventoryPanel.Elements[image.Id].Highlight();
+            if(_inventoryPanel.Elements.ContainsKey(image.Id))
+                _inventoryPanel.Elements[image.Id].Highlight();
         }
 
         private bool CanStopFocusOnElement(Tuple<Scene, UserInputEventArgs> context)
@@ -187,7 +188,8 @@ namespace Paramita.UI.Scenes
         private void StopFocusOnElement(Scene parent, UserInputEventArgs eventArgs)
         {
             var image = (Image)eventArgs.EventSource;
-            _inventoryPanel.Elements[image.Id].Unhighlight();
+            if (_inventoryPanel.Elements.ContainsKey(image.Id))
+                _inventoryPanel.Elements[image.Id].Unhighlight();
         }
 
         private bool CanSelectInventoryItem(Tuple<Scene, UserInputEventArgs> context)
