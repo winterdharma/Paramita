@@ -56,13 +56,13 @@ namespace Paramita.GameLogic
         }
         public Player Player { get { return _player; } }
 
-        public static event EventHandler<MoveEventArgs> OnActorMoveUINotification;
-        public static event EventHandler<InventoryChangeEventArgs> OnInventoryChangeUINotification;
-        public static event EventHandler<ItemEventArgs> OnItemPickedUpUINotification;
-        public static event EventHandler<ItemEventArgs> OnItemDroppedUINotification;
+        public event EventHandler<MoveEventArgs> OnActorMoveUINotification;
+        public event EventHandler<InventoryChangeEventArgs> OnInventoryChangeUINotification;
+        public event EventHandler<ItemEventArgs> OnItemPickedUpUINotification;
+        public event EventHandler<ItemEventArgs> OnItemDroppedUINotification;
         public static event EventHandler<StatusMessageEventArgs> OnStatusMsgUINotification;
-        public static event EventHandler<NewLevelEventArgs> OnLevelChangeUINotification;
-        public static event EventHandler<MoveEventArgs> OnActorRemovedUINotification;
+        public event EventHandler<NewLevelEventArgs> OnLevelChangeUINotification;
+        public event EventHandler<MoveEventArgs> OnActorRemovedUINotification;
         //public static event EventHandler<MoveEventArgs> OnPlayerDeathUINotification;
 
         public Dungeon()

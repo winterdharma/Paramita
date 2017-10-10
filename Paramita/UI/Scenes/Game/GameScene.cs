@@ -10,6 +10,8 @@ using Microsoft.Xna.Framework.Input;
 using Paramita.UI.Elements;
 using Paramita.GameLogic.Actors;
 using Paramita.UI.Base;
+using Paramita.GameLogic.Utility;
+using Paramita.GameLogic.Levels;
 
 namespace Paramita.UI.Scenes
 {
@@ -300,18 +302,58 @@ namespace Paramita.UI.Scenes
         {
             base.SubscribeToEvents();
             Dungeon.OnInventoryChangeUINotification += HandleInventoryChange;
+            Dungeon.OnActorMoveUINotification += HandleOnActorWasMoved;
+            Dungeon.OnItemDroppedUINotification += HandleItemAddedToMap;
+            Dungeon.OnItemPickedUpUINotification += HandleItemRemovedFromMap;
+            Dungeon.OnLevelChangeUINotification += HandleLevelChange;
+            Dungeon.OnActorRemovedUINotification += HandleActorWasRemoved;
         }
 
         protected override void UnsubscribeFromEvents()
         {
             base.UnsubscribeFromEvents();
             Dungeon.OnInventoryChangeUINotification -= HandleInventoryChange;
+            Dungeon.OnActorMoveUINotification -= HandleOnActorWasMoved;
+            Dungeon.OnItemDroppedUINotification -= HandleItemAddedToMap;
+            Dungeon.OnItemPickedUpUINotification -= HandleItemRemovedFromMap;
+            Dungeon.OnLevelChangeUINotification -= HandleLevelChange;
+            Dungeon.OnActorRemovedUINotification -= HandleActorWasRemoved;
         }
 
         private void HandleInventoryChange(object sender, InventoryChangeEventArgs e)
         {
             _inventoryPanel.Inventory = e.Inventory.Item1;
             _inventoryPanel.Gold = e.Inventory.Item2;
+        }
+
+        private void HandleOnActorWasMoved(object sender, MoveEventArgs eventArgs)
+        {
+            var origin = eventArgs.Origin;
+            var destination = eventArgs.Destination;
+            _tileMapPanel.MoveSprite(origin, destination);
+        }
+
+        private void HandleItemAddedToMap(object sender, ItemEventArgs e)
+        {
+            int x = e.Location.X; int y = e.Location.Y;
+            var itemType = e.ItemType;
+            _tileMapPanel.AddImage(x, y, itemType);
+        }
+
+        private void HandleItemRemovedFromMap(object sender, ItemEventArgs e)
+        {
+            _tileMapPanel.RemoveImage(e.Location.X, e.Location.Y);
+        }
+
+        private void HandleLevelChange(object sender, NewLevelEventArgs e)
+        {
+            _tileMapPanel.ChangeLevel(e.Layers);
+        }
+
+        private void HandleActorWasRemoved(object sender, MoveEventArgs eventArgs)
+        {
+            var origin = eventArgs.Origin;
+            _tileMapPanel.RemoveSprite(origin.X, origin.Y);
         }
         #endregion
 

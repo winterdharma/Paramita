@@ -6,8 +6,6 @@ using Paramita.GameLogic.Levels;
 using Paramita.GameLogic.Mechanics;
 using System;
 using System.Collections.Generic;
-using Paramita.GameLogic;
-using Paramita.GameLogic.Utility;
 using Paramita.UI.Base;
 using Paramita.UI.Elements;
 using System.Linq;
@@ -20,9 +18,9 @@ namespace Paramita.UI.Scenes
         private Vector2 _playerPosition;
         private Rectangle _drawFrame;
         public static Dictionary<string, Texture2D> _spritesheets = new Dictionary<string, Texture2D>();
-        private Dictionary<string, Image> _tiles;
-        private Dictionary<string, Image> _items;
-        private Dictionary<string, Sprite> _actors;
+        private TileType[,] _tileLayer;
+        private ItemType[,] _itemLayer;
+        private Tuple<ActorType, Compass, bool>[,] _actorLayer;
         private const int TILE_SIZE = 32;
         private Point _mapSizeInPixels;
         private Rectangle _mapRectangle;
@@ -33,8 +31,7 @@ namespace Paramita.UI.Scenes
         public TileMapPanel(Scene parent, int drawOrder) : base(parent, drawOrder)
         {
             _drawFrame = new Rectangle(0, 0, TILE_SIZE, TILE_SIZE);
-            InitializeLevelMap();
-            SubscribeToDungeonNotifications();
+            _viewport = _panelRectangle;
         }
         #endregion
 
@@ -57,38 +54,32 @@ namespace Paramita.UI.Scenes
             return _parentRectangle;
         }
 
-        // at some point, combine all the elements into the Elements collection with correct positions
         private void InitializeLevelMap()
         {
             var parent = (GameScene)Parent;
             var tileMapLayers = parent.Dungeon.GetCurrentLevelLayers();
-            var tileLayer = tileMapLayers.Item1;
-            var itemLayer = tileMapLayers.Item2;
-            var actorLayer = tileMapLayers.Item3;
-
-            InitializeLevelMap(tileLayer, itemLayer, actorLayer);
+            InitializeLevelMap(tileMapLayers.Item1, tileMapLayers.Item2, tileMapLayers.Item3);
         }
 
-        // overload provided for HandleLevelChange() 
         private void InitializeLevelMap(TileType[,] tileLayer, ItemType[,] itemLayer, 
             Tuple<ActorType, Compass, bool>[,] actorLayer)
         {
+            _tileLayer = tileLayer;
+            _itemLayer = itemLayer;
+            _actorLayer = actorLayer;
+
             _mapSizeInPixels =
-                new Point(tileLayer.GetLength(0) * TILE_SIZE, tileLayer.GetLength(1) * TILE_SIZE);
+                new Point(_tileLayer.GetLength(0) * TILE_SIZE, _tileLayer.GetLength(1) * TILE_SIZE);
             _mapRectangle = new Rectangle(0, 0, _mapSizeInPixels.X, _mapSizeInPixels.Y);
-            _viewport = _panelRectangle;
-            _tiles = CreateTileElements(tileLayer);
-            _items = CreateItemElements(itemLayer);
-            _actors = CreateActorSprites(actorLayer);
         }
 
         protected override Dictionary<string, Element> InitializeElements()
         {
             var elements = new Dictionary<string, Element>();
 
-            _tiles.ToList().ForEach(x => elements.Add(x.Key, x.Value));
-            _items.ToList().ForEach(x => elements.Add(x.Key, x.Value));
-            _actors.ToList().ForEach(x => elements.Add(x.Key, x.Value));
+            CreateTileElements(_tileLayer).ToList().ForEach(x => elements.Add(x.Key, x.Value));
+            CreateItemElements(_itemLayer).ToList().ForEach(x => elements.Add(x.Key, x.Value));
+            CreateActorSprites(_actorLayer).ToList().ForEach(x => elements.Add(x.Key, x.Value));
 
             return elements;
         }
@@ -199,74 +190,7 @@ namespace Paramita.UI.Scenes
         }
         #endregion
 
-        #region Event Handling
-        // should be handled by GameScene!
-        private void SubscribeToDungeonNotifications()
-        {
-            Dungeon.OnActorMoveUINotification += HandleOnActorWasMoved;
-            Dungeon.OnItemDroppedUINotification += HandleItemAddedToMap;
-            Dungeon.OnItemPickedUpUINotification += HandleItemRemovedFromMap;
-            Dungeon.OnLevelChangeUINotification += HandleLevelChange;
-            Dungeon.OnActorRemovedUINotification += HandleActorWasRemoved;
-        }
-
-        private void HandleOnActorWasMoved(object sender, MoveEventArgs eventArgs)
-        {
-            var origin = eventArgs.Origin;
-            var destination = eventArgs.Destination;
-            var sprite = (Sprite)Elements[GetSpriteId(origin.X, origin.Y)];
-
-            bool isPlayer = false;
-            if (sprite.Position == _playerPosition)
-                isPlayer = true;
-
-            sprite.Position =
-                    new Vector2(destination.X * TILE_SIZE, destination.Y * TILE_SIZE);
-            sprite.Facing = Direction.GetDirection(destination - origin);
-            sprite.Id = GetSpriteId(destination.X, destination.Y);
-
-            if (isPlayer)
-                _playerPosition = sprite.Position;
-
-            Elements[sprite.Id] = sprite;
-            Elements.Remove(GetSpriteId(origin.X, origin.Y));
-        }
-
-        private void HandleActorWasRemoved(object sender, MoveEventArgs eventArgs)
-        {
-            var origin = eventArgs.Origin;
-            var elements = new Dictionary<string, Element>(Elements);
-            elements.Remove(GetSpriteId(origin.X, origin.Y));
-            Elements[GetSpriteId(origin.X, origin.Y)].Hide();
-            Elements = elements;
-        }
-
-        private void HandleItemAddedToMap(object sender, ItemEventArgs e)
-        {
-            int x = e.Location.X; int y = e.Location.Y;
-            string itemId = GetItemId(x, y);
-            var elements = new Dictionary<string, Element>(Elements);
-            elements[itemId] = new Image(itemId, this, 
-                GetTilePosition(x,y), GetItemTexture(e.ItemType), 1);
-            Elements = elements;
-            Elements[itemId].Show();
-        }
-
-        private void HandleItemRemovedFromMap(object sender, ItemEventArgs e)
-        {
-            var elements = new Dictionary<string, Element>(Elements);
-            elements.Remove(GetItemId(e.Location.X, e.Location.Y));
-            Elements[GetItemId(e.Location.X, e.Location.Y)].Hide();
-            Elements = elements;
-        }
-
-        // use properties that automatically update the data structures?
-        private void HandleLevelChange(object sender, NewLevelEventArgs e)
-        {
-            InitializeLevelMap(e.Layers.Item1, e.Layers.Item2, e.Layers.Item3);
-        }
-        #endregion
-
+        
         #region Public API
         public override void Update(GameTime gameTime)
         {
@@ -294,6 +218,60 @@ namespace Paramita.UI.Scenes
             spriteBatch.End();
         }
 
+        public void MoveSprite(Point origin, Point destination)
+        {
+            var sprite = (Sprite)Elements[GetSpriteId(origin.X, origin.Y)];
+
+            bool isPlayer = false;
+            if (sprite.Position == _playerPosition)
+                isPlayer = true;
+
+            sprite.Position =
+                    new Vector2(destination.X * TILE_SIZE, destination.Y * TILE_SIZE);
+            sprite.Facing = Direction.GetDirection(destination - origin);
+            sprite.Id = GetSpriteId(destination.X, destination.Y);
+
+            if (isPlayer)
+                _playerPosition = sprite.Position;
+
+            Elements[sprite.Id] = sprite;
+            Elements.Remove(GetSpriteId(origin.X, origin.Y));
+        }
+
+        public void RemoveSprite(int x, int y)
+        {
+            var elements = new Dictionary<string, Element>(Elements);
+            elements.Remove(GetSpriteId(x, y));
+            Elements[GetSpriteId(x, y)].Hide();
+            Elements = elements;
+        }
+
+        public void AddImage(int x, int y, ItemType itemType)
+        {
+            string itemId = GetItemId(x, y);
+            var elements = new Dictionary<string, Element>(Elements);
+            elements[itemId] = new Image(itemId, this,
+                GetTilePosition(x, y), GetItemTexture(itemType), 1);
+            Elements = elements;
+            Elements[itemId].Show();
+        }
+
+        public void RemoveImage(int x, int y)
+        {
+            var elements = new Dictionary<string, Element>(Elements);
+            elements.Remove(GetItemId(x, y));
+            Elements[GetItemId(x, y)].Hide();
+            Elements = elements;
+        }
+
+        public void ChangeLevel(
+            Tuple<TileType[,], ItemType[,], Tuple<ActorType, Compass, bool>[,]> tileMapLayers)
+        {
+            InitializeLevelMap(tileMapLayers.Item1, tileMapLayers.Item2, tileMapLayers.Item3);
+        }
+        #endregion
+
+        #region Helper Methods
         private void StopViewportAtTilemapEdges(Rectangle viewport, Rectangle mapRectangle)
         {
             var position = new Vector2(

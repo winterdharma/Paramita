@@ -311,50 +311,21 @@ namespace Paramita.UI.Scenes
         #region Images
         private Image CreateClosedPanelBackground()
         {
-            var background = new Background(
-                "background_closed",
-                this,
-                Rectangle.Location,
-                _defaultSlotTextures["white_background"],
-                Color.DarkBlue,
-                Color.DarkBlue,
-                Rectangle.Size,
-                0
-                );
-            background.Hide();
-            return background;
+            return new Background("background_closed", this, Rectangle.Location,
+                _defaultSlotTextures["white_background"], Color.DarkBlue, Color.DarkBlue,
+                Rectangle.Size, 0);
         }
 
         private Image CreateOpenPanelBackground()
         {
-            var background = new Background(
-                "background_open",
-                this,
-                Rectangle.Location,
-                _defaultSlotTextures["background"],
-                Color.White,
-                Color.White,
-                Rectangle.Size,
-                0
-                );
-            background.Hide();
-            return background;
+            return new Background("background_open", this, Rectangle.Location,
+                _defaultSlotTextures["background"], Rectangle.Size, 0);
         }
 
         private Image CreateMinimizeIcon()
         {
-            var image = new Image(
-                "minimize_icon", 
-                this, 
-                new Vector2(Rectangle.Right - 20, Rectangle.Top + 5),
-                DefaultTextures["minimize_icon"],
-                Color.Gray, 
-                Color.White,
-                1, 
-                0.0784f
-                );
-            image.Hide();
-            return image;
+            return new Image("minimize_icon", this, new Vector2(Rectangle.Right - 20, Rectangle.Top + 5),
+                DefaultTextures["minimize_icon"], Color.Gray, Color.White, 1, 0.0784f);
         }
 
         private Dictionary<string, Element> CreateInventorySlotImages()
@@ -362,16 +333,9 @@ namespace Paramita.UI.Scenes
             var slotImages = new Dictionary<string, Element>();
             for (int i = 0; i < _inventorySlots.Count; i++)
             {
-                slotImages[_inventorySlots[i]] = new Image(
-                    _inventorySlots[i],
-                    this,
-                    GetSpriteElementPosition(i),
-                    _defaultSlotTextures[_inventorySlots[i]],
-                    Color.White,
-                    Color.Red,
-                    1
-                    );
-                slotImages[_inventorySlots[i]].Hide();
+                slotImages[_inventorySlots[i]] = new Image(_inventorySlots[i], this,
+                    GetSpriteElementPosition(i), _defaultSlotTextures[_inventorySlots[i]],
+                    Color.White, Color.Red, 1);
             }
             return slotImages;
         }
@@ -387,7 +351,6 @@ namespace Paramita.UI.Scenes
                 var item = new Image(itemID, this, GetSpriteElementPosition(i), 
                     ItemTextures.ItemTextureMap[ItemType.None], Color.White, Color.Red, 2);
 
-                item.Hide();
                 itemImages[itemID] = item;
             }
             return itemImages;
