@@ -102,8 +102,6 @@ namespace Paramita.UI.Scenes
             return tilesDict;
         }
 
-        // current way of getting textures needs to change since Sprite class is going away 
-        // & changing to an Element with animations in the future
         private Texture2D GetTexture(string key)
         {
             if (key.Equals("None"))
@@ -198,7 +196,6 @@ namespace Paramita.UI.Scenes
             StopViewportAtTilemapEdges(_viewport, _mapRectangle);
         }
 
-        // this needs to get simplfied with calls to Element.Draw() etc!
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();

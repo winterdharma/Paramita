@@ -33,7 +33,7 @@ namespace Paramita.UI.Scenes
             Dungeon = new Dungeon();
 
             _tileMapPanel = new TileMapPanel(this, 0);
-            _statusPanel = new StatusPanel(this, GameController.ArialBold, 10, new Point(0,720), 1);
+            _statusPanel = new StatusPanel(this, 1);
             _inventoryPanel = new InventoryPanel(this, 1);
 
             Components = InitializeComponents(_tileMapPanel, _statusPanel, _inventoryPanel);
@@ -307,6 +307,7 @@ namespace Paramita.UI.Scenes
             Dungeon.OnItemPickedUpUINotification += HandleItemRemovedFromMap;
             Dungeon.OnLevelChangeUINotification += HandleLevelChange;
             Dungeon.OnActorRemovedUINotification += HandleActorWasRemoved;
+            Dungeon.OnStatusMsgUINotification += HandleNewStatusMessage;
         }
 
         protected override void UnsubscribeFromEvents()
@@ -318,6 +319,7 @@ namespace Paramita.UI.Scenes
             Dungeon.OnItemPickedUpUINotification -= HandleItemRemovedFromMap;
             Dungeon.OnLevelChangeUINotification -= HandleLevelChange;
             Dungeon.OnActorRemovedUINotification -= HandleActorWasRemoved;
+            Dungeon.OnStatusMsgUINotification -= HandleNewStatusMessage;
         }
 
         private void HandleInventoryChange(object sender, InventoryChangeEventArgs e)
@@ -354,6 +356,24 @@ namespace Paramita.UI.Scenes
         {
             var origin = eventArgs.Origin;
             _tileMapPanel.RemoveSprite(origin.X, origin.Y);
+        }
+
+        private void HandleNewStatusMessage(object sender, StatusMessageEventArgs e)
+        {
+            if (e.Message.Count == 0)
+                return;
+
+            if (e.Message.Count == 1)
+            {
+                _statusPanel.AddMessage(e.Message[0]);
+            }
+            else
+            {
+                foreach (var msg in e.Message)
+                {
+                    _statusPanel.AddMessage(msg);
+                }
+            }
         }
         #endregion
 

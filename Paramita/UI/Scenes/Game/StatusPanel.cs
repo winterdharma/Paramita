@@ -1,119 +1,71 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Paramita.GameLogic;
 using Paramita.UI.Base;
-using Paramita.UI.Input;
+using Paramita.UI.Elements;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace Paramita.UI.Scenes
 {
     public class StatusPanel : Component
     {
-        private int maxMessages;
-        private string[] messages;
-        private Point[] lineOrigins;
-        private Color[] lineColors;
-        private TimeSpan[] lineTimes;
-        private TimeSpan lineDuration = new TimeSpan(0, 0, 15);
-        private Color lineColor = new Color(Color.White, 1.0f);
-        private Point origin;
-        private SpriteFont font;
+        #region Fields
+        private const int MAX_MESSAGES = 10;
+        private const string INTRO_MESSAGE = "Welcome back to Paramita. Come to try to get to the Other Side again?";
+        private TimeSpan[] _lineTimes;
+        private TimeSpan _lineDuration = new TimeSpan(0, 0, 15);
+        private Color _lineColor = new Color(Color.White, 1.0f);
+        private readonly Point ORIGIN = new Point(0, 720);
+        private readonly SpriteFont FONT = GameController.ArialBold;
         private int areaHeight;
+        #endregion
 
-
-
-        public StatusPanel(Scene parent, SpriteFont font, int maxMsgs, Point origin, int drawOrder) 
+        #region Constructors
+        public StatusPanel(Scene parent, int drawOrder = 1) 
             : base(parent, drawOrder)
         {
-            maxMessages = maxMsgs;
-
-            messages = new string[maxMessages];
-            lineOrigins = new Point[maxMessages];
-            lineColors = new Color[maxMessages];
-            lineTimes = new TimeSpan[maxMessages];
-
-            messages[0] = "Welcome back to Paramita. Come to try to get to the Other Side again?";
-            lineTimes[0] = lineDuration;
-            lineColors[0] = lineColor;
-
-            this.origin = origin;
-            this.font = font;
+            _lineTimes = new TimeSpan[MAX_MESSAGES];
+            _lineTimes[0] = _lineDuration;
 
             CalcHeightOfMessageArea();
-            lineOrigins = SetOriginsOfMessages();
-
-            Dungeon.OnStatusMsgUINotification += HandleNewStatusMessage;
         }
+        #endregion
 
+        #region Properties
+        #endregion
 
-        private void HandleNewStatusMessage(object sender, StatusMessageEventArgs e)
+        #region Initialization
+        protected override Dictionary<string, Element> InitializeElements()
         {
-            if (e.Message.Count == 0)
-                return;
+            var elements = new Dictionary<string, Element>();
 
-            if (e.Message.Count == 1)
+            // 10 should actually be a parameter from the constructor maxMessages
+            for(int i = 0; i < MAX_MESSAGES; i++)
             {
-                AddMessage(e.Message[0]);
-            }
-            else
-            {
-                foreach(var msg in e.Message)
-                {
-                    AddMessage(msg);
-                }
+                string id = "line " + i;
+                elements[id] = new LineOfText(id, this, GetLinePosition(i), "", FONT, Color.White, Color.White, 1);
             }
 
+            var intro = (LineOfText)elements["line 0"];
+            intro.Text = INTRO_MESSAGE;
+
+            return elements;
         }
 
-        // Sets the anchor points for drawing each message in the status area
-        private Point[] SetOriginsOfMessages()
+        protected override Rectangle UpdatePanelRectangle()
         {
-            Vector2 size = font.MeasureString(messages[0]);
-            int fontHeight = (int)size.Y;
-            Point[] origins = new Point[messages.Length];
-            int originsY = origin.Y - 30;
-            origins[0] = new Point(10, originsY);
-            for(int x = 1; x < messages.Length; x++)
-            {
-                originsY -= fontHeight + 5;
-                origins[x] = new Point(10, originsY);
-            }
-            return origins;
+            return new Rectangle();
         }
+        #endregion
 
-
-        // Calculates the Status Area's height in pixels given the font
-        // and number of lines that can be displayed at one time.
-        private void CalcHeightOfMessageArea()
-        {
-            Vector2 size = font.MeasureString(messages[0]);
-            areaHeight = (int)(origin.Y + (maxMessages * size.Y) + 45);
-
-        }
-
-
-        // Adds a message to the Status area and initializes its duration and color
-        private void AddMessage(string newMsg)
-        {
-            for(int x = messages.Length - 1; x > 0; x--)
-            {
-                messages[x] = messages[x - 1];
-                lineTimes[x] = lineTimes[x - 1];
-                lineColors[x] = lineColors[x - 1];
-            }
-            messages[0] = newMsg;
-            lineTimes[0] = lineDuration;
-            lineColors[0] = lineColor;
-        }
-
-
+        #region Public API
         // Updates a message's color so that it gradually fades out
         // as its duration approaches zero. 
         // The fade-out effect is 2.5 seconds long
         public Color SetLineColor(TimeSpan timeLeft)
         {
-            Color newColor = lineColor;
+            Color newColor = _lineColor;
             if(timeLeft.TotalMilliseconds <= 2500f)
             {
                 float alpha = (float)timeLeft.TotalMilliseconds / 2500.0f;
@@ -122,51 +74,87 @@ namespace Paramita.UI.Scenes
             return newColor;
         }
 
-
         // Updates the messages elapsed time and colors
         public override void Update(GameTime gameTime)
         {
-            for(int x = 0; x < messages.Length; x++)
-            {
-                if(lineTimes[x] > TimeSpan.Zero)
-                {
-                    lineTimes[x] -= gameTime.ElapsedGameTime;
-                    lineColors[x] = SetLineColor(lineTimes[x]);
-                    if(lineTimes[x] <= TimeSpan.Zero)
-                    {
-                        lineTimes[x] = TimeSpan.Zero;
-                        messages[x] = null;
-                    }
-                }
-            }
+            var sortedElements = Elements.OrderByDescending(element => element.Key);
+            UpdateElements(gameTime, sortedElements);
         }
-
 
         // Draws the messages to the GameScene
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin();
-            for(int x = 0; x < messages.Length; x++)
+            base.Draw(gameTime, spriteBatch);
+        }
+
+        // Adds a message to the Status area and initializes its duration and color
+        public void AddMessage(string newMsg)
+        {
+            var sortedElements = Elements.OrderByDescending(element => element.Key);
+            LineOfText lineOfText;
+            foreach (KeyValuePair<string, Element> element in sortedElements)
             {
-                if(messages[x] != null)
+                string elementId = element.Key;
+                int elementIndex = int.Parse(element.Key.Substring(5));
+                lineOfText = (LineOfText)element.Value;
+                LineOfText previousLine;
+
+                if (elementIndex > 0)
                 {
-                    spriteBatch.DrawString(font,
-                    messages[x],
-                    new Vector2(lineOrigins[x].X, lineOrigins[x].Y),
-                    lineColors[x]);
+                    previousLine = (LineOfText)Elements["line " + (elementIndex - 1)];
+                    lineOfText.Text = previousLine.Text;
+                    lineOfText.Color = previousLine.Color;
+                    _lineTimes[elementIndex] = _lineTimes[elementIndex - 1];
                 }
             }
-            spriteBatch.End();
+
+            lineOfText = (LineOfText)Elements["line 0"];
+            lineOfText.Text = newMsg;
+            lineOfText.Color = _lineColor;
+            _lineTimes[0] = _lineDuration;
+        }
+        #endregion
+
+        #region Helper Methods
+        private Vector2 GetLinePosition(int index)
+        {
+            int fontHeight = (int)FONT.MeasureString("Test string").Y;
+            int originY = ORIGIN.Y - 30;
+            int offsetY = (fontHeight + 5) * index;
+
+            int x = 10;
+            int y = originY - offsetY;
+
+            return new Vector2(x, y);
         }
 
-        protected override Dictionary<string, Element> InitializeElements()
+        // Calculates the Status Area's height in pixels given the font
+        // and number of lines that can be displayed at one time.
+        private void CalcHeightOfMessageArea()
         {
-            return new Dictionary<string, Element>();
+            Vector2 size = FONT.MeasureString("Test string");
+            areaHeight = (int)(ORIGIN.Y + (MAX_MESSAGES * size.Y) + 45);
         }
 
-        protected override Rectangle UpdatePanelRectangle()
+        private void UpdateElements(GameTime gameTime, 
+            IOrderedEnumerable<KeyValuePair<string, Element>> sortedElements)
         {
-            return new Rectangle();
+            for (int x = 0; x < sortedElements.Count(); x++)
+            {
+                _lineTimes[x] -= gameTime.ElapsedGameTime;
+
+                if (_lineTimes[x] <= TimeSpan.Zero)
+                {
+                    _lineTimes[x] = TimeSpan.Zero;
+                    var line = (LineOfText)Elements["line " + x];
+                    line.Text = "";
+                }
+                else
+                {
+                    Elements["line " + x].Color = SetLineColor(_lineTimes[x]);
+                }
+            }
         }
+        #endregion
     }
 }
