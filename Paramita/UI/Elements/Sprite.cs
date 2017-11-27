@@ -1,9 +1,9 @@
-﻿using Paramita.UI.Base;
-using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.GameLogic.Mechanics;
 using System.Collections.Generic;
+using MonoGameUI.Elements;
+using MonoGameUI.Base;
 
 namespace Paramita.UI.Elements
 {

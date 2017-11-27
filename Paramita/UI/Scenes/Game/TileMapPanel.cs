@@ -6,9 +6,10 @@ using Paramita.GameLogic.Levels;
 using Paramita.GameLogic.Mechanics;
 using System;
 using System.Collections.Generic;
-using Paramita.UI.Base;
-using Paramita.UI.Elements;
+using MonoGameUI.Base;
+using MonoGameUI.Elements;
 using System.Linq;
+using Paramita.UI.Elements;
 
 namespace Paramita.UI.Scenes
 {

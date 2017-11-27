@@ -1,17 +1,19 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.GameLogic;
+using Paramita.GameLogic.Actors;
 using Paramita.GameLogic.Items;
 using Paramita.GameLogic.Mechanics;
-using System.Collections.Generic;
-using Paramita.UI.Input;
-using Microsoft.Xna.Framework.Input;
-using Paramita.UI.Elements;
-using Paramita.GameLogic.Actors;
-using Paramita.UI.Base;
 using Paramita.GameLogic.Utility;
 using Paramita.GameLogic.Levels;
+using System.Collections.Generic;
+using MonoGameUI;
+using MonoGameUI.Input;
+using MonoGameUI.Elements;
+using MonoGameUI.Base;
+using MonoGameUI.Events;
 
 namespace Paramita.UI.Scenes
 {

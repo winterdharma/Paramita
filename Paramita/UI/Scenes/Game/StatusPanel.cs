@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Paramita.UI.Base;
-using Paramita.UI.Elements;
+using MonoGameUI.Base;
+using MonoGameUI.Elements;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -17,7 +17,7 @@ namespace Paramita.UI.Scenes
         private TimeSpan _lineDuration = new TimeSpan(0, 0, 15);
         private Color _lineColor = new Color(Color.White, 1.0f);
         private readonly Point ORIGIN = new Point(0, 720);
-        private readonly SpriteFont FONT = GameController.ArialBold;
+        private readonly SpriteFont FONT = ParamitaController.ArialBold;
         private int areaHeight;
         #endregion
 

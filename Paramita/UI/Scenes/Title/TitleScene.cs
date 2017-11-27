@@ -1,8 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Paramita.UI.Base;
-using Paramita.UI.Components;
-using Paramita.UI.Elements;
+using MonoGameUI;
+using MonoGameUI.Base;
+using MonoGameUI.Components;
+using MonoGameUI.Elements;
+using MonoGameUI.Events;
 using System;
 using System.Collections.Generic;
 
@@ -22,7 +24,12 @@ namespace Paramita.UI.Scenes
             : base(game)
         {
             _elapsedTime = TimeSpan.Zero;
+            Controller = (ParamitaController)game;
         }
+        #endregion
+
+        #region Properties
+        public ParamitaController Controller { get; }
         #endregion
 
         #region Initialization
@@ -36,7 +43,7 @@ namespace Paramita.UI.Scenes
                 { "background", new Background("background", screen, ScreenRectangle.Location, 
                     _background, WHITE, WHITE, ScreenRectangle.Size, 0) },
                 { "continue_text", new LineOfText("continue_text", screen, SetMessagePosition(), 
-                    MESSAGE, GameController.ArialBold, WHITE, WHITE, 1) }
+                    MESSAGE, ParamitaController.ArialBold, WHITE, WHITE, 1) }
             };
             Components = InitializeComponents(screen);
             UserActions = InitializeUserActions(Components);
@@ -61,7 +68,7 @@ namespace Paramita.UI.Scenes
 
         private void ContinueToMenu(Scene parent, UserInputEventArgs eventArgs)
         {
-            Game.CurrentScene = Game.MenuScene;
+            Controller.CurrentScene = Controller.MenuScene;
         }
 
         protected override void LoadContent()
@@ -88,7 +95,7 @@ namespace Paramita.UI.Scenes
         #region Helper Methods
         private Vector2 SetMessagePosition()
         {
-            SpriteFont font = GameController.ArialBold;
+            SpriteFont font = ParamitaController.ArialBold;
             Vector2 size = font.MeasureString(MESSAGE);
             return new Vector2((ScreenRectangle.Width - size.X) / 2,
                 ScreenRectangle.Bottom - 50 - font.LineSpacing);

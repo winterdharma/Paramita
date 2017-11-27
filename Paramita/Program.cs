@@ -14,7 +14,7 @@ namespace Paramita
         [STAThread]
         static void Main()
         {
-            using (var game = new GameController())
+            using (var game = new ParamitaController())
                 game.Run();
         }
     }

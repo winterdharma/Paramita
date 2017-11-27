@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Paramita.GameLogic.Items;
-using Paramita.UI.Base;
-using Paramita.UI.Elements;
+using MonoGameUI.Base;
+using MonoGameUI.Elements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -91,8 +91,8 @@ namespace Paramita.UI.Scenes
             OTHER1_ITEM, OTHER2_ITEM, OTHER3_ITEM, OTHER4_ITEM, OTHER5_ITEM };
         #endregion
 
-        private readonly SpriteFont HEADING_FONT = GameController.ArialBold;
-        private readonly SpriteFont HINT_FONT = GameController.NotoSans;
+        private readonly SpriteFont HEADING_FONT = ParamitaController.ArialBold;
+        private readonly SpriteFont HINT_FONT = ParamitaController.NotoSans;
 
         private readonly Color WHITE = Color.White;
         private readonly Color RED = Color.Red;

@@ -1,9 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Paramita.UI.Base;
-using Paramita.UI.Components;
-using Paramita.UI.Elements;
+using MonoGameUI;
+using MonoGameUI.Base;
+using MonoGameUI.Components;
+using MonoGameUI.Elements;
+using MonoGameUI.Events;
 using System;
 using System.Collections.Generic;
 
@@ -28,7 +30,10 @@ namespace Paramita.UI.Scenes
         #endregion
 
         #region Constructors
-        public MenuScene(GameController game) : base(game) { }
+        public MenuScene(GameController game) : base(game)
+        {
+            Controller = (ParamitaController)game;
+        }
         #endregion
 
         #region Properties
@@ -46,6 +51,7 @@ namespace Paramita.UI.Scenes
                 Components[0].Elements[buttonId].Highlight();
             }
         }
+        public ParamitaController Controller { get; }
         #endregion
 
         #region Initialization
@@ -147,7 +153,7 @@ namespace Paramita.UI.Scenes
 
         private void SelectNewGame(Scene parent, UserInputEventArgs eventArgs)
         {
-            Game.CurrentScene = Game.GameScene;
+            Controller.CurrentScene = Controller.GameScene;
         }
 
         private bool CanExitGame(Tuple<Scene, UserInputEventArgs> context)
@@ -172,7 +178,7 @@ namespace Paramita.UI.Scenes
 
         protected override void LoadContent()
         {
-            _fontArialBold = GameController.ArialBold;
+            _fontArialBold = ParamitaController.ArialBold;
             _background = _content.Load<Texture2D>("Images\\Scenes\\menuscreen");
             _buttonTexture = _content.Load<Texture2D>("Images\\Scenes\\wooden-button");
         }

@@ -81,7 +81,8 @@ namespace Paramita.GameLogic.Levels
             int maxSize = data.MaxRoomSize;
 
             var rooms = new List<Rectangle>();
-            for (int x = 0; x < data.MaxRooms; x++)
+            int attempts = 3;
+            for (int x = 0; x < data.MaxRooms + 1; x++)
             {
                 int roomWidth = random.Next(minSize, maxSize);
                 int roomHeight = random.Next(minSize, maxSize);
@@ -93,6 +94,16 @@ namespace Paramita.GameLogic.Levels
                 bool newRoomIntersects = rooms.Any(room => newRoom.Intersects(room));
 
                 if (newRoomIntersects == false) { rooms.Add(newRoom); }
+                else
+                {
+                    attempts--;
+                    if (attempts == 0)
+                    {
+                        attempts = 3;
+                        continue;
+                    }
+                    else x--;
+                }
             }
 
             return rooms;
