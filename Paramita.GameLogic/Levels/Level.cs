@@ -108,8 +108,8 @@ namespace Paramita.GameLogic.Levels
         private Tuple<ActorType, Compass, bool>[,] ConvertMapToBeingTypes()
         {
             // this is to defeat any future attempt to pass nulls through
-            Utilities.ThrowExceptionIfNull(_player);
-            Utilities.ThrowExceptionIfNull(_npcs);
+            UtilityMethods.ThrowExceptionIfNull(_player);
+            UtilityMethods.ThrowExceptionIfNull(_npcs);
 
             var typeArray = new Tuple<ActorType, Compass, bool>[TileMap.TilesWide, TileMap.TilesHigh];
             var playerTile = _player.CurrentTile.TilePoint;

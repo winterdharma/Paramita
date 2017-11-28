@@ -5,6 +5,7 @@ using Paramita.GameLogic.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Utilities;
 
 namespace Paramita.GameLogic.Actors
 {
@@ -46,7 +47,7 @@ namespace Paramita.GameLogic.Actors
 
         #region Events
         public event EventHandler<AttackEventArgs> OnAttackResolved;
-        public event EventHandler<EventArgs> OnCombatantKilled;
+        public event EventHandler OnCombatantKilled;
         #endregion
 
 
@@ -336,9 +337,9 @@ namespace Paramita.GameLogic.Actors
             inventory.OnShieldsChange += HandleShieldsChange;
         }
 
-        private void HandleItemEncumbranceChange(object sender, IntegerEventArgs e)
+        private void HandleItemEncumbranceChange(object sender, EventData<int> eventData)
         {
-            TotalEncumbrance = Encumbrance + e.Value;
+            TotalEncumbrance = Encumbrance + eventData.Data;
         }
 
         private void HandleWeaponsChange(object sender, WeaponsEventArgs e)

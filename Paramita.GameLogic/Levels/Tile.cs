@@ -128,7 +128,7 @@ namespace Paramita.GameLogic.Levels
         // Tiles will start with no limitations as containers
         public bool AddItem(Item item)
         {
-            Utilities.ThrowExceptionIfNull(item);
+            UtilityMethods.ThrowExceptionIfNull(item);
 
             _items.Add(item);
             OnItemAddedToTile?.Invoke(this, new ItemEventArgs(TilePoint, item.ItemType));
@@ -137,7 +137,7 @@ namespace Paramita.GameLogic.Levels
 
         public void RemoveItem(Item item)
         {
-            Utilities.ThrowExceptionIfNull(item);
+            UtilityMethods.ThrowExceptionIfNull(item);
 
             var wasRemoved = _items.Remove(item);
             if (wasRemoved)

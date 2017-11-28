@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utilities;
 
 namespace Paramita.GameLogic.Actors
 {
@@ -54,7 +55,7 @@ namespace Paramita.GameLogic.Actors
         public event EventHandler<InventoryChangeEventArgs> OnInventoryChange;
         public event EventHandler<WeaponsEventArgs> OnWeaponsChange;
         public event EventHandler<ShieldsEventArgs> OnShieldsChange;
-        public event EventHandler<IntegerEventArgs> OnItemEncumbranceChange;
+        public event EventHandler<EventData<int>> OnItemEncumbranceChange;
 
         #region Constructors
         public Inventory() { }
@@ -202,7 +203,7 @@ namespace Paramita.GameLogic.Actors
         public void RaiseChangeEvent()
         {
             OnInventoryChange?.Invoke(this, new InventoryChangeEventArgs(GetInventoryData()));
-            OnItemEncumbranceChange?.Invoke(this, new IntegerEventArgs(GetSumOfItemEncumbrance()));
+            OnItemEncumbranceChange?.Invoke(this, new EventData<int>(GetSumOfItemEncumbrance()));
         }
 
         #region Helper Methods

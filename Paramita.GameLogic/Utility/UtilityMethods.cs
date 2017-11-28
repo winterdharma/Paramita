@@ -2,7 +2,7 @@
 
 namespace Paramita.GameLogic.Utility
 {
-    public static class Utilities
+    public static class UtilityMethods
     {
         public static void ThrowExceptionIfNull(object o)
         {
