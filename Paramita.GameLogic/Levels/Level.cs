@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using Paramita.GameLogic.Mechanics;
 using Paramita.GameLogic.Utility;
+using Utilities;
 
 namespace Paramita.GameLogic.Levels
 {
@@ -137,10 +138,10 @@ namespace Paramita.GameLogic.Levels
             UnsubscribeFromOneNpcsEvents(npc);           
         }
 
-        private void HandleActorMove(object sender, DirectionEventArgs eventArgs)
+        private void HandleActorMove(object sender, EventData<Compass> eventData)
         {
             Actor actor = sender as Actor;
-            Compass direction = eventArgs.Direction;
+            Compass direction = eventData.Data;
             Tile newTile = TileMap.GetTile(actor.CurrentTile.TilePoint + Direction.GetPoint(direction));
 
             if (actor is Player)

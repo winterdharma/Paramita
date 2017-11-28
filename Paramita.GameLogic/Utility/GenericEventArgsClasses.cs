@@ -1,19 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
-using Paramita.GameLogic.Mechanics;
 using System;
 
 namespace Paramita.GameLogic.Utility
 {
-    public class DirectionEventArgs : EventArgs
-    {
-        public Compass Direction { get; }
-
-        public DirectionEventArgs(Compass direction)
-        {
-            Direction = direction;
-        }
-    }
-
     public class MoveEventArgs : EventArgs
     {
         public Point Origin { get; }

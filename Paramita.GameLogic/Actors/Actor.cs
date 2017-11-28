@@ -5,6 +5,7 @@ using System;
 using Paramita.GameLogic.Levels;
 using Paramita.GameLogic.Mechanics;
 using Paramita.GameLogic.Utility;
+using Utilities;
 
 namespace Paramita.GameLogic.Actors
 {
@@ -35,7 +36,7 @@ namespace Paramita.GameLogic.Actors
 
         #region Events
         public event EventHandler<InventoryChangeEventArgs> OnInventoryChange;
-        public event EventHandler<DirectionEventArgs> OnMoveAttempt;
+        public event EventHandler<EventData<Compass>> OnMoveAttempt;
         public event EventHandler<StatusMessageEventArgs> OnStatusMsgSent;
         #endregion
 
@@ -140,7 +141,7 @@ namespace Paramita.GameLogic.Actors
             Facing = direction;
             Tile currentTile = CurrentTile;
             
-            OnMoveAttempt?.Invoke(this, new DirectionEventArgs(direction));
+            OnMoveAttempt?.Invoke(this, new EventData<Compass>(direction));
 
             Tile newTile = CurrentTile;
             if (newTile == currentTile)
