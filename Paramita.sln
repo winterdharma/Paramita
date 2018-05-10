@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paramita.GameLogic", "Param
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paramita.GameLogic.UnitTests", "Paramita.GameLogic.UnitTests\Paramita.GameLogic.UnitTests.csproj", "{B10EF5FF-AEA3-4912-9DFF-B6E93BCA5AEA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities", "..\Utilities\Utilities.csproj", "{DE3E99B1-50B2-4F70-8B36-35BBC4B32FEB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoGameUI", "..\MonoGameUI\MonoGameUI.csproj", "{E07B86C4-92B9-40C0-AA1D-B21D18BD503F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +44,22 @@ Global
 		{B10EF5FF-AEA3-4912-9DFF-B6E93BCA5AEA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B10EF5FF-AEA3-4912-9DFF-B6E93BCA5AEA}.Release|x86.ActiveCfg = Release|Any CPU
 		{B10EF5FF-AEA3-4912-9DFF-B6E93BCA5AEA}.Release|x86.Build.0 = Release|Any CPU
+		{DE3E99B1-50B2-4F70-8B36-35BBC4B32FEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE3E99B1-50B2-4F70-8B36-35BBC4B32FEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE3E99B1-50B2-4F70-8B36-35BBC4B32FEB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DE3E99B1-50B2-4F70-8B36-35BBC4B32FEB}.Debug|x86.Build.0 = Debug|Any CPU
+		{DE3E99B1-50B2-4F70-8B36-35BBC4B32FEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE3E99B1-50B2-4F70-8B36-35BBC4B32FEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE3E99B1-50B2-4F70-8B36-35BBC4B32FEB}.Release|x86.ActiveCfg = Release|Any CPU
+		{DE3E99B1-50B2-4F70-8B36-35BBC4B32FEB}.Release|x86.Build.0 = Release|Any CPU
+		{E07B86C4-92B9-40C0-AA1D-B21D18BD503F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E07B86C4-92B9-40C0-AA1D-B21D18BD503F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E07B86C4-92B9-40C0-AA1D-B21D18BD503F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E07B86C4-92B9-40C0-AA1D-B21D18BD503F}.Debug|x86.Build.0 = Debug|Any CPU
+		{E07B86C4-92B9-40C0-AA1D-B21D18BD503F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E07B86C4-92B9-40C0-AA1D-B21D18BD503F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E07B86C4-92B9-40C0-AA1D-B21D18BD503F}.Release|x86.ActiveCfg = Release|Any CPU
+		{E07B86C4-92B9-40C0-AA1D-B21D18BD503F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

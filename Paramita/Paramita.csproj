@@ -81,9 +81,6 @@
     <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.6.0.1625\lib\net40\MonoGame.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="MonoGameUI">
-      <HintPath>..\..\MonoGameUI\MonoGameUI\obj\Debug\MonoGameUI.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -147,6 +144,14 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\MonoGameUI\MonoGameUI.csproj">
+      <Project>{e07b86c4-92b9-40c0-aa1d-b21d18bd503f}</Project>
+      <Name>MonoGameUI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Utilities\Utilities.csproj">
+      <Project>{de3e99b1-50b2-4f70-8b36-35bbc4b32feb}</Project>
+      <Name>Utilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Paramita.GameLogic\Paramita.GameLogic.csproj">
       <Project>{02d54c08-97df-44d3-ad44-d3845898e635}</Project>
       <Name>Paramita.GameLogic</Name>
