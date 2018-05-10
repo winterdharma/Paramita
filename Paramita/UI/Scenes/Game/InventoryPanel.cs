@@ -6,6 +6,7 @@ using MonoGameUI.Elements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Paramita.UI.Assets;
 
 namespace Paramita.UI.Scenes
 {
@@ -349,7 +350,7 @@ namespace Paramita.UI.Scenes
                 var itemID = _inventoryItems[i];
 
                 var item = new Image(itemID, this, GetSpriteElementPosition(i), 
-                    ItemTextures.ItemTextureMap[ItemType.None], Color.White, Color.Red, 2);
+                    ItemTextures.Get(ItemType.None), Color.White, Color.Red, 2);
 
                 itemImages[itemID] = item;
             }
@@ -362,7 +363,7 @@ namespace Paramita.UI.Scenes
             {
                 string itemID = item.Key + "_item";
                 var itemImage = (Image)Elements[itemID];
-                itemImage.Texture = ItemTextures.ItemTextureMap[item.Value];
+                itemImage.Texture = ItemTextures.Get(item.Value);
 
                 if (item.Value == ItemType.None || item.Value == ItemType.Bite ||
                     item.Value == ItemType.Fist || !IsOpen)
@@ -398,7 +399,7 @@ namespace Paramita.UI.Scenes
             if(itemType == ItemType.None || itemType == ItemType.Fist || itemType == ItemType.Bite)
                 texture = _defaultSlotTextures[slot];
             else
-                texture = ItemTextures.ItemTextureMap[itemType];
+                texture = ItemTextures.Get(itemType);
 
             return texture;
         }

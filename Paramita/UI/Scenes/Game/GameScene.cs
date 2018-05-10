@@ -14,6 +14,7 @@ using MonoGameUI.Input;
 using MonoGameUI.Elements;
 using MonoGameUI.Base;
 using MonoGameUI.Events;
+using Paramita.UI.Assets;
 
 namespace Paramita.UI.Scenes
 {
@@ -45,21 +46,22 @@ namespace Paramita.UI.Scenes
 
         protected override void LoadContent()
         {
-            ItemTextures.ItemTextureMap[ItemType.Coins] = _content.Load<Texture2D>("Images\\Items\\coins");
-            ItemTextures.ItemTextureMap[ItemType.Meat] = _content.Load<Texture2D>("Images\\Items\\meat");
-            ItemTextures.ItemTextureMap[ItemType.Shield] = _content.Load<Texture2D>("Images\\Items\\buckler");
-            ItemTextures.ItemTextureMap[ItemType.ShortSword] = _content.Load<Texture2D>("Images\\Items\\short_sword");
-            ItemTextures.ItemTextureMap[ItemType.Bite] = _content.Load<Texture2D>("transparent");
-            ItemTextures.ItemTextureMap[ItemType.Fist] = _content.Load<Texture2D>("transparent");
-            ItemTextures.ItemTextureMap[ItemType.None] = _content.Load<Texture2D>("transparent");
+            ItemTextures.Add(ItemType.Coins, _content.Load<Texture2D>("Images\\Items\\coins"));
+            ItemTextures.Add(ItemType.Meat, _content.Load<Texture2D>("Images\\Items\\meat"));
+            ItemTextures.Add(ItemType.Shield, _content.Load<Texture2D>("Images\\Items\\buckler"));
+            ItemTextures.Add(ItemType.ShortSword, _content.Load<Texture2D>("Images\\Items\\short_sword"));
+            ItemTextures.Add(ItemType.Bite, _content.Load<Texture2D>("transparent"));
+            ItemTextures.Add(ItemType.Fist, _content.Load<Texture2D>("transparent"));
+            ItemTextures.Add(ItemType.None, _content.Load<Texture2D>("transparent"));
 
-            TileMapPanel.Spritesheets.Add("Floor", _content.Load<Texture2D>("Images\\Tiles\\floor"));
-            TileMapPanel.Spritesheets.Add("Door", _content.Load<Texture2D>("Images\\Tiles\\door"));
-            TileMapPanel.Spritesheets.Add("Wall", _content.Load<Texture2D>("Images\\Tiles\\wall"));
-            TileMapPanel.Spritesheets.Add("StairsUp", _content.Load<Texture2D>("Images\\Tiles\\stairs_up"));
-            TileMapPanel.Spritesheets.Add("StairsDown", _content.Load<Texture2D>("Images\\Tiles\\stairs_down"));
-            TileMapPanel.Spritesheets.Add("GiantRat", _content.Load<Texture2D>("Images\\SentientBeings\\giant_rat"));
-            TileMapPanel.Spritesheets.Add("HumanPlayer", _content.Load<Texture2D>("Images\\SentientBeings\\human_player"));
+            TileTextures.Add(TileType.Floor, _content.Load<Texture2D>("Images\\Tiles\\floor"));
+            TileTextures.Add(TileType.Door, _content.Load<Texture2D>("Images\\Tiles\\door"));
+            TileTextures.Add(TileType.Wall, _content.Load<Texture2D>("Images\\Tiles\\wall"));
+            TileTextures.Add(TileType.StairsUp, _content.Load<Texture2D>("Images\\Tiles\\stairs_up"));
+            TileTextures.Add(TileType.StairsDown, _content.Load<Texture2D>("Images\\Tiles\\stairs_down"));
+
+            ActorTextures.Add(ActorType.GiantRat, _content.Load<Texture2D>("Images\\SentientBeings\\giant_rat"));
+            ActorTextures.Add(ActorType.HumanPlayer, _content.Load<Texture2D>("Images\\SentientBeings\\human_player"));
 
             InventoryPanel.DefaultTextures["background"] = _content.Load<Texture2D>("black_background1");
             InventoryPanel.DefaultTextures["minimize_icon"] = _content.Load<Texture2D>("Images\\Scenes\\minimize_icon");

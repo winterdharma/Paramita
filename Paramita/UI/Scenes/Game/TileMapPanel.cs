@@ -10,6 +10,7 @@ using MonoGameUI.Base;
 using MonoGameUI.Elements;
 using System.Linq;
 using Paramita.UI.Elements;
+using Paramita.UI.Assets;
 
 namespace Paramita.UI.Scenes
 {
@@ -18,7 +19,6 @@ namespace Paramita.UI.Scenes
         #region Fields
         private Vector2 _playerPosition;
         private Rectangle _drawFrame;
-        public static Dictionary<string, Texture2D> _spritesheets = new Dictionary<string, Texture2D>();
         private TileType[,] _tileLayer;
         private ItemType[,] _itemLayer;
         private Tuple<ActorType, Compass, bool>[,] _actorLayer;
@@ -33,14 +33,6 @@ namespace Paramita.UI.Scenes
         {
             _drawFrame = new Rectangle(0, 0, TILE_SIZE, TILE_SIZE);
             _viewport = _panelRectangle;
-        }
-        #endregion
-
-        #region Properties
-        public static Dictionary<string, Texture2D> Spritesheets
-        {
-            get { return _spritesheets; }
-            set { _spritesheets = value; }
         }
         #endregion
 
@@ -97,18 +89,10 @@ namespace Paramita.UI.Scenes
                     tileType = tiles[x, y];
                     string tileId = GetTileId(x, y);
                     tilesDict[tileId] = new Image(tileId, this, GetTilePosition(x,y), 
-                        GetTexture(tileType.ToString()), 0);
+                        TileTextures.Get(tileType), 0);
                 }
             }
             return tilesDict;
-        }
-
-        private Texture2D GetTexture(string key)
-        {
-            if (key.Equals("None"))
-                throw new ArgumentException("None is not a valid key to fetch a texture from Spritesheets");
-
-            return Spritesheets[key];
         }
 
         private Vector2 GetTilePosition(int x, int y)
@@ -135,7 +119,7 @@ namespace Paramita.UI.Scenes
                         itemType = items[x, y];
                         string itemId = GetItemId(x, y);
                         itemsDict[itemId] = new Image(itemId, this, GetTilePosition(x,y),
-                            GetItemTexture(itemType), 1);
+                            ItemTextures.Get(itemType), 1);
                     }
                 }
             }
@@ -145,11 +129,6 @@ namespace Paramita.UI.Scenes
         private string GetItemId(int x, int y)
         {
             return "item [" + x + ", " + y + "]";
-        }
-
-        private Texture2D GetItemTexture(ItemType itemType)
-        {
-            return ItemTextures.ItemTextureMap[itemType];
         }
 
         private Dictionary<string, Sprite> CreateActorSprites(Tuple<ActorType, Compass, bool>[,] actors)
@@ -169,7 +148,7 @@ namespace Paramita.UI.Scenes
                         isPlayer = actor.Item3;
                         string spriteId = GetSpriteId(x, y);
                         actorsDict[spriteId] = new Sprite(GetSpriteId(x, y), this, GetTilePosition(x, y),
-                            GetTexture(actorType.ToString()), 2)
+                            ActorTextures.Get(actorType), 2)
                         {
                             Facing = facing
                         };
@@ -249,7 +228,7 @@ namespace Paramita.UI.Scenes
             string itemId = GetItemId(x, y);
             var elements = new Dictionary<string, Element>(Elements);
             elements[itemId] = new Image(itemId, this,
-                GetTilePosition(x, y), GetItemTexture(itemType), 1);
+                GetTilePosition(x, y), ItemTextures.Get(itemType), 1);
             Elements = elements;
             Elements[itemId].Show();
         }

@@ -11,7 +11,7 @@ namespace Paramita.GameLogic.Levels
     // These types are translated to a graphical equivalent when the TileMap is drawn to screen
     public enum TileType
     {
-        None,
+        None = 0,
         Door,
         Wall,
         Floor,

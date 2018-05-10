@@ -6,7 +6,7 @@ namespace Paramita.GameLogic.Items
 {
     public enum ItemType
     {
-        None = 0,
+        None = 2000,
         ShortSword,
         Shield,
         ScaleMailCuirass,

@@ -22,7 +22,7 @@ namespace Paramita.GameLogic.Actors
 
     public enum ActorType
     {
-        None,
+        None = 1000,
         GiantRat,
         HumanPlayer
     }
