@@ -5,16 +5,16 @@ using System.Collections.Generic;
 
 namespace Paramita.UI.Assets
 {
-    public class ItemTextures : Textures
+    public class ItemTextures
     {
         public static void Add(ItemType type, Texture2D texture)
         {
-            Textures2D[(int)type] = texture;
+            Textures.Textures2D[(int)type] = texture;
         }
 
         public static Texture2D Get(ItemType type)
         {
-            return Textures2D[(int)type];
+            return Textures.Textures2D[(int)type];
         }
     }
 }

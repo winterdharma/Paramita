@@ -9,16 +9,16 @@ using System.Threading.Tasks;
 
 namespace Paramita.UI.Assets
 {
-    public class ActorTextures : Textures
+    public class ActorTextures
     {
         public static void Add(ActorType type, Texture2D texture)
         {
-            Textures2D[(int)type] = texture;
+            Textures.Textures2D[(int)type] = texture;
         }
 
         public static Texture2D Get(ActorType type)
         {
-            return Textures2D[(int)type];
+            return Textures.Textures2D[(int)type];
         }
     }
 }
