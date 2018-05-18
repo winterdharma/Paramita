@@ -62,7 +62,7 @@
   <ItemGroup>
     <Compile Include="UI\Assets\ActorTextures.cs" />
     <Compile Include="UI\Assets\TileTextures.cs" />
-    <Compile Include="UI\Elements\Sprite.cs" />
+    <Compile Include="UI\Elements\ActorSprite.cs" />
     <Compile Include="UI\Assets\ItemTextures.cs" />
     <Compile Include="UI\Scenes\Game\PMTileMapPanel.cs" />
     <Compile Include="UI\Scenes\Game\TileMapPanel.cs" />

@@ -147,7 +147,7 @@ namespace Paramita.UI.Scenes
                         facing = actor.Item2;
                         isPlayer = actor.Item3;
                         string spriteId = GetSpriteId(x, y);
-                        actorsDict[spriteId] = new Sprite(GetSpriteId(x, y), this, GetTilePosition(x, y),
+                        actorsDict[spriteId] = new ActorSprite(spriteId, this, GetTilePosition(x, y),
                             ActorTextures.Get(actorType), 2)
                         {
                             Facing = facing
@@ -174,6 +174,7 @@ namespace Paramita.UI.Scenes
         {
             CenterViewportOnPlayerSprite(_playerPosition, _mapRectangle);
             StopViewportAtTilemapEdges(_viewport, _mapRectangle);
+            base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -197,7 +198,7 @@ namespace Paramita.UI.Scenes
 
         public void MoveSprite(Point origin, Point destination)
         {
-            var sprite = (Sprite)Elements[GetSpriteId(origin.X, origin.Y)];
+            var sprite = (ActorSprite)Elements[GetSpriteId(origin.X, origin.Y)];
 
             bool isPlayer = false;
             if (sprite.Position == _playerPosition)
